@@ -1,0 +1,60 @@
+name: gtfs-watch
+
+on:
+  schedule:
+    - cron: '17 5 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  GTFS_URL: https://pt.tirana.al/gtfs/gtfs.zip
+  TAG: tirana-latest
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Stáhnout feed
+        run: |
+          curl -fsSL --retry 3 --retry-delay 10 -o gtfs.zip "$GTFS_URL"
+          test "$(stat -c %s gtfs.zip)" -gt 100000
+
+      - name: Ověřit obsah
+        run: |
+          unzip -tq gtfs.zip
+          for f in agency stops routes trips stop_times; do unzip -l gtfs.zip | grep -q "$f.txt"; done
+          echo "HASH=$(sha256sum gtfs.zip | cut -d' ' -f1)" >> "$GITHUB_ENV"
+          python3 - <<'EOF' >> "$GITHUB_ENV"
+          import csv, io, zipfile
+          z = zipfile.ZipFile('gtfs.zip')
+          r = next(csv.DictReader(io.TextIOWrapper(z.open('feed_info.txt'), encoding='utf-8-sig')), {})
+          print('VERSION=%s, platnost %s - %s' % (r.get('feed_version', '?'), r.get('feed_start_date', '?'), r.get('feed_end_date', '?')))
+          EOF
+
+      - name: Porovnat s posledním vydáním
+        id: cmp
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          old=$(gh release view "$TAG" --json body -q .body 2>/dev/null | grep -oE 'sha256: [0-9a-f]{64}' | cut -d' ' -f2 || true)
+          if [ "$old" = "$HASH" ]; then echo "changed=false" >> "$GITHUB_OUTPUT"; else echo "changed=true" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Publikovat release
+        if: steps.cmp.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          printf '%s\n' \
+            "Městský GTFS feed Tirany, stažený $(date -u +%F) z $GTFS_URL." \
+            "Licence CC BY-SA 4.0, Municipality of Tirana." \
+            "" \
+            "feed_info: $VERSION" \
+            "sha256: $HASH" > notes.md
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" gtfs.zip --clobber
+            gh release edit "$TAG" --notes-file notes.md
+          else
+            gh release create "$TAG" gtfs.zip --title "Tirana GTFS (poslední verze)" --notes-file notes.md
+          fi

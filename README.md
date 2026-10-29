@@ -16,6 +16,7 @@ a pak http://localhost:8000/
 
 - GTFS Tirany: https://pt.tirana.al/gtfs/gtfs.zip (CC BY-SA 4.0, Bashkia e Tiranës)
 - Nahraj ho tlačítkem **Nahrát GTFS** nebo přetažením na mapu. Bez něj běží smyšlená ukázková síť.
+- Aktuální kopii feedu hlídá GitHub Action `.github/workflows/gtfs-watch.yml`: každý den kolem 5:17 UTC stáhne feed, a pokud se změnil obsah (sha256), nahraje ho do Releases jako `tirana-latest` (`gtfs.zip`). Jde spustit i ručně (Actions → gtfs-watch → Run workflow).
 
 ## Soubory
 
