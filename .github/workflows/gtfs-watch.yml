@@ -12,6 +12,7 @@ permissions:
 env:
   GTFS_URL: https://pt.tirana.al/gtfs/gtfs.zip
   TAG: tirana-latest
+  GH_REPO: ${{ github.repository }}
 
 jobs:
   watch:
