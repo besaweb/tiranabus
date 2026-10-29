@@ -125,7 +125,6 @@
       <dl class="kv">
         <dt>${t('operator')}</dt><dd>${esc(feed.agencies.join(', ') || '–')}</dd>
         <dt>${t('valid')}</dt><dd>${fmtDate(feed.from)} – ${fmtDate(feed.to)}</dd>
-        <dt>${t('source')}</dt><dd>${esc(source || t('srcDemo'))} · ${esc(feed.tz)}</dd>
       </dl>`;
   }
 
