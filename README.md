@@ -30,6 +30,7 @@ a pak http://localhost:8000/
 | `js/demo.js` | ukázková síť |
 | `js/extra-airport.js` | doplňková linka na letiště, přidá se k nahranému feedu |
 | `data/gtfs-extra.zip` | stejná linka jako samostatný GTFS (pro jiné nástroje nebo import do DB) |
+| `js/i18n.js` | překlady rozhraní (čeština, angličtina, albánština) |
 | `js/app.js` | mapa a ovládání |
 
 ## Doplňkové linky na letiště (LU-NA)

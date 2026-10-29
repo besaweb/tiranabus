@@ -15,8 +15,8 @@ Mapa a plánovač MHD Tirany nad GTFS. Aktuální stav, TODO a známé chyby: `H
 - Bez zbytečných komentářů. Krátké názvy proměnných ve stylu stávajícího kódu, 2 mezery, středníky, jednoduché uvozovky.
 - `js/gtfs-core.js` nesmí sahat na DOM ani Leaflet – čistá logika, testovatelná v Node (`module.exports`).
 - UI logika patří do `js/app.js`, styly do `css/style.css` přes CSS proměnné (světlý i tmavý režim).
-- Texty v UI česky. Uživatelský obsah vždy přes `esc()`.
-- Pořadí skriptů v `index.html` neměnit bez důvodu (`gtfs-core` → `demo` → `extra-airport` → `app`).
+- Texty v UI jsou ve třech jazycích (cs, en, sq) v `js/i18n.js`; nový text vždy přidat do všech tří. Uživatelský obsah vždy přes `esc()`.
+- Pořadí skriptů v `index.html` neměnit bez důvodu (`gtfs-core` → `demo` → `extra-airport` → `i18n` → `app`).
 
 ## Data
 

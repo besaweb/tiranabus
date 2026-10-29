@@ -15,48 +15,53 @@
     <div class="brand">
       <div class="sign" aria-hidden="true">T</div>
       <div>
-        <h1>Tirana MHD mapa</h1>
-        <small>Prototyp nad GTFS feedem</small>
+        <h1 data-i18n="title">Tirana MHD mapa</h1>
+        <small data-i18n="sub">Prototyp nad GTFS feedem</small>
       </div>
     </div>
     <div class="actions">
       <span class="status" id="status" role="status"></span>
+      <div class="lang" role="group" data-i18n-aria="langAria" aria-label="Jazyk">
+        <button type="button" data-lang="sq" aria-pressed="false" aria-label="Shqip" title="Shqip"><svg viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#E41E20"/><path fill="#000" d="M12 3.2c-.5-.9-1.6-1.5-2.7-1.3l.6 1.1-1.3.2.9 1.1c-1.4.2-2.5 1-3.2 2.2l1.6.2c-.5.7-.7 1.5-.5 2.3l1.4-.8c.1 1.4.9 2.5 2 3.2l-1.1 2.6h6.2l-1.1-2.6c1.1-.7 1.9-1.8 2-3.2l1.4.8c.2-.8 0-1.6-.5-2.3l1.6-.2c-.7-1.2-1.8-2-3.2-2.2l.9-1.1-1.3-.2.6-1.1c-1.1-.2-2.2.4-2.7 1.3z"/></svg></button>
+        <button type="button" data-lang="en" aria-pressed="false" aria-label="English" title="English"><svg viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="60" height="30" fill="#012169"/><path d="M0 0l60 30M60 0L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0l60 30M60 0L0 30" stroke="#C8102E" stroke-width="2"/><path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6"/></svg></button>
+        <button type="button" data-lang="cs" aria-pressed="false" aria-label="Čeština" title="Čeština"><svg viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="8" fill="#fff"/><rect y="8" width="24" height="8" fill="#D7141A"/><path d="M0 0l12 8L0 16z" fill="#11457E"/></svg></button>
+      </div>
     </div>
   </header>
 
   <aside class="side">
     <div class="meta" id="meta"></div>
     <div class="demo" id="expiry" hidden></div>
-    <div class="demo" id="demo"><b>Smyšlená ukázková síť.</b> Jízdní řády se nepodařilo načíst automaticky. Stáhni gtfs.zip z pt.tirana.al a přetáhni ho na mapu. Soubor se zpracuje jen v prohlížeči.</div>
-    <div class="tabs" role="tablist" aria-label="Režim">
-      <button type="button" role="tab" id="tab-browse" aria-selected="true">Linky a zastávky</button>
-      <button type="button" role="tab" id="tab-plan" aria-selected="false">Spojení</button>
+    <div class="demo" id="demo" data-i18n-html="demo"></div>
+    <div class="tabs" role="tablist" data-i18n-aria="mode" aria-label="Režim">
+      <button type="button" role="tab" id="tab-plan" aria-selected="true" data-i18n="tabPlan">Spojení</button>
+      <button type="button" role="tab" id="tab-browse" aria-selected="false" data-i18n="tabBrowse">Linky a zastávky</button>
     </div>
-    <form class="planform" id="planform" hidden autocomplete="off">
+    <form class="planform" id="planform" autocomplete="off">
       <div class="od">
-        <div class="field"><span class="pin a" aria-hidden="true">A</span><input id="from" placeholder="Odkud – zastávka" aria-label="Odkud" role="combobox" aria-autocomplete="list"><div class="sugg" id="from-sugg" hidden></div></div>
-        <div class="field"><span class="pin b" aria-hidden="true">B</span><input id="to" placeholder="Kam – zastávka" aria-label="Kam" role="combobox" aria-autocomplete="list"><div class="sugg" id="to-sugg" hidden></div></div>
-        <button type="button" class="btn swap" id="swap" aria-label="Prohodit Odkud a Kam" title="Prohodit">
+        <div class="field"><span class="pin a" aria-hidden="true">A</span><input id="from" data-i18n-ph="fromPh" data-i18n-aria="fromAria" placeholder="Odkud – zastávka" aria-label="Odkud" role="combobox" aria-autocomplete="list"><div class="sugg" id="from-sugg" hidden></div></div>
+        <div class="field"><span class="pin b" aria-hidden="true">B</span><input id="to" data-i18n-ph="toPh" data-i18n-aria="toAria" placeholder="Kam – zastávka" aria-label="Kam" role="combobox" aria-autocomplete="list"><div class="sugg" id="to-sugg" hidden></div></div>
+        <button type="button" class="btn swap" id="swap" data-i18n-aria="swapAria" data-i18n-title="swap" aria-label="Prohodit Odkud a Kam" title="Prohodit">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 2v11M2.5 10.5 5 13l2.5-2.5M11 14V3M8.5 5.5 11 3l2.5 2.5"/></svg>
         </button>
       </div>
       <div class="when">
-        <select id="day" aria-label="Den"><option value="0">Dnes</option><option value="1">Zítra</option></select>
-        <input type="time" id="time" step="60" aria-label="Čas odjezdu">
-        <button type="button" class="btn" id="nowbtn">Teď</button>
-        <button type="submit" class="btn primary">Vyhledat</button>
+        <select id="day" data-i18n-aria="dayAria" aria-label="Den"><option value="0" data-i18n="today">Dnes</option><option value="1" data-i18n="tomorrow">Zítra</option></select>
+        <input type="time" id="time" step="60" data-i18n-aria="timeAria" aria-label="Čas odjezdu">
+        <button type="button" class="btn" id="nowbtn" data-i18n="now">Teď</button>
+        <button type="submit" class="btn primary" data-i18n="go">Vyhledat</button>
       </div>
     </form>
-    <label class="search">
+    <label class="search" hidden>
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3 3"/></svg>
-      <input type="search" id="q" placeholder="Hledat linku nebo zastávku" autocomplete="off">
+      <input type="search" id="q" data-i18n-ph="searchPh" placeholder="Hledat linku nebo zastávku" autocomplete="off">
     </label>
     <div class="panel" id="panel"></div>
   </aside>
 
   <div class="mapwrap">
-    <div id="map" aria-label="Mapa linek a zastávek"></div>
-    <div class="tilenote" id="tilenote" hidden><span id="tiletext"></span><button type="button" id="tileclose" aria-label="Zavřít">×</button></div>
+    <div id="map" data-i18n-aria="mapAria" aria-label="Mapa linek a zastávek"></div>
+    <div class="tilenote" id="tilenote" hidden><span id="tiletext"></span><button type="button" id="tileclose" data-i18n-aria="close" aria-label="Zavřít">×</button></div>
   </div>
 </div>
 
@@ -66,6 +71,7 @@
 <script src="js/gtfs-core.js"></script>
 <script src="js/demo.js"></script>
 <script src="js/extra-airport.js"></script>
+<script src="js/i18n.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

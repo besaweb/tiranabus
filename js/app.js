@@ -8,10 +8,10 @@
   };
   const ink = r => r.text || (lum(r.color) > .4 ? '#141A19' : '#FFFFFF');
   const chip = (r, cls = '') => `<span class="chip ${cls}" style="--c:${r.color};--ct:${ink(r)}">${esc(r.short)}</span>`;
-  const fmtDate = s => s && s.length === 8 ? `${+s.slice(6)}. ${+s.slice(4, 6)}. ${s.slice(0, 4)}` : '–';
-  const num = n => n.toLocaleString('cs-CZ');
+  const { t, pl } = I18N;
+  const fmtDate = s => s && s.length === 8 ? (I18N.lang === 'cs' ? `${+s.slice(6)}. ${+s.slice(4, 6)}. ${s.slice(0, 4)}` : `${s.slice(6)}/${s.slice(4, 6)}/${s.slice(0, 4)}`) : '–';
+  const num = n => n.toLocaleString(I18N.loc());
   const byName = (a, b) => a.short.localeCompare(b.short, 'cs', { numeric: true });
-  const plural = (n, a, b, c) => n === 1 ? a : n >= 2 && n <= 4 ? b : c;
 
   const map = L.map('map', { preferCanvas: true, zoomSnap: .5, attributionControl: true }).setView([41.3275, 19.8187], 13);
   map.attributionControl.setPrefix(false);
@@ -19,41 +19,41 @@
   const OSM = '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>';
   const BASE = {
     'OpenStreetMap': L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: OSM }),
-    'Esri ulice': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, attribution: 'Podklad © Esri' }),
-    'Esri letecká': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, attribution: 'Podklad © Esri, Maxar' }),
+    'Esri Streets': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, attribution: '© Esri' }),
+    'Esri Satellite': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, attribution: '© Esri, Maxar' }),
     'OpenTopoMap': L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { maxZoom: 17, subdomains: 'abc', attribution: OSM + ', © OpenTopoMap' }),
-    'Bez podkladu': L.layerGroup()
+    'No basemap': L.layerGroup()
   };
   const fromFile = location.protocol === 'file:';
   let saved = null;
   try { saved = localStorage.getItem('tirana-mhd-base'); } catch (e) {}
-  let current = BASE[saved] ? saved : fromFile ? 'Esri ulice' : 'OpenStreetMap';
+  let current = BASE[saved] ? saved : fromFile ? 'Esri Streets' : 'OpenStreetMap';
   BASE[current].addTo(map);
   L.control.layers(BASE, null, { position: 'topright' }).addTo(map);
-  const dimTiles = () => document.getElementById('map').classList.toggle('dim-tiles', current !== 'Esri letecká');
+  const dimTiles = () => document.getElementById('map').classList.toggle('dim-tiles', current !== 'Esri Satellite');
   dimTiles();
   let tileOk = false, tileErr = 0, tileDismissed = false;
-  const note = (txt) => { if (tileDismissed) return; $('#tiletext').textContent = txt; $('#tilenote').hidden = false; };
+  const note = (key) => { if (tileDismissed) return; $('#tiletext').textContent = t(key); $('#tilenote').hidden = false; };
   for (const [name, layer] of Object.entries(BASE)) {
     if (!layer.on) continue;
     layer.on('tileload', () => { tileOk = true; });
-    layer.on('tileerror', () => { if (!tileOk && ++tileErr === 2) note('Podkladová mapa se v tomto náhledu nenačte. Linky a zastávky fungují. Po stažení a otevření HTML souboru v prohlížeči se zobrazí i podklad.'); });
+    layer.on('tileerror', () => { if (!tileOk && ++tileErr === 2) note('tileNone'); });
   }
   map.on('baselayerchange', e => {
     current = e.name; dimTiles();
     try { localStorage.setItem('tirana-mhd-base', current); } catch (err) {}
-    if (current === 'OpenStreetMap' && fromFile) note('OpenStreetMap ze souboru na disku nefunguje (hlásí „Access blocked“). Spusť stránku přes web server, např. python -m http.server, nebo zvol jiný podklad.');
+    if (current === 'OpenStreetMap' && fromFile) note('tileOsmFile');
   });
-  if (fromFile && current !== 'OpenStreetMap') note('Stránka je otevřená ze souboru, proto podklad Esri. Když místo mapy uvidíš chybu, přepni podklad vpravo nahoře.');
+  if (fromFile && current !== 'OpenStreetMap') note('tileFile');
   $('#tileclose').addEventListener('click', () => { tileDismissed = true; $('#tilenote').hidden = true; });
   const retheme = () => { restyle(); drawJourney(false); };
 
   const lineLayer = L.layerGroup().addTo(map);
   const stopLayer = L.layerGroup().addTo(map);
   const planLayer = L.layerGroup().addTo(map);
-  let feed = null, lines = [], markers = new Map(), sel = { route: null, stop: null }, timer = null, source = '';
+  let feed = null, lines = [], markers = new Map(), sel = { route: null, stop: null }, timer = null, source = null;
   let view = { kind: 'list' }, prevView = null;
-  let mode = 'browse', groups = new Map(), stopGroup = new Map(), names = [];
+  let mode = 'plan', demoMode = true, groups = new Map(), stopGroup = new Map(), names = [];
   let plan = { from: null, to: null, res: null, open: 0, timeTouched: false };
   const norm = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   const mins = s => Math.max(1, Math.round(s / 60));
@@ -113,13 +113,10 @@
     if (S && markers.has(S.id)) markers.get(S.id).m.bringToFront();
   }
 
-  function renderExpiry(demo) {
+  function renderExpiry() {
     const el = $('#expiry'), v = GTFS.validity(feed, GTFS.clock(feed.tz).ymd);
-    const d = v.days;
-    const msg = demo || v.state === 'ok' ? '' :
-      v.state === 'expired' ? `<b>Platnost jízdních řádů skončila</b> ${fmtDate(feed.to)}. Odjezdy nemusí být k dispozici, stáhni novou verzi gtfs.zip z pt.tirana.al.` :
-      v.state === 'future' ? `<b>Jízdní řády platí až od</b> ${fmtDate(feed.from)} (za ${d} ${plural(d, 'den', 'dny', 'dní')}).` :
-      `<b>Jízdní řády brzy skončí:</b> platí do ${fmtDate(feed.to)}${d ? ` (zbývá ${d} ${plural(d, 'den', 'dny', 'dní')})` : ' (dnes je poslední den)'}. Zkontroluj novou verzi gtfs.zip na pt.tirana.al.`;
+    const d = v.days, p = { d: fmtDate(v.state === 'future' ? feed.from : feed.to), n: d, u: d != null ? pl('uDay', d) : '' };
+    const msg = demoMode || v.state === 'ok' ? '' : v.state === 'expired' ? t('expExpired', p) : v.state === 'future' ? t('expFuture', p) : t(d ? 'expSoon' : 'expSoon0', p);
     el.innerHTML = msg;
     el.hidden = !msg;
   }
@@ -128,14 +125,14 @@
     const nR = feed.routes.size, nS = feed.stops.size;
     $('#meta').innerHTML = `
       <div class="stats">
-        <div><b>${num(nR)}</b><span>${plural(nR, 'linka', 'linky', 'linek')}</span></div>
-        <div><b>${num(nS)}</b><span>${plural(nS, 'zastávka', 'zastávky', 'zastávek')}</span></div>
-        <div><b>${num(feed.nTrips)}</b><span>${plural(feed.nTrips, 'spoj', 'spoje', 'spojů')}</span></div>
+        <div><b>${num(nR)}</b><span>${pl('uLine', nR)}</span></div>
+        <div><b>${num(nS)}</b><span>${pl('uStop', nS)}</span></div>
+        <div><b>${num(feed.nTrips)}</b><span>${pl('uTrip', feed.nTrips)}</span></div>
       </div>
       <dl class="kv">
-        <dt>Dopravce</dt><dd>${esc(feed.agencies.join(', ') || '–')}</dd>
-        <dt>Platnost</dt><dd>${fmtDate(feed.from)} – ${fmtDate(feed.to)}</dd>
-        <dt>Zdroj</dt><dd>${esc(source)} · ${esc(feed.tz)}</dd>
+        <dt>${t('operator')}</dt><dd>${esc(feed.agencies.join(', ') || '–')}</dd>
+        <dt>${t('valid')}</dt><dd>${fmtDate(feed.from)} – ${fmtDate(feed.to)}</dd>
+        <dt>${t('source')}</dt><dd>${esc(source || t('srcDemo'))} · ${esc(feed.tz)}</dd>
       </dl>`;
   }
 
@@ -153,24 +150,24 @@
     stopTimer();
     const q = norm($('#q').value.trim());
     const routes = [...feed.routes.values()].sort(byName).filter(r => !q || norm(r.short + ' ' + r.long).includes(q) || r.dirs.some(d => norm(d.head).includes(q)));
-    let html = `<div class="sect"><span>Linky</span><span>${routes.length}</span></div>`;
-    html += routes.length ? routes.map(routeRow).join('') : `<div class="empty">Žádná linka neodpovídá hledání.</div>`;
+    let html = `<div class="sect"><span>${t('lines')}</span><span>${routes.length}</span></div>`;
+    html += routes.length ? routes.map(routeRow).join('') : `<div class="empty">${t('noLines')}</div>`;
     if (q) {
       const st = [...feed.stops.values()].filter(s => norm(s.name).includes(q) || s.code.toLowerCase() === q).sort((a, b) => a.name.localeCompare(b.name, 'cs', { numeric: true })).slice(0, 40);
-      html += `<div class="sect"><span>Zastávky</span><span>${st.length}</span></div>`;
-      html += st.length ? st.map(stopRow).join('') : `<div class="empty">Žádná zastávka neodpovídá hledání.</div>`;
+      html += `<div class="sect"><span>${t('stops')}</span><span>${st.length}</span></div>`;
+      html += st.length ? st.map(stopRow).join('') : `<div class="empty">${t('noStops')}</div>`;
     } else {
-      html += `<p class="hint">Klikni na linku v seznamu nebo na mapě. Zastávka na mapě ukáže nejbližší odjezdy.</p>`;
+      html += `<p class="hint">${t('hintList')}</p>`;
     }
     $('#panel').innerHTML = html;
   }
 
   function showRoute(r) {
     stopTimer();
-    let html = `<button class="back" data-back>← Všechny linky</button>
-      <div class="head">${chip(r, 'lg')}<div><h2>${esc(r.long || r.short)}</h2><p>${r.stops.size} ${plural(r.stops.size, 'zastávka', 'zastávky', 'zastávek')} · ${r.trips.length} ${plural(r.trips.length, 'spoj', 'spoje', 'spojů')}</p></div></div>${r.desc ? `<p class="hint" style="margin-top:4px">${esc(r.desc)}</p>` : ''}`;
+    let html = `<button class="back" data-back>${t('backLines')}</button>
+      <div class="head">${chip(r, 'lg')}<div><h2>${esc(r.long || r.short)}</h2><p>${r.stops.size} ${pl('uStop', r.stops.size)} · ${r.trips.length} ${pl('uTrip', r.trips.length)}</p></div></div>${r.desc ? `<p class="hint" style="margin-top:4px">${esc(r.desc)}</p>` : ''}`;
     for (const d of r.dirs) {
-      html += `<div class="sect"><span>Směr ${esc(d.head)}</span></div><ol class="board" style="--c:${r.color}">`;
+      html += `<div class="sect"><span>${t('dir', { h: esc(d.head) })}</span></div><ol class="board" style="--c:${r.color}">`;
       html += d.stops.map(s => {
         const other = [...s.routes].filter(x => x !== r).sort(byName);
         return `<li><button class="row" data-stop="${esc(s.id)}"><span class="dot"></span><span class="t"><b>${esc(s.name)}</b></span>${other.length ? `<span class="xfer">${other.slice(0, 4).map(x => chip(x)).join('')}${other.length > 4 ? '<span class="n">+' + (other.length - 4) + '</span>' : ''}</span>` : ''}</button></li>`;
@@ -184,20 +181,21 @@
     const now = GTFS.clock(feed.tz);
     const deps = GTFS.departures(feed, s, now, 10);
     const rs = [...s.routes].sort(byName);
-    const backLabel = prevView && prevView.kind === 'route' ? '← Linka ' + esc(prevView.r.short) : '← Všechny linky';
+    const backLabel = prevView && prevView.kind === 'route' ? t('backRoute', { r: esc(prevView.r.short) }) : t('backLines');
     let html = `<button class="back" data-back>${backLabel}</button>
-      <div class="head"><span class="dot" style="margin:0 4px"></span><div><h2>${esc(s.name)}</h2><p>${s.code ? 'Kód ' + esc(s.code) + ' · ' : ''}ID ${esc(s.id)}</p></div></div>
+      <div class="head"><span class="dot" style="margin:0 4px"></span><div><h2>${esc(s.name)}</h2><p>${s.code ? t('code', { c: esc(s.code) }) + ' · ' : ''}ID ${esc(s.id)}</p></div></div>
       <div class="chips">${rs.map(r => `<button data-route="${esc(r.id)}" title="${esc(r.long || r.short)}">${chip(r)}</button>`).join('')}</div>
-      <div class="planbtns"><button class="btn sm" data-plan="from" data-sid="${esc(s.id)}"><span class="pin a">A</span>Spojení odsud</button><button class="btn sm" data-plan="to" data-sid="${esc(s.id)}"><span class="pin b">B</span>Spojení sem</button></div>
-      <div class="sect"><span>Nejbližší odjezdy</span><span class="clock">${esc(feed.tz.split('/').pop())} ${GTFS.hhmm(now.sec)}</span></div>`;
+      <div class="planbtns"><button class="btn sm" data-plan="from" data-sid="${esc(s.id)}"><span class="pin a">A</span>${t('planFrom')}</button><button class="btn sm" data-plan="to" data-sid="${esc(s.id)}"><span class="pin b">B</span>${t('planTo')}</button></div>
+      <div class="sect"><span>${t('nextDeps')}</span><span class="clock">${esc(feed.tz.split('/').pop())} ${GTFS.hhmm(now.sec)}</span></div>`;
     if (deps.length) {
       html += `<table class="deps"><tbody>${deps.map(d => {
         const m = Math.max(0, Math.floor((d.t - now.sec) / 60));
-        return `<tr><td class="tm">${GTFS.hhmm(d.t)}</td><td>${chip(d.tr.route)}</td><td class="hd">${esc(d.tr.head)}${d.hw ? `<small>interval ${Math.round(d.hw / 60)} min</small>` : ''}</td><td class="in ${m <= 3 ? 'soon' : ''}">${m === 0 ? 'teď' : 'za ' + m + ' min'}</td></tr>`;
+        return `<tr><td class="tm">${GTFS.hhmm(d.t)}</td><td>${chip(d.tr.route)}</td><td class="hd">${esc(d.tr.head)}${d.hw ? `<small>${t('every', { n: Math.round(d.hw / 60) })}</small>` : ''}</td><td class="in ${m <= 3 ? 'soon' : ''}">${m === 0 ? t('nowLc') : t('inMin', { n: m })}</td></tr>`;
       }).join('')}</tbody></table>`;
-      if (deps.some(d => d.hw)) html += `<p class="hint">Linky s intervalem jsou ve feedu zadané přes frequencies.txt, časy jsou proto orientační.</p>`;
+      html += `<p class="hint">${t('approx')}</p>`;
+      if (deps.some(d => d.hw)) html += `<p class="hint">${t('freqHint')}</p>`;
     } else {
-      html += `<div class="empty">V příštích 3 hodinách odsud podle jízdního řádu nic nejede.</div>`;
+      html += `<div class="empty">${t('noDeps')}</div>`;
     }
     $('#panel').innerHTML = html;
   }
@@ -256,12 +254,16 @@
   });
   $('#q').addEventListener('input', () => { if (view.kind !== 'list') { view = { kind: 'list' }; sel = { route: null, stop: null }; restyle(); } showList(); });
 
-  function setFeed(f, name, demo) {
-    feed = f; source = name;
-    $('#demo').hidden = !demo;
+  function setAttr() {
     map.attributionControl.removeAttribution(map._gtfsAttr || '');
-    map._gtfsAttr = demo ? 'Ukázková data' : 'Jízdní řády: ' + esc(f.agencies.join(', ') || name);
+    map._gtfsAttr = demoMode ? t('attrDemo') : t('attr', { a: esc(feed.agencies.join(', ') || source) });
     map.attributionControl.addAttribution(map._gtfsAttr);
+  }
+
+  function setFeed(f, name, demo) {
+    feed = f; source = name; demoMode = !!demo;
+    $('#demo').hidden = !demo;
+    setAttr();
     $('#q').value = '';
     groups = new Map(); stopGroup = new Map();
     names = GTFS.groupStops([...f.stops.values()]);
@@ -274,7 +276,7 @@
     plan = { from: null, to: null, res: null, open: 0, timeTouched: false };
     $('#from').value = ''; $('#to').value = '';
     planLayer.clearLayers();
-    renderMeta(); renderExpiry(demo); draw();
+    renderMeta(); renderExpiry(); draw();
     if (mode === 'plan') { setNow(); showPlan(); restyle(); } else openList();
   }
 
@@ -320,7 +322,7 @@
   function maybeRun() { if (plan.from && plan.to) runPlan(); }
 
   function runPlan() {
-    if (!plan.from || !plan.to) { showPlan('Vyber výchozí i cílovou zastávku.'); return; }
+    if (!plan.from || !plan.to) { showPlan(t('pickBoth')); return; }
     const c = GTFS.clock(feed.tz);
     const day = $('#day').value === '1' ? { ...GTFS.nextDay(c.ymd, c.wd) } : { ymd: c.ymd, wd: c.wd };
     const m = /^(\d{1,2}):(\d{2})/.exec($('#time').value || '');
@@ -332,7 +334,7 @@
   }
 
   const legIcon = l => l.kind === 'walk'
-    ? '<span class="wk" title="Pěšky"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="9" cy="2.8" r="1.4"/><path d="M8.4 5.6 6.6 9.2l2.4 1.6.8 3.6M8.4 5.6l2.2 2.4 2 .6M6.6 9.2 5.2 13.6M8.4 5.6 5.8 6.8 4.8 9"/></svg></span>'
+    ? `<span class="wk" title="${t('walk')}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="9" cy="2.8" r="1.4"/><path d="M8.4 5.6 6.6 9.2l2.4 1.6.8 3.6M8.4 5.6l2.2 2.4 2 .6M6.6 9.2 5.2 13.6M8.4 5.6 5.8 6.8 4.8 9"/></svg></span>`
     : chip(l.route);
 
   function showPlan(msg) {
@@ -340,24 +342,25 @@
     let html = '';
     if (msg) html += `<div class="empty">${esc(msg)}</div>`;
     if (!r) {
-      html += `<p class="hint">Napiš název zastávky, nebo klikni na zastávku v mapě: první klik nastaví Odkud, druhý Kam. Hledá se podle jízdního řádu, s přestupem aspoň 1 minutu a s chůzí mezi zastávkami do 400 m.</p>`;
+      html += `<p class="hint">${t('hintPlan')}</p>`;
     } else if (r.same) {
-      html += `<div class="empty">Výchozí a cílová zastávka je stejná.</div>`;
+      html += `<div class="empty">${t('same')}</div>`;
     } else if (!r.list.length) {
-      html += `<div class="empty">Podle jízdního řádu jsme v 6 hodinách od ${GTFS.hhmm(r.t0)} nenašli žádné spojení. Zkus jiný čas nebo den.</div>`;
+      html += `<div class="empty">${t('noRes', { t: GTFS.hhmm(r.t0) })}</div>`;
     } else {
       const now = GTFS.clock(feed.tz).sec;
       html += `<div class="sect"><span>${esc(plan.from.label)} → ${esc(plan.to.label)}</span><span>${r.list.length}</span></div>`;
       html += r.list.map((j, i) => {
         const wait = r.today ? Math.floor((j.dep - now) / 60) : null;
         const sum = `<button class="jsum" data-j="${i}" aria-expanded="${i === plan.open}">
-          <span class="jt"><b>${GTFS.hhmm(j.dep)} – ${GTFS.hhmm(j.arr)}</b><span>${mins(j.arr - j.dep)} min · ${j.rides ? (j.transfers ? j.transfers + ' ' + plural(j.transfers, 'přestup', 'přestupy', 'přestupů') : 'přímo') : 'jen pěšky'}</span></span>
+          <span class="jt"><b>${GTFS.hhmm(j.dep)} – ${GTFS.hhmm(j.arr)}</b><span>${t('minutes', { n: mins(j.arr - j.dep) })} · ${j.rides ? (j.transfers ? j.transfers + ' ' + pl('uTransfer', j.transfers) : t('direct')) : t('walkOnly')}</span></span>
           <span class="jlegs">${j.legs.filter(l => l.kind === 'ride' || l.m > 150 || j.legs.length === 1).map(legIcon).join('<i>›</i>')}</span>
-          ${wait != null && wait >= 0 && wait < 120 ? `<span class="jin ${wait <= 5 ? 'soon' : ''}">${wait === 0 ? 'teď' : 'za ' + wait + ' min'}</span>` : ''}
+          ${wait != null && wait >= 0 && wait < 120 ? `<span class="jin ${wait <= 5 ? 'soon' : ''}">${wait === 0 ? t('nowLc') : t('inMin', { n: wait })}</span>` : ''}
         </button>`;
         return `<div class="jrn ${i === plan.open ? 'open' : ''}">${sum}${i === plan.open ? detail(j) : ''}</div>`;
       }).join('');
-      if (r.list.some(j => j.legs.some(l => l.kind === 'ride' && l.inst.tr.freq))) html += `<p class="hint">Některé linky jezdí v intervalu, časy jsou proto orientační.</p>`;
+      html += `<p class="hint">${t('approx')}</p>`;
+      if (r.list.some(j => j.legs.some(l => l.kind === 'ride' && l.inst.tr.freq))) html += `<p class="hint">${t('freqHintPlan')}</p>`;
     }
     $('#panel').innerHTML = html;
   }
@@ -366,17 +369,17 @@
     let out = '<ol class="legs">', prevArr = null;
     for (const l of j.legs) {
       if (l.kind === 'ride') {
-        if (prevArr != null && l.dep - prevArr >= 120) out += `<li class="leg wait">Čekání ${mins(l.dep - prevArr)} min</li>`;
+        if (prevArr != null && l.dep - prevArr >= 120) out += `<li class="leg wait">${t('wait', { n: mins(l.dep - prevArr) })}</li>`;
         const n = l.k1 - l.k0;
         const mid = l.inst.tr.st.slice(l.k0 + 1, l.k1).map(x => feed.stops.get(x.stop).name);
         out += `<li class="leg ride" style="--c:${l.route.color}">
-          <div class="lh">${chip(l.route)}<span>směr <b>${esc(l.head)}</b></span></div>
+          <div class="lh">${chip(l.route)}<span>${t('dirLeg', { h: '<b>' + esc(l.head) + '</b>' })}</span></div>
           <div class="ls"><time>${GTFS.hhmm(l.dep)}</time><span>${esc(l.from.name)}</span></div>
-          ${mid.length ? `<details class="lm"><summary>${n} ${plural(n, 'zastávka', 'zastávky', 'zastávek')} · ${mins(l.arr - l.dep)} min</summary><ul>${mid.map(x => `<li>${esc(x)}</li>`).join('')}</ul></details>` : `<div class="lm">${n} zastávka · ${mins(l.arr - l.dep)} min</div>`}
+          ${mid.length ? `<details class="lm"><summary>${n} ${pl('uStop', n)} · ${t('minutes', { n: mins(l.arr - l.dep) })}</summary><ul>${mid.map(x => `<li>${esc(x)}</li>`).join('')}</ul></details>` : `<div class="lm">${n} ${pl('uStop', n)} · ${t('minutes', { n: mins(l.arr - l.dep) })}</div>`}
           <div class="ls"><time>${GTFS.hhmm(l.arr)}</time><span>${esc(l.to.name)}</span></div>
         </li>`;
       } else {
-        out += `<li class="leg walk">${legIcon(l)}<span>Pěšky ${mins(l.arr - l.dep)} min, asi ${Math.round(l.m / 10) * 10} m<br><small>${l.from.name === l.to.name ? 'na druhou stranu ulice, ' : ''}na zastávku ${esc(l.to.name)}</small></span></li>`;
+        out += `<li class="leg walk">${legIcon(l)}<span>${t('walkLeg', { n: mins(l.arr - l.dep), m: Math.round(l.m / 10) * 10 })}<br><small>${l.from.name === l.to.name ? t('walkCross') : ''}${t('walkTo', { s: esc(l.to.name) })}</small></span></li>`;
       }
       prevArr = l.arr;
     }
@@ -414,7 +417,7 @@
     const hits = names.filter(g => g.key.includes(q)).sort((a, b) => (b.key.startsWith(q) - a.key.startsWith(q))).slice(0, 8);
     box.innerHTML = hits.length
       ? hits.map((g, i) => `<button type="button" class="sg ${i === 0 ? 'act' : ''}" data-name="${esc(g.id)}"><b>${esc(g.label)}</b><span>${[...g.routes].sort(byName).slice(0, 6).map(r => esc(r.short)).join(' · ')}</span></button>`).join('')
-      : `<div class="sg none">Žádná zastávka</div>`;
+      : `<div class="sg none">${t('noStop')}</div>`;
     box.hidden = false;
     return hits;
   }
@@ -472,21 +475,21 @@
   $('#planform').addEventListener('submit', e => {
     e.preventDefault();
     resolveTyped('from'); resolveTyped('to');
-    if (!plan.from || !plan.to) { showPlan(!plan.from ? 'Zastávku Odkud se nepodařilo najít. Vyber ji ze seznamu.' : 'Zastávku Kam se nepodařilo najít. Vyber ji ze seznamu.'); return; }
+    if (!plan.from || !plan.to) { showPlan(t(!plan.from ? 'errFrom' : 'errTo')); return; }
     runPlan();
   });
 
   async function loadFile(file) {
     if (!file) return;
-    status('Načítám ' + file.name + ' …');
+    status(t('loading', { f: file.name }));
     let zip;
     try { zip = await JSZip.loadAsync(file); }
-    catch (e) { status('Soubor není platný ZIP. Nahraj gtfs.zip.', true); return; }
+    catch (e) { status(t('errZip'), true); return; }
     try {
-      const t = await GTFS.readZip(zip, txt => Papa.parse(txt, { header: true, skipEmptyLines: true, transformHeader: h => h.trim() }).data);
-      status('Zpracovávám jízdní řády …');
+      const tb = await GTFS.readZip(zip, txt => Papa.parse(txt, { header: true, skipEmptyLines: true, transformHeader: h => h.trim() }).data);
+      status(t('processing'));
       await new Promise(r => setTimeout(r, 30));
-      let tt = t;
+      let tt = tb;
       const extras = typeof EXTRA_FEEDS !== 'undefined' ? EXTRA_FEEDS : [];
       for (const x of extras) tt = GTFS.merge(tt, x.tables, x.id + ':');
       const f = GTFS.build(tt);
@@ -494,7 +497,7 @@
       setFeed(f, file.name, false);
       status('');
     } catch (e) {
-      status((e && e.message) || 'Soubor se nepodařilo zpracovat.', true);
+      status((e && e.message) || t('errProc'), true);
     }
   }
 
@@ -507,7 +510,31 @@
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', retheme);
   new MutationObserver(retheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
-  setFeed(GTFS.build(demoTables()), 'ukázková data', true);
+  function applyLang() {
+    const l = I18N.lang;
+    document.documentElement.lang = l;
+    document.title = t('title');
+    for (const el of document.querySelectorAll('[data-i18n]')) el.textContent = t(el.dataset.i18n);
+    for (const el of document.querySelectorAll('[data-i18n-html]')) el.innerHTML = t(el.dataset.i18nHtml);
+    for (const el of document.querySelectorAll('[data-i18n-ph]')) el.placeholder = t(el.dataset.i18nPh);
+    for (const el of document.querySelectorAll('[data-i18n-aria]')) el.setAttribute('aria-label', t(el.dataset.i18nAria));
+    for (const el of document.querySelectorAll('[data-i18n-title]')) el.title = t(el.dataset.i18nTitle);
+    for (const b of document.querySelectorAll('[data-lang]')) b.setAttribute('aria-pressed', b.dataset.lang === l);
+    if (!feed) return;
+    setAttr(); renderMeta(); renderExpiry();
+    if (mode === 'plan') showPlan(); else { const st = $('#panel').scrollTop; render(); $('#panel').scrollTop = st; }
+  }
+  for (const b of document.querySelectorAll('[data-lang]')) b.addEventListener('click', () => {
+    I18N.setLang(b.dataset.lang);
+    try { localStorage.setItem('tirana-mhd-lang', b.dataset.lang); } catch (e) {}
+    applyLang();
+  });
+  let savedLang = null;
+  try { savedLang = localStorage.getItem('tirana-mhd-lang'); } catch (e) {}
+  I18N.setLang(savedLang || I18N.detect(navigator.languages || [navigator.language]));
+
+  setFeed(GTFS.build(demoTables()), null, true);
+  applyLang();
 
   async function autoLoad() {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -515,7 +542,7 @@
       const r = await fetch('gtfs.zip', { cache: 'no-cache' });
       if (!r.ok) return;
       const b = await r.blob();
-      if (source !== 'ukázková data') return;
+      if (source !== null) return;
       await loadFile(new File([b], 'gtfs.zip'));
     } catch (e) {}
   }

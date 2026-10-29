@@ -16,6 +16,9 @@ Statická webová aplikace (vanilla JS, bez buildu) nad GTFS feedem MHD Tirany. 
 - **`frequencies.txt`:** podporované v odjezdech i v plánovači (Tirana je zatím nepoužívá).
 - **Plánovač spojení:** Connection Scan Algorithm s Pareto výběrem (čas příjezdu × počet přestupů), chůze mezi zastávkami, až 5 jízd, horizont 6 h, dnes/zítra. Detail cesty s mezizastávkami a vykreslením na mapě.
 - **Seskupení zastávek** (`GTFS.groupStops`): podle názvu a vzdálenosti do 300 m. Vzdálené stejnojmenné zastávky se rozliší jako „Název (1)“, „Název (2)“ (ve feedu Selitë, Xhamia). Skupiny mají id, výběr v plánovači jde přes id.
+- **Jazykové verze** čeština / angličtina / albánština (`js/i18n.js`, přepínač vlajek SQ | EN | CS v hlavičce, vlajky jsou inline SVG, protože emoji vlajky ve Windows nefungují): slovník `I18N.D`, funkce `t(klíč, {param})` a `pl(klíč, n)` (cs má 3 tvary množného čísla, en a sq 2). Statické texty v `index.html` mají `data-i18n*` atributy, `applyLang()` v `app.js` je přepíše a znovu vykreslí panel. Jazyk se ukládá do `localStorage` (`tirana-mhd-lang`), jinak se vezme z prohlížeče (sq/cs/en, jinak en). Názvy zastávek a linek se nepřekládají. Albánština a angličtina jsou strojový překlad bez rodilého korektora.
+- **Poznámka „časy jsou orientační“** (klíč `approx`) pod odjezdy zastávky i pod výsledky plánovače.
+- **Záložka Spojení je první** a je výchozí režim po startu.
 - **Hlídání feedu** (`.github/workflows/gtfs-watch.yml`, připraveno, zatím necommitnuto a neběželo): denně stáhne feed, ověří zip a povinné soubory, porovná sha256 s hodnotou v popisu release `tirana-latest` a při změně nahraje nový `gtfs.zip` do Releases. Repozitář `gtfs-watch` se tím nahrazuje workflow přímo v tomto repu, proměnná `GTFS_URL_TIRANA` není potřeba (URL je ve workflow).
 - **Automatické načtení feedu při startu** (`autoLoad` v `app.js`): přes http(s) zkusí `fetch('gtfs.zip')` vedle `index.html`, při úspěchu ho načte stejnou cestou jako ruční nahrání (včetně letištního doplňku); jinak zůstane ukázková síť. Nepřepíše ručně nahraný soubor. Na GitHub Pages dodá `gtfs.zip` workflow `pages.yml` (necommitnuto, neběželo; vyžaduje Pages Source = GitHub Actions). Zip se tak nedostane do gitu.
 - **Upozornění na platnost feedu** (`GTFS.validity`, `renderExpiry`): žlutočervený pruh v postranním panelu, když feed skončil, začíná až v budoucnu nebo končí do 30 dnů. U ukázkové sítě se nezobrazuje.
@@ -37,11 +40,12 @@ MHD Tirana/
 ├── js/gtfs-core.js       jádro bez DOM: build, kalendář, departures, plánovač (CSA), merge, readZip
 ├── js/demo.js            demoTables() – smyšlená síť
 ├── js/extra-airport.js   EXTRA_FEEDS – linky LU-NA včetně shapes z OSRM
+├── js/i18n.js            překlady cs/en/sq, t(), pl()
 ├── js/app.js             mapa, panely, plánovací formulář, načítání souboru
 └── data/gtfs-extra.zip   letištní linky jako samostatný GTFS (generovaný z extra-airport.js)
 ```
 
-Pořadí skriptů v `index.html`: `gtfs-core` → `demo` → `extra-airport` → `app`. Moduly jsou globální proměnné (`GTFS`, `demoTables`, `EXTRA_FEEDS`). `gtfs-core.js` a `extra-airport.js` exportují i přes `module.exports`, takže jdou testovat v Node.
+Pořadí skriptů v `index.html`: `gtfs-core` → `demo` → `extra-airport` → `i18n` → `app`. Moduly jsou globální proměnné (`GTFS`, `demoTables`, `EXTRA_FEEDS`, `I18N`). `gtfs-core.js` a `extra-airport.js` exportují i přes `module.exports`, takže jdou testovat v Node.
 
 ## GTFS zdroj
 
