@@ -71,7 +71,6 @@ header {
 .btn.primary { background: var(--fg); color: var(--panel); border-color: var(--fg); }
 .btn.primary:hover { opacity: .9; }
 .btn svg { width: 16px; height: 16px; flex: none; }
-#file { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 
 .side {
   grid-area: side; min-height: 0; display: flex; flex-direction: column; gap: 10px;
@@ -84,9 +83,6 @@ header {
 .stats span, .kv dt { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 .kv { margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 12px; font-size: 13px; }
 .kv dd { margin: 0; overflow-wrap: anywhere; }
-.flags { display: flex; gap: 6px; flex-wrap: wrap; }
-.flag { font: 500 11px/1 var(--mono); padding: 4px 6px; border-radius: 4px; background: var(--soft); border: 1px solid var(--line); color: var(--muted); }
-.flag.on { color: var(--fg); }
 .demo {
   margin: 0 16px; padding: 10px 12px; border-radius: 8px; font-size: 13px;
   background: color-mix(in srgb, var(--accent) 9%, var(--panel)); border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--line));

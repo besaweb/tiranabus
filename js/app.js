@@ -126,7 +126,6 @@
 
   function renderMeta() {
     const nR = feed.routes.size, nS = feed.stops.size;
-    const fl = [['shapes.txt', feed.hasShapes], ['frequencies.txt', feed.hasFreq]];
     $('#meta').innerHTML = `
       <div class="stats">
         <div><b>${num(nR)}</b><span>${plural(nR, 'linka', 'linky', 'linek')}</span></div>
@@ -137,8 +136,7 @@
         <dt>Dopravce</dt><dd>${esc(feed.agencies.join(', ') || '–')}</dd>
         <dt>Platnost</dt><dd>${fmtDate(feed.from)} – ${fmtDate(feed.to)}</dd>
         <dt>Zdroj</dt><dd>${esc(source)} · ${esc(feed.tz)}</dd>
-      </dl>
-      <div class="flags">${fl.map(([n, on]) => `<span class="flag ${on ? 'on' : ''}">${on ? '✓' : '–'} ${n}</span>`).join('')}${(feed.extras || []).map(x => `<span class="flag on" title="Doplněno ručně, mimo oficiální feed">+ ${esc(x)}</span>`).join('')}</div>`;
+      </dl>`;
   }
 
   const routeRow = r => {
@@ -494,13 +492,12 @@
       const f = GTFS.build(tt);
       f.extras = extras.map(x => x.label);
       setFeed(f, file.name, false);
-      status('Načteno: ' + file.name + (extras.length ? ' + doplněk ' + f.extras.join(', ') : ''));
+      status('');
     } catch (e) {
       status((e && e.message) || 'Soubor se nepodařilo zpracovat.', true);
     }
   }
 
-  $('#file').addEventListener('change', e => { loadFile(e.target.files[0]); e.target.value = ''; });
   let dragDepth = 0;
   addEventListener('dragenter', e => { if (e.dataTransfer && [...e.dataTransfer.types].includes('Files')) { e.preventDefault(); dragDepth++; $('#app').classList.add('dropping'); } });
   addEventListener('dragover', e => { if (e.dataTransfer && [...e.dataTransfer.types].includes('Files')) e.preventDefault(); });

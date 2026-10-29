@@ -15,7 +15,7 @@ a pak http://localhost:8000/
 ## Data
 
 - GTFS Tirany: https://pt.tirana.al/gtfs/gtfs.zip (CC BY-SA 4.0, Bashkia e Tiranës)
-- Nahraj ho tlačítkem **Nahrát GTFS** nebo přetažením na mapu. Bez něj běží smyšlená ukázková síť.
+- Ručně ho lze načíst přetažením `gtfs.zip` na mapu. Bez feedu běží smyšlená ukázková síť.
 - Pokud je vedle `index.html` dostupný `gtfs.zip` (nasazený web na GitHub Pages, nebo lokální kopie přes `python -m http.server`), načte se automaticky při startu. Při otevření přes `file://` se neděje nic.
 - Nasazení: `.github/workflows/pages.yml` při každém pushi a denně sestaví web s aktuálním `gtfs.zip` z Releases `tirana-latest`. V repozitáři je nutné zapnout Settings → Pages → Source: **GitHub Actions**.
 - Aktuální kopii feedu hlídá GitHub Action `.github/workflows/gtfs-watch.yml`: každý den kolem 5:17 UTC stáhne feed, a pokud se změnil obsah (sha256), nahraje ho do Releases jako `tirana-latest` (`gtfs.zip`). Jde spustit i ručně (Actions → gtfs-watch → Run workflow).

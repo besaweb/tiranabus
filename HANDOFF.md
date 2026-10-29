@@ -8,7 +8,7 @@ Statická webová aplikace (vanilla JS, bez buildu) nad GTFS feedem MHD Tirany. 
 
 ## Hotovo
 
-- **Načtení GTFS** ze zipu (tlačítko nebo drag & drop), parsování přes PapaParse, zpracování jen v prohlížeči.
+- **Načtení GTFS** ze zipu (automaticky při startu, záložně drag & drop; tlačítka Stáhnout/Nahrát GTFS, hlášení „Načteno“ a štítky shapes/frequencies/letiště byly odstraněny), parsování přes PapaParse, zpracování jen v prohlížeči.
 - **Ukázková síť** (`demo.js`) při startu, dokud uživatel nenahraje feed.
 - **Mapa** (Leaflet, canvas renderer): linky podle `shapes.txt`, jinak rovné spojnice zastávek. Volba podkladu: OSM, Esri ulice, Esri letecká, OpenTopoMap, bez podkladu. Volba se ukládá do `localStorage`.
 - **Prohlížení:** seznam linek s hledáním, detail linky (zastávky po směrech, přestupní linky), detail zastávky s odjezdy na 3 h dopředu, obnova každých 30 s.
