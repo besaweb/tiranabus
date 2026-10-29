@@ -10,6 +10,13 @@
   const chip = (r, cls = '') => `<span class="chip ${cls}" style="--c:${r.color};--ct:${ink(r)}">${esc(r.short)}</span>`;
   const { t, pl } = I18N;
   const fmtDate = s => s && s.length === 8 ? (I18N.lang === 'cs' ? `${+s.slice(6)}. ${+s.slice(4, 6)}. ${s.slice(0, 4)}` : `${s.slice(6)}/${s.slice(4, 6)}/${s.slice(0, 4)}`) : '–';
+  const FARE = { lek: 40, luna: { 'rx:RX': 400, 'rx:RT': 300 }, cur: { cs: ['CZK', .268], en: ['EUR', .011], sq: null } };
+  const fareText = j => {
+    const total = j.legs.reduce((a, l) => l.kind === 'ride' ? a + (FARE.luna[l.route.id] || FARE.lek) : a, 0), c = FARE.cur[I18N.lang];
+    if (!c) return t('priceLek', { l: total });
+    const [cur, rate] = c;
+    return t('price', { l: total, c: new Intl.NumberFormat(I18N.loc(), { style: 'currency', currency: cur, maximumFractionDigits: cur === 'CZK' ? 0 : 2 }).format(total * rate) });
+  };
   const byName = (a, b) => a.short.localeCompare(b.short, 'cs', { numeric: true });
 
   const map = L.map('map', { preferCanvas: true, zoomSnap: .5, attributionControl: true }).setView([41.3275, 19.8187], 13);
@@ -345,7 +352,7 @@
       html += r.list.map((j, i) => {
         const wait = r.today ? Math.floor((j.dep - now) / 60) : null;
         const sum = `<button class="jsum" data-j="${i}" aria-expanded="${i === plan.open}">
-          <span class="jt"><b>${GTFS.hhmm(j.dep)} – ${GTFS.hhmm(j.arr)}</b><span>${t('minutes', { n: mins(j.arr - j.dep) })} · ${j.rides ? (j.transfers ? j.transfers + ' ' + pl('uTransfer', j.transfers) : t('direct')) : t('walkOnly')}</span></span>
+          <span class="jt"><b>${GTFS.hhmm(j.dep)} – ${GTFS.hhmm(j.arr)}</b><span>${t('minutes', { n: mins(j.arr - j.dep) })} · ${j.rides ? (j.transfers ? j.transfers + ' ' + pl('uTransfer', j.transfers) : t('direct')) + ' · ' + fareText(j) : t('walkOnly')}</span></span>
           <span class="jlegs">${j.legs.filter(l => l.kind === 'ride' || l.m > 150 || j.legs.length === 1).map(legIcon).join('<i>›</i>')}</span>
           ${wait != null && wait >= 0 && wait < 120 ? `<span class="jin ${wait <= 5 ? 'soon' : ''}">${wait === 0 ? t('nowLc') : t('inMin', { n: wait })}</span>` : ''}
         </button>`;

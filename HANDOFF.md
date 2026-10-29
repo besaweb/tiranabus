@@ -19,6 +19,8 @@ Statická webová aplikace (vanilla JS, bez buildu) nad GTFS feedem MHD Tirany. 
 - **Jazykové verze** čeština / angličtina / albánština (`js/i18n.js`, přepínač vlajek SQ | EN | CS v hlavičce, vlajky jsou inline SVG, protože emoji vlajky ve Windows nefungují): slovník `I18N.D`, funkce `t(klíč, {param})` a `pl(klíč, n)` (cs má 3 tvary množného čísla, en a sq 2). Statické texty v `index.html` mají `data-i18n*` atributy, `applyLang()` v `app.js` je přepíše a znovu vykreslí panel. Jazyk se ukládá do `localStorage` (`tirana-mhd-lang`), jinak se vezme z prohlížeče (sq/cs/en, jinak en). Názvy zastávek a linek se nepřekládají. Albánština a angličtina jsou strojový překlad bez rodilého korektora.
 - **Poznámka „časy jsou orientační“** (klíč `approx`) pod odjezdy zastávky i pod výsledky plánovače.
 - **Přehled počtů** (linek, zastávek, spojů) odstraněn z postranního panelu; zůstaly údaje Dopravce a Platnost, řádek Zdroj (název souboru a časová zóna) byl také odstraněn (na telefonu je celý blok `.meta` skrytý). Záložky mají ikony: Spojení autobus, Linky a zastávky trasa se dvěma zastávkami (inline SVG).
+- **Informace o jízdném** (klíč `fare`, nad záložkami, i na telefonu): 40 lekë za jednu jízdu na všech městských linkách (kromě cest na/z letiště), platí se v autobuse hotově, průvodčí vydá papírovou jízdenku, jen na jednu jízdu, nepřenosné. Údaj dodal uživatel 29. 10. 2026, bez uvedeného zdroje, stojí za ověření a případné doplnění odkazu (např. tirana.al).
+- **Cena spojení** v souhrnu každého nalezeného spojení (`fareText` v `app.js`): počet jízd × 40 lekë (každý nástup se platí zvlášť, jízdenka není přenosná) a v závorce přepočet: CZK v češtině, EUR v angličtině, v albánštině bez přepočtu. Jízdy linkami Luna Travel se počítají podle linky: RX 400 lekë, RT 300 lekë (`FARE.luna`, podle luna.al/aeroporti ze 29. 10. 2026), ostatní jízdy 40 lekë. Pevné kurzy `FARE.cur`: 1 lek ≈ 0,268 Kč, ≈ 0,011 €. Odhad podle kurzů z open.er-api.com ze 29. 10. 2026 (1 EUR = 90,88 ALL = 24,36 CZK); kurzy se v aplikaci nenačítají, je třeba je občas ručně aktualizovat. U spojení jen pěšky se cena nezobrazuje.
 - **Přepínač jazyka na telefonu** (≤ 760 px): jedna vlajka vpravo nahoře v hlavičce, klepnutím se rozbalí nabídka všech tří, výběr nebo klepnutí mimo ji zavře. Na desktopu zůstávají tři vlajky vedle sebe.
 - **Záložka Spojení je první** a je výchozí režim po startu.
 - **Hlídání feedu** (`.github/workflows/gtfs-watch.yml`, připraveno, zatím necommitnuto a neběželo): denně stáhne feed, ověří zip a povinné soubory, porovná sha256 s hodnotou v popisu release `tirana-latest` a při změně nahraje nový `gtfs.zip` do Releases. Repozitář `gtfs-watch` se tím nahrazuje workflow přímo v tomto repu, proměnná `GTFS_URL_TIRANA` není potřeba (URL je ve workflow).
@@ -61,7 +63,12 @@ Pořadí skriptů v `index.html`: `gtfs-core` → `demo` → `extra-airport` →
 | Nestandardní soubory | `timetables.txt`, `timetable_pages.txt`, `stops_pos.txt` (ignorujeme) |
 | Realtime | žádný veřejný GTFS-RT neexistuje |
 
-Letiště ve feedu není (Rinas leží mimo území města, linky provozuje soukromý LU-NA). Zdroj pro doplněk: https://luna.al/en/airport/timetable a https://luna.al/en/airport#stacionet.
+Letiště ve feedu není (Rinas leží mimo území města, linky provozuje soukromý LU-NA). Zdroje pro doplněk (ověřeno 29. 10. 2026):
+
+- https://luna.al/aeroporti (přehled linek, sekce `#timetable` a `#stacionet`) a https://luna.al/aeroporti/orari (jízdní řád obou směrů). Starší adresy `luna.al/en/airport/...` nahrazeny těmito.
+- Strojově čitelná data (API, PDF, GTFS) neexistují. Stránka je Next.js, v HTML je jen JSON-LD (schema.org) s cenami a odkazy na Google Maps u stanic. Stránka ukazuje jen aktuální den, bez minutových časů, provozních dní, výjimek a platnosti řádu.
+- Potvrzeno: Qendra ⇄ TIA 24/7 každou celou hodinu (00:00–23:00) v obou směrech, jízdné 400 L (JSON-LD); Terminali Jug-Veri → TIA 07:00–18:00 (12 odjezdů), TIA → terminál 08:00–18:00 (11 odjezdů), jízdné 300 L (JSON-LD). Doba jízdy 45 min je na stránce uvedena u hlavní linky, u RT není (30 min zůstává odhad). Souřadnice stanic z vložených Google Map sedí s `extra-airport.js` na desítky metrů. Hodinové časy odjezdů jsou ze shrnutí stránky, ne z čtení surového HTML.
+- Další údaje ze stránky (zatím v aplikaci nepoužité): platba v lekë, eurech nebo kartou (POS); jízdenka platí celý den; velké zavazadlo +500 L; 50% sleva pro albánské občany se zdravotním postižením; online platba kartou +30 L (RX) / +28 L (RT).
 
 ## Rozhodnutí
 
