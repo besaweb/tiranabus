@@ -10,7 +10,6 @@
   const chip = (r, cls = '') => `<span class="chip ${cls}" style="--c:${r.color};--ct:${ink(r)}">${esc(r.short)}</span>`;
   const { t, pl } = I18N;
   const fmtDate = s => s && s.length === 8 ? (I18N.lang === 'cs' ? `${+s.slice(6)}. ${+s.slice(4, 6)}. ${s.slice(0, 4)}` : `${s.slice(6)}/${s.slice(4, 6)}/${s.slice(0, 4)}`) : '–';
-  const num = n => n.toLocaleString(I18N.loc());
   const byName = (a, b) => a.short.localeCompare(b.short, 'cs', { numeric: true });
 
   const map = L.map('map', { preferCanvas: true, zoomSnap: .5, attributionControl: true }).setView([41.3275, 19.8187], 13);
@@ -122,13 +121,7 @@
   }
 
   function renderMeta() {
-    const nR = feed.routes.size, nS = feed.stops.size;
     $('#meta').innerHTML = `
-      <div class="stats">
-        <div><b>${num(nR)}</b><span>${pl('uLine', nR)}</span></div>
-        <div><b>${num(nS)}</b><span>${pl('uStop', nS)}</span></div>
-        <div><b>${num(feed.nTrips)}</b><span>${pl('uTrip', feed.nTrips)}</span></div>
-      </div>
       <dl class="kv">
         <dt>${t('operator')}</dt><dd>${esc(feed.agencies.join(', ') || '–')}</dd>
         <dt>${t('valid')}</dt><dd>${fmtDate(feed.from)} – ${fmtDate(feed.to)}</dd>
@@ -524,7 +517,11 @@
     setAttr(); renderMeta(); renderExpiry();
     if (mode === 'plan') showPlan(); else { const st = $('#panel').scrollTop; render(); $('#panel').scrollTop = st; }
   }
+  const langBox = $('.lang'), narrow = matchMedia('(max-width: 760px)');
+  document.addEventListener('click', e => { if (!langBox.contains(e.target)) langBox.classList.remove('open'); });
   for (const b of document.querySelectorAll('[data-lang]')) b.addEventListener('click', () => {
+    if (narrow.matches && !langBox.classList.contains('open')) { langBox.classList.add('open'); return; }
+    langBox.classList.remove('open');
     I18N.setLang(b.dataset.lang);
     try { localStorage.setItem('tirana-mhd-lang', b.dataset.lang); } catch (e) {}
     applyLang();
