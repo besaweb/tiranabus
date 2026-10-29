@@ -1,4 +1,5 @@
 name: gtfs-watch
+# Feed se do webu na GitHub Pages dostává ve workflow pages.yml
 
 on:
   schedule:

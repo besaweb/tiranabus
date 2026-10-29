@@ -17,6 +17,7 @@ Statická webová aplikace (vanilla JS, bez buildu) nad GTFS feedem MHD Tirany. 
 - **Plánovač spojení:** Connection Scan Algorithm s Pareto výběrem (čas příjezdu × počet přestupů), chůze mezi zastávkami, až 5 jízd, horizont 6 h, dnes/zítra. Detail cesty s mezizastávkami a vykreslením na mapě.
 - **Seskupení zastávek** (`GTFS.groupStops`): podle názvu a vzdálenosti do 300 m. Vzdálené stejnojmenné zastávky se rozliší jako „Název (1)“, „Název (2)“ (ve feedu Selitë, Xhamia). Skupiny mají id, výběr v plánovači jde přes id.
 - **Hlídání feedu** (`.github/workflows/gtfs-watch.yml`, připraveno, zatím necommitnuto a neběželo): denně stáhne feed, ověří zip a povinné soubory, porovná sha256 s hodnotou v popisu release `tirana-latest` a při změně nahraje nový `gtfs.zip` do Releases. Repozitář `gtfs-watch` se tím nahrazuje workflow přímo v tomto repu, proměnná `GTFS_URL_TIRANA` není potřeba (URL je ve workflow).
+- **Automatické načtení feedu při startu** (`autoLoad` v `app.js`): přes http(s) zkusí `fetch('gtfs.zip')` vedle `index.html`, při úspěchu ho načte stejnou cestou jako ruční nahrání (včetně letištního doplňku); jinak zůstane ukázková síť. Nepřepíše ručně nahraný soubor. Na GitHub Pages dodá `gtfs.zip` workflow `pages.yml` (necommitnuto, neběželo; vyžaduje Pages Source = GitHub Actions). Zip se tak nedostane do gitu.
 - **Upozornění na platnost feedu** (`GTFS.validity`, `renderExpiry`): žlutočervený pruh v postranním panelu, když feed skončil, začíná až v budoucnu nebo končí do 30 dnů. U ukázkové sítě se nezobrazuje.
 - **Hledání bez diakritiky** v seznamu linek a zastávek (`norm`).
 - **Letištní linky LU-NA** (`extra-airport.js`): RX Opera ⇄ TIA (24/7, každou hodinu, 45 min), RT Terminál Jug–Sever ⇄ TIA (7–18 / 8–18 h, odhad 30 min). Slučují se do každého nahraného feedu s prefixem ID `rx:`. Stejná data jako samostatný GTFS v `data/gtfs-extra.zip`.
@@ -70,7 +71,7 @@ Letiště ve feedu není (Rinas leží mimo území města, linky provozuje souk
 ## TODO
 
 1. **Hlídání feedu:** po pushi workflow jednou spustit ručně (workflow_dispatch) a zkontrolovat vznik release `tirana-latest`. Pak případně přidat kontrolu stránky Luna (bod 4).
-2. **Automatické načtení feedu** při startu, aby nebylo nutné nahrávat ručně. Pozor: stahování assetu z GitHub Releases přímo z prohlížeče neprojde kvůli CORS, bude potřeba GitHub Pages (workflow by feed kopíroval vedle webu) nebo jiné řešení.
+2. Zapnout GitHub Pages (Source: GitHub Actions) a po pushi ověřit, že běží `pages.yml` a web na Pages načte feed sám.
 3. **Feed končí 31. 12. 2026.** UI už upozorní, zbývá stáhnout novou verzi, až ji město vydá (řeší hlídání feedu). Kalendář letištních linek je do 2027.
 4. Kontrola stránky Luna (jízdní řád letiště) v rámci hlídání feedu.
 5. Zobrazit varianty tras linek (větve), nejen nejdelší spoj.

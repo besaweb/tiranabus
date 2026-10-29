@@ -511,4 +511,16 @@
   new MutationObserver(retheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
   setFeed(GTFS.build(demoTables()), 'ukázková data', true);
+
+  async function autoLoad() {
+    if (!/^https?:$/.test(location.protocol)) return;
+    try {
+      const r = await fetch('gtfs.zip', { cache: 'no-cache' });
+      if (!r.ok) return;
+      const b = await r.blob();
+      if (source !== 'ukázková data') return;
+      await loadFile(new File([b], 'gtfs.zip'));
+    } catch (e) {}
+  }
+  autoLoad();
 })();
