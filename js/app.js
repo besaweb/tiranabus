@@ -522,7 +522,7 @@
   }
   let savedTheme = null;
   try { savedTheme = localStorage.getItem('tirana-mhd-theme'); } catch (e) {}
-  document.documentElement.dataset.theme = savedTheme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.documentElement.dataset.theme = savedTheme === 'dark' ? 'dark' : 'light';
   themeBtn.addEventListener('click', () => {
     const th = isDark() ? 'light' : 'dark';
     document.documentElement.dataset.theme = th;

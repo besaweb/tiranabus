@@ -16,14 +16,6 @@
   --display: "Barlow Condensed", "Arial Narrow", "Segoe UI", sans-serif;
   --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0D1312; --panel: #141C1B; --fg: #E4EBE9; --muted: #8FA09D; --line: #26322F; --soft: #18211F;
-    --accent: #FF5468; --accent-ink: #1A0508; --map-bg: #101817; --stop-fill: #4DA3FF; --stop-stroke: #E4EBE9;
-    --tiles: invert(1) hue-rotate(180deg) brightness(.82) contrast(.92) saturate(.6);
-    color-scheme: dark;
-  }
-}
 :root[data-theme="dark"] {
   --bg: #0D1312; --panel: #141C1B; --fg: #E4EBE9; --muted: #8FA09D; --line: #26322F; --soft: #18211F;
   --accent: #FF5468; --accent-ink: #1A0508; --map-bg: #101817; --stop-fill: #4DA3FF; --stop-stroke: #E4EBE9;
