@@ -2,9 +2,12 @@
   const T = {
     cs: { menu: 'Menu', lang: 'Jazyk', about: 'O aplikaci', ver: 'Verze' },
     en: { menu: 'Menu', lang: 'Language', about: 'About the app', ver: 'Version' },
-    sq: { menu: 'Menyja', lang: 'Gjuha', about: 'Rreth aplikacionit', ver: 'Versioni' }
+    sq: { menu: 'Menyja', lang: 'Gjuha', about: 'Rreth aplikacionit', ver: 'Versioni' },
+    it: { menu: 'Menu', lang: 'Lingua', about: 'Info sull’app', ver: 'Versione' },
+    de: { menu: 'Menü', lang: 'Sprache', about: 'Über die App', ver: 'Version' },
+    pl: { menu: 'Menu', lang: 'Język', about: 'O aplikacji', ver: 'Wersja' }
   };
-  const NAMES = { cs: 'Čeština', en: 'English', sq: 'Shqip' };
+  const NAMES = { cs: 'Čeština', en: 'English', sq: 'Shqip', it: 'Italiano', de: 'Deutsch', pl: 'Polski' };
   const langBox = document.querySelector('.lang');
   if (!langBox) return;
   const wrap = document.createElement('div');
