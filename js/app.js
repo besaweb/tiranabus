@@ -356,7 +356,7 @@
       html += r.list.map((j, i) => {
         const wait = r.today ? Math.floor((j.dep - now) / 60) : null;
         const sum = `<button class="jsum" data-j="${i}" aria-expanded="${i === plan.open}">
-          <span class="jt"><b>${GTFS.hhmm(j.dep)} – ${GTFS.hhmm(j.arr)}</b><span>${t('minutes', { n: mins(j.arr - j.dep) })} · ${j.rides ? (j.transfers ? j.transfers + ' ' + pl('uTransfer', j.transfers) : t('direct')) + ' · ' + fareText(j) : t('walkOnly')}</span></span>
+          <span class="jt"><b>${GTFS.hhmm(j.dep)} – ${GTFS.hhmm(j.arr)}</b><span>${t('minutes', { n: mins(j.arr - j.dep) })} · ${j.rides ? (j.transfers ? j.transfers + ' ' + pl('uTransfer', j.transfers) : t('direct')) + ' · <span class="nw">' + fareText(j) + '</span>' : t('walkOnly')}</span></span>
           <span class="jlegs">${j.legs.filter(l => l.kind === 'ride' || l.m > 150 || j.legs.length === 1).map(legIcon).join('<i>›</i>')}</span>
           ${wait != null && wait >= 0 && wait < 120 ? `<span class="jin ${wait <= 5 ? 'soon' : ''}">${wait === 0 ? t('nowLc') : t('inMin', { n: wait })}</span>` : ''}
         </button>`;
