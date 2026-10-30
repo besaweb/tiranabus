@@ -23,7 +23,8 @@ curl -fsSL $CDN/PapaParse/5.4.1/papaparse.min.js -o build/site/lib/papaparse.min
 curl -fsSL $CDN/maplibre-gl/4.7.1/maplibre-gl.js -o build/site/lib/maplibre-gl.js
 curl -fsSL $CDN/maplibre-gl/4.7.1/maplibre-gl.css -o build/site/lib/maplibre-gl.css
 mkdir -p build/site/map && cp -r map/fonts map/style-*.json map/tirana.mbtiles build/site/map/
-sed -i 's#<link rel="stylesheet" href="css/style.css">#<link rel="stylesheet" href="lib/maplibre-gl.css">&#; s#<script src="js/gtfs-core.js">#<script>window.OFFLINE_MAP=1</script><script src="lib/maplibre-gl.js"></script>&#' build/site/index.html
+cp menu.js menu.css build/site/
+sed -i 's#<link rel="stylesheet" href="css/style.css">#<link rel="stylesheet" href="lib/maplibre-gl.css">&<link rel="stylesheet" href="menu.css">#; s#<script src="js/gtfs-core.js">#<script>window.OFFLINE_MAP=1;window.APP_VERSION="'$VER'"</script><script src="lib/maplibre-gl.js"></script>&#; s#<script src="js/app.js"></script>#&<script src="menu.js"></script>#' build/site/index.html
 sed -i "s#$CDN/leaflet/1.9.4/#lib/#; s#$CDN/jszip/3.10.1/#lib/#; s#$CDN/PapaParse/5.4.1/#lib/#" build/site/index.html
 
 "$BT/aapt2.exe" compile --dir res -o build/res.zip
