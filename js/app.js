@@ -30,13 +30,45 @@
     'OpenTopoMap': L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { maxZoom: 17, subdomains: 'abc', attribution: OSM + ', © OpenTopoMap' }),
     'No basemap': L.layerGroup()
   };
+  const VEC = 'Offline mapa';
+  if (window.OFFLINE_MAP && window.maplibregl) {
+    const sty = () => new URL('map/style-' + (document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light') + '.json', location.href).href;
+    BASE[VEC] = L.Layer.extend({
+      getAttribution: () => '© OpenMapTiles © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>',
+      onAdd(m) {
+        this._m = m;
+        this._el = L.DomUtil.create('div', 'vec-map');
+        m.getPane('tilePane').appendChild(this._el);
+        this._gl = new maplibregl.Map({ container: this._el, style: sty(), interactive: false, attributionControl: false, fadeDuration: 0, center: [m.getCenter().lng, m.getCenter().lat], zoom: m.getZoom() - 1 });
+        this._sync = () => this._place();
+        m.on('move zoom resize viewreset', this._sync);
+        this._obs = new MutationObserver(() => this._gl.setStyle(sty()));
+        this._obs.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+        this._place();
+      },
+      onRemove(m) {
+        m.off('move zoom resize viewreset', this._sync);
+        this._obs.disconnect();
+        this._gl.remove();
+        L.DomUtil.remove(this._el);
+      },
+      _place() {
+        const m = this._m, sz = m.getSize(), c = m.getCenter();
+        L.DomUtil.setPosition(this._el, m.containerPointToLayerPoint([0, 0]));
+        this._el.style.width = sz.x + 'px'; this._el.style.height = sz.y + 'px';
+        this._gl.resize();
+        this._gl.jumpTo({ center: [c.lng, c.lat], zoom: m.getZoom() - 1 });
+      }
+    });
+    BASE[VEC] = new BASE[VEC]();
+  }
   const fromFile = location.protocol === 'file:';
   let saved = null;
   try { saved = localStorage.getItem('tirana-mhd-base'); } catch (e) {}
-  let current = BASE[saved] ? saved : fromFile ? 'Esri Streets' : 'OpenStreetMap';
+  let current = BASE[saved] ? saved : BASE[VEC] ? VEC : fromFile ? 'Esri Streets' : 'OpenStreetMap';
   BASE[current].addTo(map);
   L.control.layers(BASE, null, { position: 'topright' }).addTo(map);
-  const dimTiles = () => document.getElementById('map').classList.toggle('dim-tiles', current !== 'Esri Satellite');
+  const dimTiles = () => document.getElementById('map').classList.toggle('dim-tiles', current !== 'Esri Satellite' && current !== VEC);
   dimTiles();
   let tileOk = false, tileErr = 0, tileDismissed = false;
   const note = (key) => { if (tileDismissed) return; $('#tiletext').textContent = t(key); $('#tilenote').hidden = false; };
@@ -568,15 +600,23 @@
   setFeed(GTFS.build(demoTables()), null, true);
   applyLang();
 
+  const boot = $('#boot');
+  const endBoot = fail => {
+    if (!fail) { boot.classList.add('done'); return; }
+    boot.classList.add('fail');
+    $('#boottext').dataset.i18n = 'bootFail'; $('#boottext').textContent = t('bootFail');
+    setTimeout(() => { $('#demo').hidden = false; boot.classList.add('done'); }, 1800);
+  };
   async function autoLoad() {
-    if (!/^https?:$/.test(location.protocol)) return;
+    if (!/^https?:$/.test(location.protocol)) { boot.classList.add('done'); return; }
+    $('#demo').hidden = true;
     try {
       const r = await fetch('gtfs.zip', { cache: 'no-cache' });
-      if (!r.ok) return;
+      if (!r.ok) throw 0;
       const b = await r.blob();
-      if (source !== null) return;
-      await loadFile(new File([b], 'gtfs.zip'));
+      if (source === null) await loadFile(new File([b], 'gtfs.zip'));
     } catch (e) {}
+    endBoot(source === null);
   }
   autoLoad();
 })();

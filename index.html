@@ -10,6 +10,24 @@
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+<div class="boot" id="boot" role="status" aria-live="polite">
+  <svg viewBox="0 0 800 400" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+    <path d="M0 250 L110 170 L190 205 L330 110 L450 195 L565 140 L690 205 L800 150 V400 H0Z" fill="#8FCBFF"/>
+    <path d="M0 290 L140 215 L260 265 L400 190 L520 260 L660 200 L800 250 V400 H0Z" fill="#5AAEF7"/>
+    <g fill="#0B3A82">
+      <rect x="0" y="335" width="800" height="65"/>
+      <rect x="40" y="200" width="44" height="140"/><rect x="84" y="250" width="26" height="90"/><rect x="20" y="290" width="22" height="50"/>
+      <path d="M170 335v-30a45 45 0 0 1 90 0v30z"/><path d="M200 262h30v-8a15 15 0 0 0-30 0z"/>
+      <rect x="290" y="235" width="9" height="100"/><path d="M288 235l6.5-34 6.5 34z"/>
+      <rect x="330" y="300" width="60" height="40"/><rect x="400" y="285" width="40" height="55"/>
+      <rect x="500" y="245" width="38" height="95"/><path d="M496 245l23-36 23 36z"/>
+      <rect x="560" y="290" width="54" height="50"/>
+      <rect x="640" y="305" width="70" height="35"/><path d="M660 305v-22l-10-3 6-12 14-3 8 8-5 8 10 4-3 20z"/>
+      <rect x="725" y="280" width="30" height="60"/><rect x="755" y="310" width="45" height="30"/>
+    </g>
+  </svg>
+  <p id="boottext" data-i18n="bootLoading">Načítají se jízdní řády.</p>
+</div>
 <div class="app" id="app">
   <header>
     <div class="brand">
