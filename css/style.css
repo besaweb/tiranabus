@@ -75,6 +75,11 @@ header {
 .lang button:hover { opacity: .85; }
 .lang button[aria-pressed="true"] { opacity: 1; background: var(--soft); }
 .lang svg { display: block; width: 24px; height: 16px; border-radius: 2px; box-shadow: 0 0 0 1px color-mix(in srgb, var(--fg) 22%, transparent); }
+.theme { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; padding: 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--fg); cursor: pointer; }
+.theme:hover { border-color: var(--muted); }
+.theme svg { width: 18px; height: 18px; }
+.theme .sun, :root[data-theme="dark"] .theme .moon { display: none; }
+:root[data-theme="dark"] .theme .sun { display: block; }
 .btn svg { width: 16px; height: 16px; flex: none; }
 
 .side {
@@ -270,7 +275,8 @@ header {
 
 @media (max-width: 760px) {
   .app { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 44% minmax(0, 1fr); grid-template-areas: "head" "map" "side"; gap: 10px; }
-  header { position: relative; padding-right: 64px; }
+  header { position: relative; padding-right: 108px; }
+  .theme { position: absolute; top: 0; right: 62px; z-index: 1001; height: 34px; }
   .actions { margin-left: 0; width: 100%; }
   .lang { position: absolute; top: 0; right: 0; z-index: 1001; flex-direction: column; box-shadow: 0 2px 8px rgb(0 0 0 / .12); }
   .lang button { opacity: 1; }

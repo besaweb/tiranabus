@@ -514,6 +514,22 @@
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', retheme);
   new MutationObserver(retheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
+  const themeBtn = $('#theme');
+  const isDark = () => document.documentElement.dataset.theme === 'dark';
+  function syncTheme() {
+    const k = isDark() ? 'themeLight' : 'themeDark';
+    themeBtn.setAttribute('aria-label', t(k)); themeBtn.title = t(k);
+  }
+  let savedTheme = null;
+  try { savedTheme = localStorage.getItem('tirana-mhd-theme'); } catch (e) {}
+  document.documentElement.dataset.theme = savedTheme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  themeBtn.addEventListener('click', () => {
+    const th = isDark() ? 'light' : 'dark';
+    document.documentElement.dataset.theme = th;
+    try { localStorage.setItem('tirana-mhd-theme', th); } catch (e) {}
+    syncTheme();
+  });
+
   function applyLang() {
     const l = I18N.lang;
     document.documentElement.lang = l;
@@ -524,6 +540,7 @@
     for (const el of document.querySelectorAll('[data-i18n-aria]')) el.setAttribute('aria-label', t(el.dataset.i18nAria));
     for (const el of document.querySelectorAll('[data-i18n-title]')) el.title = t(el.dataset.i18nTitle);
     for (const b of document.querySelectorAll('[data-lang]')) b.setAttribute('aria-pressed', b.dataset.lang === l);
+    syncTheme();
     if (!feed) return;
     setAttr(); renderMeta(); renderExpiry();
     if (mode === 'plan') showPlan(); else { const st = $('#panel').scrollTop; render(); $('#panel').scrollTop = st; }
