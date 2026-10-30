@@ -77,7 +77,7 @@
       lines.push({ r, pl });
     }
     for (const s of feed.stops.values()) {
-      const m = L.circleMarker([s.lat, s.lon], { renderer, radius: 3.5, weight: 1.5 });
+      const m = L.circleMarker([s.lat, s.lon], { renderer, radius: 2, weight: 1.5 });
       m.on('click', e => { L.DomEvent.stop(e); if (mode === 'plan') pickStop(s); else openStop(s); });
       m.bindTooltip(s.name, { direction: 'top', offset: [0, -4] });
       m.addTo(stopLayer);
@@ -87,6 +87,9 @@
     const b = L.latLngBounds([...feed.stops.values()].map(s => [s.lat, s.lon]));
     if (b.isValid()) map.fitBounds(b, { padding: [24, 24] });
   }
+
+  const sr = () => { const z = map.getZoom(); return z >= 16 ? 4 : z >= 14.5 ? 3.5 : z >= 13.5 ? 3 : 2; };
+  map.on('zoomend', () => restyle());
 
   function restyle() {
     if (!feed) return;
@@ -100,7 +103,7 @@
       for (const { pl } of lines) pl.setStyle({ opacity: J ? .12 : .55, weight: 4 });
       for (const { s, m } of markers.values()) {
         const e = ends.get(s.id);
-        m.setStyle({ radius: e ? 7 : 3.5, color: e || ss, fillColor: e || sf, fillOpacity: J && !e ? .35 : 1, opacity: J && !e ? .35 : 1, weight: e ? 2.5 : 1.5 });
+        m.setStyle({ radius: e ? 8 : sr(), color: e || ss, fillColor: e || sf, fillOpacity: J && !e ? .35 : 1, opacity: J && !e ? .35 : 1, weight: e ? 2.5 : 1.5 });
         if (e) m.bringToFront();
       }
       return;
@@ -113,7 +116,7 @@
     for (const { s, m } of markers.values()) {
       const on = R ? R.stops.has(s) : true;
       const hit = S === s;
-      m.setStyle({ radius: hit ? 7.5 : R && on ? 4.5 : 3.5, color: hit ? ac : ss, fillColor: hit ? ac : sf, fillOpacity: on ? 1 : .3, opacity: on ? 1 : .3, weight: hit ? 2.5 : 1.5 });
+      m.setStyle({ radius: hit ? 8.5 : R && on ? sr() + 1 : sr(), color: hit ? ac : ss, fillColor: hit ? ac : sf, fillOpacity: on ? 1 : .3, opacity: on ? 1 : .3, weight: hit ? 2.5 : 1.5 });
       if ((R && on) || hit) m.bringToFront();
     }
     if (S && markers.has(S.id)) markers.get(S.id).m.bringToFront();

@@ -9,7 +9,7 @@
   --accent: #C8102E;
   --accent-ink: #FFFFFF;
   --map-bg: #E2E8E6;
-  --stop-fill: #FFFFFF;
+  --stop-fill: #3D8BFD;
   --stop-stroke: #142120;
   --tiles: none;
   --ui: "Barlow", "Segoe UI", system-ui, sans-serif;
@@ -19,14 +19,14 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #0D1312; --panel: #141C1B; --fg: #E4EBE9; --muted: #8FA09D; --line: #26322F; --soft: #18211F;
-    --accent: #FF5468; --accent-ink: #1A0508; --map-bg: #101817; --stop-fill: #0D1312; --stop-stroke: #E4EBE9;
+    --accent: #FF5468; --accent-ink: #1A0508; --map-bg: #101817; --stop-fill: #4DA3FF; --stop-stroke: #E4EBE9;
     --tiles: invert(1) hue-rotate(180deg) brightness(.82) contrast(.92) saturate(.6);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #0D1312; --panel: #141C1B; --fg: #E4EBE9; --muted: #8FA09D; --line: #26322F; --soft: #18211F;
-  --accent: #FF5468; --accent-ink: #1A0508; --map-bg: #101817; --stop-fill: #0D1312; --stop-stroke: #E4EBE9;
+  --accent: #FF5468; --accent-ink: #1A0508; --map-bg: #101817; --stop-fill: #4DA3FF; --stop-stroke: #E4EBE9;
   --tiles: invert(1) hue-rotate(180deg) brightness(.82) contrast(.92) saturate(.6);
   color-scheme: dark;
 }
