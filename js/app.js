@@ -439,6 +439,10 @@
         L.polyline(path, { renderer, interactive: false, color: fg, weight: 3.5, opacity: .85, dashArray: '1 8', lineCap: 'round' }).addTo(planLayer);
       }
     }
+    for (const l of j.legs) if (l.kind === 'ride') for (const x of l.inst.tr.st.slice(l.k0 + 1, l.k1)) {
+      const s = feed.stops.get(x.stop);
+      if (s) L.circleMarker([s.lat, s.lon], { renderer, interactive: false, radius: 4, color: l.route.color, weight: 2.5, fillColor: panel, fillOpacity: 1 }).bindTooltip(s.name).addTo(planLayer);
+    }
     for (const l of j.legs) if (l.kind === 'ride') for (const s of [l.from, l.to]) L.circleMarker([s.lat, s.lon], { renderer, interactive: false, radius: 5.5, color: l.route.color, weight: 3, fillColor: panel, fillOpacity: 1 }).bindTooltip(s.name).addTo(planLayer);
     const o = j.legs.length ? j.legs[0].from : j.origin, dst = j.dest;
     L.circleMarker([o.lat, o.lon], { renderer, interactive: false, radius: 8, color: panel, weight: 2.5, fillColor: ac, fillOpacity: 1 }).addTo(planLayer);
