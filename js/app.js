@@ -59,7 +59,7 @@
   const planLayer = L.layerGroup().addTo(map);
   let feed = null, lines = [], markers = new Map(), sel = { route: null, stop: null }, timer = null, source = null;
   let view = { kind: 'list' }, prevView = null;
-  let mode = 'plan', demoMode = true, groups = new Map(), stopGroup = new Map(), names = [];
+  let baseTables = null, builtLang = null, mode = 'plan', demoMode = true, groups = new Map(), stopGroup = new Map(), names = [];
   let plan = { from: null, to: null, res: null, open: 0, timeTouched: false };
   const norm = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   const mins = s => Math.max(1, Math.round(s / 60));
@@ -483,6 +483,16 @@
     runPlan();
   });
 
+  function buildFeed() {
+    let tt = baseTables;
+    const extras = typeof EXTRA_FEEDS !== 'undefined' ? EXTRA_FEEDS : [];
+    for (const x of extras) tt = GTFS.merge(tt, EXTRA_FEEDS.localize(x, I18N.lang), x.id + ':');
+    const f = GTFS.build(tt);
+    f.extras = extras.map(x => x.label);
+    builtLang = I18N.lang;
+    return f;
+  }
+
   async function loadFile(file) {
     if (!file) return;
     status(t('loading', { f: file.name }));
@@ -493,12 +503,8 @@
       const tb = await GTFS.readZip(zip, txt => Papa.parse(txt, { header: true, skipEmptyLines: true, transformHeader: h => h.trim() }).data);
       status(t('processing'));
       await new Promise(r => setTimeout(r, 30));
-      let tt = tb;
-      const extras = typeof EXTRA_FEEDS !== 'undefined' ? EXTRA_FEEDS : [];
-      for (const x of extras) tt = GTFS.merge(tt, x.tables, x.id + ':');
-      const f = GTFS.build(tt);
-      f.extras = extras.map(x => x.label);
-      setFeed(f, file.name, false);
+      baseTables = tb;
+      setFeed(buildFeed(), file.name, false);
       status('');
     } catch (e) {
       status((e && e.message) || t('errProc'), true);
@@ -542,6 +548,7 @@
     for (const b of document.querySelectorAll('[data-lang]')) b.setAttribute('aria-pressed', b.dataset.lang === l);
     syncTheme();
     if (!feed) return;
+    if (baseTables && builtLang !== l) { setFeed(buildFeed(), source, false); return; }
     setAttr(); renderMeta(); renderExpiry();
     if (mode === 'plan') showPlan(); else { const st = $('#panel').scrollTop; render(); $('#panel').scrollTop = st; }
   }

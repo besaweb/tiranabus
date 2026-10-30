@@ -1,6 +1,26 @@
 // Doplňkové linky LU-NA (Luna Travel) na letiště Tirana.
 // Zdroj: https://luna.al/en/airport/timetable a https://luna.al/en/airport#stacionet (stav 29. 10. 2026).
 // Polohy zastávek: odkazy Luna na Google Maps. Trasy: OSRM nad OpenStreetMap, zjednodušené na odchylku 6 m.
+const EXTRA_I18N = {
+  rx: {
+    en: {
+      stops: { CITY: 'Opera (Pallati i Kulturës) – airport bus', TERM: 'Jug–Sever Terminal – airport bus', TIA: 'Tirana Airport – Nënë Tereza (TIA)' },
+      routes: {
+        RX: { long: 'Rinas Express: centre – airport', desc: 'LU-NA. Every full hour, non-stop 24/7 in both directions. Fare 400 ALL (€4.50), paid on the bus, the ticket is valid all day. Journey time about 45 min.' },
+        RT: { long: 'Jug–Sever Terminal – airport', desc: 'LU-NA. Every full hour: from the terminal 7:00–18:00, from the airport 8:00–18:00. Fare 300 ALL (€3.50). Luna does not state the journey time; the data uses an estimate of 30 min.' }
+      },
+      heads: { 'Letiště Tirana (TIA)': 'Tirana Airport (TIA)', 'Tirana centrum (Opera)': 'Tirana centre (Opera)', 'Terminál Jug–Sever': 'Jug–Sever Terminal' }
+    },
+    sq: {
+      stops: { CITY: 'Opera (Pallati i Kulturës) – autobusi për aeroport', TERM: 'Terminali Jug–Veri – autobusi për aeroport', TIA: 'Aeroporti i Tiranës – Nënë Tereza (TIA)' },
+      routes: {
+        RX: { long: 'Rinas Express: qendra – aeroporti', desc: 'LU-NA. Çdo orë të plotë, pa ndërprerje 24/7 në të dy drejtimet. Bileta 400 ALL (4,50 €), paguhet në autobus dhe vlen gjithë ditën. Koha e udhëtimit rreth 45 min.' },
+        RT: { long: 'Terminali Jug–Veri – aeroporti', desc: 'LU-NA. Çdo orë të plotë: nga terminali 7:00–18:00, nga aeroporti 8:00–18:00. Bileta 300 ALL (3,50 €). Luna nuk e tregon kohën e udhëtimit; në të dhëna është vlerësim 30 min.' }
+      },
+      heads: { 'Letiště Tirana (TIA)': 'Aeroporti i Tiranës (TIA)', 'Tirana centrum (Opera)': 'Qendra e Tiranës (Opera)', 'Terminál Jug–Sever': 'Terminali Jug–Veri' }
+    }
+  }
+};
 const EXTRA_FEEDS = [{
   id: 'rx',
   label: 'letiště (LU-NA)',
@@ -48,4 +68,14 @@ const EXTRA_FEEDS = [{
     return T;
   })()
 }];
+EXTRA_FEEDS.localize = (x, lang) => {
+  const L = EXTRA_I18N[x.id] && EXTRA_I18N[x.id][lang];
+  if (!L) return x.tables;
+  const T = x.tables;
+  return Object.assign({}, T, {
+    stops: T.stops.map(s => L.stops[s.stop_id] ? Object.assign({}, s, { stop_name: L.stops[s.stop_id] }) : s),
+    routes: T.routes.map(r => L.routes[r.route_id] ? Object.assign({}, r, { route_long_name: L.routes[r.route_id].long, route_desc: L.routes[r.route_id].desc }) : r),
+    trips: T.trips.map(t => L.heads[t.trip_headsign] ? Object.assign({}, t, { trip_headsign: L.heads[t.trip_headsign] }) : t)
+  });
+};
 if (typeof module !== 'undefined') module.exports = EXTRA_FEEDS;
