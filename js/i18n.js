@@ -1,7 +1,7 @@
 const I18N = (() => {
   const D = {
     cs: {
-      title: 'Tirana MHD mapa',
+      title: 'Tirana Bus',
       sub: 'Městská hromadná doprava',
       langAria: 'Jazyk',
       themeDark: 'Tmavý režim',
@@ -84,7 +84,7 @@ const I18N = (() => {
       tileFile: 'Stránka je otevřená ze souboru, proto podklad Esri. Když místo mapy uvidíš chybu, přepni podklad vpravo nahoře.'
     },
     en: {
-      title: 'Tirana Transit Map',
+      title: 'Tirana Bus',
       sub: 'Urban public transport',
       langAria: 'Language',
       themeDark: 'Dark mode',
@@ -167,7 +167,7 @@ const I18N = (() => {
       tileFile: 'The page is opened from a file, so the Esri basemap is used. If you see an error instead of a map, switch the basemap at the top right.'
     },
     sq: {
-      title: 'Harta e transportit publik të Tiranës',
+      title: 'Tirana Bus',
       sub: 'Transporti publik urban',
       langAria: 'Gjuha',
       themeDark: 'Mënyra e errët',
