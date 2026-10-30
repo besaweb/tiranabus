@@ -55,8 +55,7 @@ header {
 }
 .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .sign {
-  width: 34px; height: 34px; border-radius: 7px; background: var(--accent); color: var(--accent-ink);
-  display: grid; place-items: center; font: 700 22px/1 var(--display); flex: none;
+  width: 40px; height: 40px; flex: none; object-fit: contain;
 }
 .brand h1 { margin: 0; font: 700 24px/1 var(--display); letter-spacing: .01em; text-wrap: balance; }
 .brand small { display: block; font: 600 11px/1.2 var(--ui); letter-spacing: .09em; text-transform: uppercase; color: var(--muted); margin-top: 3px; }
@@ -84,7 +83,6 @@ header {
 }
 .meta { padding: 14px 16px 0; display: grid; gap: 8px; }
 .kv dt { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
-.fare { margin: 8px 16px 0; font-size: 13px; color: var(--muted); }
 .kv { margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 12px; font-size: 13px; }
 .kv dd { margin: 0; overflow-wrap: anywhere; }
 .demo {

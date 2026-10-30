@@ -193,6 +193,7 @@
       }).join('')}</tbody></table>`;
       html += `<p class="hint">${t('approx')}</p>`;
       if (deps.some(d => d.hw)) html += `<p class="hint">${t('freqHint')}</p>`;
+      html += `<p class="hint">${t('fare')}</p>`;
     } else {
       html += `<div class="empty">${t('noDeps')}</div>`;
     }
@@ -360,6 +361,7 @@
       }).join('');
       html += `<p class="hint">${t('approx')}</p>`;
       if (r.list.some(j => j.legs.some(l => l.kind === 'ride' && l.inst.tr.freq))) html += `<p class="hint">${t('freqHintPlan')}</p>`;
+      html += `<p class="hint">${t('fare')}</p>`;
     }
     $('#panel').innerHTML = html;
   }

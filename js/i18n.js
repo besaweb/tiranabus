@@ -2,7 +2,7 @@ const I18N = (() => {
   const D = {
     cs: {
       title: 'Tirana MHD mapa',
-      sub: 'Prototyp nad GTFS feedem',
+      sub: 'Městská hromadná doprava',
       langAria: 'Jazyk',
       mode: 'Režim',
       tabPlan: 'Spojení',
@@ -83,7 +83,7 @@ const I18N = (() => {
     },
     en: {
       title: 'Tirana Transit Map',
-      sub: 'Prototype built on a GTFS feed',
+      sub: 'Urban public transport',
       langAria: 'Language',
       mode: 'Mode',
       tabPlan: 'Journey',
@@ -164,7 +164,7 @@ const I18N = (() => {
     },
     sq: {
       title: 'Harta e transportit publik të Tiranës',
-      sub: 'Prototip mbi një feed GTFS',
+      sub: 'Transporti publik urban',
       langAria: 'Gjuha',
       mode: 'Modaliteti',
       tabPlan: 'Itinerari',
