@@ -26,3 +26,13 @@
 html[lang="en"] .when select { flex: 1 1 0; min-width: 64px; }
 html[lang="en"] .when input[type="time"] { flex: 1 1 0; width: auto; min-width: 84px; }
 html[lang="en"] .when .btn:not(.primary) { flex: none; }
+.boot { background: #0b2a6b url(splash.webp) center / cover no-repeat; }
+.boot svg { display: none; }
+.boot:not(.fail) p { display: none; }
+.boot.fail p { position: absolute; left: 0; right: 0; top: 50%; margin: 0; font-size: 18px; animation: none; text-shadow: 0 1px 8px rgb(0 0 0 / .7); }
+.boot .bar { position: absolute; left: 22%; right: 22%; top: 56%; height: 8px; border-radius: 4px; background: rgb(255 255 255 / .35); box-shadow: 0 1px 8px rgb(0 0 0 / .35); overflow: hidden; }
+.boot .bar i { display: block; height: 100%; width: 0; border-radius: 4px; background: #fff; animation: barfill 9s cubic-bezier(.1, .7, .3, 1) forwards; }
+.boot .lbl { position: absolute; left: 50%; top: calc(56% - 54px); transform: translateX(-50%); width: max-content; max-width: 90%; padding: 7px 18px; border-radius: 999px; background: rgb(6 24 70 / .62); border: 1px solid rgb(255 255 255 / .35); text-align: center; color: #fff; font: 700 19px/1.25 var(--display); letter-spacing: .02em; text-shadow: 0 0 2px #000, 0 1px 3px #000, 0 2px 10px rgb(0 0 0 / .8); }
+.boot.fail .bar, .boot.fail .lbl { display: none; }
+.boot.done .bar i { animation: none; width: 100%; }
+@keyframes barfill { to { width: 92%; } }
