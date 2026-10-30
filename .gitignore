@@ -1,2 +1,7 @@
 gtfs.zip
 node_modules/
+data/etransport/
+android/build/
+android/out/
+android/*.keystore
+*.apk

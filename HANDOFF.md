@@ -29,6 +29,7 @@ Statická webová aplikace (vanilla JS, bez buildu) nad GTFS feedem MHD Tirany. 
 - **Hledání bez diakritiky** v seznamu linek a zastávek (`norm`).
 - **Letištní linky LU-NA** (`extra-airport.js`): RX Opera ⇄ TIA (24/7, každou hodinu, 45 min), RT Terminál Jug–Sever ⇄ TIA (7–18 / 8–18 h, odhad 30 min). Slučují se do každého nahraného feedu s prefixem ID `rx:`. Stejná data jako samostatný GTFS v `data/gtfs-extra.zip`.
 - **Vzhled:** světlý i tmavý režim, responzivní, české UI.
+- **Android APK** (`android/`): WebView obálka bez Gradle, `bash android/build.sh` → `android/out/TiranaBus.apk` (min. Android 7, podepsáno vlastním klíčem). Web, Leaflet/JSZip/PapaParse a lokální `gtfs.zip` jsou v APK; `gtfs.zip` se při startu zkusí stáhnout z Pages, jinak se použije vložená kopie. Mapové dlaždice vyžadují internet. Ověřeno na emulátoru (aplikace, feed, UI); dlaždice se tam nenačetly kvůli TLS na emulátoru, na telefonu neověřeno.
 - **Artefakt** „Tirana MHD mapa“ (jednosouborová verze `tirana-mhd-mapa.html`) na claude.ai.
 
 ## Struktura souborů
@@ -46,6 +47,7 @@ MHD Tirana/
 ├── js/extra-airport.js   EXTRA_FEEDS – linky LU-NA včetně shapes z OSRM
 ├── js/i18n.js            překlady cs/en/sq, t(), pl()
 ├── js/app.js             mapa, panely, plánovací formulář, načítání souboru
+├── android/              WebView obálka a build.sh pro APK (build/, out/, *.keystore jsou v .gitignore)
 └── data/gtfs-extra.zip   letištní linky jako samostatný GTFS (generovaný z extra-airport.js)
 ```
 
@@ -91,7 +93,7 @@ Letiště ve feedu není (Rinas leží mimo území města, linky provozuje souk
 6. Výběr libovolného data v plánovači (teď jen dnes/zítra).
 7. Jízdné (`fare_*`) a odkazy na oficiální PDF jízdní řády (`timetable_pages.txt`).
 8. Po změně `extra-airport.js` ručně přegenerovat `data/gtfs-extra.zip` – zvážit skript.
-9. Git repozitář projektu (složka zatím není pod gitem).
+9. Android: zálohovat `android/tirana-bus.keystore` (bez něj nejde APK aktualizovat přes stávající instalaci), případně ikona se zaoblením (adaptive icon) a vydání APK do Releases.
 
 ## Známé chyby a omezení
 

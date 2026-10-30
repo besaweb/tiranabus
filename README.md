@@ -48,6 +48,10 @@ Městský feed letiště neobsahuje, protože Rinas leží mimo území Tirany a
 - Jízdenka platí celý den do 23:59. Autobus může na požádání zastavit i po cestě.
 - ID z doplňku dostávají prefix `rx:`, aby nekolidovala s městským feedem. Po úpravě `js/extra-airport.js` je potřeba znovu vygenerovat `data/gtfs-extra.zip`.
 
+## Android aplikace (APK)
+
+Ve složce `android/` je WebView obálka. `bash android/build.sh` (Git Bash, Android SDK a Android Studio JBR) vytvoří `android/out/TiranaBus.apk`, bez Gradle. APK obsahuje web, knihovny a lokální `gtfs.zip`, při startu zkusí stáhnout čerstvý feed z GitHub Pages. Mapové dlaždice potřebují internet. Instalace: nahrát APK do telefonu a povolit instalaci z neznámých zdrojů. Klíč `android/tirana-bus.keystore` je mimo git, bez něj nejde aplikaci aktualizovat.
+
 ## Parametry plánovače (`js/gtfs-core.js`)
 
 - `WALK_R = 400` – max. chůze mezi zastávkami (m)
