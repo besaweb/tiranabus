@@ -116,6 +116,8 @@ header {
 .when { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
 .when select, .when input { height: 36px; border-radius: 8px; border: 1px solid var(--line); background: var(--soft); padding: 0 8px; font-variant-numeric: tabular-nums; }
 .when .primary { flex: 1 0 100%; justify-content: center; }
+.when select, .when .btn:not(.primary) { flex: none; }
+.when input[type="time"] { flex: 1 1 80px; min-width: 0; }
 .btn.sm { height: 30px; padding: 0 10px; font-size: 13px; gap: 6px; }
 .planbtns { display: flex; gap: 6px; flex-wrap: wrap; padding: 6px 8px 0; }
 
