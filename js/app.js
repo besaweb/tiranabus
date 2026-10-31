@@ -401,7 +401,7 @@
     if (msg) html += `<div class="empty">${esc(msg)}</div>`;
     if (!r) {
       html += `<p class="hint">${t('hintPlan')}</p>`;
-      html += `<div class="gplay"><p class="hint">${t('gplaySoon')}</p><img src="img/gplay/en.png" alt="Google Play" width="160" height="62"></div>`;
+      html += `<div class="gplay"><p class="hint">${t('gplaySoon')}</p><img src="img/gplay/en.png" alt="Google Play" width="160" height="62"><a class="kofi" href="https://ko-fi.com/tiranabus" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 8h14v6.5A4.5 4.5 0 0 1 12.5 19h-5A4.5 4.5 0 0 1 3 14.5zm14 1.5h1.8a2.7 2.7 0 0 1 0 5.4H17v-1.6h1.6a1.1 1.1 0 0 0 0-2.2H17z"/><path fill="#FF5E5B" d="M10 16.6c-1.7-1.2-2.8-2.1-2.8-3.3 0-.9.7-1.5 1.5-1.5.5 0 1 .3 1.3.7.3-.4.8-.7 1.3-.7.8 0 1.5.6 1.5 1.5 0 1.2-1.1 2.1-2.8 3.3z"/><path fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" d="M6.5 5.2c.4-.5.4-1.1 0-1.6M10 5.2c.4-.5.4-1.1 0-1.6M13.5 5.2c.4-.5.4-1.1 0-1.6"/></svg><span>${t('support')}</span></a></div>`;
     } else if (r.same) {
       html += `<div class="empty">${t('same')}</div>`;
     } else if (!r.list.length) {

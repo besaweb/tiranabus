@@ -335,3 +335,7 @@ html[lang="en"] .when input[type="time"] { flex: 0 1 104px; width: 104px; paddin
 .gplay { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); }
 .gplay p { margin: 0 0 4px; }
 .gplay img { display: block; width: 160px; height: auto; margin: 0 auto; }
+.kofi { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 14px; padding: 9px 12px; border-radius: 10px; background: #FF5E5B; color: #fff; font-size: 13px; font-weight: 600; line-height: 1.25; text-align: left; text-decoration: none; }
+.kofi svg { width: 28px; height: 28px; flex: none; }
+.kofi:hover { filter: brightness(1.07); }
+@media (max-width: 760px) { .kofi { display: none; } }
