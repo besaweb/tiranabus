@@ -163,9 +163,9 @@
   }
 
   function renderMeta() {
-    const el = $('#meta');
+    const el = $('#meta'), tl = `<a class="mlink" href="tickets.html">${t('tickets')}</a>`;
     if (!baseTables) {
-      el.innerHTML = `<h2>${t('dataTitle')}</h2>
+      el.innerHTML = `${tl}<h2>${t('dataTitle')}</h2>
       <dl class="kv ds">
         <dt>${t('operator')}</dt><dd>${esc(feed.agencies.join(', ') || '–')}</dd>
         <dt>${t('valid')}</dt><dd>${fmtDate(feed.from)} – ${fmtDate(feed.to)}</dd>
@@ -178,7 +178,7 @@
       src.push({ name: x.tables.agency[0].agency_name, from: c.start_date, to: c.end_date, upd: x.updated, url: x.url });
     }
     const fd = v => v ? fmtDate(String(v).replace(/-/g, '')) : '–';
-    el.innerHTML = `<h2>${t('dataTitle')}</h2>${src.map(x => `<dl class="kv ds">
+    el.innerHTML = `${tl}<h2>${t('dataTitle')}</h2>${src.map(x => `<dl class="kv ds">
         <dt>${t('operator')}</dt><dd>${esc(x.name)}</dd>
         <dt>${t('valid')}</dt><dd>${fd(x.from)} – ${fd(x.to)}</dd>
         <dt>${t('lastUpd')}</dt><dd>${fd(x.upd)}</dd>
