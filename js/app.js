@@ -187,7 +187,7 @@
   function renderMeta() {
     $('#meta').innerHTML = `<a class="mi mlink" href="tickets.html">${t('tickets')}</a>
       <button type="button" class="mi mtoggle" aria-expanded="false">${t('dataTitle')}</button><div class="mpane data">${metaData()}</div>
-      <button type="button" class="mi mtoggle" aria-expanded="false">${t('aboutTitle')}</button><div class="mpane about"><p><b>${esc(t('title'))}</b><br>${esc(t('aboutDesc'))}</p><p>${esc(t('aboutCredits'))}</p></div>`;
+      <button type="button" class="mi mtoggle" aria-expanded="false">${t('aboutTitle')}</button><div class="mpane about"><p><b>${esc(t('title'))}</b><br>${esc(t('aboutDesc'))}</p><p>${esc(t('aboutCredits'))}</p><p><b>${esc(t('aboutAuthor'))}:</b> <a href="https://besaweb.al" target="_blank" rel="noopener">besaweb.al</a><br><b>${esc(t('aboutContact'))}:</b> <a href="mailto:info@besaweb.al">info@besaweb.al</a></p></div>`;
   }
 
   const routeRow = r => {
@@ -248,7 +248,6 @@
       }).join('')}</tbody></table>`;
       html += `<p class="hint">${t('approx')}</p>`;
       if (deps.some(d => d.hw)) html += `<p class="hint">${t('freqHint')}</p>`;
-      html += `<p class="hint">${t('fare')}</p>`;
     } else {
       html += `<div class="empty">${t('noDeps')}</div>`;
     }
@@ -418,7 +417,6 @@
       }).join('');
       html += `<p class="hint">${t('approx')}</p>`;
       if (r.list.some(j => j.legs.some(l => l.kind === 'ride' && l.inst.tr.freq))) html += `<p class="hint">${t('freqHintPlan')}</p>`;
-      html += `<p class="hint">${t('fare')}</p>`;
     }
     $('#panel').innerHTML = html;
   }

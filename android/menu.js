@@ -68,10 +68,15 @@
     for (const el of wrap.querySelectorAll('[data-k]')) el.textContent = x[el.dataset.k];
     btn.setAttribute('aria-label', x.menu); btn.title = x.menu;
     q('.cur').textContent = NAMES[l];
+    const A = I18N.D[l] || I18N.D.en;
     about.textContent = '';
-    const b = document.createElement('b');
-    b.textContent = document.title;
-    about.append(b, document.createElement('br'), x.ver + ': ' + (window.APP_VERSION || '?'));
+    const bold = s => { const e = document.createElement('b'); e.textContent = s; return e; };
+    const link = (h, s) => { const e = document.createElement('a'); e.href = h; e.textContent = s; return e; };
+    const add = (...n) => { const e = document.createElement('p'); e.append(...n); about.append(e); };
+    add(bold(A.title), document.createElement('br'), A.aboutDesc);
+    add(A.aboutCredits);
+    add(bold(A.aboutAuthor + ': '), link('https://besaweb.al', 'besaweb.al'), document.createElement('br'), bold(A.aboutContact + ': '), link('mailto:info@besaweb.al', 'info@besaweb.al'));
+    add(bold(x.ver + ': '), window.APP_VERSION || '?');
   };
   new MutationObserver(sync).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
   sync();

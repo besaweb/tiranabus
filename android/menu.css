@@ -15,6 +15,9 @@
 .ammenu .lang button[aria-pressed="true"]::after { content: none; }
 .about { padding: 6px 10px 8px; font-size: 13px; line-height: 1.4; color: var(--muted); }
 .about b { color: var(--fg); }
+.about p { margin: 0 0 8px; }
+.about p:last-child { margin: 0; }
+.about a { color: var(--accent); }
 @media (max-width: 760px) {
   header { padding-right: 92px; }
   .theme { right: 46px; }
