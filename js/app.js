@@ -185,9 +185,11 @@
   }
 
   function renderMeta() {
+    const aboutBody = `<p><b>${esc(t('title'))}</b><br>${esc(t('aboutDesc'))}</p><p>${esc(t('aboutCredits'))}</p><p><b>${esc(t('aboutAuthor'))}:</b> <a href="https://besaweb.al" target="_blank" rel="noopener">besaweb.al</a><br><b>${esc(t('aboutContact'))}:</b> <a href="mailto:info@besaweb.al">info@besaweb.al</a></p>`;
     $('#meta').innerHTML = `<a class="mi mlink" href="tickets.html">${t('tickets')}</a>
       <button type="button" class="mi mtoggle" aria-expanded="false">${t('dataTitle')}</button><div class="mpane data">${metaData()}</div>
-      <button type="button" class="mi mtoggle" aria-expanded="false">${t('aboutTitle')}</button><div class="mpane about"><p><b>${esc(t('title'))}</b><br>${esc(t('aboutDesc'))}</p><p>${esc(t('aboutCredits'))}</p><p><b>${esc(t('aboutAuthor'))}:</b> <a href="https://besaweb.al" target="_blank" rel="noopener">besaweb.al</a><br><b>${esc(t('aboutContact'))}:</b> <a href="mailto:info@besaweb.al">info@besaweb.al</a></p></div>`;
+      <button type="button" class="mi mtoggle" aria-expanded="false">${t('aboutTitle')}</button><div class="mpane about">${aboutBody}</div>`;
+    $('#aboutbox').innerHTML = `<h2>${t('aboutTitle')}</h2><div class="aboutbody">${aboutBody}</div>`;
   }
 
   const routeRow = r => {
@@ -577,8 +579,13 @@
   new MutationObserver(retheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
   const menuBtn = $('#menubtn'), menuBox = $('#meta');
-  const setMenu = o => { menuBox.hidden = !o; menuBtn.setAttribute('aria-expanded', o); };
+  const aboutBtn = $('#aboutbtn'), aboutBox = $('#aboutbox');
+  const setMenu = o => { menuBox.hidden = !o; menuBtn.setAttribute('aria-expanded', o); if (o) setAbout(false); };
+  const setAbout = o => { aboutBox.hidden = !o; aboutBtn.setAttribute('aria-expanded', o); if (o) setMenu(false); };
   menuBtn.addEventListener('click', e => { e.stopPropagation(); setMenu(menuBox.hidden); });
+  aboutBtn.addEventListener('click', e => { e.stopPropagation(); setAbout(aboutBox.hidden); });
+  document.addEventListener('click', e => { if (!menuBox.contains(e.target)) setMenu(false); if (!aboutBox.contains(e.target)) setAbout(false); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { setMenu(false); setAbout(false); } });
   menuBox.addEventListener('click', e => {
     const b = e.target.closest('.mtoggle');
     if (!b) return;
@@ -587,8 +594,6 @@
     for (const x of menuBox.querySelectorAll('.mtoggle')) x.setAttribute('aria-expanded', 'false');
     if (open) { pane.classList.add('open'); b.setAttribute('aria-expanded', 'true'); }
   });
-  document.addEventListener('click', e => { if (!menuBox.contains(e.target)) setMenu(false); });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
   const themeBtn = $('#theme');
   const isDark = () => document.documentElement.dataset.theme === 'dark';
   function syncTheme() {

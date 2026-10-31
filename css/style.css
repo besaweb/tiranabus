@@ -282,6 +282,9 @@ html[lang="en"] .when input[type="time"] { flex: 0 1 104px; width: 104px; paddin
 .menu h2 + .ds { border-top: 0; padding-top: 0; }
 .menu a { color: var(--accent); }
 .menu .mi { display: none; }
+.menu .aboutbody p { margin: 0 0 8px; font-size: 13px; line-height: 1.45; color: var(--muted); }
+.menu .aboutbody p b { color: var(--fg); }
+.menu .aboutbody p:last-child { margin: 0; }
 .menu .mpane.about { display: none; }
 
 .nodata .tabs, .nodata .planform, .nodata .search, .nodata .panel, .nodata .menuwrap { display: none; }
@@ -300,6 +303,7 @@ html[lang="en"] .when input[type="time"] { flex: 0 1 104px; width: 104px; paddin
   .menu .mpane { display: none; padding: 8px 2px 4px; }
   .menu .mpane.data.open, .menu .mpane.about.open { display: block; }
   .menu .mpane h2 { display: none; }
+  .menuwrap.aboutwrap { display: none; }
   .menu .mpane p { margin: 0 0 8px; font-size: 13px; line-height: 1.45; color: var(--muted); }
   .menu .mpane p b { color: var(--fg); }
   .menu .mtoggle::after { content: ''; width: 7px; height: 7px; border: solid var(--muted); border-width: 0 2px 2px 0; transform: rotate(45deg); margin-right: 4px; }
