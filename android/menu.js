@@ -5,9 +5,10 @@
     sq: { menu: 'Menyja', lang: 'Gjuha', about: 'Rreth aplikacionit', ver: 'Versioni', tickets: 'Biletat', data: 'Vlefshmëria e të dhënave' },
     it: { menu: 'Menu', lang: 'Lingua', about: 'Info sull’app', ver: 'Versione', tickets: 'Biglietti', data: 'Validità dei dati' },
     de: { menu: 'Menü', lang: 'Sprache', about: 'Über die App', ver: 'Version', tickets: 'Fahrkarten', data: 'Datengültigkeit' },
-    pl: { menu: 'Menu', lang: 'Język', about: 'O aplikacji', ver: 'Wersja', tickets: 'Bilety', data: 'Ważność danych' }
+    pl: { menu: 'Menu', lang: 'Język', about: 'O aplikacji', ver: 'Wersja', tickets: 'Bilety', data: 'Ważność danych' },
+    fr: { menu: 'Menu', lang: 'Langue', about: 'À propos de l’appli', ver: 'Version', tickets: 'Billets', data: 'Validité des données' }
   };
-  const NAMES = { cs: 'Čeština', en: 'English', sq: 'Shqip', it: 'Italiano', de: 'Deutsch', pl: 'Polski' };
+  const NAMES = { cs: 'Čeština', en: 'English', sq: 'Shqip', it: 'Italiano', de: 'Deutsch', pl: 'Polski', fr: 'Français' };
   const KEY = 'tirana-data-info';
   let info = [{ from: '', to: '', upd: '' }, { from: '', to: '', upd: '20261029' }];
   try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s[0]) info[0] = s[0]; } catch (e) {}

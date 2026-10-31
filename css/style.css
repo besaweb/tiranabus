@@ -117,9 +117,9 @@ header {
 .when .primary { flex: 1 0 100%; justify-content: center; }
 .when select, .when .btn:not(.primary) { flex: none; }
 .when input[type="time"] { flex: 1 1 80px; min-width: 0; }
-html[lang="en"] .when select { flex: 0 1 auto; min-width: 0; padding: 0 4px; }
-html[lang="en"] .when .btn:not(.primary) { padding: 0 10px; }
-html[lang="en"] .when input[type="time"] { flex: 0 1 104px; width: 104px; padding: 0 4px; }
+html[lang="en"] .when select, html[lang="fr"] .when select { flex: 0 1 auto; min-width: 0; padding: 0 4px; }
+html[lang="en"] .when .btn:not(.primary), html[lang="fr"] .when .btn:not(.primary) { padding: 0 10px; }
+html[lang="en"] .when input[type="time"], html[lang="fr"] .when input[type="time"] { flex: 0 1 104px; width: 104px; padding: 0 4px; }
 .btn.sm { height: 30px; padding: 0 10px; font-size: 13px; gap: 6px; }
 .planbtns { display: flex; gap: 6px; flex-wrap: wrap; padding: 6px 8px 0; }
 

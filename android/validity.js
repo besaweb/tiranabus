@@ -5,7 +5,8 @@
     sq: { data: 'Vlefshmëria e të dhënave', op: 'Operatori', valid: 'Vlefshmëria e orarit', upd: 'Përditësimi i fundit', web: 'Faqja e internetit' },
     it: { data: 'Validità dei dati', op: 'Operatore', valid: 'Validità degli orari', upd: 'Ultimo aggiornamento', web: 'Sito web' },
     de: { data: 'Datengültigkeit', op: 'Betreiber', valid: 'Gültigkeit der Fahrpläne', upd: 'Letzte Aktualisierung', web: 'Webseite' },
-    pl: { data: 'Ważność danych', op: 'Przewoźnik', valid: 'Ważność rozkładów jazdy', upd: 'Ostatnia aktualizacja', web: 'Strona internetowa' }
+    pl: { data: 'Ważność danych', op: 'Przewoźnik', valid: 'Ważność rozkładów jazdy', upd: 'Ostatnia aktualizacja', web: 'Strona internetowa' },
+    fr: { data: 'Validité des données', op: 'Exploitant', valid: 'Validité des horaires', upd: 'Dernière mise à jour', web: 'Site web' }
   };
   const SRC = [
     { name: 'Municipality of Tirana', url: 'https://pt.tirana.al' },
