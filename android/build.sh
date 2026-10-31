@@ -12,7 +12,7 @@ VER="${VERSION:-1.0}"; CODE="${VERSION_CODE:-1}"
 KS=tirana-bus.keystore; PASS=tiranabus
 
 rm -rf build; mkdir -p build/site build/classes build/dex out
-cp -r $ROOT/index.html $ROOT/css $ROOT/js $ROOT/data $ROOT/img build/site/
+cp -r $ROOT/index.html $ROOT/tickets.html $ROOT/css $ROOT/js $ROOT/data $ROOT/img build/site/
 [ -f $ROOT/gtfs.zip ] && cp $ROOT/gtfs.zip build/site/gtfs.zip || echo 'Pozor: chybí gtfs.zip v kořeni, aplikace ho stáhne jen online.'
 
 mkdir -p build/site/lib
@@ -23,7 +23,7 @@ curl -fsSL $CDN/PapaParse/5.4.1/papaparse.min.js -o build/site/lib/papaparse.min
 curl -fsSL $CDN/maplibre-gl/4.7.1/maplibre-gl.js -o build/site/lib/maplibre-gl.js
 curl -fsSL $CDN/maplibre-gl/4.7.1/maplibre-gl.css -o build/site/lib/maplibre-gl.css
 mkdir -p build/site/map && cp -r map/fonts map/style-*.json map/tirana.mbtiles build/site/map/
-cp menu.js menu.css splash.webp build/site/
+cp menu.js menu.css splash.webp validity.html validity.js build/site/
 python -c "p='build/site/index.html';s=open(p,encoding='utf-8').read();x=open('boot-extra.html',encoding='utf-8').read();s=s.replace('<p id=\"boottext\"',x+'<p id=\"boottext\"',1);open(p,'w',encoding='utf-8').write(s)"
 sed -i 's#<link rel="stylesheet" href="css/style.css">#<link rel="stylesheet" href="lib/maplibre-gl.css">&<link rel="stylesheet" href="menu.css">#; s#<script src="js/gtfs-core.js">#<script>window.OFFLINE_MAP=1;window.APP_VERSION="'$VER'"</script><script src="lib/maplibre-gl.js"></script>&#; s#<script src="js/app.js"></script>#&<script src="menu.js"></script>#' build/site/index.html
 sed -i "s#$CDN/leaflet/1.9.4/#lib/#; s#$CDN/jszip/3.10.1/#lib/#; s#$CDN/PapaParse/5.4.1/#lib/#" build/site/index.html

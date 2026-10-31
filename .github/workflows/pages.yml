@@ -30,7 +30,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           mkdir site
-          cp -r index.html css js data img site/
+          cp -r index.html tickets.html css js data img site/
           if ! gh release download tirana-latest -p gtfs.zip -D site; then
             curl -fsSL --retry 3 -o site/gtfs.zip https://pt.tirana.al/gtfs/gtfs.zip
           fi
