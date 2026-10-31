@@ -401,7 +401,7 @@
     if (msg) html += `<div class="empty">${esc(msg)}</div>`;
     if (!r) {
       html += `<p class="hint">${t('hintPlan')}</p>`;
-      html += `<div class="gplay"><p class="hint">${t('gplaySoon')}</p><img src="img/gplay/en.png" alt="Google Play" width="160" height="62"><a class="kofi" href="https://ko-fi.com/tiranabus" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 8h14v6.5A4.5 4.5 0 0 1 12.5 19h-5A4.5 4.5 0 0 1 3 14.5zm14 1.5h1.8a2.7 2.7 0 0 1 0 5.4H17v-1.6h1.6a1.1 1.1 0 0 0 0-2.2H17z"/><path fill="#FF5E5B" d="M10 16.6c-1.7-1.2-2.8-2.1-2.8-3.3 0-.9.7-1.5 1.5-1.5.5 0 1 .3 1.3.7.3-.4.8-.7 1.3-.7.8 0 1.5.6 1.5 1.5 0 1.2-1.1 2.1-2.8 3.3z"/><path fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" d="M6.5 5.2c.4-.5.4-1.1 0-1.6M10 5.2c.4-.5.4-1.1 0-1.6M13.5 5.2c.4-.5.4-1.1 0-1.6"/></svg><span>${t('support')}</span></a></div>`;
+      html += `<div class="gplay"><p class="hint">${t('gplaySoon')}</p><div class="gprow"><a class="gpbtn" href="https://ko-fi.com/tiranabus" target="_blank" rel="noopener"><svg viewBox="0 0 24 26" aria-hidden="true"><path fill="#00D7FE" d="M1.5 1.2 13 13 1.5 24.8c-.3-.3-.5-.7-.5-1.2V2.4c0-.5.2-.9.5-1.2z"/><path fill="#00F076" d="M16.8 9.2 13 13 1.5 1.2c.5-.3 1.1-.3 1.7 0z"/><path fill="#FF3A44" d="M16.8 16.8 3.2 24.8c-.6.3-1.2.3-1.7 0L13 13z"/><path fill="#FFD500" d="M22 11.9c.9.5.9 1.7 0 2.2l-5.2 2.7L13 13l3.8-3.8z"/></svg><span><small>DONATION FOR</small><b>Google Play</b></span></a></div></div>`;
     } else if (r.same) {
       html += `<div class="empty">${t('same')}</div>`;
     } else if (!r.list.length) {
