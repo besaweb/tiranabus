@@ -180,7 +180,6 @@
         <dt>${t('operator')}</dt><dd>${esc(x.name)}</dd>
         <dt>${t('valid')}</dt><dd>${fd(x.from)} – ${fd(x.to)}</dd>
         <dt>${t('lastUpd')}</dt><dd>${fd(x.upd)}</dd>
-        <dt>${t('web')}</dt><dd><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.url.replace(/^https?:\/\//, ''))}</a></dd>
       </dl>`).join('')}`;
   }
 
@@ -581,8 +580,15 @@
 
   const menuBtn = $('#menubtn'), menuBox = $('#meta');
   const aboutBtn = $('#aboutbtn'), aboutBox = $('#aboutbox');
-  const setMenu = o => { menuBox.hidden = !o; menuBtn.setAttribute('aria-expanded', o); if (o) setAbout(false); };
-  const setAbout = o => { aboutBox.hidden = !o; aboutBtn.setAttribute('aria-expanded', o); if (o) setMenu(false); };
+  const fitPop = box => {
+    box.style.right = '';
+    if (matchMedia('(max-width: 760px)').matches) return;
+    const r = box.getBoundingClientRect();
+    if (r.left < 8) box.style.right = (r.left - 8) + 'px';
+    else if (r.right > innerWidth - 8) box.style.right = (r.right - innerWidth + 8) + 'px';
+  };
+  const setMenu = o => { menuBox.hidden = !o; menuBtn.setAttribute('aria-expanded', o); if (o) { setAbout(false); fitPop(menuBox); } };
+  const setAbout = o => { aboutBox.hidden = !o; aboutBtn.setAttribute('aria-expanded', o); if (o) { setMenu(false); fitPop(aboutBox); } };
   menuBtn.addEventListener('click', e => { e.stopPropagation(); setMenu(menuBox.hidden); });
   aboutBtn.addEventListener('click', e => { e.stopPropagation(); setAbout(aboutBox.hidden); });
   document.addEventListener('click', e => { if (!menuBox.contains(e.target)) setMenu(false); if (!aboutBox.contains(e.target)) setAbout(false); });
