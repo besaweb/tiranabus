@@ -332,3 +332,6 @@ html[lang="en"] .when input[type="time"] { flex: 0 1 104px; width: 104px; paddin
 .boot p { position: relative; margin: 0; padding: 0 24px; align-self: center; margin-top: -12vh; text-align: center; color: #fff; font: 700 clamp(22px, 5vw, 34px)/1.2 var(--display); letter-spacing: .02em; text-shadow: 0 2px 10px rgb(6 40 100 / .45); }
 .boot:not(.fail) p { animation: bootpulse 1.4s ease-in-out infinite; }
 @keyframes bootpulse { 50% { opacity: .55; } }
+.gplay { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); }
+.gplay p { margin: 0 0 4px; }
+.gplay img { display: block; width: 160px; height: auto; margin: 0 auto; }

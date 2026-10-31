@@ -45,3 +45,4 @@ html[lang="en"] .when .btn:not(.primary) { flex: none; }
 a.mi, a.mi:visited { text-decoration: none; color: var(--fg); }
 
 .menuwrap { display: none; }
+.gplay { display: none; }

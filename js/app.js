@@ -401,6 +401,7 @@
     if (msg) html += `<div class="empty">${esc(msg)}</div>`;
     if (!r) {
       html += `<p class="hint">${t('hintPlan')}</p>`;
+      html += `<div class="gplay"><p class="hint">${t('gplaySoon')}</p><img src="img/gplay/en.png" alt="Google Play" width="160" height="62"></div>`;
     } else if (r.same) {
       html += `<div class="empty">${t('same')}</div>`;
     } else if (!r.list.length) {
