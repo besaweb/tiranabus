@@ -104,14 +104,14 @@
     for (const r of routes) for (const d of r.dirs) {
       const pl = L.polyline(d.line, { renderer, color: r.color, weight: 4, opacity: .9, lineCap: 'round', lineJoin: 'round' });
       pl.on('click', e => { if (mode !== 'browse') return; L.DomEvent.stop(e); openRoute(r); });
-      pl.bindTooltip(r.short + (r.long ? ' · ' + r.long : ''), { sticky: true });
+      pl.bindTooltip(esc(r.short + (r.long ? ' · ' + r.long : '')), { sticky: true });
       pl.addTo(lineLayer);
       lines.push({ r, pl });
     }
     for (const s of feed.stops.values()) {
       const m = L.circleMarker([s.lat, s.lon], { renderer, radius: 2, weight: 1.5 });
       m.on('click', e => { L.DomEvent.stop(e); if (mode === 'plan') pickStop(s); else openStop(s); });
-      m.bindTooltip(s.name, { direction: 'top', offset: [0, -4] });
+      m.bindTooltip(esc(s.name), { direction: 'top', offset: [0, -4] });
       m.addTo(stopLayer);
       markers.set(s.id, { s, m });
     }
@@ -464,9 +464,9 @@
     }
     for (const l of j.legs) if (l.kind === 'ride') for (const x of l.inst.tr.st.slice(l.k0 + 1, l.k1)) {
       const s = feed.stops.get(x.stop);
-      if (s) L.circleMarker([s.lat, s.lon], { renderer, interactive: false, radius: 4, color: l.route.color, weight: 2.5, fillColor: panel, fillOpacity: 1 }).bindTooltip(s.name).addTo(planLayer);
+      if (s) L.circleMarker([s.lat, s.lon], { renderer, interactive: false, radius: 4, color: l.route.color, weight: 2.5, fillColor: panel, fillOpacity: 1 }).bindTooltip(esc(s.name)).addTo(planLayer);
     }
-    for (const l of j.legs) if (l.kind === 'ride') for (const s of [l.from, l.to]) L.circleMarker([s.lat, s.lon], { renderer, interactive: false, radius: 5.5, color: l.route.color, weight: 3, fillColor: panel, fillOpacity: 1 }).bindTooltip(s.name).addTo(planLayer);
+    for (const l of j.legs) if (l.kind === 'ride') for (const s of [l.from, l.to]) L.circleMarker([s.lat, s.lon], { renderer, interactive: false, radius: 5.5, color: l.route.color, weight: 3, fillColor: panel, fillOpacity: 1 }).bindTooltip(esc(s.name)).addTo(planLayer);
     const o = j.legs.length ? j.legs[0].from : j.origin, dst = j.dest;
     L.circleMarker([o.lat, o.lon], { renderer, interactive: false, radius: 8, color: panel, weight: 2.5, fillColor: ac, fillOpacity: 1 }).addTo(planLayer);
     L.circleMarker([dst.lat, dst.lon], { renderer, interactive: false, radius: 8, color: panel, weight: 2.5, fillColor: fg, fillOpacity: 1 }).addTo(planLayer);

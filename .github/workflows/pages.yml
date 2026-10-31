@@ -31,6 +31,7 @@ jobs:
         run: |
           mkdir site
           cp -r index.html tickets.html css js data img site/
+          sed -i -E "s#((src|href)=\"(css|js)/[^\"?]+\.(js|css))\"#\1?v=${GITHUB_SHA::8}\"#g" site/index.html site/tickets.html
           if ! gh release download tirana-latest -p gtfs.zip -D site; then
             curl -fsSL --retry 3 -o site/gtfs.zip https://pt.tirana.al/gtfs/gtfs.zip
           fi
