@@ -162,15 +162,13 @@
     el.hidden = !msg;
   }
 
-  function renderMeta() {
-    const el = $('#meta'), tl = `<a class="mlink" href="tickets.html">${t('tickets')}</a>`;
+  function metaData() {
     if (!baseTables) {
-      el.innerHTML = `${tl}<h2>${t('dataTitle')}</h2>
+      return `<h2>${t('dataTitle')}</h2>
       <dl class="kv ds">
         <dt>${t('operator')}</dt><dd>${esc(feed.agencies.join(', ') || '–')}</dd>
         <dt>${t('valid')}</dt><dd>${fmtDate(feed.from)} – ${fmtDate(feed.to)}</dd>
       </dl>`;
-      return;
     }
     const src = [{ name: baseTables.agency.map(a => (a.agency_name || '').trim()).filter(Boolean).join(', ') || '–', from: feed.from, to: feed.to, upd: feed.version, url: 'https://pt.tirana.al' }];
     for (const x of typeof EXTRA_FEEDS !== 'undefined' ? EXTRA_FEEDS : []) {
@@ -178,12 +176,18 @@
       src.push({ name: x.tables.agency[0].agency_name, from: c.start_date, to: c.end_date, upd: x.updated, url: x.url });
     }
     const fd = v => v ? fmtDate(String(v).replace(/-/g, '')) : '–';
-    el.innerHTML = `${tl}<h2>${t('dataTitle')}</h2>${src.map(x => `<dl class="kv ds">
+    return `<h2>${t('dataTitle')}</h2>${src.map(x => `<dl class="kv ds">
         <dt>${t('operator')}</dt><dd>${esc(x.name)}</dd>
         <dt>${t('valid')}</dt><dd>${fd(x.from)} – ${fd(x.to)}</dd>
         <dt>${t('lastUpd')}</dt><dd>${fd(x.upd)}</dd>
         <dt>${t('web')}</dt><dd><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.url.replace(/^https?:\/\//, ''))}</a></dd>
       </dl>`).join('')}`;
+  }
+
+  function renderMeta() {
+    $('#meta').innerHTML = `<a class="mi mlink" href="tickets.html">${t('tickets')}</a>
+      <button type="button" class="mi mtoggle" aria-expanded="false">${t('dataTitle')}</button><div class="mpane data">${metaData()}</div>
+      <button type="button" class="mi mtoggle" aria-expanded="false">${t('aboutTitle')}</button><div class="mpane about"><p><b>${esc(t('title'))}</b><br>${esc(t('aboutDesc'))}</p><p>${esc(t('aboutCredits'))}</p></div>`;
   }
 
   const routeRow = r => {
@@ -577,6 +581,14 @@
   const menuBtn = $('#menubtn'), menuBox = $('#meta');
   const setMenu = o => { menuBox.hidden = !o; menuBtn.setAttribute('aria-expanded', o); };
   menuBtn.addEventListener('click', e => { e.stopPropagation(); setMenu(menuBox.hidden); });
+  menuBox.addEventListener('click', e => {
+    const b = e.target.closest('.mtoggle');
+    if (!b) return;
+    const pane = b.nextElementSibling, open = !pane.classList.contains('open');
+    for (const x of menuBox.querySelectorAll('.mpane')) x.classList.remove('open');
+    for (const x of menuBox.querySelectorAll('.mtoggle')) x.setAttribute('aria-expanded', 'false');
+    if (open) { pane.classList.add('open'); b.setAttribute('aria-expanded', 'true'); }
+  });
   document.addEventListener('click', e => { if (!menuBox.contains(e.target)) setMenu(false); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
   const themeBtn = $('#theme');

@@ -281,7 +281,8 @@ html[lang="en"] .when input[type="time"] { flex: 0 1 104px; width: 104px; paddin
 .menu .ds { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
 .menu h2 + .ds { border-top: 0; padding-top: 0; }
 .menu a { color: var(--accent); }
-.menu a.mlink { display: none; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--line); color: var(--fg); font-weight: 600; font-size: 15px; text-decoration: none; }
+.menu .mi { display: none; }
+.menu .mpane.about { display: none; }
 
 .nodata .tabs, .nodata .planform, .nodata .search, .nodata .panel, .nodata .menuwrap { display: none; }
 
@@ -295,7 +296,14 @@ html[lang="en"] .when input[type="time"] { flex: 0 1 104px; width: 104px; paddin
   .menu { position: fixed; top: 64px; right: 12px; left: auto; }
   .theme { position: absolute; top: 0; right: 62px; z-index: 1001; height: 34px; }
   .ticketbtn { display: none; }
-  .menu a.mlink { display: block; }
+  .menu .mi { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 10px 2px; border: 0; border-bottom: 1px solid var(--line); background: none; color: var(--fg); font: 600 15px var(--ui); text-align: left; text-decoration: none; cursor: pointer; }
+  .menu .mpane { display: none; padding: 8px 2px 4px; }
+  .menu .mpane.data.open, .menu .mpane.about.open { display: block; }
+  .menu .mpane h2 { display: none; }
+  .menu .mpane p { margin: 0 0 8px; font-size: 13px; line-height: 1.45; color: var(--muted); }
+  .menu .mpane p b { color: var(--fg); }
+  .menu .mtoggle::after { content: ''; width: 7px; height: 7px; border: solid var(--muted); border-width: 0 2px 2px 0; transform: rotate(45deg); margin-right: 4px; }
+  .menu .mtoggle[aria-expanded="true"]::after { transform: rotate(-135deg); }
   .actions { margin-left: 0; width: 100%; }
   .lang { position: absolute; top: 0; right: 0; z-index: 1001; flex-direction: column; box-shadow: 0 2px 8px rgb(0 0 0 / .12); }
   .lang button { opacity: 1; }
