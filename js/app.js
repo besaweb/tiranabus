@@ -170,7 +170,7 @@
         <dt>${t('valid')}</dt><dd>${fmtDate(feed.from)} – ${fmtDate(feed.to)}</dd>
       </dl>`;
     }
-    const src = [{ name: baseTables.agency.map(a => (a.agency_name || '').trim()).filter(Boolean).join(', ') || '–', from: feed.from, to: feed.to, upd: feed.version, url: 'https://pt.tirana.al' }];
+    const src = [{ name: baseTables.agency.map(a => (a.agency_name || '').trim()).filter(Boolean).join(', ') || '–', from: feed.from, to: feed.to, upd: feed.version }];
     for (const x of typeof EXTRA_FEEDS !== 'undefined' ? EXTRA_FEEDS : []) {
       const c = x.tables.calendar[0];
       src.push({ name: x.tables.agency[0].agency_name, from: c.start_date, to: c.end_date, upd: x.updated, url: x.url });
@@ -179,7 +179,8 @@
     return `<h2>${t('dataTitle')}</h2>${src.map(x => `<dl class="kv ds">
         <dt>${t('operator')}</dt><dd>${esc(x.name)}</dd>
         <dt>${t('valid')}</dt><dd>${fd(x.from)} – ${fd(x.to)}</dd>
-        <dt>${t('lastUpd')}</dt><dd>${fd(x.upd)}</dd>
+        <dt>${t('lastUpd')}</dt><dd>${fd(x.upd)}</dd>${x.url ? `
+        <dt>${t('web')}</dt><dd><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.url.replace(/^https?:\/\//, ''))}</a></dd>` : ''}
       </dl>`).join('')}`;
   }
 
