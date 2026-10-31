@@ -110,7 +110,7 @@ const GTFS = (() => {
         if (!to || c.end_date > to) to = c.end_date;
       }
     }
-    return { tz, agencies, stops, routes, trips, cal, ex, from, to, nTrips, shapes, hasShapes: shapes.size > 0, hasFreq: !!(t.frequencies && t.frequencies.length) };
+    return { tz, agencies, stops, routes, trips, cal, ex, from, to, version: (fi && fi.feed_version || '').trim(), nTrips, shapes, hasShapes: shapes.size > 0, hasFreq: !!(t.frequencies && t.frequencies.length) };
   }
 
   function interpolate(st) {

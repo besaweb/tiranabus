@@ -48,6 +48,8 @@ const EXTRA_I18N = {
 const EXTRA_FEEDS = [{
   id: 'rx',
   label: 'letiště (LU-NA)',
+  updated: '20261029',
+  url: 'https://luna.al/aeroporti',
   tables: (() => {
     const tstr = s => [Math.floor(s / 3600), Math.floor(s / 60) % 60, s % 60].map(v => String(v).padStart(2, '0')).join(':');
     const T = {

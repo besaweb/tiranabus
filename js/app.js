@@ -163,11 +163,27 @@
   }
 
   function renderMeta() {
-    $('#meta').innerHTML = `
-      <dl class="kv">
+    const el = $('#meta');
+    if (!baseTables) {
+      el.innerHTML = `<h2>${t('dataTitle')}</h2>
+      <dl class="kv ds">
         <dt>${t('operator')}</dt><dd>${esc(feed.agencies.join(', ') || '–')}</dd>
         <dt>${t('valid')}</dt><dd>${fmtDate(feed.from)} – ${fmtDate(feed.to)}</dd>
       </dl>`;
+      return;
+    }
+    const src = [{ name: baseTables.agency.map(a => (a.agency_name || '').trim()).filter(Boolean).join(', ') || '–', from: feed.from, to: feed.to, upd: feed.version, url: 'https://pt.tirana.al' }];
+    for (const x of typeof EXTRA_FEEDS !== 'undefined' ? EXTRA_FEEDS : []) {
+      const c = x.tables.calendar[0];
+      src.push({ name: x.tables.agency[0].agency_name, from: c.start_date, to: c.end_date, upd: x.updated, url: x.url });
+    }
+    const fd = v => v ? fmtDate(String(v).replace(/-/g, '')) : '–';
+    el.innerHTML = `<h2>${t('dataTitle')}</h2>${src.map(x => `<dl class="kv ds">
+        <dt>${t('operator')}</dt><dd>${esc(x.name)}</dd>
+        <dt>${t('valid')}</dt><dd>${fd(x.from)} – ${fd(x.to)}</dd>
+        <dt>${t('lastUpd')}</dt><dd>${fd(x.upd)}</dd>
+        <dt>${t('web')}</dt><dd><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.url.replace(/^https?:\/\//, ''))}</a></dd>
+      </dl>`).join('')}`;
   }
 
   const routeRow = r => {
@@ -291,12 +307,14 @@
 
   function setAttr() {
     map.attributionControl.removeAttribution(map._gtfsAttr || '');
+    if (document.body.classList.contains('nodata')) return;
     map._gtfsAttr = demoMode ? t('attrDemo') : t('attr', { a: esc(feed.agencies.join(', ') || source) });
     map.attributionControl.addAttribution(map._gtfsAttr);
   }
 
   function setFeed(f, name, demo) {
     feed = f; source = name; demoMode = !!demo;
+    document.body.classList.remove('nodata');
     $('#demo').hidden = !demo;
     setAttr();
     $('#q').value = '';
@@ -556,6 +574,11 @@
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', retheme);
   new MutationObserver(retheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
+  const menuBtn = $('#menubtn'), menuBox = $('#meta');
+  const setMenu = o => { menuBox.hidden = !o; menuBtn.setAttribute('aria-expanded', o); };
+  menuBtn.addEventListener('click', e => { e.stopPropagation(); setMenu(menuBox.hidden); });
+  document.addEventListener('click', e => { if (!menuBox.contains(e.target)) setMenu(false); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
   const themeBtn = $('#theme');
   const isDark = () => document.documentElement.dataset.theme === 'dark';
   function syncTheme() {
@@ -582,6 +605,7 @@
     for (const el of document.querySelectorAll('[data-i18n-aria]')) el.setAttribute('aria-label', t(el.dataset.i18nAria));
     for (const el of document.querySelectorAll('[data-i18n-title]')) el.title = t(el.dataset.i18nTitle);
     for (const b of document.querySelectorAll('[data-lang]')) b.setAttribute('aria-pressed', b.dataset.lang === l);
+    menuBtn.setAttribute('aria-label', t('dataTitle')); menuBtn.title = t('dataTitle');
     syncTheme();
     if (!feed) return;
     if (baseTables && builtLang !== l) { setFeed(buildFeed(), source, false); return; }
@@ -609,7 +633,13 @@
     if (!fail) { boot.classList.add('done'); return; }
     boot.classList.add('fail');
     $('#boottext').dataset.i18n = 'bootFail'; $('#boottext').textContent = t('bootFail');
-    setTimeout(() => { $('#demo').hidden = false; boot.classList.add('done'); }, 1800);
+    setTimeout(() => {
+      document.body.classList.add('nodata');
+      lineLayer.clearLayers(); stopLayer.clearLayers(); planLayer.clearLayers();
+      map.attributionControl.removeAttribution(map._gtfsAttr);
+      $('#demo').dataset.i18nHtml = 'dataFail'; $('#demo').innerHTML = t('dataFail'); $('#demo').hidden = false;
+      boot.classList.add('done');
+    }, 1800);
   };
   async function autoLoad() {
     if (!/^https?:$/.test(location.protocol)) { boot.classList.add('done'); return; }
