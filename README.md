@@ -15,10 +15,7 @@ a pak http://localhost:8000/
 ## Data
 
 - GTFS Tirany: https://pt.tirana.al/gtfs/gtfs.zip (CC BY-SA 4.0, Bashkia e Tiranës)
-- Ručně ho lze načíst přetažením `gtfs.zip` na mapu. Bez feedu běží smyšlená ukázková síť.
-- Pokud je vedle `index.html` dostupný `gtfs.zip` (nasazený web na GitHub Pages, nebo lokální kopie přes `python -m http.server`), načte se automaticky při startu. Při otevření přes `file://` se neděje nic.
-- Nasazení: `.github/workflows/pages.yml` při každém pushi a denně sestaví web s aktuálním `gtfs.zip` z Releases `tirana-latest`. V repozitáři je nutné zapnout Settings → Pages → Source: **GitHub Actions**.
-- Aktuální kopii feedu hlídá GitHub Action `.github/workflows/gtfs-watch.yml`: každý den kolem 5:17 UTC stáhne feed, a pokud se změnil obsah (sha256), nahraje ho do Releases jako `tirana-latest` (`gtfs.zip`). Jde spustit i ručně (Actions → gtfs-watch → Run workflow).
+- Nahraj ho tlačítkem **Nahrát GTFS** nebo přetažením na mapu. Bez něj běží smyšlená ukázková síť.
 
 ## Soubory
 
@@ -30,7 +27,6 @@ a pak http://localhost:8000/
 | `js/demo.js` | ukázková síť |
 | `js/extra-airport.js` | doplňková linka na letiště, přidá se k nahranému feedu |
 | `data/gtfs-extra.zip` | stejná linka jako samostatný GTFS (pro jiné nástroje nebo import do DB) |
-| `js/i18n.js` | překlady rozhraní (čeština, angličtina, albánština) |
 | `js/app.js` | mapa a ovládání |
 
 ## Doplňkové linky na letiště (LU-NA)
@@ -63,3 +59,7 @@ Ve složce `android/` je WebView obálka. `bash android/build.sh` (Git Bash, And
 ## Omezení
 
 Jen plánovaný jízdní řád (bez zpoždění), linky zadané intervalem mají orientační časy, chůze se počítá vzdušnou čarou × 1,3.
+
+## eTransport – meziměstské linky (jen interní analýza)
+
+Ve složce `tools/etransport/` je skript pro denní stažení registru meziměstských linek z webu eTransport (DPSHTRR) do `data/etransport/`: surové snapshoty, CSV pro databázi, GTFS a přehled změn. Data jsou bez licence, proto jen pro neveřejnou analýzu. Návod je v `tools/etransport/README.md`.

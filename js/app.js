@@ -173,7 +173,7 @@
     const src = [{ name: baseTables.agency.map(a => (a.agency_name || '').trim()).filter(Boolean).join(', ') || '–', from: feed.from, to: feed.to, upd: feed.version }];
     for (const x of typeof EXTRA_FEEDS !== 'undefined' ? EXTRA_FEEDS : []) {
       const c = x.tables.calendar[0];
-      src.push({ name: x.tables.agency[0].agency_name, from: c.start_date, to: c.end_date, upd: x.updated, url: x.url });
+      src.push({ name: x.name || x.tables.agency[0].agency_name, from: c.start_date, to: c.end_date, upd: x.updated, url: x.url });
     }
     const fd = v => v ? fmtDate(String(v).replace(/-/g, '')) : '–';
     return `<h2>${t('dataTitle')}</h2>${src.map(x => `<dl class="kv ds">

@@ -9,7 +9,7 @@
   };
   const SRC = [
     { name: 'Municipality of Tirana', url: 'https://pt.tirana.al' },
-    { name: 'LU-NA (Luna Travel)', url: 'https://luna.al/aeroporti' }
+    { name: 'Luna Travel', url: 'https://luna.al/aeroporti' }
   ];
   let lang = null, theme = null;
   try {
