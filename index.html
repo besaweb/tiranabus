@@ -3,7 +3,29 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Tirana Bus</title>
+<title>Tirana Bus – public transport map, timetables and journey planner</title>
+<meta name="description" content="Tirana Bus: map of city bus lines and stops in Tirana, timetables, next departures and a journey planner with transfers. Includes airport buses to Rinas. Works in the browser, 6 languages.">
+<meta name="keywords" content="Tirana, Tirana bus, Tirana public transport, Tirana bus timetable, Tirana journey planner, Tirana airport bus, Rinas, Albania, GTFS">
+<meta name="author" content="besaweb">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#ECEFEE" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0D1312" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://besaweb.github.io/tiranabus/">
+<link rel="icon" type="image/png" href="img/logo.png">
+<link rel="apple-touch-icon" href="img/logo.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Tirana Bus">
+<meta property="og:title" content="Tirana Bus – map, timetables and journey planner">
+<meta property="og:description" content="Bus lines and stops, departures and a journey planner for public transport in Tirana, including airport buses.">
+<meta property="og:url" content="https://besaweb.github.io/tiranabus/">
+<meta property="og:image" content="https://besaweb.github.io/tiranabus/img/logo.png">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="cs_CZ">
+<meta property="og:locale:alternate" content="sq_AL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Tirana Bus">
+<meta name="twitter:description" content="Map, timetables and journey planner for public transport in Tirana.">
+<meta name="twitter:image" content="https://besaweb.github.io/tiranabus/img/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@500&display=swap">
@@ -93,6 +115,10 @@
     <div id="map" data-i18n-aria="mapAria" aria-label="Mapa linek a zastávek"></div>
     <div class="tilenote" id="tilenote" hidden><span id="tiletext"></span><button type="button" id="tileclose" data-i18n-aria="close" aria-label="Zavřít">×</button></div>
   </div>
+  <footer class="foot">
+    <p>Website designed, developed &amp; maintained by <a href="https://besaweb.al" target="_blank" rel="noopener">BesaWEB</a></p>
+    <p>© 2026 Tirana Bus. All rights reserved.</p>
+  </footer>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>

@@ -46,3 +46,6 @@ a.mi, a.mi:visited { text-decoration: none; color: var(--fg); }
 
 .menuwrap { display: none; }
 .gplay { display: none; }
+.foot { display: none; }
+.app { grid-template-rows: auto minmax(0, 1fr); grid-template-areas: "head head" "side map"; }
+@media (max-width: 760px) { .app { grid-template-rows: auto 44% minmax(0, 1fr); grid-template-areas: "head" "map" "side"; } }

@@ -39,8 +39,8 @@ button, input, select { font: inherit; color: inherit; }
 .app {
   height: 100%; display: grid; gap: 12px; padding-block: 12px;
   grid-template-columns: minmax(300px, 380px) minmax(0, 1fr);
-  grid-template-rows: auto minmax(0, 1fr);
-  grid-template-areas: "head head" "side map";
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-areas: "head head" "side map" "foot foot";
 }
 header {
   grid-area: head; display: flex; align-items: center; gap: 12px 20px; flex-wrap: wrap;
@@ -200,6 +200,10 @@ html[lang="en"] .when input[type="time"] { flex: 0 1 104px; width: 104px; paddin
 .empty { padding: 14px 8px; color: var(--muted); font-size: 14px; }
 .hint { margin: 10px 8px 0; font-size: 12.5px; color: var(--muted); }
 
+.foot { grid-area: foot; text-align: center; font-size: 11.5px; line-height: 1.5; color: var(--muted); }
+.foot p { margin: 0; }
+.foot a { color: var(--accent); font-weight: 600; text-decoration: none; }
+.foot a:hover { text-decoration: underline; }
 .mapwrap { grid-area: map; position: relative; min-height: 0; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); }
 #map { position: absolute; inset: 0; background: var(--map-bg); }
 .tilenote {
@@ -290,7 +294,7 @@ html[lang="en"] .when input[type="time"] { flex: 0 1 104px; width: 104px; paddin
 .nodata .tabs, .nodata .planform, .nodata .search, .nodata .panel, .nodata .menuwrap { display: none; }
 
 @media (max-width: 760px) {
-  .app { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 44% minmax(0, 1fr); grid-template-areas: "head" "map" "side"; gap: 10px; }
+  .app { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 44% minmax(0, 1fr) auto; grid-template-areas: "head" "map" "side" "foot"; gap: 10px; }
   header { position: relative; padding-right: 150px; }
   .menuwrap { position: absolute; top: 0; right: 104px; z-index: 1001; }
   .menubtn { width: 34px; height: 34px; padding: 0; }
