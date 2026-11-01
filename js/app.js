@@ -9,8 +9,8 @@
   const ink = r => r.text || (lum(r.color) > .4 ? '#141A19' : '#FFFFFF');
   const chip = (r, cls = '') => `<span class="chip ${cls}" style="--c:${r.color};--ct:${ink(r)}">${esc(r.short)}</span>`;
   const { t, pl } = I18N;
-  const fmtDate = s => s && s.length === 8 ? (I18N.lang === 'cs' ? `${+s.slice(6)}. ${+s.slice(4, 6)}. ${s.slice(0, 4)}` : I18N.lang === 'de' || I18N.lang === 'pl' ? `${s.slice(6)}.${s.slice(4, 6)}.${s.slice(0, 4)}` : `${s.slice(6)}/${s.slice(4, 6)}/${s.slice(0, 4)}`) : '–';
-  const FARE = { lek: 40, luna: { 'rx:RX': 400, 'rx:RT': 300 }, cur: { cs: ['CZK', .268], en: ['EUR', .011], sq: null, it: ['EUR', .011], de: ['EUR', .011], pl: ['PLN', .047], fr: ['EUR', .011] } };
+  const fmtDate = s => s && s.length === 8 ? (I18N.lang === 'cs' ? `${+s.slice(6)}. ${+s.slice(4, 6)}. ${s.slice(0, 4)}` : ['de', 'pl', 'ru', 'mk'].includes(I18N.lang) ? `${s.slice(6)}.${s.slice(4, 6)}.${s.slice(0, 4)}` : `${s.slice(6)}/${s.slice(4, 6)}/${s.slice(0, 4)}`) : '–';
+  const FARE = { lek: 40, luna: { 'rx:RX': 400, 'rx:RT': 300 }, cur: { cs: ['CZK', .268], en: ['EUR', .011], sq: null, it: ['EUR', .011], de: ['EUR', .011], pl: ['PLN', .047], fr: ['EUR', .011], es: ['EUR', .011], el: ['EUR', .011], ru: ['EUR', .011], mk: ['MKD', .68] } };
   const fareText = j => {
     const total = j.legs.reduce((a, l) => l.kind === 'ride' ? a + (FARE.luna[l.route.id] || FARE.lek) : a, 0), c = FARE.cur[I18N.lang];
     if (!c) return t('priceLek', { l: total });
@@ -650,10 +650,10 @@
     setAttr(); renderMeta(); renderExpiry();
     if (mode === 'plan') showPlan(); else { const st = $('#panel').scrollTop; render(); $('#panel').scrollTop = st; }
   }
-  const langBox = $('.lang'), narrow = matchMedia('(max-width: 760px)');
+  const langBox = $('.lang');
   document.addEventListener('click', e => { if (!langBox.contains(e.target)) langBox.classList.remove('open'); });
   for (const b of document.querySelectorAll('[data-lang]')) b.addEventListener('click', () => {
-    if (narrow.matches && !langBox.classList.contains('open')) { langBox.classList.add('open'); return; }
+    if (!langBox.classList.contains('open')) { langBox.classList.add('open'); return; }
     langBox.classList.remove('open');
     I18N.setLang(b.dataset.lang);
     try { localStorage.setItem('tirana-mhd-lang', b.dataset.lang); } catch (e) {}

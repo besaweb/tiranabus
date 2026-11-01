@@ -64,9 +64,16 @@ header {
 .btn:hover { border-color: var(--muted); }
 .btn.primary { background: var(--navy); color: var(--navy-ink); border-color: var(--navy); }
 .btn.primary:hover { opacity: .9; }
-.lang { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--panel); }
+.langwrap { position: relative; width: 62px; height: 36px; flex: none; }
+.lang { position: absolute; top: 0; right: 0; z-index: 1001; display: inline-flex; flex-direction: column; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--panel); box-shadow: 0 2px 8px rgb(0 0 0 / .12); }
+.lang button { opacity: 1; }
+.lang button:not([aria-pressed="true"]) { display: none; }
+.lang.open button { display: flex; opacity: .75; }
+.lang.open button[aria-pressed="true"] { opacity: 1; }
+.lang button[aria-pressed="true"] { order: -1; }
+.lang.open button + button { border-top: 1px solid var(--line); }
+.lang:not(.open) button[aria-pressed="true"]::after { content: ''; margin-left: 6px; border: 4px solid transparent; border-top-color: var(--muted); border-bottom-width: 0; }
 .lang button { display: flex; align-items: center; height: 34px; padding: 0 9px; border: 0; background: transparent; cursor: pointer; opacity: .5; }
-.lang button + button { border-left: 1px solid var(--line); }
 .lang button:hover { opacity: .85; }
 .lang button[aria-pressed="true"] { opacity: 1; background: var(--soft); }
 .lang svg { display: block; width: 24px; height: 16px; border-radius: 2px; box-shadow: 0 0 0 1px color-mix(in srgb, var(--fg) 22%, transparent); }
@@ -321,15 +328,7 @@ html[lang="en"] .when input[type="time"], html[lang="fr"] .when input[type="time
   .menu .mtoggle::after { content: ''; width: 7px; height: 7px; border: solid var(--muted); border-width: 0 2px 2px 0; transform: rotate(45deg); margin-right: 4px; }
   .menu .mtoggle[aria-expanded="true"]::after { transform: rotate(-135deg); }
   .actions { margin-left: 0; width: 100%; }
-  .lang { position: absolute; top: 0; right: 0; z-index: 1001; flex-direction: column; box-shadow: 0 2px 8px rgb(0 0 0 / .12); }
-  .lang button { opacity: 1; }
-  .lang button:not([aria-pressed="true"]) { display: none; }
-  .lang.open button { display: flex; opacity: .75; }
-  .lang.open button[aria-pressed="true"] { opacity: 1; }
-  .lang button[aria-pressed="true"] { order: -1; }
-  .lang button + button { border-left: 0; }
-  .lang.open button + button { border-top: 1px solid var(--line); }
-  .lang:not(.open) button[aria-pressed="true"]::after { content: ''; margin-left: 6px; border: 4px solid transparent; border-top-color: var(--muted); border-bottom-width: 0; }
+  .langwrap { position: static; width: auto; height: auto; }
   .status { order: 3; width: 100%; }
   .sign { width: 34px; height: 34px; }
   .brand { gap: 8px; }

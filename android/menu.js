@@ -6,9 +6,13 @@
     it: { menu: 'Menu', lang: 'Lingua', about: 'Info sull’app', ver: 'Versione', tickets: 'Tariffe', data: 'Validità dei dati' },
     de: { menu: 'Menü', lang: 'Sprache', about: 'Über die App', ver: 'Version', tickets: 'Fahrpreise', data: 'Datengültigkeit' },
     pl: { menu: 'Menu', lang: 'Język', about: 'O aplikacji', ver: 'Wersja', tickets: 'Taryfy', data: 'Ważność danych' },
-    fr: { menu: 'Menu', lang: 'Langue', about: 'À propos de l’appli', ver: 'Version', tickets: 'Tarifs', data: 'Validité des données' }
+    fr: { menu: 'Menu', lang: 'Langue', about: 'À propos de l’appli', ver: 'Version', tickets: 'Tarifs', data: 'Validité des données' },
+    es: { menu: 'Menú', lang: 'Idioma', about: 'Acerca de la app', ver: 'Versión', tickets: 'Tarifas', data: 'Validez de los datos' },
+    mk: { menu: 'Мени', lang: 'Јазик', about: 'За апликацијата', ver: 'Верзија', tickets: 'Тарифи', data: 'Важност на податоците' },
+    el: { menu: 'Μενού', lang: 'Γλώσσα', about: 'Σχετικά με την εφαρμογή', ver: 'Έκδοση', tickets: 'Ναύλα', data: 'Εγκυρότητα δεδομένων' },
+    ru: { menu: 'Меню', lang: 'Язык', about: 'О приложении', ver: 'Версия', tickets: 'Тарифы', data: 'Актуальность данных' }
   };
-  const NAMES = { cs: 'Čeština', en: 'English', sq: 'Shqip', it: 'Italiano', de: 'Deutsch', pl: 'Polski', fr: 'Français' };
+  const NAMES = { cs: 'Čeština', en: 'English', sq: 'Shqip', it: 'Italiano', de: 'Deutsch', pl: 'Polski', fr: 'Français', es: 'Español', mk: 'Македонски', el: 'Ελληνικά', ru: 'Русский' };
   const KEY = 'tirana-data-info';
   let info = [{ from: '', to: '', upd: '' }, { from: '', to: '', upd: '20261029' }];
   try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s[0]) info[0] = s[0]; } catch (e) {}
