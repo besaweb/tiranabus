@@ -279,10 +279,39 @@ const GTFS = (() => {
 
   const MAXR = 5;
 
+  function tidy(f, W, legs, tEnd, org, dst) {
+    for (let i = 0; i < legs.length; i++) {
+      const w = legs[i];
+      if (w.kind !== 'walk') continue;
+      const A = legs[i - 1], B = legs[i + 1];
+      const sa = A && A.inst.tr.st, sb = B && B.inst.tr.st;
+      const xs = A ? sa.map((x, e) => e).filter(e => e > A.k0 && sa[e].arr != null) : org;
+      const ys = B ? sb.map((x, b) => b).filter(b => b < B.k1 && sb[b].dep != null) : dst;
+      let best = null;
+      for (const e of xs) {
+        const X = A ? sa[e].stop : e, tX = A ? sa[e].arr + A.inst.base : -Infinity;
+        const near = new Map((W.get(X) || []).map(([o, s2, m]) => [o.id, [s2, m]]));
+        for (const b of ys) {
+          const Y = B ? sb[b].stop : b, tY = B ? sb[b].dep + B.inst.base : Infinity;
+          if (A && B && A.inst === B.inst) continue;
+          const v = X === Y ? [A && B ? CHANGE : 0, 0] : near.get(Y);
+          if (!v || tX + v[0] > tY || (!B && tX + v[0] > tEnd)) continue;
+          if (!best || v[1] < best.m) best = { e, b, X, Y, tX, s: v[0], m: v[1] };
+        }
+      }
+      if (!best || best.m >= w.m) continue;
+      if (A) { A.k1 = best.e; A.to = f.stops.get(best.X); A.arr = best.tX; }
+      if (B) { B.k0 = best.b; B.from = f.stops.get(best.Y); B.dep = sb[best.b].dep + B.inst.base; }
+      if (best.X === best.Y) { legs.splice(i, 1); i--; continue; }
+      Object.assign(w, { from: f.stops.get(best.X), to: f.stops.get(best.Y), m: best.m, dep: A ? best.tX : w.dep, arr: A ? best.tX + best.s : w.arr });
+      if (!A) w.dep = w.arr - best.s;
+    }
+  }
+
   function scan(f, conns, fromStops, toSet, t0) {
     const W = walkGraph(f), INF = Infinity;
-    const arr = [], board = [], J = [], T = [];
-    for (let k = 0; k <= MAXR; k++) { arr.push(new Map()); board.push(new Map()); J.push(new Map()); T.push(new Map()); }
+    const arr = [], board = [], J = [], T = [], RA = [];
+    for (let k = 0; k <= MAXR; k++) { arr.push(new Map()); board.push(new Map()); J.push(new Map()); T.push(new Map()); RA.push(new Map()); }
     let best = INF;
     const get = (m, id) => m.has(id) ? m.get(id) : INF;
     const reach = (k, id, t, b, j) => {
@@ -311,8 +340,11 @@ const GTFS = (() => {
         if (e && !kmin) { kmin = k; enter = e; }
       }
       if (!kmin) continue;
-      if (reach(kmin, c.to, c.arr, c.arr + CHANGE, { kind: 'ride', k: kmin, enter, exit: c })) {
-        for (const [o, w, m] of W.get(c.to) || []) reach(kmin, o.id, c.arr + w, c.arr + w, { kind: 'walk', k: kmin, from: c.to, to: o.id, dep: c.arr, arr: c.arr + w, m });
+      const jr = { kind: 'ride', k: kmin, enter, exit: c };
+      reach(kmin, c.to, c.arr, c.arr + CHANGE, jr);
+      if (c.arr < get(RA[kmin], c.to)) {
+        for (let kk = kmin; kk <= MAXR; kk++) if (c.arr < get(RA[kk], c.to)) RA[kk].set(c.to, c.arr);
+        for (const [o, w, m] of W.get(c.to) || []) reach(kmin, o.id, c.arr + w, c.arr + w, { kind: 'walk', k: kmin, from: c.to, to: o.id, dep: c.arr, arr: c.arr + w, m, prev: jr });
       }
     }
     const out = [];
@@ -323,25 +355,27 @@ const GTFS = (() => {
       if (!bs || bk >= prevBest) continue;
       prevBest = bk;
       const legs = [];
-      let p = bs, lvl = k, guard = 0;
+      let p = bs, lvl = k, guard = 0, nx = null;
       while (guard++ < 100) {
-        const j = J[lvl].get(p);
+        const j = nx || J[lvl].get(p);
+        nx = null;
         if (!j || j.kind === 'origin') break;
         if (j.kind === 'ride') {
           legs.unshift({ kind: 'ride', inst: j.enter.inst, route: j.enter.inst.tr.route, head: j.enter.inst.tr.head, from: f.stops.get(j.enter.from), to: f.stops.get(j.exit.to), dep: j.enter.dep, arr: j.exit.arr, k0: j.enter.k, k1: j.exit.k + 1 });
           p = j.enter.from; lvl = j.k - 1;
         } else {
           legs.unshift({ kind: 'walk', from: f.stops.get(j.from), to: f.stops.get(j.to), dep: j.dep, arr: j.arr, m: j.m });
-          p = j.from; lvl = j.k;
+          p = j.from; lvl = j.k; nx = j.prev || null;
         }
       }
+      tidy(f, W, legs, bk, fromStops.map(s => s.id), [...toSet]);
       if (legs.length > 1 && legs[0].kind === 'walk' && legs[1].kind === 'ride') {
         const w = legs[0].arr - legs[0].dep;
         legs[0].arr = legs[1].dep; legs[0].dep = legs[1].dep - w;
       }
       const rides = legs.filter(l => l.kind === 'ride').length;
       out.push({
-        origin: f.stops.get(p), dest: f.stops.get(bs), legs,
+        origin: legs.length ? legs[0].from : f.stops.get(p), dest: legs.length ? legs[legs.length - 1].to : f.stops.get(bs), legs,
         dep: legs.length ? legs[0].dep : t0, arr: bk,
         rides, transfers: Math.max(0, rides - 1),
         walkM: legs.filter(l => l.kind === 'walk').reduce((s, l) => s + l.m, 0)
