@@ -441,11 +441,11 @@
       if (l.kind === 'ride') {
         if (prevArr != null && l.dep - prevArr >= 120) out += `<li class="leg wait">${t('wait', { n: mins(l.dep - prevArr) })}</li>`;
         const n = l.k1 - l.k0;
-        const mid = l.inst.tr.st.slice(l.k0 + 1, l.k1).map(x => feed.stops.get(x.stop).name);
+        const mid = l.inst.tr.st.slice(l.k0 + 1, l.k1).map(x => [x.dep + l.inst.base, feed.stops.get(x.stop).name]);
         out += `<li class="leg ride" style="--c:${l.route.color}">
           <div class="lh">${chip(l.route)}<span>${t('dirLeg', { h: '<b>' + esc(l.head) + '</b>' })}</span></div>
           <div class="ls"><time>${GTFS.hhmm(l.dep)}</time><span>${esc(l.from.name)}</span></div>
-          ${mid.length ? `<details class="lm"><summary>${n} ${pl('uStop', n)} · ${t('minutes', { n: mins(l.arr - l.dep) })}</summary><ul>${mid.map(x => `<li>${esc(x)}</li>`).join('')}</ul></details>` : `<div class="lm">${n} ${pl('uStop', n)} · ${t('minutes', { n: mins(l.arr - l.dep) })}</div>`}
+          ${mid.length ? `<details class="lm"><summary>${n} ${pl('uStop', n)} · ${t('minutes', { n: mins(l.arr - l.dep) })}</summary><ul>${mid.map(([s, x]) => `<li><time>${GTFS.hhmm(s)}</time><span>${esc(x)}</span></li>`).join('')}</ul></details>` : `<div class="lm">${n} ${pl('uStop', n)} · ${t('minutes', { n: mins(l.arr - l.dep) })}</div>`}
           <div class="ls"><time>${GTFS.hhmm(l.arr)}</time><span>${esc(l.to.name)}</span></div>
         </li>`;
       } else {
