@@ -8,6 +8,8 @@
   --soft: #F4F6F5;
   --accent: #C8102E;
   --accent-ink: #FFFFFF;
+  --navy: #0B2463;
+  --navy-ink: #FFFFFF;
   --map-bg: #E2E8E6;
   --stop-fill: #3D8BFD;
   --stop-stroke: #142120;
@@ -18,7 +20,7 @@
 }
 :root[data-theme="dark"] {
   --bg: #0D1312; --panel: #141C1B; --fg: #E4EBE9; --muted: #8FA09D; --line: #26322F; --soft: #18211F;
-  --accent: #FF5468; --accent-ink: #1A0508; --map-bg: #101817; --stop-fill: #4DA3FF; --stop-stroke: #E4EBE9;
+  --accent: #FF5468; --accent-ink: #1A0508; --navy: #2A55B8; --navy-ink: #FFFFFF; --map-bg: #101817; --stop-fill: #4DA3FF; --stop-stroke: #E4EBE9;
   --tiles: invert(1) hue-rotate(180deg) brightness(.82) contrast(.92) saturate(.6);
   color-scheme: dark;
 }
@@ -60,7 +62,7 @@ header {
   border: 1px solid var(--line); background: var(--panel); color: var(--fg); text-decoration: none; font-weight: 600; font-size: 14px; cursor: pointer;
 }
 .btn:hover { border-color: var(--muted); }
-.btn.primary { background: var(--fg); color: var(--panel); border-color: var(--fg); }
+.btn.primary { background: var(--navy); color: var(--navy-ink); border-color: var(--navy); }
 .btn.primary:hover { opacity: .9; }
 .lang { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--panel); }
 .lang button { display: flex; align-items: center; height: 34px; padding: 0 9px; border: 0; background: transparent; cursor: pointer; opacity: .5; }
@@ -105,7 +107,7 @@ header {
 .field .pin { position: absolute; left: 10px; top: 11px; }
 .pin { display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; font: 700 12px/1 var(--display); flex: none; }
 .pin.a { background: var(--accent); color: var(--accent-ink); }
-.pin.b { background: var(--fg); color: var(--panel); }
+.pin.b { background: var(--navy); color: var(--navy-ink); }
 .swap { position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; padding: 0; justify-content: center; }
 .sugg { position: absolute; z-index: 50; top: calc(100% + 4px); left: 0; right: 0; max-height: 280px; overflow: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 8px 24px rgb(0 0 0 / .18); padding: 4px; }
 .sg { display: block; width: 100%; text-align: left; border: 0; background: none; padding: 7px 9px; border-radius: 6px; cursor: pointer; }
