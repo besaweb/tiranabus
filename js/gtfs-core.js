@@ -3,6 +3,7 @@ const GTFS = (() => {
     const m = /^\s*(\d+):(\d{2}):(\d{2})\s*$/.exec(t || '');
     return m ? +m[1] * 3600 + +m[2] * 60 + +m[3] : null;
   };
+  const STAY = 600;
   const PALETTE = ['#D1495B', '#00798C', '#D99A1E', '#30638E', '#6A4C93', '#2A9D8F', '#E76F51', '#8A5A44', '#3D7D3A', '#C2185B', '#5C6BC0', '#9C6644'];
   const hex = v => /^[0-9a-fA-F]{6}$/.test((v || '').trim()) ? '#' + v.trim().toUpperCase() : null;
   const WD = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
@@ -33,7 +34,7 @@ const GTFS = (() => {
     for (const tr of t.trips) {
       const r = routes.get(tr.route_id);
       if (!r) continue;
-      const o = { id: tr.trip_id, route: r, service: tr.service_id, shape: tr.shape_id || '', dir: (tr.direction_id || '0').trim() || '0', head: (tr.trip_headsign || '').trim(), st: [], freq: null, first: null };
+      const o = { id: tr.trip_id, route: r, service: tr.service_id, shape: tr.shape_id || '', dir: (tr.direction_id || '0').trim() || '0', head: (tr.trip_headsign || '').trim(), block: (tr.block_id || '').trim(), st: [], freq: null, first: null };
       trips.set(tr.trip_id, o);
       r.trips.push(o);
     }
@@ -78,6 +79,20 @@ const GTFS = (() => {
         if (x.dep != null && i < lastIdx) s.deps.push([tr, x.dep]);
       });
     }
+
+    const blocks = new Map();
+    for (const tr of trips.values()) if (tr.block && !tr.freq && tr.st.length > 1) {
+      const k = tr.service + '|' + tr.block;
+      (blocks.get(k) || blocks.set(k, []).get(k)).push(tr);
+    }
+    for (const a of blocks.values()) {
+      a.sort((x, y) => x.st[0].dep - y.st[0].dep);
+      for (let i = 1; i < a.length; i++) {
+        const p = a[i - 1], q = a[i], e = p.st[p.st.length - 1], g = q.st[0].dep - e.arr;
+        if (p.route === q.route && p.dir === q.dir && e.stop === q.st[0].stop && g >= 0 && g <= STAY) { p.next = q; q.prev = p; }
+      }
+    }
+    for (const tr of trips.values()) if (tr.next && !tr.prev) for (let x = tr; x; x = x.next) x.chain = tr.id;
 
     for (const [id, r] of routes) {
       const byDir = new Map();
@@ -261,7 +276,8 @@ const GTFS = (() => {
         for (const sh of shifts) {
           const base = d.off + sh;
           if (tLast + base < from || tFirst + base > until) continue;
-          const inst = { tr, base, id: tr.id + '@' + d.ymd + '@' + sh };
+          const id = tr.id + '@' + d.ymd + '@' + sh;
+          const inst = { tr, base, id, rid: tr.chain && !tr.freq ? tr.chain + '@' + d.ymd : id };
           for (let k = 0; k < n - 1; k++) {
             const a = st[k], b = st[k + 1];
             if (a.dep == null || b.arr == null) continue;
@@ -311,6 +327,22 @@ const GTFS = (() => {
     }
   }
 
+  function span(f, enter, exit) {
+    if (enter.inst === exit.inst) return [enter.inst, exit.k + 1];
+    const st = [];
+    let pts = [], k1 = 0;
+    for (let tr = enter.inst.tr; tr; tr = tr.next) {
+      const off = st.length ? st.length - 1 : 0;
+      if (st.length) st[off] = { ...st[off], dep: tr.st[0].dep };
+      st.push(...(st.length ? tr.st.slice(1) : tr.st));
+      const sh = tr.shape && f.shapes.get(tr.shape);
+      pts = pts && sh ? pts.concat(sh) : null;
+      if (tr === exit.inst.tr) { k1 = off + exit.k + 1; break; }
+    }
+    const tr = exit.inst.tr;
+    return [{ tr: { ...enter.inst.tr, st, head: tr.head, pts }, base: enter.inst.base, id: enter.inst.id }, k1];
+  }
+
   function scan(f, conns, fromStops, toSet, t0) {
     const W = walkGraph(f), INF = Infinity;
     const arr = [], board = [], J = [], T = [], RA = [];
@@ -335,10 +367,10 @@ const GTFS = (() => {
       if (c.dep >= best) break;
       let kmin = 0, enter = null;
       for (let k = 1; k <= MAXR; k++) {
-        let e = T[k].get(c.inst.id);
+        let e = T[k].get(c.inst.rid);
         if (!e && get(board[k - 1], c.from) <= c.dep) {
           const prev = J[k - 1].get(c.from);
-          if (!(prev && prev.kind === 'ride' && prev.enter.inst.tr.route === c.inst.tr.route && prev.enter.inst.tr.dir !== c.inst.tr.dir)) { e = c; T[k].set(c.inst.id, c); }
+          if (!(prev && prev.kind === 'ride' && prev.enter.inst.tr.route === c.inst.tr.route && prev.enter.inst.tr.dir !== c.inst.tr.dir)) { e = c; T[k].set(c.inst.rid, c); }
         }
         if (e && !kmin) { kmin = k; enter = e; }
       }
@@ -364,7 +396,8 @@ const GTFS = (() => {
         nx = null;
         if (!j || j.kind === 'origin') break;
         if (j.kind === 'ride') {
-          legs.unshift({ kind: 'ride', inst: j.enter.inst, route: j.enter.inst.tr.route, head: j.enter.inst.tr.head, from: f.stops.get(j.enter.from), to: f.stops.get(j.exit.to), dep: j.enter.dep, arr: j.exit.arr, k0: j.enter.k, k1: j.exit.k + 1 });
+          const [inst, k1] = span(f, j.enter, j.exit);
+          legs.unshift({ kind: 'ride', inst, route: inst.tr.route, head: inst.tr.head, from: f.stops.get(j.enter.from), to: f.stops.get(j.exit.to), dep: j.enter.dep, arr: j.exit.arr, k0: j.enter.k, k1 });
           p = j.enter.from; lvl = j.k - 1;
         } else {
           legs.unshift({ kind: 'walk', from: f.stops.get(j.from), to: f.stops.get(j.to), dep: j.dep, arr: j.arr, m: j.m });
@@ -413,7 +446,7 @@ const GTFS = (() => {
 
   function legPath(f, leg) {
     const st = leg.inst.tr.st.slice(leg.k0, leg.k1 + 1).map(x => f.stops.get(x.stop));
-    const sh = leg.inst.tr.shape && f.shapes.get(leg.inst.tr.shape);
+    const sh = leg.inst.tr.pts || (leg.inst.tr.shape && f.shapes.get(leg.inst.tr.shape));
     if (!sh || sh.length < 2) return st.map(s => [s.lat, s.lon]);
     const near = (s, from) => {
       let bi = from, bd = Infinity;
