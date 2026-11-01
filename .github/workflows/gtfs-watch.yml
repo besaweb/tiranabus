@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 env:
   GTFS_URL: https://pt.tirana.al/gtfs/gtfs.zip
@@ -59,4 +60,47 @@ jobs:
             gh release edit "$TAG" --notes-file notes.md
           else
             gh release create "$TAG" gtfs.zip --title "Tirana GTFS (poslední verze)" --notes-file notes.md
+          fi
+
+      - name: Upozornit na novou verzi
+        if: steps.cmp.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          printf '%s\n' \
+            "@besaweb Feed $GTFS_URL má novou verzi, vydání \`$TAG\` je aktualizované." \
+            "" \
+            "- feed_info: $VERSION" \
+            "- sha256: $HASH" \
+            "- vydání: https://github.com/$GH_REPO/releases/tag/$TAG" \
+            "" \
+            "Web se aktualizuje při nejbližším nasazení (pages.yml), APK je potřeba přestavět." > issue.md
+          gh issue create --title "Nová verze GTFS feedu ($(date -u +%F))" --body-file issue.md
+
+      - name: Uzavřít hlášení o výpadku
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for n in $(gh issue list --state open --search 'in:title "Feed nedostupný"' --json number -q '.[].number'); do
+            gh issue close "$n" --comment "Feed je znovu dostupný ($(date -u '+%F %H:%M') UTC)."
+          done
+
+      - name: Upozornit na výpadek
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          run="https://github.com/$GH_REPO/actions/runs/$GITHUB_RUN_ID"
+          n=$(gh issue list --state open --search 'in:title "Feed nedostupný"' --json number -q '.[0].number')
+          if [ -n "$n" ]; then
+            gh issue comment "$n" --body "Feed se nepodařilo načíst ani $(date -u '+%F %H:%M') UTC. Běh: $run"
+          else
+            printf '%s\n' \
+              "@besaweb Feed $GTFS_URL se $(date -u '+%F %H:%M') UTC nepodařilo stáhnout nebo je poškozený." \
+              "" \
+              "Běh: $run" \
+              "" \
+              "Web i APK dál používají poslední uloženou verzi (vydání \`$TAG\`). Hlášení se samo uzavře, až bude feed znovu dostupný." > issue.md
+            gh issue create --title "Feed nedostupný ($(date -u +%F))" --body-file issue.md
           fi
