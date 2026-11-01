@@ -355,12 +355,12 @@ html[lang="en"] .when input[type="time"], html[lang="fr"] .when input[type="time
 .gplay { margin: 16px 8px 0; padding-top: 14px; border-top: 1px solid var(--line); }
 .gplay p { margin: 0 0 4px; }
 .gplay .promo { display: block; width: 60%; max-width: 200px; height: auto; margin: 14px auto 4px; border-radius: 12px; }
-.gprow { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; margin-top: 6px; }
-.gpbtn { display: inline-flex; align-items: center; gap: 9px; padding: 7px 16px 7px 12px; border-radius: 9px; background: #000; color: #fff; border: 1px solid #a6a6a6; text-decoration: none; }
-.gpbtn svg { width: 24px; height: 26px; flex: none; }
+.gprow { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; margin-top: 6px; }
+.gpbtn { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px 4px 8px; border-radius: 6px; background: #000; color: #fff; border: 1px solid #a6a6a6; text-decoration: none; }
+.gpbtn svg { width: 15px; height: 17px; flex: none; }
 .gpbtn span { display: flex; flex-direction: column; line-height: 1.1; text-align: left; }
-.gpbtn small { font-size: 10px; font-weight: 500; letter-spacing: .04em; }
-.gpbtn b { font-size: 19px; font-weight: 600; }
+.gpbtn small { font-size: 7px; font-weight: 500; letter-spacing: .04em; }
+.gpbtn b { font-size: 13px; font-weight: 600; }
 .gpbtn:hover { filter: brightness(1.2); }
 @media (min-width: 761px) {
   .ticketbtn .ico, .menubtn .ico { display: block; width: 16px; height: 16px; flex: none; opacity: .85; }
