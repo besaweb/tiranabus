@@ -330,6 +330,8 @@ html[lang="en"] .when input[type="time"], html[lang="fr"] .when input[type="time
   .brand { gap: 8px; }
   .brand h1 { font-size: 18px; line-height: 1; }
   .brand small { font-size: 9px; line-height: 1.1; margin-top: 3px; }
+  .when input[type="time"] { flex: 0 1 92px; width: 92px; }
+  html[lang="en"] .when input[type="time"], html[lang="fr"] .when input[type="time"] { flex-basis: 92px; width: 92px; }
   .brand .sd { display: none; }
   .brand .sm { display: inline; }
   .side { overflow: auto; }
