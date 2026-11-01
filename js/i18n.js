@@ -3,7 +3,7 @@ const I18N = (() => {
     cs: {
       title: 'Tirana Bus',
       sub: 'Městská hromadná doprava',
-      subM: 'MHD',
+      subM: 'Městská hromadná doprava',
       langAria: 'Jazyk',
       dataTitle: 'Platnost dat',
       aboutTitle: 'O aplikaci',
@@ -127,7 +127,7 @@ const I18N = (() => {
     },
     en: {
       title: 'Tirana Bus',
-      sub: 'Urban public transport',
+      sub: 'Public Transport',
       subM: 'Public Transport',
       langAria: 'Language',
       dataTitle: 'Data validity',
@@ -253,7 +253,7 @@ const I18N = (() => {
     sq: {
       title: 'Tirana Bus',
       sub: 'Transporti publik urban',
-      subM: 'Transport Publik',
+      subM: 'Transporti publik urban',
       langAria: 'Gjuha',
       dataTitle: 'Vlefshmëria e të dhënave',
       aboutTitle: 'Rreth aplikacionit',
@@ -377,8 +377,8 @@ const I18N = (() => {
     },
     it: {
       title: 'Tirana Bus',
-      sub: 'Trasporto pubblico urbano',
-      subM: 'Trasporto Pubblico',
+      sub: 'Trasporto pubblico',
+      subM: 'Trasporto pubblico',
       langAria: 'Lingua',
       dataTitle: 'Validità dei dati',
       aboutTitle: 'Info sull’app',
@@ -503,7 +503,7 @@ const I18N = (() => {
     de: {
       title: 'Tirana Bus',
       sub: 'Öffentlicher Nahverkehr',
-      subM: 'ÖPNV',
+      subM: 'Öffentlicher Nahverkehr',
       langAria: 'Sprache',
       dataTitle: 'Datengültigkeit',
       aboutTitle: 'Über die App',
@@ -627,8 +627,8 @@ const I18N = (() => {
     },
     pl: {
       title: 'Tirana Bus',
-      sub: 'Miejski transport publiczny',
-      subM: 'Transport Publ.',
+      sub: 'Transport publiczny',
+      subM: 'Transport publiczny',
       langAria: 'Język',
       dataTitle: 'Ważność danych',
       aboutTitle: 'O aplikacji',
@@ -752,8 +752,8 @@ const I18N = (() => {
     },
     fr: {
       title: 'Tirana Bus',
-      sub: 'Transports publics urbains',
-      subM: 'Transports Publics',
+      sub: 'Transports en commun',
+      subM: 'Transports en commun',
       langAria: 'Langue',
       dataTitle: 'Validité des données',
       aboutTitle: 'À propos de l’appli',
