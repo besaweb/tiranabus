@@ -1,12 +1,12 @@
 (function () {
   const T = {
-    cs: { menu: 'Menu', lang: 'Jazyk', about: 'O aplikaci', ver: 'Verze', tickets: 'Jízdenky', data: 'Platnost dat' },
-    en: { menu: 'Menu', lang: 'Language', about: 'About the app', ver: 'Version', tickets: 'Tickets', data: 'Data validity' },
-    sq: { menu: 'Menyja', lang: 'Gjuha', about: 'Rreth aplikacionit', ver: 'Versioni', tickets: 'Biletat', data: 'Vlefshmëria e të dhënave' },
-    it: { menu: 'Menu', lang: 'Lingua', about: 'Info sull’app', ver: 'Versione', tickets: 'Biglietti', data: 'Validità dei dati' },
-    de: { menu: 'Menü', lang: 'Sprache', about: 'Über die App', ver: 'Version', tickets: 'Fahrkarten', data: 'Datengültigkeit' },
-    pl: { menu: 'Menu', lang: 'Język', about: 'O aplikacji', ver: 'Wersja', tickets: 'Bilety', data: 'Ważność danych' },
-    fr: { menu: 'Menu', lang: 'Langue', about: 'À propos de l’appli', ver: 'Version', tickets: 'Billets', data: 'Validité des données' }
+    cs: { menu: 'Menu', lang: 'Jazyk', about: 'O aplikaci', ver: 'Verze', tickets: 'Jízdné', data: 'Platnost dat' },
+    en: { menu: 'Menu', lang: 'Language', about: 'About the app', ver: 'Version', tickets: 'Fares', data: 'Data validity' },
+    sq: { menu: 'Menyja', lang: 'Gjuha', about: 'Rreth aplikacionit', ver: 'Versioni', tickets: 'Tarifa', data: 'Vlefshmëria e të dhënave' },
+    it: { menu: 'Menu', lang: 'Lingua', about: 'Info sull’app', ver: 'Versione', tickets: 'Tariffe', data: 'Validità dei dati' },
+    de: { menu: 'Menü', lang: 'Sprache', about: 'Über die App', ver: 'Version', tickets: 'Fahrpreise', data: 'Datengültigkeit' },
+    pl: { menu: 'Menu', lang: 'Język', about: 'O aplikacji', ver: 'Wersja', tickets: 'Taryfy', data: 'Ważność danych' },
+    fr: { menu: 'Menu', lang: 'Langue', about: 'À propos de l’appli', ver: 'Version', tickets: 'Tarifs', data: 'Validité des données' }
   };
   const NAMES = { cs: 'Čeština', en: 'English', sq: 'Shqip', it: 'Italiano', de: 'Deutsch', pl: 'Polski', fr: 'Français' };
   const KEY = 'tirana-data-info';
