@@ -204,6 +204,7 @@ html[lang="en"] .when input[type="time"], html[lang="fr"] .when input[type="time
 .foot p { margin: 0; }
 .foot a { color: var(--accent); font-weight: 600; text-decoration: none; }
 .foot a:hover { text-decoration: underline; }
+@media (max-width: 760px) { .foot { display: none; } }
 .mapwrap { grid-area: map; position: relative; min-height: 0; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); }
 #map { position: absolute; inset: 0; background: var(--map-bg); }
 .tilenote {
@@ -294,7 +295,7 @@ html[lang="en"] .when input[type="time"], html[lang="fr"] .when input[type="time
 .nodata .tabs, .nodata .planform, .nodata .search, .nodata .panel, .nodata .menuwrap { display: none; }
 
 @media (max-width: 760px) {
-  .app { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 44% minmax(0, 1fr) auto; grid-template-areas: "head" "map" "side" "foot"; gap: 10px; }
+  .app { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 44% minmax(0, 1fr); grid-template-areas: "head" "map" "side"; gap: 10px; }
   header { position: relative; padding-right: 150px; }
   .menuwrap { position: absolute; top: 0; right: 104px; z-index: 1001; }
   .menubtn { width: 34px; height: 34px; padding: 0; }
@@ -345,4 +346,7 @@ html[lang="en"] .when input[type="time"], html[lang="fr"] .when input[type="time
 .gpbtn small { font-size: 10px; font-weight: 500; letter-spacing: .04em; }
 .gpbtn b { font-size: 19px; font-weight: 600; }
 .gpbtn:hover { filter: brightness(1.2); }
-@media (max-width: 760px) { 
+@media (min-width: 761px) {
+  .brand h1 { font: 500 21px/1 var(--display); letter-spacing: .02em; }
+  .brand small { font: 500 10px/1.2 var(--display); letter-spacing: .1em; }
+}
