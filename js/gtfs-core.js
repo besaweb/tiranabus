@@ -186,7 +186,7 @@ const GTFS = (() => {
   }
 
 
-  const WALK_R = 400, WALK_V = 1.25, DETOUR = 1.3, CHANGE = 60, HORIZON = 6 * 3600;
+  const WALK_R = 400, WALK_V = 1.25, DETOUR = 1.3, CHANGE = 60, HORIZON = 6 * 3600, SAFE = 180;
 
   function dist(a, b) {
     const R = 6371000, r = Math.PI / 180;
@@ -287,7 +287,8 @@ const GTFS = (() => {
       const sa = A && A.inst.tr.st, sb = B && B.inst.tr.st;
       const xs = A ? sa.map((x, e) => e).filter(e => e > A.k0 && sa[e].arr != null) : org;
       const ys = B ? sb.map((x, b) => b).filter(b => b < B.k1 && sb[b].dep != null) : dst;
-      let best = null;
+      let best = null, orig = null;
+      const worse = (p, q) => (p.sl < SAFE) - (q.sl < SAFE) || p.m - q.m;
       for (const e of xs) {
         const X = A ? sa[e].stop : e, tX = A ? sa[e].arr + A.inst.base : -Infinity;
         const near = new Map((W.get(X) || []).map(([o, s2, m]) => [o.id, [s2, m]]));
@@ -296,10 +297,12 @@ const GTFS = (() => {
           if (A && B && A.inst === B.inst) continue;
           const v = X === Y ? [A && B ? CHANGE : 0, 0] : near.get(Y);
           if (!v || tX + v[0] > tY || (!B && tX + v[0] > tEnd)) continue;
-          if (!best || v[1] < best.m) best = { e, b, X, Y, tX, s: v[0], m: v[1] };
+          const cand = { e, b, X, Y, tX, s: v[0], m: v[1], sl: B ? tY - tX - v[0] : Infinity };
+          if (X === w.from.id && Y === w.to.id && (!A || e === A.k1) && (!B || b === B.k0)) orig = cand;
+          if (!best || worse(cand, best) < 0) best = cand;
         }
       }
-      if (!best || best.m >= w.m) continue;
+      if (!best || best === orig || (orig ? worse(best, orig) >= 0 : best.m >= w.m)) continue;
       if (A) { A.k1 = best.e; A.to = f.stops.get(best.X); A.arr = best.tX; }
       if (B) { B.k0 = best.b; B.from = f.stops.get(best.Y); B.dep = sb[best.b].dep + B.inst.base; }
       if (best.X === best.Y) { legs.splice(i, 1); i--; continue; }
