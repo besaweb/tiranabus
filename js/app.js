@@ -187,6 +187,7 @@
   function renderMeta() {
     const aboutBody = `<p><b>${esc(t('title'))}</b><br>${esc(t('aboutDesc'))}</p><p>${esc(t('aboutCredits'))}</p><p><b>${esc(t('aboutAuthor'))}:</b> <a href="https://besaweb.al" target="_blank" rel="noopener">besaweb.al</a><br><b>${esc(t('aboutContact'))}:</b> <a href="mailto:info@besaweb.al">info@besaweb.al</a></p>`;
     $('#meta').innerHTML = `<a class="mi mlink" href="tickets.html">${t('tickets')}</a>
+      <button type="button" class="mi mtheme" id="themeitem">${t(document.documentElement.dataset.theme === 'dark' ? 'themeLight' : 'themeDark')}</button>
       <button type="button" class="mi mtoggle" aria-expanded="false">${t('dataTitle')}</button><div class="mpane data">${metaData()}</div>
       <button type="button" class="mi mtoggle" aria-expanded="false">${t('aboutTitle')}</button><div class="mpane about">${aboutBody}</div>`;
     $('#aboutbox').innerHTML = `<h2>${t('aboutTitle')}</h2><div class="aboutbody">${aboutBody}</div>`;
@@ -595,6 +596,7 @@
   document.addEventListener('click', e => { if (!menuBox.contains(e.target)) setMenu(false); if (!aboutBox.contains(e.target)) setAbout(false); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') { setMenu(false); setAbout(false); } });
   menuBox.addEventListener('click', e => {
+    if (e.target.closest('.mtheme')) { toggleTheme(); return; }
     const b = e.target.closest('.mtoggle');
     if (!b) return;
     const pane = b.nextElementSibling, open = !pane.classList.contains('open');
@@ -607,16 +609,18 @@
   function syncTheme() {
     const k = isDark() ? 'themeLight' : 'themeDark';
     themeBtn.setAttribute('aria-label', t(k)); themeBtn.title = t(k);
+    const ti = $('#themeitem'); if (ti) ti.textContent = t(k);
   }
   let savedTheme = null;
   try { savedTheme = localStorage.getItem('tirana-mhd-theme'); } catch (e) {}
   document.documentElement.dataset.theme = savedTheme === 'dark' ? 'dark' : 'light';
-  themeBtn.addEventListener('click', () => {
+  const toggleTheme = () => {
     const th = isDark() ? 'light' : 'dark';
     document.documentElement.dataset.theme = th;
     try { localStorage.setItem('tirana-mhd-theme', th); } catch (e) {}
     syncTheme();
-  });
+  };
+  themeBtn.addEventListener('click', toggleTheme);
 
   function applyLang() {
     const l = I18N.lang;

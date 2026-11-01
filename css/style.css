@@ -288,6 +288,7 @@ html[lang="en"] .when input[type="time"], html[lang="fr"] .when input[type="time
 .menu h2 + .ds { border-top: 0; padding-top: 0; }
 .menu a { color: var(--accent); }
 .menu .mi { display: none; }
+.menu .mtheme { display: none; }
 .menu .aboutbody p { margin: 0 0 8px; font-size: 13px; line-height: 1.45; color: var(--muted); }
 .menu .aboutbody p b { color: var(--fg); }
 .menu .aboutbody p:last-child { margin: 0; }
@@ -297,15 +298,15 @@ html[lang="en"] .when input[type="time"], html[lang="fr"] .when input[type="time
 
 @media (max-width: 760px) {
   .app { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 44% minmax(0, 1fr); grid-template-areas: "head" "map" "side"; gap: 10px; }
-  header { position: relative; padding-right: 150px; }
-  .menuwrap { position: absolute; top: 0; right: 104px; z-index: 1001; }
+  header { position: relative; padding-right: 108px; }
+  .menuwrap { position: absolute; top: 0; right: 62px; z-index: 1001; }
   .menubtn { width: 34px; height: 34px; padding: 0; }
   .menubtn svg { display: block; }
   .menubtn .mt { display: none; }
   .menu { position: fixed; top: 64px; right: 12px; left: auto; }
-  .theme { position: absolute; top: 0; right: 62px; z-index: 1001; height: 34px; }
+  .theme { display: none; }
   .ticketbtn { display: none; }
-  .menu .mi { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 10px 2px; border: 0; border-bottom: 1px solid var(--line); background: none; color: var(--fg); font: 600 15px var(--ui); text-align: left; text-decoration: none; cursor: pointer; }
+  .menu .mi, .menu .mtheme { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 10px 2px; border: 0; border-bottom: 1px solid var(--line); background: none; color: var(--fg); font: 600 15px var(--ui); text-align: left; text-decoration: none; cursor: pointer; }
   .menu .mpane { display: none; padding: 8px 2px 4px; }
   .menu .mpane.data.open, .menu .mpane.about.open { display: block; }
   .menu .mpane h2 { display: none; }

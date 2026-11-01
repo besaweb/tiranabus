@@ -20,7 +20,7 @@
 .about a { color: var(--accent); }
 @media (max-width: 760px) {
   header { padding-right: 92px; }
-  .theme { right: 46px; }
+  .theme { display: flex; position: absolute; top: 0; right: 46px; z-index: 1001; height: 34px; }
   .amwrap { position: absolute; top: 0; right: 0; z-index: 1001; }
   .ambtn { height: 34px; width: 34px; }
 }
