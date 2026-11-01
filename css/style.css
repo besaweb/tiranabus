@@ -289,6 +289,8 @@ html[lang="en"] .when input[type="time"], html[lang="fr"] .when input[type="time
 .menu a { color: var(--accent); }
 .menu .mi { display: none; }
 .menu .mtheme { display: none; }
+.menu .mil { display: flex; align-items: center; gap: 10px; }
+.menu .mico { width: 18px; height: 18px; flex: none; color: var(--muted); }
 .menu .aboutbody p { margin: 0 0 8px; font-size: 13px; line-height: 1.45; color: var(--muted); }
 .menu .aboutbody p b { color: var(--fg); }
 .menu .aboutbody p:last-child { margin: 0; }
@@ -302,6 +304,7 @@ html[lang="en"] .when input[type="time"], html[lang="fr"] .when input[type="time
   .menuwrap { position: absolute; top: 0; right: 62px; z-index: 1001; }
   .menubtn { width: 34px; height: 34px; padding: 0; }
   .menubtn svg { display: block; }
+  .menubtn .ico { display: none; }
   .menubtn .mt { display: none; }
   .menu { position: fixed; top: 64px; right: 12px; left: auto; }
   .theme { display: none; }
@@ -356,6 +359,9 @@ html[lang="en"] .when input[type="time"], html[lang="fr"] .when input[type="time
 .gpbtn b { font-size: 19px; font-weight: 600; }
 .gpbtn:hover { filter: brightness(1.2); }
 @media (min-width: 761px) {
+  .ticketbtn .ico, .menubtn .ico { display: block; width: 16px; height: 16px; flex: none; opacity: .85; }
+  .ticketbtn, .menubtn { gap: 7px; }
+  .ticketbtn:hover .ico, .menubtn:hover .ico, .menubtn[aria-expanded="true"] .ico { color: var(--accent); opacity: 1; }
   .ticketbtn, .menubtn { position: relative; height: 36px; padding: 0 12px; border: 0; border-radius: 8px; background: transparent; color: var(--muted); font-weight: 600; font-size: 14px; letter-spacing: .01em; transition: background .15s, color .15s; }
   .ticketbtn:hover, .menubtn:hover { background: var(--soft); color: var(--fg); border-color: transparent; }
   .ticketbtn:focus-visible, .menubtn:focus-visible { outline-offset: -2px; }
