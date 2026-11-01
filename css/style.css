@@ -50,6 +50,7 @@ header {
   width: 40px; height: 40px; flex: none; object-fit: contain;
 }
 .brand h1 { margin: 0; font: 700 24px/1 var(--display); letter-spacing: .01em; text-wrap: balance; }
+.brand .sm { display: none; }
 .brand small { display: block; font: 600 11px/1.2 var(--ui); letter-spacing: .09em; text-transform: uppercase; color: var(--muted); margin-top: 3px; }
 .actions { margin-left: auto; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .status { font-size: 13px; color: var(--muted); }
@@ -324,7 +325,9 @@ html[lang="en"] .when input[type="time"], html[lang="fr"] .when input[type="time
   .lang.open button + button { border-top: 1px solid var(--line); }
   .lang:not(.open) button[aria-pressed="true"]::after { content: ''; margin-left: 6px; border: 4px solid transparent; border-top-color: var(--muted); border-bottom-width: 0; }
   .status { order: 3; width: 100%; }
-  .brand h1 { font-size: 22px; }
+  .brand h1 { font-size: 19px; }
+  .brand .sd { display: none; }
+  .brand .sm { display: inline; }
   .side { overflow: auto; }
   .panel { flex: none; overflow: visible; }
   .tilenote { bottom: 22px; font-size: 12px; }
