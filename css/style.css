@@ -356,6 +356,15 @@ html[lang="en"] .when input[type="time"], html[lang="fr"] .when input[type="time
 .gpbtn b { font-size: 19px; font-weight: 600; }
 .gpbtn:hover { filter: brightness(1.2); }
 @media (min-width: 761px) {
+  .ticketbtn, .menubtn { position: relative; height: 36px; padding: 0 12px; border: 0; border-radius: 8px; background: transparent; color: var(--muted); font-weight: 600; font-size: 14px; letter-spacing: .01em; transition: background .15s, color .15s; }
+  .ticketbtn:hover, .menubtn:hover { background: var(--soft); color: var(--fg); border-color: transparent; }
+  .ticketbtn:focus-visible, .menubtn:focus-visible { outline-offset: -2px; }
+  .menubtn[aria-expanded="true"] { background: var(--soft); color: var(--fg); }
+  .ticketbtn::after, .menubtn::after { content: ''; position: absolute; left: 12px; right: 12px; bottom: 5px; height: 2px; border-radius: 2px; background: var(--accent); transform: scaleX(0); transition: transform .18s; }
+  .ticketbtn:hover::after, .menubtn:hover::after, .menubtn[aria-expanded="true"]::after { transform: scaleX(1); }
+  .actions { gap: 4px; }
+  .actions .theme { margin-left: 8px; }
+  .actions .lang { margin-left: 4px; }
   .sign { width: 36px; height: 36px; }
   .brand { gap: 9px; }
   .brand h1 { font: 500 20px/1 var(--display); letter-spacing: .02em; }
