@@ -51,7 +51,7 @@ header {
 .sign {
   width: 40px; height: 40px; flex: none; object-fit: contain;
 }
-.brand h1 { margin: 0; font: 700 24px/1 var(--display); letter-spacing: .01em; text-wrap: balance; }
+.brand h1 { margin: 0; font: 600 22px/1 var(--ui); letter-spacing: 0; text-wrap: balance; }
 .brand .sm { display: none; }
 .brand small { display: block; font: 600 11px/1.2 var(--ui); letter-spacing: .09em; text-transform: uppercase; color: var(--muted); margin-top: 3px; }
 .actions { margin-left: auto; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
@@ -332,7 +332,7 @@ html[lang="en"] .when input[type="time"], html[lang="fr"] .when input[type="time
   .status { order: 3; width: 100%; }
   .sign { width: 34px; height: 34px; }
   .brand { gap: 8px; }
-  .brand h1 { font-size: 18px; line-height: 1; }
+  .brand h1 { font-size: 17px; line-height: 1; }
   .brand small { font-size: 9px; line-height: 1.1; margin-top: 3px; }
   .when input[type="time"] { flex: 0 1 92px; width: 92px; }
   html[lang="en"] .when input[type="time"], html[lang="fr"] .when input[type="time"] { flex-basis: 92px; width: 92px; }
@@ -376,7 +376,7 @@ html[lang="en"] .when input[type="time"], html[lang="fr"] .when input[type="time
   .actions .lang { margin-left: 4px; }
   .sign { width: 36px; height: 36px; }
   .brand { gap: 9px; }
-  .brand h1 { font: 500 20px/1 var(--display); letter-spacing: .02em; }
+  .brand h1 { font: 600 19px/1 var(--ui); letter-spacing: 0; }
   .brand small { font: 500 9.5px/1.1 var(--display); letter-spacing: .1em; margin-top: 3px; }
 }
 .adslot { flex: none; min-height: 50px; margin: 0 16px 10px; }
