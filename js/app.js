@@ -670,7 +670,7 @@
   const endBoot = fail => {
     if (!fail) { boot.classList.add('done'); return; }
     boot.classList.add('fail');
-    $('#boottext').dataset.i18n = 'bootFail'; $('#boottext').textContent = t('bootFail');
+    $('#boottx').dataset.i18n = 'bootFail'; $('#boottx').textContent = t('bootFail'); $('#boottext .bookico').remove();
     setTimeout(() => {
       document.body.classList.add('nodata');
       lineLayer.clearLayers(); stopLayer.clearLayers(); planLayer.clearLayers();
