@@ -185,7 +185,7 @@
   }
 
   function renderMeta() {
-    const aboutBody = `<p><b>${esc(t('title'))}</b><br>${esc(t('aboutDesc'))}</p><p>${esc(t('aboutCredits'))}</p><p><b>${esc(t('aboutAuthor'))}:</b> <a href="https://besaweb.al" target="_blank" rel="noopener">besaweb.al</a><br><b>${esc(t('aboutContact'))}:</b> <a href="mailto:info@besaweb.al">info@besaweb.al</a></p>`;
+    const aboutBody = `<p><b>${esc(t('title'))}</b><br>${esc(t('aboutDesc'))}</p><p>${esc(t('aboutCredits'))}</p><p><b>${esc(t('aboutAuthor'))}:</b> <a href="https://besaweb.al" target="_blank" rel="noopener">besaweb.al</a><br><b>${esc(t('aboutContact'))}:</b> <a href="mailto:info@besaweb.al">info@besaweb.al</a></p><p><a href="privacy.html">${esc(t('privacy'))}</a>${typeof Consent !== 'undefined' && Consent.enabled ? ` · <a href="#" class="adprefs">${esc(t('adPrefs'))}</a>` : ''}</p>`;
     $('#meta').innerHTML = `<a class="mi mlink" href="tickets.html">${t('tickets')}</a>
       <button type="button" class="mi mtheme" id="themeitem">${t(document.documentElement.dataset.theme === 'dark' ? 'themeLight' : 'themeDark')}</button>
       <button type="button" class="mi mtoggle" aria-expanded="false">${t('dataTitle')}</button><div class="mpane data">${metaData()}</div>
@@ -624,6 +624,7 @@
 
   function applyLang() {
     const l = I18N.lang;
+    if (typeof Consent !== 'undefined') Consent.render();
     document.documentElement.lang = l;
     document.title = t('title');
     for (const el of document.querySelectorAll('[data-i18n]')) el.textContent = t(el.dataset.i18n);

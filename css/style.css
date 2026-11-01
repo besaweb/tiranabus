@@ -361,3 +361,7 @@ html[lang="en"] .when input[type="time"], html[lang="fr"] .when input[type="time
   .brand h1 { font: 500 20px/1 var(--display); letter-spacing: .02em; }
   .brand small { font: 500 9.5px/1.1 var(--display); letter-spacing: .1em; margin-top: 3px; }
 }
+.adslot { flex: none; min-height: 50px; margin: 0 16px 10px; }
+.consent { position: fixed; left: 0; right: 0; bottom: 0; z-index: 3000; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px 16px; padding: 12px max(16px, env(safe-area-inset-right, 0px)) max(12px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); background: var(--panel); border-top: 1px solid var(--line); box-shadow: 0 -2px 12px rgb(0 0 0 / .12); font-size: 13px; line-height: 1.4; }
+.consent p { margin: 0; max-width: 640px; }
+.consent .cb { display: flex; gap: 8px; }

@@ -37,3 +37,7 @@ dd.big { font-weight: 600; font-size: 16px; }
   dt { padding-top: 8px; }
   dt:first-child { padding-top: 0; }
 }
+.card ul { margin: 0 0 10px; padding-left: 20px; }
+.card li { margin-bottom: 6px; }
+.card a { color: var(--accent); }
+.meta { color: var(--muted); font-size: 13px; margin: 0; }
