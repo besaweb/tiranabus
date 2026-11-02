@@ -10,7 +10,8 @@
     es: { data: 'Validez de los datos', op: 'Operador', valid: 'Validez de los horarios', upd: 'Última actualización', web: 'Sitio web' },
     mk: { data: 'Важност на податоците', op: 'Превозник', valid: 'Важност на возните редови', upd: 'Последно ажурирање', web: 'Веб-страница' },
     el: { data: 'Εγκυρότητα δεδομένων', op: 'Φορέας', valid: 'Εγκυρότητα δρομολογίων', upd: 'Τελευταία ενημέρωση', web: 'Ιστότοπος' },
-    ru: { data: 'Актуальность данных', op: 'Перевозчик', valid: 'Срок действия расписаний', upd: 'Последнее обновление', web: 'Сайт' }
+    ru: { data: 'Актуальность данных', op: 'Перевозчик', valid: 'Срок действия расписаний', upd: 'Последнее обновление', web: 'Сайт' },
+    tr: { data: 'Veri geçerliliği', op: 'İşletmeci', valid: 'Sefer saatlerinin geçerliliği', upd: 'Son güncelleme', web: 'Web sitesi' }
   };
   const SRC = [
     { name: 'Municipality of Tirana', url: 'https://pt.tirana.al' },
@@ -33,7 +34,7 @@
   const fd = v => {
     const m = /^(\d{4})-?(\d{2})-?(\d{2})/.exec(v || '');
     if (!m) return '–';
-    return l === 'cs' ? +m[3] + '. ' + +m[2] + '. ' + m[1] : ['de', 'pl', 'ru', 'mk'].includes(l) ? m[3] + '.' + m[2] + '.' + m[1] : m[3] + '/' + m[2] + '/' + m[1];
+    return l === 'cs' ? +m[3] + '. ' + +m[2] + '. ' + m[1] : ['de', 'pl', 'ru', 'mk', 'tr'].includes(l) ? m[3] + '.' + m[2] + '.' + m[1] : m[3] + '/' + m[2] + '/' + m[1];
   };
   const main = document.getElementById('main');
   for (const x of SRC) {

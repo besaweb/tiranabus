@@ -82,6 +82,14 @@ const EXTRA_I18N = {
         RT: { long: 'Терминал Jug–Sever – аэропорт', desc: 'LU-NA. Каждый час: от терминала 7:00–18:00, из аэропорта 8:00–18:00. Стоимость 300 ALL (3,50 €). Luna не указывает время в пути; в данных используется оценка 30 мин.' }
       },
       heads: { 'Letiště Tirana (TIA)': 'Аэропорт Тираны (TIA)', 'Tirana centrum (Opera)': 'Центр Тираны (Опера)', 'Terminál Jug–Sever': 'Терминал Jug–Sever' }
+    },
+    tr: {
+      stops: { CITY: 'Opera (Pallati i Kulturës) – havalimanı otobüsü', TERM: 'Jug–Sever Terminali – havalimanı otobüsü', TIA: 'Tiran Havalimanı – Nënë Tereza (TIA)' },
+      routes: {
+        RX: { long: 'Rinas Express: merkez – havalimanı', desc: 'LU-NA. Her saat başı, iki yönde de 7/24 kesintisiz. Ücret 400 ALL (4,50 €), otobüste ödenir, bilet tüm gün geçerlidir. Yolculuk süresi yaklaşık 45 dk.' },
+        RT: { long: 'Jug–Sever Terminali – havalimanı', desc: 'LU-NA. Her saat başı: terminalden 7:00–18:00, havalimanından 8:00–18:00. Ücret 300 ALL (3,50 €). Luna yolculuk süresini belirtmiyor; verilerde 30 dk tahmini kullanılıyor.' }
+      },
+      heads: { 'Letiště Tirana (TIA)': 'Tiran Havalimanı (TIA)', 'Tirana centrum (Opera)': 'Tiran merkezi (Opera)', 'Terminál Jug–Sever': 'Jug–Sever Terminali' }
     }
   }
 };

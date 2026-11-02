@@ -10,9 +10,10 @@
     es: { menu: 'Menú', lang: 'Idioma', about: 'Acerca de la app', ver: 'Versión', tickets: 'Tarifas', data: 'Validez de los datos' },
     mk: { menu: 'Мени', lang: 'Јазик', about: 'За апликацијата', ver: 'Верзија', tickets: 'Тарифи', data: 'Важност на податоците' },
     el: { menu: 'Μενού', lang: 'Γλώσσα', about: 'Σχετικά με την εφαρμογή', ver: 'Έκδοση', tickets: 'Ναύλα', data: 'Εγκυρότητα δεδομένων' },
-    ru: { menu: 'Меню', lang: 'Язык', about: 'О приложении', ver: 'Версия', tickets: 'Тарифы', data: 'Актуальность данных' }
+    ru: { menu: 'Меню', lang: 'Язык', about: 'О приложении', ver: 'Версия', tickets: 'Тарифы', data: 'Актуальность данных' },
+    tr: { menu: 'Menü', lang: 'Dil', about: 'Uygulama hakkında', ver: 'Sürüm', tickets: 'Ücretler', data: 'Veri geçerliliği' }
   };
-  const NAMES = { cs: 'Čeština', en: 'English', sq: 'Shqip', it: 'Italiano', de: 'Deutsch', pl: 'Polski', fr: 'Français', es: 'Español', mk: 'Македонски', el: 'Ελληνικά', ru: 'Русский' };
+  const NAMES = { cs: 'Čeština', en: 'English', sq: 'Shqip', it: 'Italiano', de: 'Deutsch', pl: 'Polski', fr: 'Français', es: 'Español', mk: 'Македонски', el: 'Ελληνικά', ru: 'Русский', tr: 'Türkçe' };
   const KEY = 'tirana-data-info';
   let info = [{ from: '', to: '', upd: '' }, { from: '', to: '', upd: '20261029' }];
   try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s[0]) info[0] = s[0]; } catch (e) {}
