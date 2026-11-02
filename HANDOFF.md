@@ -9,7 +9,9 @@ Statická webová aplikace (vanilla JS, bez buildu) nad GTFS feedem MHD Tirany. 
 ## Hotovo
 
 - **Google Analytics 4** (gtag `G-XJ9EK9ZKWF`) na začátku `<head>` v `index.html`, `tickets.html`, `privacy.html`; bez consent mode. Popsáno v `privacy.html` (sekce Analytics / Analytika, EN i CS). Gtag je i v APK (bere `index.html`) – v Google Play Data safety uvést analytiku.
-- **Verze webu** v O aplikaci: konstanta `VERSION = '1.00'` v `js/app.js` (v APK se místo ní ukáže `APP_VERSION` z `build.sh`). Při vydání ručně zvýšit.
+- **SEO etapa 2** (2. 11. 2026): výchozí jazyk HTML je angličtina (`lang="en"`, texty, placeholdery a aria z `D.en`; JS je pak přeloží), `tickets.html` má title, description, canonical, OG a anglický text přímo v HTML, `privacy.html` canonical. OG obrázek `img/og.jpg` (1200×630, výřez z `TiranaBusCover.png`), `summary_large_image`. JSON-LD (WebSite, WebApplication, Organization BesaWeb) v `index.html`. `<noscript>` s popisem a odkazy (`.nojs`). `favicon.ico` (16/32/48) v kořeni, `img/logo.png` zmenšeno na 256 barev (50 → 9 KB). Alt promo obrázku z klíče `promoAlt`, title tickets z `tkTitle`.
+- **Mobilní okraje webu** (≤ 760 px): body bez výchozího marginu 8 px, boky 8 px, nahoře 6 px (dřív 24 a 20 px), vždy aspoň safe-area. Desktop beze změny.
+- **Verze webu** v O aplikaci: konstanta `VERSION = '1.01'` v `js/app.js` (v APK se místo ní ukáže `APP_VERSION` z `build.sh`). Při vydání ručně zvýšit.
 - **SEO etapa 1** (2. 11. 2026): title z klíče `metaTitle` (JS už nepřepisuje title na holé „Tirana Bus“), nový description (11 jazyků), bez meta keywords; canonical/og:url/og:image ve zdroji na `https://tiranabus.al/` (kopie na Pages tak odkazuje na hlavní doménu). `robots.txt`, `sitemap.xml` (lastmod ručně), `.htaccess` (301 www → bez www, `ErrorDocument 404`), `404.html` (absolutní cesty, `noindex`). `.htaccess` a `404.html` jen na FTP, ne na Pages.
 - **Načtení GTFS** ze zipu (automaticky při startu, záložně drag & drop; tlačítka Stáhnout/Nahrát GTFS, hlášení „Načteno“ a štítky shapes/frequencies/letiště byly odstraněny), parsování přes PapaParse, zpracování jen v prohlížeči.
 - **Ukázková síť** (`demo.js`) při startu, dokud uživatel nenahraje feed.
@@ -105,7 +107,7 @@ Letiště ve feedu není (Rinas leží mimo území města, linky provozuje souk
 7. Jízdné (`fare_*`) a odkazy na oficiální PDF jízdní řády (`timetable_pages.txt`).
 8. Po změně `extra-airport.js` ručně přegenerovat `data/gtfs-extra.zip` – zvážit skript.
 9. Android: zálohovat `android/tirana-bus.keystore` (bez něj nejde APK aktualizovat přes stávající instalaci), případně ikona se zaoblením (adaptive icon) a vydání APK do Releases.
-10. **SEO:** ověřit tiranabus.al v Google Search Console a Bing Webmaster Tools (DNS TXT u gigaserver.cz), odeslat `sitemap.xml`. Etapa 2: meta a statický text na `tickets.html`, výchozí `lang="en"`, OG obrázek 1200×630, JSON-LD (WebSite, WebApplication, Organization), `<noscript>`, favicon. Etapa 3: jazykové URL + hreflang, landing pages z GTFS (letiště, linky, zastávky), Consent Mode pro EU.
+10. **SEO:** ověřit tiranabus.al v Google Search Console a Bing Webmaster Tools (DNS TXT u gigaserver.cz), odeslat `sitemap.xml`. Etapa 3: jazykové URL + hreflang, landing pages z GTFS (letiště, linky, zastávky), Consent Mode pro EU.
 
 ## Známé chyby a omezení
 

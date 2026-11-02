@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="cs">
+<html lang="en">
 <head>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-XJ9EK9ZKWF"></script>
@@ -19,27 +19,33 @@
 <meta name="theme-color" content="#ECEFEE" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0D1312" media="(prefers-color-scheme: dark)">
 <link rel="canonical" href="https://tiranabus.al/">
-<link rel="icon" type="image/png" href="img/logo.png">
+<link rel="icon" href="favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" href="img/logo.png" sizes="192x192">
 <link rel="apple-touch-icon" href="img/logo.png">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Tirana Bus">
-<meta property="og:title" content="Tirana Bus – map, timetables and journey planner">
+<meta property="og:title" content="Tirana Bus – Bus Map, Timetables &amp; Journey Planner">
 <meta property="og:description" content="Bus lines and stops, departures and a journey planner for public transport in Tirana, including airport buses.">
 <meta property="og:url" content="https://tiranabus.al/">
-<meta property="og:image" content="https://tiranabus.al/img/logo.png">
+<meta property="og:image" content="https://tiranabus.al/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Tirana Bus – public transport journey planner for Tirana">
 <meta property="og:locale" content="en_US">
 <meta property="og:locale:alternate" content="cs_CZ">
 <meta property="og:locale:alternate" content="sq_AL">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Tirana Bus">
 <meta name="twitter:description" content="Map, timetables and journey planner for public transport in Tirana.">
-<meta name="twitter:image" content="https://tiranabus.al/img/logo.png">
+<meta name="twitter:image" content="https://tiranabus.al/img/og.jpg">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "@id": "https://tiranabus.al/#website", "url": "https://tiranabus.al/", "name": "Tirana Bus", "inLanguage": "en", "publisher": {"@id": "https://besaweb.al/#org"}}, {"@type": "WebApplication", "@id": "https://tiranabus.al/#app", "name": "Tirana Bus", "url": "https://tiranabus.al/", "description": "Map of Tirana city bus lines and stops, timetables, next departures and a journey planner with transfers, including airport buses to Rinas.", "applicationCategory": "TravelApplication", "operatingSystem": "Web, Android", "browserRequirements": "Requires JavaScript", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}, "inLanguage": ["en", "sq", "cs", "it", "de", "pl", "fr", "es", "mk", "el", "ru"], "image": "https://tiranabus.al/img/og.jpg", "author": {"@id": "https://besaweb.al/#org"}}, {"@type": "Organization", "@id": "https://besaweb.al/#org", "name": "BesaWeb", "url": "https://besaweb.al", "email": "info@besaweb.al"}]}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@500&display=swap">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+<noscript><div class="nojs"><h2>Tirana Bus</h2><p>Map of Tirana city bus lines and stops, timetables, next departures and a journey planner with transfers, including airport buses to Rinas. The map and planner need JavaScript.</p><p><a href="tickets.html">Bus tickets and fares in Tirana</a> · <a href="privacy.html">Privacy Policy</a></p></div></noscript>
 <div class="boot" id="boot" role="status" aria-live="polite">
   <svg viewBox="0 0 800 400" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
     <path d="M0 250 L110 170 L190 205 L330 110 L450 195 L565 140 L690 205 L800 150 V400 H0Z" fill="#8FCBFF"/>
@@ -63,7 +69,7 @@
     <use href="#bb" transform="translate(363 360) scale(.8)"/>
     <use href="#bb" transform="translate(540 346) scale(1.15)"/>
   </svg>
-  <p id="boottext"><span id="boottx" data-i18n="bootLoading">Načítají se jízdní řády...</span><svg class="bookico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M3 5.5c3-1.3 6-1.3 9 .5v13c-3-1.8-6-1.8-9-.5z"/><path d="M21 5.5c-3-1.3-6-1.3-9 .5v13c3-1.8 6-1.8 9-.5z"/></svg></p>
+  <p id="boottext"><span id="boottx" data-i18n="bootLoading">Loading timetables...</span><svg class="bookico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M3 5.5c3-1.3 6-1.3 9 .5v13c-3-1.8-6-1.8-9-.5z"/><path d="M21 5.5c-3-1.3-6-1.3-9 .5v13c3-1.8 6-1.8 9-.5z"/></svg></p>
 </div>
 <div class="app" id="app">
   <header>
@@ -71,22 +77,22 @@
       <img class="sign" src="img/logo.png" alt="" width="40" height="40">
       <div>
         <h1 data-i18n="title">Tirana Bus</h1>
-        <small><span class="sd" data-i18n="sub">Městská hromadná doprava</span><span class="sm" data-i18n="subM">Městská hromadná doprava</span></small>
+        <small><span class="sd" data-i18n="sub">Public Transport</span><span class="sm" data-i18n="subM">Public Transport</span></small>
       </div>
     </div>
     <div class="actions">
       <span class="status" id="status" role="status"></span>
-      <a class="btn ticketbtn" id="tickets" href="tickets.html"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5V7a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v1.5a2.5 2.5 0 0 0 0 5V17a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-3.5a2.5 2.5 0 0 0 0-5z"/><path d="M14 6.5v11" stroke-dasharray="2 2.2"/></svg><span data-i18n="tickets">Jízdné</span></a>
+      <a class="btn ticketbtn" id="tickets" href="tickets.html"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5V7a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v1.5a2.5 2.5 0 0 0 0 5V17a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-3.5a2.5 2.5 0 0 0 0-5z"/><path d="M14 6.5v11" stroke-dasharray="2 2.2"/></svg><span data-i18n="tickets">Fares</span></a>
       <div class="menuwrap">
-        <button type="button" class="menubtn" id="menubtn" aria-haspopup="true" aria-expanded="false" aria-controls="meta" aria-label="Platnost dat" title="Platnost dat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4M9 15l2 2 4-4"/></svg><span class="mt" data-i18n="dataTitle">Platnost dat</span></button>
+        <button type="button" class="menubtn" id="menubtn" aria-haspopup="true" aria-expanded="false" aria-controls="meta" aria-label="Data validity" title="Data validity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4M9 15l2 2 4-4"/></svg><span class="mt" data-i18n="dataTitle">Data validity</span></button>
         <div class="menu" id="meta" hidden></div>
       </div>
       <div class="menuwrap aboutwrap">
-        <button type="button" class="menubtn" id="aboutbtn" aria-haspopup="true" aria-expanded="false" aria-controls="aboutbox"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5M12 8h.01"/></svg><span class="mt" data-i18n="aboutTitle">O aplikaci</span></button>
+        <button type="button" class="menubtn" id="aboutbtn" aria-haspopup="true" aria-expanded="false" aria-controls="aboutbox"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5M12 8h.01"/></svg><span class="mt" data-i18n="aboutTitle">About the app</span></button>
         <div class="menu" id="aboutbox" hidden></div>
       </div>
-      <button type="button" class="theme" id="theme" aria-label="Tmavý režim" title="Tmavý režim"><svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg><svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg></button>
-      <div class="langwrap"><div class="lang" role="group" data-i18n-aria="langAria" aria-label="Jazyk">
+      <button type="button" class="theme" id="theme" aria-label="Dark mode" title="Dark mode"><svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg><svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg></button>
+      <div class="langwrap"><div class="lang" role="group" data-i18n-aria="langAria" aria-label="Language">
         <button type="button" data-lang="sq" aria-pressed="false" aria-label="Shqip" title="Shqip"><svg viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#E41E20"/><path fill="#000" d="M12 3.2c-.5-.9-1.6-1.5-2.7-1.3l.6 1.1-1.3.2.9 1.1c-1.4.2-2.5 1-3.2 2.2l1.6.2c-.5.7-.7 1.5-.5 2.3l1.4-.8c.1 1.4.9 2.5 2 3.2l-1.1 2.6h6.2l-1.1-2.6c1.1-.7 1.9-1.8 2-3.2l1.4.8c.2-.8 0-1.6-.5-2.3l1.6-.2c-.7-1.2-1.8-2-3.2-2.2l.9-1.1-1.3-.2.6-1.1c-1.1-.2-2.2.4-2.7 1.3z"/></svg></button>
         <button type="button" data-lang="en" aria-pressed="false" aria-label="English" title="English"><svg viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="60" height="30" fill="#012169"/><path d="M0 0l60 30M60 0L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0l60 30M60 0L0 30" stroke="#C8102E" stroke-width="2"/><path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6"/></svg></button>
         <button type="button" data-lang="cs" aria-pressed="false" aria-label="Čeština" title="Čeština"><svg viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="8" fill="#fff"/><rect y="8" width="24" height="8" fill="#D7141A"/><path d="M0 0l12 8L0 16z" fill="#11457E"/></svg></button>
@@ -105,36 +111,36 @@
   <aside class="side">
     <div class="demo" id="expiry" hidden></div>
     <div class="demo" id="demo" data-i18n-html="demo"></div>
-    <div class="tabs" role="tablist" data-i18n-aria="mode" aria-label="Režim">
-      <button type="button" role="tab" id="tab-plan" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="15" rx="3"/><path d="M4 11h16M4 7.5h16"/><circle cx="8" cy="14.5" r=".6"/><circle cx="16" cy="14.5" r=".6"/><path d="M6.5 18v2.5M17.5 18v2.5"/></svg><span data-i18n="tabPlan">Spojení</span></button>
-      <button type="button" role="tab" id="tab-browse" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="18" r="2.3"/><circle cx="18" cy="6" r="2.3"/><path d="M8.3 18H14a3.5 3.5 0 0 0 0-7h-4a3.5 3.5 0 0 1 0-7h5.7"/></svg><span data-i18n="tabBrowse">Linky a zastávky</span></button>
+    <div class="tabs" role="tablist" data-i18n-aria="mode" aria-label="Mode">
+      <button type="button" role="tab" id="tab-plan" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="15" rx="3"/><path d="M4 11h16M4 7.5h16"/><circle cx="8" cy="14.5" r=".6"/><circle cx="16" cy="14.5" r=".6"/><path d="M6.5 18v2.5M17.5 18v2.5"/></svg><span data-i18n="tabPlan">Journey</span></button>
+      <button type="button" role="tab" id="tab-browse" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="18" r="2.3"/><circle cx="18" cy="6" r="2.3"/><path d="M8.3 18H14a3.5 3.5 0 0 0 0-7h-4a3.5 3.5 0 0 1 0-7h5.7"/></svg><span data-i18n="tabBrowse">Lines &amp; stops</span></button>
     </div>
     <form class="planform" id="planform" autocomplete="off">
       <div class="od">
-        <div class="field"><span class="pin a" aria-hidden="true">A</span><input id="from" data-i18n-ph="fromPh" data-i18n-aria="fromAria" placeholder="Odkud – zastávka" aria-label="Odkud" role="combobox" aria-autocomplete="list"><div class="sugg" id="from-sugg" hidden></div></div>
-        <div class="field"><span class="pin b" aria-hidden="true">B</span><input id="to" data-i18n-ph="toPh" data-i18n-aria="toAria" placeholder="Kam – zastávka" aria-label="Kam" role="combobox" aria-autocomplete="list"><div class="sugg" id="to-sugg" hidden></div></div>
-        <button type="button" class="btn swap" id="swap" data-i18n-aria="swapAria" data-i18n-title="swap" aria-label="Prohodit Odkud a Kam" title="Prohodit">
+        <div class="field"><span class="pin a" aria-hidden="true">A</span><input id="from" data-i18n-ph="fromPh" data-i18n-aria="fromAria" placeholder="From – stop" aria-label="From" role="combobox" aria-autocomplete="list"><div class="sugg" id="from-sugg" hidden></div></div>
+        <div class="field"><span class="pin b" aria-hidden="true">B</span><input id="to" data-i18n-ph="toPh" data-i18n-aria="toAria" placeholder="To – stop" aria-label="To" role="combobox" aria-autocomplete="list"><div class="sugg" id="to-sugg" hidden></div></div>
+        <button type="button" class="btn swap" id="swap" data-i18n-aria="swapAria" data-i18n-title="swap" aria-label="Swap From and To" title="Swap">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 2v11M2.5 10.5 5 13l2.5-2.5M11 14V3M8.5 5.5 11 3l2.5 2.5"/></svg>
         </button>
       </div>
       <div class="when">
-        <select id="day" data-i18n-aria="dayAria" aria-label="Den"><option value="0" data-i18n="today">Dnes</option><option value="1" data-i18n="tomorrow">Zítra</option></select>
-        <input type="time" id="time" step="60" data-i18n-aria="timeAria" aria-label="Čas odjezdu">
-        <button type="button" class="btn" id="nowbtn" data-i18n="now">Teď</button>
-        <button type="submit" class="btn primary"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3 3"/></svg><span data-i18n="go">Vyhledat</span></button>
+        <select id="day" data-i18n-aria="dayAria" aria-label="Day"><option value="0" data-i18n="today">Today</option><option value="1" data-i18n="tomorrow">Tomorrow</option></select>
+        <input type="time" id="time" step="60" data-i18n-aria="timeAria" aria-label="Departure time">
+        <button type="button" class="btn" id="nowbtn" data-i18n="now">Now</button>
+        <button type="submit" class="btn primary"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3 3"/></svg><span data-i18n="go">Search</span></button>
       </div>
     </form>
     <label class="search" hidden>
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3 3"/></svg>
-      <input type="search" id="q" data-i18n-ph="searchPh" placeholder="Hledat linku nebo zastávku" autocomplete="off">
+      <input type="search" id="q" data-i18n-ph="searchPh" placeholder="Search for a line or stop" autocomplete="off">
     </label>
     <div class="panel" id="panel"></div>
     <div class="adslot" id="adslot" hidden></div>
   </aside>
 
   <div class="mapwrap">
-    <div id="map" data-i18n-aria="mapAria" aria-label="Mapa linek a zastávek"></div>
-    <div class="tilenote" id="tilenote" hidden><span id="tiletext"></span><button type="button" id="tileclose" data-i18n-aria="close" aria-label="Zavřít">×</button></div>
+    <div id="map" data-i18n-aria="mapAria" aria-label="Map of lines and stops"></div>
+    <div class="tilenote" id="tilenote" hidden><span id="tiletext"></span><button type="button" id="tileclose" data-i18n-aria="close" aria-label="Close">×</button></div>
   </div>
   <footer class="foot">
     <p>Website designed, developed &amp; maintained by <a href="https://besaweb.al" target="_blank" rel="noopener">BesaWeb</a> · © 2026 BesaWeb. All rights reserved. · <a href="privacy.html">Privacy Policy</a></p>

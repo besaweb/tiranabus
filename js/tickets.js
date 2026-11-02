@@ -4,7 +4,7 @@
   I18N.setLang(lang || I18N.detect(navigator.languages || [navigator.language]));
   document.documentElement.dataset.theme = theme === 'dark' ? 'dark' : 'light';
   document.documentElement.lang = I18N.lang;
-  document.title = I18N.t('tickets') + ' – ' + I18N.t('title');
+  document.title = I18N.t('tkTitle') + ' – ' + I18N.t('title');
   for (const el of document.querySelectorAll('[data-k]')) el.textContent = I18N.t(el.dataset.k);
   document.getElementById('title').textContent = I18N.t('tkTitle');
   const RATE = { cs: ['CZK', .268], en: ['EUR', .011], it: ['EUR', .011], de: ['EUR', .011], pl: ['PLN', .047], fr: ['EUR', .011], es: ['EUR', .011], el: ['EUR', .011], ru: ['EUR', .011], mk: ['MKD', .68] }[I18N.lang];
