@@ -46,6 +46,8 @@ Městský feed letiště neobsahuje, protože Rinas leží mimo území Tirany a
 
 ## Android aplikace (APK)
 
+Web běží na https://tiranabus.al (nahrání: `bash deploy-ftp.sh`, údaje v `.ftp.env` mimo git) a na GitHub Pages.
+
 Ve složce `android/` je WebView obálka. `bash android/build.sh` (Git Bash, Android SDK a Android Studio JBR) vytvoří `android/out/TiranaBus.apk`, bez Gradle. APK obsahuje web, knihovny a lokální `gtfs.zip`, při startu zkusí stáhnout čerstvý feed z GitHub Pages. Mapové dlaždice potřebují internet. Instalace: nahrát APK do telefonu a povolit instalaci z neznámých zdrojů. Klíč `android/tirana-bus.keystore` je mimo git, bez něj nejde aplikaci aktualizovat.
 
 ## Parametry plánovače (`js/gtfs-core.js`)

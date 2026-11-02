@@ -5,3 +5,5 @@ android/build/
 android/out/
 android/*.keystore
 *.apk
+
+.ftp.env
