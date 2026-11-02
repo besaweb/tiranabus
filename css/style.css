@@ -333,6 +333,8 @@ html[lang="en"] .when input[type="time"], html[lang="fr"] .when input[type="time
   .actions { margin-left: 0; width: 100%; }
   .langwrap { position: static; width: auto; height: auto; }
   .status { order: 3; width: 100%; }
+  .status:empty { display: none; }
+  header { row-gap: 0; }
   .sign { width: 34px; height: 34px; }
   .brand { gap: 8px; }
   .brand h1 { font-size: 17px; line-height: 1; }
