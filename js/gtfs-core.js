@@ -20,7 +20,7 @@ const GTFS = (() => {
       if (lt !== '0' && lt !== '') continue;
       const lat = +s.stop_lat, lon = +s.stop_lon;
       if (!isFinite(lat) || !isFinite(lon) || (lat === 0 && lon === 0)) continue;
-      stops.set(s.stop_id, { id: s.stop_id, name: (s.stop_name || s.stop_id).trim(), code: (s.stop_code || '').trim(), lat, lon, routes: new Set(), deps: [] });
+      stops.set(s.stop_id, { id: s.stop_id, name: (s.stop_name || s.stop_id).trim(), code: (s.stop_code || '').trim(), desc: (s.stop_desc || '').trim(), lat, lon, routes: new Set(), deps: [] });
     }
 
     const routes = new Map();
@@ -201,7 +201,7 @@ const GTFS = (() => {
   }
 
 
-  const WALK_R = 400, WALK_V = 1.25, DETOUR = 1.3, CHANGE = 60, HORIZON = 6 * 3600, SAFE = 180;
+  const WALK_R = 400, WALK_V = 1.25, DETOUR = 1.3, CHANGE = 60, HORIZON = 6 * 3600, SAFE = 180, ACC_K = 2, XFER = 600;
 
   function dist(a, b) {
     const R = 6371000, r = Math.PI / 180;
@@ -219,13 +219,29 @@ const GTFS = (() => {
       const cl = new Map();
       list.forEach((s, i) => { const r = root(i); (cl.get(r) || cl.set(r, []).get(r)).push(s); });
       const parts = [...cl.values()].sort((a, b) => b.length - a.length || a[0].lat - b[0].lat);
-      parts.forEach((p, i) => out.push({ name, label: parts.length > 1 ? name + ' (' + (i + 1) + ')' : name, stops: p }));
+      const street = p => {
+        for (const s of p) {
+          const m = /\b(blv|bulevardi|rr|rruga|rrug[eë]s|rrug[eë]n)\.?\s*["“]([^"”]+)["”]/i.exec(s.desc || '');
+          if (m) return name + ' – ' + (/^b/i.test(m[1]) ? 'Bulevardi ' : 'Rruga ') + m[2].trim();
+        }
+        return '';
+      };
+      const lines = p => name + ' (' + [...new Set(p.flatMap(s => [...(s.routes || [])].map(r => r.short)))].sort((a, b) => a.localeCompare(b, 'cs', { numeric: true })).join(', ') + ')';
+      let labels = parts.map(p => street(p) || lines(p));
+      labels = labels.map((l, i) => labels.indexOf(l) !== labels.lastIndexOf(l) ? lines(parts[i]) : l);
+      labels = labels.map((l, i) => labels.indexOf(l) !== labels.lastIndexOf(l) ? name + ' (' + (i + 1) + ')' : l);
+      parts.forEach((p, i) => out.push({ name, label: parts.length > 1 ? labels[i] : name, stops: p }));
     }
     return out;
   }
 
   function walkGraph(f) {
     if (f.walk) return f.walk;
+    if (f.walkFn) {
+      const W = new Map(), M = f.walkFn([...f.stops.values()], WALK_R * DETOUR);
+      for (const s of f.stops.values()) W.set(s.id, (M.get(s.id) || []).filter(([o]) => o !== s).map(([o, m]) => [o, Math.max(30, Math.round(m / WALK_V)), Math.round(m)]));
+      return (f.walk = W);
+    }
     const cell = 0.005, grid = new Map(), W = new Map();
     const key = (a, b) => a + ':' + b;
     for (const s of f.stops.values()) {
@@ -345,7 +361,7 @@ const GTFS = (() => {
 
   function scan(f, conns, fromStops, toSet, t0, acc) {
     const W = walkGraph(f), INF = Infinity;
-    const eg = id => acc && acc.d.has(id) ? acc.d.get(id).w : 0;
+    const eg = id => acc && acc.d.has(id) ? acc.d.get(id).w * ACC_K : 0;
     const arr = [], board = [], J = [], T = [], RA = [];
     for (let k = 0; k <= MAXR; k++) { arr.push(new Map()); board.push(new Map()); J.push(new Map()); T.push(new Map()); RA.push(new Map()); }
     let best = INF;
@@ -356,7 +372,7 @@ const GTFS = (() => {
         if (t >= get(arr[kk], id)) continue;
         arr[kk].set(id, t); board[kk].set(id, b); J[kk].set(id, j); hit = true;
       }
-      if (hit && toSet.has(id) && t + eg(id) < best) best = t + eg(id);
+      if (hit && toSet.has(id) && !(acc && j.kind === 'origin') && t + eg(id) < best) best = t + eg(id);
       return hit;
     };
     for (const s of fromStops) { const w = acc && acc.o.has(s.id) ? acc.o.get(s.id).w : 0; reach(0, s.id, t0 + w, t0 + w, { kind: 'origin' }); }
@@ -387,7 +403,7 @@ const GTFS = (() => {
     let prevBest = INF;
     for (let k = 0; k <= MAXR; k++) {
       let bk = INF, bs = null;
-      for (const id of toSet) { const t = get(arr[k], id) + eg(id); if (t < bk) { bk = t; bs = id; } }
+      for (const id of toSet) { if (acc && J[k].has(id) && J[k].get(id).kind === 'origin') continue; const t = get(arr[k], id) + eg(id); if (t < bk) { bk = t; bs = id; } }
       if (!bs || bk >= prevBest) continue;
       prevBest = bk;
       if (acc && !k) continue;
@@ -421,7 +437,7 @@ const GTFS = (() => {
       const rides = legs.filter(l => l.kind === 'ride').length;
       out.push({
         origin: legs.length ? legs[0].from : f.stops.get(p), dest: legs.length ? legs[legs.length - 1].to : f.stops.get(bs), legs,
-        dep: legs.length ? legs[0].dep : t0, arr: bk,
+        dep: legs.length ? legs[0].dep : t0, arr: acc ? legs[legs.length - 1].arr : bk, cost: bk,
         rides, transfers: Math.max(0, rides - 1),
         walkM: legs.filter(l => l.kind === 'walk').reduce((s, l) => s + l.m, 0)
       });
@@ -447,10 +463,11 @@ const GTFS = (() => {
       t = Math.max(t + 60, nt);
       if (new Set(all.map(j => j.dep)).size >= n) break;
     }
-    if (acc && acc.walk) all.push({ origin: acc.op, dest: acc.dp, legs: [{ kind: 'walk', from: acc.op, to: acc.dp, dep: t0, arr: t0 + acc.walk.w, m: acc.walk.m, acc: 1 }], dep: t0, arr: t0 + acc.walk.w, rides: 0, transfers: 0, walkM: acc.walk.m });
-    const dom = (b, a) => b.dep >= a.dep && b.arr <= a.arr && b.transfers <= a.transfers && (b.dep > a.dep || b.arr < a.arr || b.transfers < a.transfers);
-    const kept = all.filter(a => !all.some(b => b !== a && dom(b, a)));
-    kept.sort((x, y) => x.dep - y.dep || x.arr - y.arr || x.transfers - y.transfers);
+    if (acc && acc.walk) all.push({ origin: acc.op, dest: acc.dp, legs: [{ kind: 'walk', from: acc.op, to: acc.dp, dep: t0, arr: t0 + acc.walk.w, m: acc.walk.m, acc: 1 }], dep: t0, arr: t0 + acc.walk.w, cost: t0 + acc.walk.w, rides: 0, transfers: 0, walkM: acc.walk.m });
+    const dom = (b, a) => b.dep >= a.dep && (b.cost <= a.cost && b.transfers <= a.transfers && (b.dep > a.dep || b.cost < a.cost || b.transfers < a.transfers) ||
+      !!acc && b.transfers < a.transfers && b.cost + XFER * b.transfers <= a.cost + XFER * a.transfers);
+    const kept = all.filter(a => !all.some(b => b !== a && dom(b, a)) && !(acc && acc.walk && a.rides && a.arr > t0 + acc.walk.w + 900));
+    kept.sort((x, y) => (acc ? Math.floor(x.dep / 60) - Math.floor(y.dep / 60) : x.dep - y.dep) || x.cost - y.cost || x.arr - y.arr || x.transfers - y.transfers);
     return { same: false, list: kept.slice(0, n), nConns: conns.length };
   }
 

@@ -5,10 +5,12 @@ const path = require('path');
 
 const BB = '41.27,19.73,41.39,19.90';
 const Q = `[out:json][timeout:120];(
-nwr["name"]["amenity"~"^(hospital|clinic|university|college|school|theatre|cinema|townhall|courthouse|embassy|police|library|marketplace|bus_station|place_of_worship|restaurant|post_office|arts_centre|community_centre)$"](${BB});
-nwr["name"]["tourism"~"^(hotel|hostel|guest_house|motel|attraction|museum|artwork|viewpoint|gallery|zoo|theme_park)$"](${BB});
+nwr["name"]["amenity"~"^(hospital|clinic|university|college|school|theatre|cinema|townhall|courthouse|embassy|police|library|marketplace|bus_station|place_of_worship|restaurant|post_office|arts_centre|community_centre|nightclub|casino|internet_cafe|events_venue|conference_centre|social_centre|exhibition_centre|music_school|dancing_school|planetarium)$"](${BB});
+nwr["name"]["tourism"~"^(hotel|hostel|guest_house|motel|attraction|museum|artwork|viewpoint|gallery|zoo|theme_park|camp_site)$"](${BB});
 nwr["name"]["historic"](${BB});
-nwr["name"]["leisure"~"^(park|garden|stadium|sports_centre|water_park)$"](${BB});
+nwr["name"]["leisure"~"^(park|garden|stadium|sports_centre|water_park|fitness_centre|swimming_pool|sports_hall|ice_rink|pitch|track|dance|resort|playground|indoor_play|amusement_arcade|bowling_alley|trampoline_park|escape_game|adventure_park|miniature_golf)$"](${BB});
+nwr["name"]["club"="sport"](${BB});
+nwr["name"]["building"~"^(commercial|retail)$"][!"amenity"][!"shop"][!"office"][!"tourism"](${BB});
 nwr["name"]["shop"~"^(mall|department_store|supermarket)$"](${BB});
 nwr["name"]["office"="government"](${BB});
 nwr["name"]["aeroway"="aerodrome"](41.35,19.65,41.45,19.80);
@@ -27,10 +29,25 @@ const ALIAS = {
   'Muzeu Historik Kombëtar': ['Historical Museum', 'Národní historické muzeum']
 };
 
+// Místa, která v OSM chybějí. Zdroj a datum ověření u každého, odhad polohy výslovně označen.
+const MANUAL = [
+  // Adresa: Mbikalimi i Unazës së Re, Rruga e Kavajës, Tiranë 1019 (spottedbylocals.com, qkk.filmmakers.systems, ověřeno 3. 11. 2026).
+  // Poloha: souřadnice dodal provozovatel aplikace 3. 11. 2026.
+  { n: 'Latitude Tirana', c: 'fun', k: 'trampoline_park', pt: [41.32278, 19.78661], a: ['Latitude', 'Latitude Air', 'Latitude Air Tirana', 'Latitude Games Park'] }
+];
+
+// Obecné názvy bez užitku pro hledání (hřiště, herní koutky, bazény bez vlastního jména).
+const GENERIC = /^(fush[eë]( (e )?(sporti|basketbolli|futbolli|tenisit?|volejbollit|minifutbollit))?|k[eë]nd(i)? lojrash|pishina|gym|kasino|playground|pitch|basketball( court)?|football( pitch)?|tennis( court)?|sport|terren sportiv)$/i;
+
 // Poloha vstupu místo středu areálu (letiště: autobusové stání LU-NA u příletové haly, viz js/extra-airport.js).
 const POS = { 'Aeroporti Ndërkombëtar i Tiranës Nënë Tereza': [41.41726, 19.71391] };
 
 const LANGS = ['en', 'sq', 'it', 'de', 'cs', 'pl', 'fr', 'es', 'mk', 'el', 'ru', 'tr'];
+
+const FUN = ['playground', 'indoor_play', 'amusement_arcade', 'bowling_alley', 'trampoline_park', 'escape_game', 'adventure_park', 'miniature_golf'];
+const CULT = ['theatre', 'cinema', 'arts_centre', 'events_venue', 'conference_centre', 'social_centre', 'exhibition_centre', 'music_school', 'dancing_school', 'planetarium'];
+
+const sub = t => t.amenity || t.leisure || t.tourism || t.shop || (t.historic && 'historic') || (t.office && 'government') || (t.club && 'club') || t.aeroway || t.place || (t.building && 'building') || '';
 
 function cat(t) {
   if (t.aeroway) return 'air';
@@ -41,13 +58,16 @@ function cat(t) {
   if (a === 'university' || a === 'college' || a === 'school') return 'edu';
   if (a === 'bus_station') return 'bus';
   if (['townhall', 'courthouse', 'embassy', 'police', 'library', 'post_office', 'community_centre'].includes(a) || t.office) return 'gov';
-  if (a === 'theatre' || a === 'cinema' || a === 'arts_centre') return 'culture';
+  if (CULT.includes(a)) return 'culture';
+  if (a === 'nightclub' || a === 'casino' || a === 'internet_cafe' || FUN.includes(t.leisure)) return 'fun';
   if (a === 'restaurant') return 'food';
   if (a === 'marketplace' || t.shop) return 'shop';
   if (a === 'place_of_worship') return 'worship';
   if (t.leisure === 'park' || t.leisure === 'garden') return 'park';
-  if (t.leisure) return 'sport';
-  if (['hotel', 'hostel', 'guest_house', 'motel'].includes(t.tourism)) return 'hotel';
+  if (t.leisure === 'resort') return 'hotel';
+  if (t.leisure || t.club) return 'sport';
+  if (['hotel', 'hostel', 'guest_house', 'motel', 'camp_site'].includes(t.tourism)) return 'hotel';
+  if (t.building && !t.tourism && !t.historic) return 'shop';
   if (t.tourism === 'museum' || t.tourism === 'gallery') return 'museum';
   return 'sight';
 }
@@ -79,7 +99,7 @@ async function main() {
   const P = [], S = new Map();
   for (const e of els) {
     const t = e.tags, c = e.center || e;
-    if (c.lat == null || !t.name) continue;
+    if (c.lat == null || !t.name || GENERIC.test(t.name.trim())) continue;
     const pt = POS[t.name] || [rd(c.lat), rd(c.lon)];
     const tr = {};
     for (const l of LANGS) if (t['name:' + l] && t['name:' + l] !== t.name) tr[l] = t['name:' + l];
@@ -94,12 +114,13 @@ async function main() {
     }
     const key = norm(t.name) + '|' + k;
     if (P.some(p => p.key === key && dist(p.pt, pt) < 150)) continue;
-    P.push({ key, n: t.name, c: k, t: tr, a: [...new Set(alt)].filter(x => x !== t.name), pt });
+    P.push({ key, n: t.name, c: k, k: sub(t), t: tr, a: [...new Set(alt)].filter(x => x !== t.name), pt });
   }
+  for (const m of MANUAL) if (!P.some(p => p.n === m.n)) P.push({ n: m.n, c: m.c, k: m.k, t: {}, a: m.a, pt: m.pt });
   const out = {
     v: new Date().toISOString().slice(0, 10),
     src: '© OpenStreetMap contributors, ODbL',
-    p: P.map(p => [p.n, p.c, p.pt[0], p.pt[1], p.t, p.a]),
+    p: P.map(p => [p.n, p.c, p.k, p.pt[0], p.pt[1], p.t, p.a]),
     s: [...S.values()].map(s => [s.n, s.c, s.pts, s.t, [...s.a].filter(x => x !== s.n)])
   };
   const json = JSON.stringify(out).replace(/,\{\},\[\]\]/g, ']').replace(/,\[\]\]/g, ']');

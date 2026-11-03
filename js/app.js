@@ -95,6 +95,12 @@
   let plan = { from: null, to: null, res: null, open: 0, timeTouched: false };
   let ext = false, pidx = null, pload = null;
   try { ext = localStorage.getItem('tirana-mhd-ext') === '1'; } catch (e) {}
+  let wnet = null, wload = null;
+  const loadNet = () => {
+    if (!wload) wload = fetch('data/walk.json').then(r => r.ok ? r.json() : Promise.reject()).then(d => { wnet = Places.net(d); useNet(); }).catch(() => { wload = null; });
+    return wload;
+  };
+  loadNet();
   const norm = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   const mins = s => Math.max(1, Math.round(s / 60));
 
@@ -333,8 +339,16 @@
     map.attributionControl.addAttribution(map._gtfsAttr);
   }
 
+  function useNet() {
+    if (!feed || !wnet || feed.walkFn) return;
+    feed.walkFn = (st, lim) => Places.stopWalks(wnet, st, lim);
+    feed.walk = null;
+    if (plan.res && plan.from && plan.to) runPlan();
+  }
+
   function setFeed(f, name, demo) {
     feed = f; source = name; demoMode = !!demo;
+    useNet();
     document.body.classList.remove('nodata');
     $('#demo').hidden = !demo;
     setAttr();
@@ -473,7 +487,7 @@
         L.polyline(path, { renderer, interactive: false, color: panel, weight: 11, opacity: .9, lineCap: 'round', lineJoin: 'round' }).addTo(planLayer);
         L.polyline(path, { renderer, interactive: false, color: l.route.color, weight: 7, opacity: 1, lineCap: 'round', lineJoin: 'round' }).addTo(planLayer);
       } else {
-        const path = [[l.from.lat, l.from.lon], [l.to.lat, l.to.lon]];
+        const path = l.acc ? Places.route(wnet, [l.from.lat, l.from.lon], [l.to.lat, l.to.lon]) : [[l.from.lat, l.from.lon], [l.to.lat, l.to.lon]];
         pts.push(...path);
         L.polyline(path, { renderer, interactive: false, color: fg, weight: 3.5, opacity: .85, dashArray: '1 8', lineCap: 'round' }).addTo(planLayer);
       }
@@ -504,7 +518,8 @@
     culture: '<path d="M4 5h16v6a8 8 0 0 1-16 0z"/><path d="M9 10h.01M15 10h.01M9.5 14.5c1.5 1 3.5 1 5 0"/>',
     hotel: '<path d="M3 19V6M3 15h18v4M21 15v-2.5a2.5 2.5 0 0 0-2.5-2.5H10v5"/><circle cx="6.5" cy="11.5" r="1.5"/>',
     food: '<path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M16 3c-2 1.5-2 6 0 8v10"/>',
-    shop: '<path d="M5 8h14l-1 13H6zM9 8V6a3 3 0 0 1 6 0v2"/>'
+    shop: '<path d="M5 8h14l-1 13H6zM9 8V6a3 3 0 0 1 6 0v2"/>',
+    fun: '<ellipse cx="12" cy="9" rx="5.5" ry="6.5"/><path d="M12 15.5 11 17h2l-1-1.5M12 17c-1 1.5 1 2.5 0 4.5"/>'
   };
   const PK = { street: 'road', square: 'road', area: 'pin', worship: 'sight', bus: 'stop' };
   const picon = k => `<i class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${PICO[PK[k] || k] || PICO.pin}</svg></i>`;
@@ -525,14 +540,14 @@
   document.addEventListener('tb-ext', e => setExt(!!e.detail));
 
   function placeEnd(it, which) {
-    const c = Places.center(it), acc = Places.access(allStops(), it.pts), name = Places.label(it, I18N.lang);
+    const c = Places.center(it), acc = Places.access(allStops(), it.pts, wnet), name = Places.label(it, I18N.lang);
     return { place: it, label: name, stops: acc.map(a => a.s), acc, pt: { id: '@' + which, name, lat: c[0], lon: c[1] } };
   }
   function accOf(A, B) {
     const ep = (g, id) => g.place ? g : { acc: g.stops.map(s => ({ s, w: 0, m: 0 })), pt: { id, name: g.label, lat: g.stops[0].lat, lon: g.stops[0].lon } };
     const a = ep(A, '@from'), b = ep(B, '@to');
-    const d = Places.dist([a.pt.lat, a.pt.lon], [b.pt.lat, b.pt.lon]);
-    return { o: new Map(a.acc.map(x => [x.s.id, x])), d: new Map(b.acc.map(x => [x.s.id, x])), op: a.pt, dp: b.pt, walk: d <= 1500 ? { w: Math.max(30, Math.round(d * 1.3 / 1.25)), m: Math.round(d * 1.3) } : null };
+    const d = Places.between(wnet, [a.pt.lat, a.pt.lon], [b.pt.lat, b.pt.lon], 1500);
+    return { o: new Map(a.acc.map(x => [x.s.id, x])), d: new Map(b.acc.map(x => [x.s.id, x])), op: a.pt, dp: b.pt, walk: d == null ? null : { w: Math.max(30, Math.round(d / Places.WALK_V)), m: Math.round(d) } };
   }
 
   function suggest(which) {
@@ -543,7 +558,8 @@
     const ps = ext && pidx ? Places.search(pidx, inp.value, I18N.lang, 5) : [];
     const hits = names.filter(g => g.key.includes(q)).sort((a, b) => (b.key.startsWith(q) - a.key.startsWith(q))).slice(0, ps.length ? 5 : 8);
     const prow = (it, act) => {
-      const a = Places.access(allStops(), it.pts)[0];
+      if (!it.nr || it.nr[0] !== feed || it.nr[1] !== wnet) it.nr = [feed, wnet, Places.access(allStops(), it.pts, wnet)[0]];
+      const a = it.nr[2];
       return `<button type="button" class="sg pl ${act ? 'act' : ''}" data-place="${esc(it.id)}">${picon(it.c)}<b>${esc(Places.label(it, I18N.lang))}</b><span>${esc(t('cats')[it.c] || '')}${a ? ' · ' + esc(t('nearStop', { m: Math.round(a.m / 10) * 10, s: a.s.name })) : ''}</span></button>`;
     };
     box.innerHTML = hits.length || ps.length
@@ -555,7 +571,7 @@
   for (const which of ['from', 'to']) {
     const inp = $('#' + which), box = $('#' + which + '-sugg');
     inp.addEventListener('input', () => { plan[which] = null; plan.res = null; planLayer.clearLayers(); suggest(which); restyle(); });
-    inp.addEventListener('focus', () => { if (ext) loadPlaces(); if (inp.value && !plan[which]) suggest(which); });
+    inp.addEventListener('focus', () => { if (ext) { loadPlaces(); loadNet(); } if (inp.value && !plan[which]) suggest(which); });
     inp.addEventListener('blur', () => setTimeout(() => { box.hidden = true; }, 150));
     inp.addEventListener('keydown', e => {
       const items = [...box.querySelectorAll('.sg[data-name], .sg[data-place]')];

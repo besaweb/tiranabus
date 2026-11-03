@@ -29,6 +29,7 @@ a pak http://localhost:8000/
 | `data/gtfs-extra.zip` | stejná linka jako samostatný GTFS (pro jiné nástroje nebo import do DB) |
 | `js/app.js` | mapa a ovládání |
 | `js/places.js`, `data/poi.json` | volitelné rozšířené vyhledávání míst a ulic (data © OpenStreetMap contributors, ODbL; přegenerovat `node tools/poi-build.js`) |
+| `data/walk.json` | pěší síť ulic pro docházku k místům (© OpenStreetMap contributors, ODbL; přegenerovat `node tools/walk-build.js`) |
 | `robots.txt`, `sitemap.xml`, `favicon.ico`, `img/og.jpg` | pro vyhledávače (hlavní doména tiranabus.al) |
 | `.htaccess`, `404.html` | přesměrování www a chybová stránka, jen na FTP |
 
@@ -55,7 +56,7 @@ Ve složce `android/` je WebView obálka. `bash android/build.sh` (Git Bash, And
 
 ## Parametry plánovače (`js/gtfs-core.js`)
 
-- `WALK_R = 400` – max. chůze mezi zastávkami (m)
+- `WALK_R = 400` – max. chůze mezi zastávkami (m vzdušnou čarou; s načtenou sítí ulic `data/walk.json` max. 520 m po ulicích)
 - `WALK_V = 1.25`, `DETOUR = 1.3` – rychlost chůze (m/s) a koeficient zajížďky
 - `CHANGE = 60` – min. čas na přestup (s)
 - `HORIZON = 6 * 3600` – jak daleko dopředu se hledá (s)
