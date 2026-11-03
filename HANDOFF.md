@@ -10,6 +10,7 @@ Statická webová aplikace (vanilla JS, bez buildu) nad GTFS feedem MHD Tirany. 
 
 - **Google Analytics 4** (gtag `G-XJ9EK9ZKWF`) na začátku `<head>` v `index.html`, `tickets.html`, `privacy.html`; bez consent mode. Popsáno v `privacy.html` (sekce Analytics / Analytika, EN i CS). Gtag je i v APK (bere `index.html`) – v Google Play Data safety uvést analytiku.
 - **SEO etapa 2** (2. 11. 2026): výchozí jazyk HTML je angličtina (`lang="en"`, texty, placeholdery a aria z `D.en`; JS je pak přeloží), `tickets.html` má title, description, canonical, OG a anglický text přímo v HTML, `privacy.html` canonical. OG obrázek `img/og.jpg` (1200×630, výřez z `TiranaBusCover.png`), `summary_large_image`. JSON-LD (WebSite, WebApplication, Organization BesaWeb) v `index.html`. `<noscript>` s popisem a odkazy (`.nojs`). `favicon.ico` (16/32/48) v kořeni, `img/logo.png` zmenšeno na 256 barev (50 → 9 KB). Alt promo obrázku z klíče `promoAlt`, title tickets z `tkTitle`.
+- **Rozšířené vyhledávání** (3. 11. 2026, volitelné, výchozí vypnuto): přepínač v menu (desktop: dole v nabídce Platnost dat, mobil: hamburger, APK: `android/menu.js`), stav v `localStorage` `tirana-mhd-ext`. Vypnuté = beze změny (našeptávač, plánovač, žádné stahování dat). Zapnuté: pole Odkud/Kam nabízejí i místa a ulice z `data/poi.json` (OSM, generuje `node tools/poi-build.js`, asi 2 350 míst + 1 850 ulic, 80 KB gzip, načte se až při prvním kliknutí do pole). Pořadí: zastávky (max 5, s ikonou autobusu), pak místa (max 5) podle kvality shody a skupiny (instituce → památky → ulice → ostatní). Hledání v `js/places.js` (bez diakritiky, slova v libovolném pořadí, začátky slov, 1 překlep od 5 znaků, všechny jazykové varianty, alternativní názvy a ruční aliasy). Vybrané místo → zastávky do 800 m (jinak 3 nejbližší do 1,5 km) s časem chůze; `GTFS.plan(..., acc)` počítá start/cíl s docházkou, přidá pěší úseky k místu a od místa a variantu „jen pěšky“ do 1,5 km. Bez `acc` je plánovač beze změny (regrese 300 dotazů, 0 rozdílů).
 - **Nová ikona** (2. 11. 2026, červená orlice na čelním skle autobusu): `img/logo.png` (192 px, zaoblené rohy, 256 barev), `favicon.ico`, Android `ic_launcher.png` a `ic_launcher_foreground.png` (obrázek 320 px uprostřed plátna 432 px), pozadí adaptivní ikony `#7A0A0A`. OG obrázek `img/og.jpg` zůstává ze starší modré obálky.
 - **Turečtina** (2. 11. 2026, 12. jazyk): `tr` v `js/i18n.js` (všech 131 klíčů, `tr-TR`, data jako dd.mm.rrrr, ceny v EUR), vlajka v přepínači, letištní texty v `extra-airport.js` (jen překlad, data a `gtfs-extra.zip` beze změny), Android `menu.js`, `validity.js`, `boot-extra.html`. Překlad je strojový, bez kontroly rodilým mluvčím.
 - **Mobilní okraje webu** (≤ 760 px): body bez výchozího marginu 8 px, boky 8 px, nahoře 6 px (dřív 24 a 20 px), vždy aspoň safe-area. Desktop beze změny.
@@ -97,6 +98,7 @@ Letiště ve feedu není (Rinas leží mimo území města, linky provozuje souk
 - **Zobrazená trasa linky** = nejdelší spoj v každém směru (varianty a větve se nekreslí zvlášť).
 - **Časová zóna** z `agency.txt` (Europe/Tirane), ne z prohlížeče.
 - Hlavní doména je `https://tiranabus.al/` (canonical ve zdroji); GitHub Pages jsou zrcadlo.
+- Místa a ulice z OSM jako lokální `data/poi.json` (ne Nominatim/Overpass za běhu: rychlost, offline v APK, pravidla Nominatimu zakazují našeptávání). Nový skript `js/places.js` hned za `gtfs-core.js` (čistá logika, testovatelná v Node). Rozšířené vyhledávání je jen volitelné a výchozí vypnuté.
 
 ## TODO
 
@@ -112,6 +114,8 @@ Letiště ve feedu není (Rinas leží mimo území města, linky provozuje souk
 10. **SEO:** ověřit tiranabus.al v Google Search Console a Bing Webmaster Tools (DNS TXT u gigaserver.cz), odeslat `sitemap.xml`. Etapa 3: jazykové URL + hreflang, landing pages z GTFS (letiště, linky, zastávky), Consent Mode pro EU.
 
 ## Známé chyby a omezení
+
+- Rozšířené vyhledávání: kvalita a překlady míst podle OSM (překladů je málo, většinou se zobrazí albánský název). U ulic se bere celá ulice, bez čísel domů. Velké areály (park) mají bod uprostřed, docházka může vyjít delší. `data/poi.json` obnovovat zhruba jednou za měsíc (`node tools/poi-build.js`, Overpass občas vrací 502 – skript zkouší znovu).
 
 - Rozlišení „Název (1)/(2)“ u stejnojmenných vzdálených zastávek je číslované bez popisu místa; pomáhá výpis linek v nápovědě. Prahová vzdálenost 300 m je odhad.
 - Jen plánovaný jízdní řád, žádná zpoždění (realtime není k dispozici).

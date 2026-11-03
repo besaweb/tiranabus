@@ -44,13 +44,22 @@
     '<div class="langslot" hidden></div>' +
     '<a class="mi" id="mi-tickets" href="tickets.html"><span data-k="tickets"></span></a>' +
     '<a class="mi" id="mi-data" href="validity.html"><span data-k="data"></span></a>' +
-    '<button type="button" class="mi" id="mi-about" aria-expanded="false"><span data-k="about"></span></button><div class="about" hidden></div></div>';
+    '<button type="button" class="mi" id="mi-about" aria-expanded="false"><span data-k="about"></span></button><div class="about" hidden></div>' +
+    '<button type="button" class="mi" id="mi-ext" role="switch" aria-checked="false"><span class="ext"></span><span class="sw" aria-hidden="true"></span></button></div>';
   langBox.parentNode.insertBefore(wrap, langBox);
   const q = s => wrap.querySelector(s);
   const btn = q('.ambtn'), menu = q('.ammenu'), slot = q('.langslot'), about = q('.about'), miLang = q('#mi-lang'), miAbout = q('#mi-about');
   slot.appendChild(langBox);
   for (const b of langBox.querySelectorAll('[data-lang]')) b.insertAdjacentHTML('beforeend', '<span>' + NAMES[b.dataset.lang] + '</span>');
   langBox.addEventListener('click', () => langBox.classList.add('open'), true);
+
+  const miExt = q('#mi-ext');
+  try { miExt.setAttribute('aria-checked', String(localStorage.getItem('tirana-mhd-ext') === '1')); } catch (e) {}
+  miExt.addEventListener('click', () => {
+    const v = miExt.getAttribute('aria-checked') !== 'true';
+    miExt.setAttribute('aria-checked', String(v));
+    document.dispatchEvent(new CustomEvent('tb-ext', { detail: v }));
+  });
 
   const subs = [[miLang, slot], [miAbout, about]];
   const closeSubs = () => { for (const [b, box] of subs) { box.hidden = true; b.setAttribute('aria-expanded', 'false'); } };
@@ -75,6 +84,7 @@
     btn.setAttribute('aria-label', x.menu); btn.title = x.menu;
     q('.cur').textContent = NAMES[l];
     const A = I18N.D[l] || I18N.D.en;
+    q('#mi-ext .ext').textContent = A.extSearch;
     about.textContent = '';
     const bold = s => { const e = document.createElement('b'); e.textContent = s; return e; };
     const link = (h, s) => { const e = document.createElement('a'); e.href = h; e.textContent = s; return e; };

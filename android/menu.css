@@ -43,6 +43,10 @@ html[lang="en"] .when .btn:not(.primary) { flex: none; }
 
 .ticketbtn { display: none; }
 a.mi, a.mi:visited { text-decoration: none; color: var(--fg); }
+.mi .sw { position: relative; flex: none; width: 34px; height: 20px; border-radius: 10px; background: var(--line); transition: background .15s; }
+.mi .sw::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: var(--panel); box-shadow: 0 1px 3px rgb(0 0 0 / .3); transition: left .15s; }
+.mi[aria-checked="true"] .sw { background: var(--accent); }
+.mi[aria-checked="true"] .sw::after { left: 16px; }
 
 .menuwrap { display: none; }
 .gplay { display: none; }

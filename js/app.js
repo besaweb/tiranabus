@@ -93,6 +93,8 @@
   let view = { kind: 'list' }, prevView = null;
   let baseTables = null, builtLang = null, mode = 'plan', demoMode = true, groups = new Map(), stopGroup = new Map(), names = [];
   let plan = { from: null, to: null, res: null, open: 0, timeTouched: false };
+  let ext = false, pidx = null, pload = null;
+  try { ext = localStorage.getItem('tirana-mhd-ext') === '1'; } catch (e) {}
   const norm = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   const mins = s => Math.max(1, Math.round(s / 60));
 
@@ -130,8 +132,8 @@
     const J = mode === 'plan' && plan.res && plan.res.list[plan.open];
     if (mode === 'plan') {
       const ends = new Map();
-      for (const s of plan.from ? plan.from.stops : []) ends.set(s.id, ac);
-      for (const s of plan.to ? plan.to.stops : []) ends.set(s.id, ss);
+      for (const s of plan.from && !plan.from.place ? plan.from.stops : []) ends.set(s.id, ac);
+      for (const s of plan.to && !plan.to.place ? plan.to.stops : []) ends.set(s.id, ss);
       for (const { pl } of lines) pl.setStyle({ opacity: J ? .12 : .55, weight: 4 });
       for (const { s, m } of markers.values()) {
         const e = ends.get(s.id);
@@ -189,7 +191,8 @@
     dark: '<path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/>',
     light: '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/>',
     data: '<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4M9 15l2 2 4-4"/>',
-    about: '<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5M12 8h.01"/>'
+    about: '<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5M12 8h.01"/>',
+    ext: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5M10.5 7.5v6M7.5 10.5h6"/>'
   };
   const mil = (k, txt) => `<span class="mil"><svg class="mico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${MICO[k]}</svg><span>${txt}</span></span>`;
   const themeItem = () => { const d = document.documentElement.dataset.theme === 'dark'; return mil(d ? 'light' : 'dark', t(d ? 'themeLight' : 'themeDark')); };
@@ -200,7 +203,8 @@
     $('#meta').innerHTML = `<a class="mi mlink" href="tickets.html">${mil('tk', t('tickets'))}</a>
       <button type="button" class="mi mtheme" id="themeitem">${themeItem()}</button>
       <button type="button" class="mi mtoggle" aria-expanded="false">${mil('data', t('dataTitle'))}</button><div class="mpane data">${metaData()}</div>
-      <button type="button" class="mi mtoggle" aria-expanded="false">${mil('about', t('aboutTitle'))}</button><div class="mpane about">${aboutBody}</div>`;
+      <button type="button" class="mi mtoggle" aria-expanded="false">${mil('about', t('aboutTitle'))}</button><div class="mpane about">${aboutBody}</div>
+      <button type="button" class="mi mext" role="switch" aria-checked="${ext}">${mil('ext', t('extSearch'))}<span class="sw" aria-hidden="true"></span></button>`;
     $('#aboutbox').innerHTML = `<h2>${t('aboutTitle')}</h2><div class="aboutbody">${aboutBody}</div>`;
   }
 
@@ -397,7 +401,7 @@
     const day = $('#day').value === '1' ? { ...GTFS.nextDay(c.ymd, c.wd) } : { ymd: c.ymd, wd: c.wd };
     const m = /^(\d{1,2}):(\d{2})/.exec($('#time').value || '');
     const t0 = m ? +m[1] * 3600 + +m[2] * 60 : c.sec;
-    const r = GTFS.plan(feed, plan.from.stops, plan.to.stops, day, t0);
+    const r = GTFS.plan(feed, plan.from.stops, plan.to.stops, day, t0, 5, plan.from.place || plan.to.place ? accOf(plan.from, plan.to) : undefined);
     plan.res = { ...r, t0, today: day.ymd === c.ymd };
     plan.open = r.list.length ? 0 : -1;
     showPlan(); drawJourney(true); restyle();
@@ -450,7 +454,7 @@
           <div class="ls"><time>${GTFS.hhmm(l.arr)}</time><span>${esc(l.to.name)}</span></div>
         </li>`;
       } else {
-        out += `<li class="leg walk">${legIcon(l)}<span>${t('walkLeg', { n: mins(l.arr - l.dep), m: Math.round(l.m / 10) * 10 })}<br><small>${l.from.name === l.to.name ? t('walkCross') : ''}${t('walkTo', { s: esc(l.to.name) })}</small></span></li>`;
+        out += `<li class="leg walk">${legIcon(l)}<span>${t('walkLeg', { n: mins(l.arr - l.dep), m: Math.round(l.m / 10) * 10 })}<br><small>${!l.acc && l.from.name === l.to.name ? t('walkCross') : ''}${t(String(l.to.id)[0] === '@' ? 'walkPlace' : 'walkTo', { s: esc(l.to.name) })}</small></span></li>`;
       }
       prevArr = l.arr;
     }
@@ -485,13 +489,65 @@
     if (fit && pts.length) map.fitBounds(L.latLngBounds(pts), { padding: [40, 40], maxZoom: 16 });
   }
 
+  const PICO = {
+    stop: '<rect x="5" y="3" width="14" height="15" rx="3"/><path d="M5 11h14M8 18v2.5M16 18v2.5"/><circle cx="8.5" cy="14.5" r=".6"/><circle cx="15.5" cy="14.5" r=".6"/>',
+    road: '<path d="M8 3 5 21M16 3l3 18M12 4v3M12 10.5v3M12 17v3"/>',
+    pin: '<path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/>',
+    sight: '<path d="M10 21V8l2-5 2 5v13M7 21h10"/>',
+    museum: '<path d="M3 21h18M5 21V10M19 21V10M9.5 21V10M14.5 21V10M3 10l9-6 9 6z"/>',
+    gov: '<path d="M3 21h18M5 21V10h14v11M3 10l9-6 9 6M9 14v4M15 14v4M12 14v4"/>',
+    health: '<rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M12 8v8M8 12h8"/>',
+    edu: '<path d="m2 9 10-5 10 5-10 5z"/><path d="M6 11v5c3 2.5 9 2.5 12 0v-5M22 9v5"/>',
+    air: '<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>',
+    park: '<path d="M12 21v-6M12 15c-4 0-6-2.5-6-5.5S8.5 3 12 3s6 3 6 6.5-2 5.5-6 5.5z"/>',
+    sport: '<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17M3.5 12h17"/>',
+    culture: '<path d="M4 5h16v6a8 8 0 0 1-16 0z"/><path d="M9 10h.01M15 10h.01M9.5 14.5c1.5 1 3.5 1 5 0"/>',
+    hotel: '<path d="M3 19V6M3 15h18v4M21 15v-2.5a2.5 2.5 0 0 0-2.5-2.5H10v5"/><circle cx="6.5" cy="11.5" r="1.5"/>',
+    food: '<path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M16 3c-2 1.5-2 6 0 8v10"/>',
+    shop: '<path d="M5 8h14l-1 13H6zM9 8V6a3 3 0 0 1 6 0v2"/>'
+  };
+  const PK = { street: 'road', square: 'road', area: 'pin', worship: 'sight', bus: 'stop' };
+  const picon = k => `<i class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${PICO[PK[k] || k] || PICO.pin}</svg></i>`;
+  const allStops = () => [...feed.stops.values()];
+
+  function loadPlaces() {
+    if (!pload) pload = fetch('data/poi.json').then(r => r.ok ? r.json() : Promise.reject()).then(d => { pidx = Places.build(d); }).catch(() => { pload = null; });
+    return pload;
+  }
+  function setExt(v) {
+    ext = v;
+    try { localStorage.setItem('tirana-mhd-ext', v ? '1' : '0'); } catch (e) {}
+    for (const b of document.querySelectorAll('.mext')) b.setAttribute('aria-checked', v);
+    if (v) loadPlaces();
+    else for (const w of ['from', 'to']) if (plan[w] && plan[w].place) setEnd(w, null);
+    if (mode === 'plan') { showPlan(); restyle(); }
+  }
+  document.addEventListener('tb-ext', e => setExt(!!e.detail));
+
+  function placeEnd(it, which) {
+    const c = Places.center(it), acc = Places.access(allStops(), it.pts), name = Places.label(it, I18N.lang);
+    return { place: it, label: name, stops: acc.map(a => a.s), acc, pt: { id: '@' + which, name, lat: c[0], lon: c[1] } };
+  }
+  function accOf(A, B) {
+    const ep = (g, id) => g.place ? g : { acc: g.stops.map(s => ({ s, w: 0, m: 0 })), pt: { id, name: g.label, lat: g.stops[0].lat, lon: g.stops[0].lon } };
+    const a = ep(A, '@from'), b = ep(B, '@to');
+    const d = Places.dist([a.pt.lat, a.pt.lon], [b.pt.lat, b.pt.lon]);
+    return { o: new Map(a.acc.map(x => [x.s.id, x])), d: new Map(b.acc.map(x => [x.s.id, x])), op: a.pt, dp: b.pt, walk: d <= 1500 ? { w: Math.max(30, Math.round(d * 1.3 / 1.25)), m: Math.round(d * 1.3) } : null };
+  }
+
   function suggest(which) {
     const inp = $('#' + which), box = $('#' + which + '-sugg');
     const q = norm(inp.value.trim());
     if (!q) { box.hidden = true; box.innerHTML = ''; return []; }
-    const hits = names.filter(g => g.key.includes(q)).sort((a, b) => (b.key.startsWith(q) - a.key.startsWith(q))).slice(0, 8);
-    box.innerHTML = hits.length
-      ? hits.map((g, i) => `<button type="button" class="sg ${i === 0 ? 'act' : ''}" data-name="${esc(g.id)}"><b>${esc(g.label)}</b><span>${[...g.routes].sort(byName).slice(0, 6).map(r => esc(r.short)).join(' · ')}</span></button>`).join('')
+    if (ext && !pidx) loadPlaces().then(() => { if (pidx && document.activeElement === inp && !plan[which]) suggest(which); });
+    const ps = ext && pidx ? Places.search(pidx, inp.value, I18N.lang, 5) : [];
+    const hits = names.filter(g => g.key.includes(q)).sort((a, b) => (b.key.startsWith(q) - a.key.startsWith(q))).slice(0, ps.length ? 5 : 8);
+    const prow = (it, act) => {
+      const a = Places.access(allStops(), it.pts)[0];
+      return `<button type="button" class="sg pl ${act ? 'act' : ''}" data-place="${esc(it.id)}">${picon(it.c)}<b>${esc(Places.label(it, I18N.lang))}</b><span>${esc(t('cats')[it.c] || '')}${a ? ' · ' + esc(t('nearStop', { m: Math.round(a.m / 10) * 10, s: a.s.name })) : ''}</span></button>`;
+    };
+    box.innerHTML = hits.length || ps.length
+      ? hits.map((g, i) => `<button type="button" class="sg ${i === 0 ? 'act' : ''}${ext ? ' st' : ''}" data-name="${esc(g.id)}">${ext ? picon('stop') : ''}<b>${esc(g.label)}</b><span>${[...g.routes].sort(byName).slice(0, 6).map(r => esc(r.short)).join(' · ')}</span></button>`).join('') + ps.map((it, i) => prow(it, !hits.length && !i)).join('')
       : `<div class="sg none">${t('noStop')}</div>`;
     box.hidden = false;
     return hits;
@@ -499,10 +555,10 @@
   for (const which of ['from', 'to']) {
     const inp = $('#' + which), box = $('#' + which + '-sugg');
     inp.addEventListener('input', () => { plan[which] = null; plan.res = null; planLayer.clearLayers(); suggest(which); restyle(); });
-    inp.addEventListener('focus', () => { if (inp.value && !plan[which]) suggest(which); });
+    inp.addEventListener('focus', () => { if (ext) loadPlaces(); if (inp.value && !plan[which]) suggest(which); });
     inp.addEventListener('blur', () => setTimeout(() => { box.hidden = true; }, 150));
     inp.addEventListener('keydown', e => {
-      const items = [...box.querySelectorAll('.sg[data-name]')];
+      const items = [...box.querySelectorAll('.sg[data-name], .sg[data-place]')];
       if (box.hidden || !items.length) return;
       let i = items.findIndex(x => x.classList.contains('act'));
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
@@ -512,22 +568,23 @@
         items[i].classList.add('act'); items[i].scrollIntoView({ block: 'nearest' });
       } else if (e.key === 'Enter') {
         e.preventDefault();
-        choose(which, items[Math.max(0, i)].dataset.name);
+        chooseEl(which, items[Math.max(0, i)]);
       } else if (e.key === 'Escape') box.hidden = true;
     });
     box.addEventListener('mousedown', e => {
-      const b = e.target.closest('[data-name]');
+      const b = e.target.closest('[data-name], [data-place]');
       if (!b) return;
       e.preventDefault();
-      choose(which, b.dataset.name);
+      chooseEl(which, b);
     });
   }
-  function choose(which, name) {
-    setEnd(which, groups.get(name));
+  const chooseEl = (which, b) => b.dataset.place ? choose(which, null, pidx.items.find(x => x.id === b.dataset.place)) : choose(which, b.dataset.name);
+  function choose(which, name, it) {
+    setEnd(which, it ? placeEnd(it, which) : groups.get(name));
     $('#' + which + '-sugg').hidden = true;
     restyle();
     if (plan.from && plan.to) runPlan();
-    else { showPlan(); const g = plan[which]; if (g) map.panTo([g.stops[0].lat, g.stops[0].lon]); $('#' + (which === 'from' ? 'to' : 'from')).focus(); }
+    else { showPlan(); const g = plan[which]; if (g) map.panTo(g.pt ? [g.pt.lat, g.pt.lon] : [g.stops[0].lat, g.stops[0].lon]); $('#' + (which === 'from' ? 'to' : 'from')).focus(); }
   }
   function resolveTyped(which) {
     if (plan[which]) return;
@@ -536,6 +593,7 @@
     const exact = names.filter(g => g.key === v);
     const hits = exact.length ? exact : names.filter(g => g.key.includes(v));
     if (hits.length === 1) setEnd(which, hits[0]);
+    else if (!hits.length && ext && pidx) { const it = Places.search(pidx, $('#' + which).value, I18N.lang, 1)[0]; if (it) setEnd(which, placeEnd(it, which)); }
   }
   $('#swap').addEventListener('click', () => {
     const a = plan.from, b = plan.to, va = $('#from').value, vb = $('#to').value;
@@ -608,6 +666,7 @@
   document.addEventListener('keydown', e => { if (e.key === 'Escape') { setMenu(false); setAbout(false); } });
   menuBox.addEventListener('click', e => {
     if (e.target.closest('.mtheme')) { toggleTheme(); return; }
+    if (e.target.closest('.mext')) { setExt(!ext); return; }
     const b = e.target.closest('.mtoggle');
     if (!b) return;
     const pane = b.nextElementSibling, open = !pane.classList.contains('open');

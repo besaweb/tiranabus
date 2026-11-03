@@ -28,6 +28,7 @@ a pak http://localhost:8000/
 | `js/extra-airport.js` | doplňková linka na letiště, přidá se k nahranému feedu |
 | `data/gtfs-extra.zip` | stejná linka jako samostatný GTFS (pro jiné nástroje nebo import do DB) |
 | `js/app.js` | mapa a ovládání |
+| `js/places.js`, `data/poi.json` | volitelné rozšířené vyhledávání míst a ulic (data © OpenStreetMap contributors, ODbL; přegenerovat `node tools/poi-build.js`) |
 | `robots.txt`, `sitemap.xml`, `favicon.ico`, `img/og.jpg` | pro vyhledávače (hlavní doména tiranabus.al) |
 | `.htaccess`, `404.html` | přesměrování www a chybová stránka, jen na FTP |
 

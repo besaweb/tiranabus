@@ -343,8 +343,9 @@ const GTFS = (() => {
     return [{ tr: { ...enter.inst.tr, st, head: tr.head, pts }, base: enter.inst.base, id: enter.inst.id }, k1];
   }
 
-  function scan(f, conns, fromStops, toSet, t0) {
+  function scan(f, conns, fromStops, toSet, t0, acc) {
     const W = walkGraph(f), INF = Infinity;
+    const eg = id => acc && acc.d.has(id) ? acc.d.get(id).w : 0;
     const arr = [], board = [], J = [], T = [], RA = [];
     for (let k = 0; k <= MAXR; k++) { arr.push(new Map()); board.push(new Map()); J.push(new Map()); T.push(new Map()); RA.push(new Map()); }
     let best = INF;
@@ -355,11 +356,11 @@ const GTFS = (() => {
         if (t >= get(arr[kk], id)) continue;
         arr[kk].set(id, t); board[kk].set(id, b); J[kk].set(id, j); hit = true;
       }
-      if (hit && toSet.has(id) && t < best) best = t;
+      if (hit && toSet.has(id) && t + eg(id) < best) best = t + eg(id);
       return hit;
     };
-    for (const s of fromStops) reach(0, s.id, t0, t0, { kind: 'origin' });
-    for (const s of fromStops) for (const [o, w, m] of W.get(s.id) || []) reach(0, o.id, t0 + w, t0 + w, { kind: 'walk', k: 0, from: s.id, to: o.id, dep: t0, arr: t0 + w, m });
+    for (const s of fromStops) { const w = acc && acc.o.has(s.id) ? acc.o.get(s.id).w : 0; reach(0, s.id, t0 + w, t0 + w, { kind: 'origin' }); }
+    if (!acc) for (const s of fromStops) for (const [o, w, m] of W.get(s.id) || []) reach(0, o.id, t0 + w, t0 + w, { kind: 'walk', k: 0, from: s.id, to: o.id, dep: t0, arr: t0 + w, m });
     let lo = 0, hi = conns.length;
     while (lo < hi) { const mid = (lo + hi) >> 1; if (conns[mid].dep < t0) lo = mid + 1; else hi = mid; }
     for (let i = lo; i < conns.length; i++) {
@@ -386,9 +387,10 @@ const GTFS = (() => {
     let prevBest = INF;
     for (let k = 0; k <= MAXR; k++) {
       let bk = INF, bs = null;
-      for (const id of toSet) { const t = get(arr[k], id); if (t < bk) { bk = t; bs = id; } }
+      for (const id of toSet) { const t = get(arr[k], id) + eg(id); if (t < bk) { bk = t; bs = id; } }
       if (!bs || bk >= prevBest) continue;
       prevBest = bk;
+      if (acc && !k) continue;
       const legs = [];
       let p = bs, lvl = k, guard = 0, nx = null;
       while (guard++ < 100) {
@@ -404,7 +406,14 @@ const GTFS = (() => {
           p = j.from; lvl = j.k; nx = j.prev || null;
         }
       }
-      tidy(f, W, legs, bk, fromStops.map(s => s.id), [...toSet]);
+      tidy(f, W, legs, bk - eg(bs), acc ? [p] : fromStops.map(s => s.id), acc ? [bs] : [...toSet]);
+      if (acc) {
+        const a = acc.o.get(p), e = acc.d.get(bs), last = legs[legs.length - 1];
+        if (a && a.m >= 25) legs.unshift({ kind: 'walk', from: acc.op, to: legs[0].from, dep: legs[0].dep - a.w, arr: legs[0].dep, m: a.m, acc: 1 });
+        if (e && e.m < 25) last.arr += e.w;
+        else if (e && last.kind === 'walk') Object.assign(last, { to: acc.dp, arr: last.arr + e.w, m: last.m + e.m, acc: 1 });
+        else if (e) legs.push({ kind: 'walk', from: last.to, to: acc.dp, dep: last.arr, arr: last.arr + e.w, m: e.m, acc: 1 });
+      }
       if (legs.length > 1 && legs[0].kind === 'walk' && legs[1].kind === 'ride') {
         const w = legs[0].arr - legs[0].dep;
         legs[0].arr = legs[1].dep; legs[0].dep = legs[1].dep - w;
@@ -420,14 +429,14 @@ const GTFS = (() => {
     return out;
   }
 
-  function plan(f, fromStops, toStops, day, t0, n = 5) {
+  function plan(f, fromStops, toStops, day, t0, n = 5, acc) {
     const toSet = new Set(toStops.map(s => s.id));
-    if (fromStops.some(s => toSet.has(s.id))) return { same: true, list: [] };
+    if (!acc && fromStops.some(s => toSet.has(s.id))) return { same: true, list: [] };
     const conns = connections(f, day, t0, t0 + HORIZON);
     const all = [], seen = new Set();
     let t = t0;
     for (let i = 0; i < 8; i++) {
-      const js = scan(f, conns, fromStops, toSet, t);
+      const js = scan(f, conns, fromStops, toSet, t, acc);
       if (!js.length) break;
       for (const j of js) {
         const sig = j.legs.map(l => l.kind === 'ride' ? l.inst.id + ':' + l.from.id + '>' + l.to.id : 'w').join('|');
@@ -438,6 +447,7 @@ const GTFS = (() => {
       t = Math.max(t + 60, nt);
       if (new Set(all.map(j => j.dep)).size >= n) break;
     }
+    if (acc && acc.walk) all.push({ origin: acc.op, dest: acc.dp, legs: [{ kind: 'walk', from: acc.op, to: acc.dp, dep: t0, arr: t0 + acc.walk.w, m: acc.walk.m, acc: 1 }], dep: t0, arr: t0 + acc.walk.w, rides: 0, transfers: 0, walkM: acc.walk.m });
     const dom = (b, a) => b.dep >= a.dep && b.arr <= a.arr && b.transfers <= a.transfers && (b.dep > a.dep || b.arr < a.arr || b.transfers < a.transfers);
     const kept = all.filter(a => !all.some(b => b !== a && dom(b, a)));
     kept.sort((x, y) => x.dep - y.dep || x.arr - y.arr || x.transfers - y.transfers);
