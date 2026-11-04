@@ -110,7 +110,7 @@ header {
 /* Left column */
 .side { grid-area: side; min-height: 0; display: flex; flex-direction: column; gap: 14px; margin: 18px 0 12px var(--gut); padding: 0 6px 2px 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
 .card, .sheet { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); }
-.searchcard { flex: none; display: grid; gap: 14px; padding: 14px; container-type: inline-size; }
+.searchcard { flex: none; display: grid; gap: 10px; padding: 12px; container-type: inline-size; }
 .sheet { flex: 1 0 auto; display: flex; flex-direction: column; }
 .panel { padding: 4px 14px 16px; }
 .demo { flex: none; margin: 0; padding: 10px 14px; border-radius: 14px; font-size: 13.5px; background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--line)); }
@@ -120,29 +120,29 @@ header {
 .kv { margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 3px 12px; font-size: 13.5px; }
 .kv dd { margin: 0; overflow-wrap: anywhere; }
 
-.tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 4px; border-radius: 14px; background: var(--soft); border: 1px solid var(--line); }
-.tabs button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 4px 8px; line-height: 1.15; text-align: center; border: 0; border-radius: 11px; background: none; color: var(--fg); font-weight: 600; font-size: 15px; cursor: pointer; transition: background .15s, color .15s; }
+.tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 3px; border-radius: 12px; background: var(--soft); border: 1px solid var(--line); }
+.tabs button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 38px; padding: 3px 8px; line-height: 1.15; text-align: center; border: 0; border-radius: 11px; background: none; color: var(--fg); font-weight: 600; font-size: 14.5px; white-space: nowrap; cursor: pointer; transition: background .15s, color .15s; }
 .tabs button:hover { background: color-mix(in srgb, var(--fg) 5%, transparent); }
-.tabs svg { width: 22px; height: 22px; }
+.tabs svg { width: 20px; height: 20px; }
 .tabs button[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); box-shadow: 0 3px 10px color-mix(in srgb, var(--accent) 35%, transparent); }
 
 .search { position: relative; display: block; }
-.search input { width: 100%; height: 50px; border-radius: 12px; border: 1px solid var(--line); background: var(--panel); padding: 0 14px 0 44px; font-size: 16px; }
-.search svg { position: absolute; left: 15px; top: 17px; width: 17px; height: 17px; color: var(--muted); }
+.search input { width: 100%; height: 42px; border-radius: 12px; border: 1px solid var(--line); background: var(--panel); padding: 0 14px 0 44px; font-size: 16px; }
+.search svg { position: absolute; left: 15px; top: 13px; width: 17px; height: 17px; color: var(--muted); }
 
-.planform { display: grid; gap: 10px; }
-.od { position: relative; display: grid; gap: 8px; padding-right: 58px; }
+.planform { display: grid; gap: 8px; }
+.od { position: relative; display: grid; gap: 6px; padding-right: 52px; }
 .field { position: relative; }
 .field input, .search input { outline: none; transition: border-color .15s, box-shadow .15s; }
-.field input { width: 100%; height: 50px; border-radius: 12px; border: 1px solid var(--line); background: var(--panel); padding: 0 14px 0 50px; font-size: 16px; font-weight: 500; text-overflow: ellipsis; }
+.field input { width: 100%; height: 42px; border-radius: 12px; border: 1px solid var(--line); background: var(--panel); padding: 0 14px 0 50px; font-size: 16px; font-weight: 500; text-overflow: ellipsis; }
 .field input::placeholder, .search input::placeholder { color: var(--muted); font-weight: 400; }
 .field input:focus, .search input:focus, .sel:focus-within { border-color: var(--navy); box-shadow: 0 0 0 3px color-mix(in srgb, var(--navy) 16%, transparent); }
-.field .pin { position: absolute; left: 12px; top: 12px; }
-.pin { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; font: 700 13px/1 var(--ui); flex: none; }
+.field .pin { position: absolute; left: 11px; top: 9px; }
+.pin { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; font: 700 13px/1 var(--ui); flex: none; }
 .pin.a { background: var(--accent); color: var(--accent-ink); }
 .pin.b { background: var(--navy); color: var(--navy-ink); }
 .btn .pin { width: 20px; height: 20px; font-size: 11px; }
-.swap { position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: 48px; height: 48px; padding: 0; border-radius: 12px; }
+.swap { position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; padding: 0; border-radius: 12px; }
 .swap svg { width: 20px; height: 20px; }
 .sugg { position: absolute; z-index: 1100; top: calc(100% + 6px); left: 0; right: 0; max-height: 300px; overflow: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow-lg); padding: 6px; }
 .sg { display: block; width: 100%; text-align: left; border: 0; background: none; padding: 9px 12px; border-radius: 10px; cursor: pointer; }
@@ -155,17 +155,17 @@ header {
 .sg.st .si { color: var(--navy); }
 .sg .si svg { display: block; width: 20px; height: 20px; }
 
-.when { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px; }
-.when .primary { grid-column: 1 / -1; height: 52px; font-size: 16px; border-radius: 12px; }
+.when { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 6px; }
+.when .primary { grid-column: 1 / -1; height: 44px; font-size: 16px; border-radius: 12px; }
 .when .primary svg { width: 19px; height: 19px; }
-.sel { position: relative; display: flex; align-items: center; gap: 8px; min-width: 0; height: 48px; padding: 0 8px 0 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); cursor: pointer; transition: border-color .15s, box-shadow .15s; }
+.sel { position: relative; display: flex; align-items: center; gap: 8px; min-width: 0; height: 42px; padding: 0 8px 0 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); cursor: pointer; transition: border-color .15s, box-shadow .15s; }
 .sel > svg { width: 20px; height: 20px; color: var(--fg); }
 .sel select { flex: 1 1 auto; }
 .sel input { flex: 1; width: 100%; }
 .sel select, .sel input { min-width: 0; height: 100%; padding: 0; border: 0; background: transparent; font-size: 15px; font-weight: 500; font-variant-numeric: tabular-nums; outline: none; cursor: pointer; }
 .sel select option { background: var(--panel); color: var(--fg); }
 .sel input::-webkit-calendar-picker-indicator { width: 14px; height: 14px; padding: 2px; opacity: .8; cursor: pointer; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235E6A85' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / 14px no-repeat; }
-#nowbtn { height: 48px; padding: 0 16px; border-radius: 12px; font-size: 15px; }
+#nowbtn { height: 42px; padding: 0 16px; border-radius: 12px; font-size: 15px; }
 @container (max-width: 380px) {
   .sel > svg { display: none; }
   .sel { padding-left: 10px; }
@@ -444,18 +444,11 @@ header {
   .menu .mtoggle[aria-expanded="true"]::after { transform: rotate(-135deg); }
 
   .side { margin: 10px var(--gutr) 0 var(--gut); padding: 0 0 calc(12px + env(safe-area-inset-bottom, 0px)); gap: 10px; }
-  .searchcard { padding: 10px; gap: 10px; border-radius: 16px; }
-  .tabs button { min-height: 42px; font-size: 14.5px; }
-  .tabs svg { width: 20px; height: 20px; }
-  .od { padding-right: 54px; gap: 6px; }
-  .field input { height: 48px; }
-  .field .pin { top: 11px; }
-  .swap { width: 46px; height: 46px; }
-  .when { gap: 6px; }
-  .sel { height: 46px; padding: 0 6px 0 10px; gap: 6px; }
+  .searchcard { padding: 10px; gap: 8px; border-radius: 16px; }
+  .tabs button { font-size: 14.5px; }
+  .sel { padding: 0 6px 0 10px; gap: 6px; }
   .sel > svg { width: 18px; height: 18px; }
-  #nowbtn { height: 46px; padding: 0 12px; }
-  .when .primary { height: 50px; }
+  #nowbtn { padding: 0 12px; }
   .sheet { flex: none; border-radius: 16px; }
   .panel { padding: 2px 12px 14px; }
   .mapwrap { margin: 0; border: 0; border-radius: 0; box-shadow: none; }
