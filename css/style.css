@@ -443,7 +443,8 @@ header {
   .menu .mtoggle::after { content: ''; width: 8px; height: 8px; border: solid var(--muted); border-width: 0 2px 2px 0; transform: rotate(45deg); margin-right: 6px; transition: transform .2s; }
   .menu .mtoggle[aria-expanded="true"]::after { transform: rotate(-135deg); }
 
-  .side { margin: 10px var(--gutr) 0 var(--gut); padding: 0 0 calc(12px + env(safe-area-inset-bottom, 0px)); gap: 10px; }
+  .side { margin: 8px 0 0; padding: 0 max(6px, env(safe-area-inset-right, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) max(6px, env(safe-area-inset-left, 0px)); gap: 8px; scrollbar-width: none; }
+  .side::-webkit-scrollbar { display: none; }
   .searchcard { padding: 10px; gap: 8px; border-radius: 16px; }
   .tabs button { font-size: 14.5px; }
   .sel { padding: 0 6px 0 10px; gap: 6px; }
