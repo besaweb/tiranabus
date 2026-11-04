@@ -383,6 +383,9 @@ header {
 .gplay { margin: 18px 4px 0; padding-top: 16px; border-top: 1px solid var(--line); }
 .gplay p { margin: 0 0 4px; }
 .gplay .promo { display: block; width: 60%; max-width: 200px; height: auto; margin: 14px auto 4px; border-radius: 14px; }
+.gplay .kofi { display: block; width: 50%; max-width: 170px; margin: 12px auto 4px; }
+.gplay .kofi img { display: block; width: 100%; height: auto; border-radius: 10px; }
+.gplay a:hover img { filter: brightness(1.05); }
 .gprow { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; margin-top: 8px; }
 .gpbtn { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px 5px 9px; border-radius: 8px; background: #000; color: #fff; border: 1px solid #a6a6a6; text-decoration: none; }
 .gpbtn svg { width: 15px; height: 17px; flex: none; }
