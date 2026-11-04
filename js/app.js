@@ -106,54 +106,9 @@
 
   const status = (msg, err) => { const el = $('#status'); el.textContent = msg || ''; el.classList.toggle('err', !!err); };
 
-  const app = $('#app'), sheet = $('#sheet'), grip = $('#grip'), MOB = matchMedia('(max-width: 760px)');
-  let sheetSt = 'half';
   const scr = () => getComputedStyle($('#panel')).overflowY === 'visible' ? $('.side') : $('#panel');
-  const cover = () => MOB.matches && sheetSt !== 'full' ? sheet.offsetHeight : 0;
-  const fit = (b, p, maxZoom) => { if (b.isValid()) map.fitBounds(b, { paddingTopLeft: [p, p], paddingBottomRight: [p, p + cover()], maxZoom }); };
-  const syncCover = () => $('.mapwrap').style.setProperty('--sb', cover() + 'px');
-  function setSheet(st, user) {
-    const prev = sheetSt;
-    sheetSt = st; app.dataset.sheet = st; sheet.style.height = '';
-    $('#v-map').setAttribute('aria-pressed', st === 'map');
-    $('#v-list').setAttribute('aria-pressed', st !== 'map');
-    if (user && prev === 'full' && st !== 'full' && MOB.matches) setTimeout(() => { syncCover(); if (mode === 'plan' && plan.res && plan.res.list[plan.open]) drawJourney(true); }, 300);
-  }
-  const peek = () => { if (MOB.matches && sheetSt === 'map') setSheet('half'); };
-  const syncSeg = () => { $('#v-list-t').textContent = t(mode === 'plan' ? 'tabPlan' : 'tabBrowse'); };
-  $('#v-map').addEventListener('click', () => setSheet('map', true));
-  $('#v-list').addEventListener('click', () => setSheet(sheetSt === 'map' ? 'half' : 'full', true));
-  let drag = null, dragged = false;
-  grip.addEventListener('pointerdown', e => {
-    if (!MOB.matches) return;
-    drag = { y: e.clientY, h: sheet.offsetHeight, min: $('.sheethead').offsetHeight, max: $('.mapwrap').offsetHeight, moved: false };
-    grip.setPointerCapture(e.pointerId);
-  });
-  grip.addEventListener('pointermove', e => {
-    if (!drag) return;
-    if (Math.abs(e.clientY - drag.y) > 6 && !drag.moved) { drag.moved = true; sheet.classList.add('drag'); }
-    if (drag.moved) sheet.style.height = Math.min(drag.max, Math.max(drag.min, drag.h + drag.y - e.clientY)) + 'px';
-  });
-  const endDrag = () => {
-    if (!drag) return;
-    const d = drag;
-    drag = null; sheet.classList.remove('drag');
-    if (!d.moved) return;
-    dragged = true;
-    const f = (sheet.offsetHeight - d.min) / (d.max - d.min);
-    setSheet(f < .25 ? 'map' : f < .75 ? 'half' : 'full', true);
-  };
-  grip.addEventListener('pointerup', endDrag);
-  grip.addEventListener('pointercancel', endDrag);
-  grip.addEventListener('click', () => {
-    if (dragged) { dragged = false; return; }
-    setSheet(sheetSt === 'map' ? 'half' : sheetSt === 'half' ? 'full' : 'half', true);
-  });
-  if (window.ResizeObserver) {
-    new ResizeObserver(() => map.invalidateSize({ pan: false })).observe($('#map'));
-    new ResizeObserver(syncCover).observe(sheet);
-  }
-  MOB.addEventListener('change', syncCover);
+  const fit = (b, p, maxZoom) => { if (b.isValid()) map.fitBounds(b, { padding: [p, p], maxZoom }); };
+  if (window.ResizeObserver) new ResizeObserver(() => map.invalidateSize({ pan: false })).observe($('#map'));
 
   function draw() {
     lineLayer.clearLayers(); stopLayer.clearLayers(); lines = []; markers.clear();
@@ -336,7 +291,6 @@
 
   function openRoute(r, zoom = true) {
     if (mode !== 'browse') setMode('browse', true);
-    peek();
     prevView = null;
     view = { kind: 'route', r };
     sel = { route: r, stop: null };
@@ -348,7 +302,6 @@
     if (!keepPrev) prevView = view.kind === 'route' ? view : view.kind === 'stop' ? prevView : null;
     view = { kind: 'stop', s };
     sel = { route: null, stop: s };
-    peek();
     restyle(); render();
     if (!map.getBounds().pad(-.1).contains([s.lat, s.lon])) map.panTo([s.lat, s.lon]);
     stopTimer();
@@ -421,12 +374,10 @@
 
   function setMode(m, quiet) {
     mode = m;
-    app.dataset.mode = m;
     $('#tab-browse').setAttribute('aria-selected', m === 'browse');
     $('#tab-plan').setAttribute('aria-selected', m === 'plan');
     $('.search').hidden = m !== 'browse';
     $('#planform').hidden = m !== 'plan';
-    syncSeg();
     if (m === 'plan') {
       stopTimer();
       if (!plan.timeTouched) setNow();
@@ -471,7 +422,6 @@
     const r = GTFS.plan(feed, plan.from.stops, plan.to.stops, day, t0, 5, plan.from.place || plan.to.place ? accOf(plan.from, plan.to) : undefined);
     plan.res = { ...r, t0, today: day.ymd === c.ymd };
     plan.open = r.list.length ? 0 : -1;
-    peek();
     showPlan(); drawJourney(true); restyle();
   }
 
@@ -655,7 +605,7 @@
     $('#' + which + '-sugg').hidden = true;
     restyle();
     if (plan.from && plan.to) runPlan();
-    else { showPlan(); const g = plan[which]; if (g && !MOB.matches) map.panTo(g.pt ? [g.pt.lat, g.pt.lon] : [g.stops[0].lat, g.stops[0].lon]); $('#' + (which === 'from' ? 'to' : 'from')).focus(); }
+    else { showPlan(); const g = plan[which]; if (g) map.panTo(g.pt ? [g.pt.lat, g.pt.lon] : [g.stops[0].lat, g.stops[0].lon]); $('#' + (which === 'from' ? 'to' : 'from')).focus(); }
   }
   function resolveTyped(which) {
     if (plan[which]) return;
@@ -775,7 +725,7 @@
     for (const el of document.querySelectorAll('[data-i18n-title]')) el.title = t(el.dataset.i18nTitle);
     for (const b of document.querySelectorAll('[data-lang]')) b.setAttribute('aria-pressed', b.dataset.lang === l);
     menuBtn.setAttribute('aria-label', t('dataTitle')); menuBtn.title = t('dataTitle');
-    syncTheme(); syncSeg();
+    syncTheme();
     if (!feed) return;
     if (baseTables && builtLang !== l) { setFeed(buildFeed(), source, false); return; }
     setAttr(); renderMeta(); renderExpiry();
