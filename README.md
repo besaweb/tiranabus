@@ -2,6 +2,8 @@
 
 Prototyp mapy městské dopravy v Tiraně nad GTFS feedem: linky, zastávky, odjezdy a vyhledání spojení.
 
+Na telefonu jsou výsledky ve vysouvacím panelu přes mapu: táhlem nebo přepínačem **Mapa / Spojení** se přepíná mezi mapou, polovičním zobrazením a výsledky přes celou obrazovku.
+
 ## Spuštění
 
 Otevři `index.html` v prohlížeči. Podklad OpenStreetMap funguje jen přes web server:

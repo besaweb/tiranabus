@@ -106,6 +106,55 @@
 
   const status = (msg, err) => { const el = $('#status'); el.textContent = msg || ''; el.classList.toggle('err', !!err); };
 
+  const app = $('#app'), sheet = $('#sheet'), grip = $('#grip'), MOB = matchMedia('(max-width: 760px)');
+  let sheetSt = 'half';
+  const scr = () => getComputedStyle($('#panel')).overflowY === 'visible' ? $('.side') : $('#panel');
+  const cover = () => MOB.matches && sheetSt !== 'full' ? sheet.offsetHeight : 0;
+  const fit = (b, p, maxZoom) => { if (b.isValid()) map.fitBounds(b, { paddingTopLeft: [p, p], paddingBottomRight: [p, p + cover()], maxZoom }); };
+  const syncCover = () => $('.mapwrap').style.setProperty('--sb', cover() + 'px');
+  function setSheet(st, user) {
+    const prev = sheetSt;
+    sheetSt = st; app.dataset.sheet = st; sheet.style.height = '';
+    $('#v-map').setAttribute('aria-pressed', st === 'map');
+    $('#v-list').setAttribute('aria-pressed', st !== 'map');
+    if (user && prev === 'full' && st !== 'full' && MOB.matches) setTimeout(() => { syncCover(); if (mode === 'plan' && plan.res && plan.res.list[plan.open]) drawJourney(true); }, 300);
+  }
+  const peek = () => { if (MOB.matches && sheetSt === 'map') setSheet('half'); };
+  const syncSeg = () => { $('#v-list-t').textContent = t(mode === 'plan' ? 'tabPlan' : 'tabBrowse'); };
+  $('#v-map').addEventListener('click', () => setSheet('map', true));
+  $('#v-list').addEventListener('click', () => setSheet(sheetSt === 'map' ? 'half' : 'full', true));
+  let drag = null, dragged = false;
+  grip.addEventListener('pointerdown', e => {
+    if (!MOB.matches) return;
+    drag = { y: e.clientY, h: sheet.offsetHeight, min: $('.sheethead').offsetHeight, max: $('.mapwrap').offsetHeight, moved: false };
+    grip.setPointerCapture(e.pointerId);
+  });
+  grip.addEventListener('pointermove', e => {
+    if (!drag) return;
+    if (Math.abs(e.clientY - drag.y) > 6 && !drag.moved) { drag.moved = true; sheet.classList.add('drag'); }
+    if (drag.moved) sheet.style.height = Math.min(drag.max, Math.max(drag.min, drag.h + drag.y - e.clientY)) + 'px';
+  });
+  const endDrag = () => {
+    if (!drag) return;
+    const d = drag;
+    drag = null; sheet.classList.remove('drag');
+    if (!d.moved) return;
+    dragged = true;
+    const f = (sheet.offsetHeight - d.min) / (d.max - d.min);
+    setSheet(f < .25 ? 'map' : f < .75 ? 'half' : 'full', true);
+  };
+  grip.addEventListener('pointerup', endDrag);
+  grip.addEventListener('pointercancel', endDrag);
+  grip.addEventListener('click', () => {
+    if (dragged) { dragged = false; return; }
+    setSheet(sheetSt === 'map' ? 'half' : sheetSt === 'half' ? 'full' : 'half', true);
+  });
+  if (window.ResizeObserver) {
+    new ResizeObserver(() => map.invalidateSize({ pan: false })).observe($('#map'));
+    new ResizeObserver(syncCover).observe(sheet);
+  }
+  MOB.addEventListener('change', syncCover);
+
   function draw() {
     lineLayer.clearLayers(); stopLayer.clearLayers(); lines = []; markers.clear();
     const routes = [...feed.routes.values()].sort((a, b) => b.stops.size - a.stops.size);
@@ -125,7 +174,7 @@
     }
     restyle();
     const b = L.latLngBounds([...feed.stops.values()].map(s => [s.lat, s.lon]));
-    if (b.isValid()) map.fitBounds(b, { padding: [24, 24] });
+    fit(b, 24);
   }
 
   const sr = () => { const z = map.getZoom(); return z >= 16 ? 4 : z >= 14.5 ? 3.5 : z >= 13.5 ? 3 : 2; };
@@ -282,26 +331,28 @@
     if (view.kind === 'list') showList();
     else if (view.kind === 'route') showRoute(view.r);
     else showStop(view.s);
-    $('#panel').scrollTop = 0;
+    scr().scrollTop = 0;
   }
 
-  function openRoute(r, fit = true) {
+  function openRoute(r, zoom = true) {
     if (mode !== 'browse') setMode('browse', true);
+    peek();
     prevView = null;
     view = { kind: 'route', r };
     sel = { route: r, stop: null };
     restyle(); render();
-    if (fit) map.fitBounds(L.latLngBounds(r.dirs.flatMap(d => d.line)), { padding: [30, 30], maxZoom: 16 });
+    if (zoom) fit(L.latLngBounds(r.dirs.flatMap(d => d.line)), 30, 16);
   }
 
   function openStop(s, keepPrev) {
     if (!keepPrev) prevView = view.kind === 'route' ? view : view.kind === 'stop' ? prevView : null;
     view = { kind: 'stop', s };
     sel = { route: null, stop: s };
+    peek();
     restyle(); render();
     if (!map.getBounds().pad(-.1).contains([s.lat, s.lon])) map.panTo([s.lat, s.lon]);
     stopTimer();
-    timer = setInterval(() => { if (view.kind === 'stop' && view.s === s) { const st = $('#panel').scrollTop; showStop(s); $('#panel').scrollTop = st; } }, 30000);
+    timer = setInterval(() => { if (view.kind === 'stop' && view.s === s) { const el = scr(), st = el.scrollTop; showStop(s); el.scrollTop = st; } }, 30000);
   }
 
   function openList() {
@@ -317,7 +368,7 @@
     const pb = e.target.closest('[data-plan]');
     if (pb) { setEnd(pb.dataset.plan, stopGroup.get(pb.dataset.sid)); setMode('plan'); maybeRun(); return; }
     const jb = e.target.closest('[data-j]');
-    if (jb) { plan.open = +jb.dataset.j === plan.open ? -1 : +jb.dataset.j; const st = $('#panel').scrollTop; showPlan(); $('#panel').scrollTop = st; drawJourney(true); restyle(); return; }
+    if (jb) { plan.open = +jb.dataset.j === plan.open ? -1 : +jb.dataset.j; const el = scr(), st = el.scrollTop; showPlan(); el.scrollTop = st; drawJourney(true); restyle(); return; }
     const b = e.target.closest('[data-route],[data-stop],[data-back]');
     if (!b) return;
     if (b.hasAttribute('data-back')) {
@@ -370,10 +421,12 @@
 
   function setMode(m, quiet) {
     mode = m;
+    app.dataset.mode = m;
     $('#tab-browse').setAttribute('aria-selected', m === 'browse');
     $('#tab-plan').setAttribute('aria-selected', m === 'plan');
     $('.search').hidden = m !== 'browse';
     $('#planform').hidden = m !== 'plan';
+    syncSeg();
     if (m === 'plan') {
       stopTimer();
       if (!plan.timeTouched) setNow();
@@ -418,6 +471,7 @@
     const r = GTFS.plan(feed, plan.from.stops, plan.to.stops, day, t0, 5, plan.from.place || plan.to.place ? accOf(plan.from, plan.to) : undefined);
     plan.res = { ...r, t0, today: day.ymd === c.ymd };
     plan.open = r.list.length ? 0 : -1;
+    peek();
     showPlan(); drawJourney(true); restyle();
   }
 
@@ -438,13 +492,14 @@
       html += `<div class="empty">${t('noRes', { t: GTFS.hhmm(r.t0) })}</div>`;
     } else {
       const now = GTFS.clock(feed.tz).sec;
-      html += `<div class="sect"><span>${esc(plan.from.label)} → ${esc(plan.to.label)}</span><span>${r.list.length}</span></div>`;
+      html += `<div class="jhead"><span class="ji"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="18" r="2.3"/><circle cx="18" cy="6" r="2.3"/><path d="M8.3 18H14a3.5 3.5 0 0 0 0-7h-4a3.5 3.5 0 0 1 0-7h5.7"/></svg></span><b>${esc(plan.from.label)} → ${esc(plan.to.label)}</b><span class="n">${r.list.length}</span></div>`;
       html += r.list.map((j, i) => {
         const wait = r.today ? Math.floor((j.dep - now) / 60) : null;
         const sum = `<button class="jsum" data-j="${i}" aria-expanded="${i === plan.open}">
-          <span class="jt"><b>${GTFS.hhmm(j.dep)} – ${GTFS.hhmm(j.arr)}</b><span>${t('minutes', { n: mins(j.arr - j.dep) })} · ${j.rides ? (j.transfers ? j.transfers + ' ' + pl('uTransfer', j.transfers) : t('direct')) + ' · <span class="nw">' + fareText(j) + '</span>' : t('walkOnly')}</span></span>
-          <span class="jlegs">${j.legs.filter(l => l.kind === 'ride' || l.m > 150 || j.legs.length === 1).map(legIcon).join('<i>›</i>')}</span>
-          ${wait != null && wait >= 0 && wait < 120 ? `<span class="jin ${wait <= 5 ? 'soon' : ''}">${wait === 0 ? t('nowLc') : t('inMin', { n: wait })}</span>` : ''}
+          <span class="jt">${GTFS.hhmm(j.dep)} – ${GTFS.hhmm(j.arr)}</span>
+          ${wait != null && wait >= 0 && wait < 120 ? `<span class="jin ${wait <= 5 ? 'soon' : ''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>${wait === 0 ? t('nowLc') : t('inMin', { n: wait })}</span>` : ''}
+          <span class="jm">${t('minutes', { n: mins(j.arr - j.dep) })} · ${j.rides ? (j.transfers ? j.transfers + ' ' + pl('uTransfer', j.transfers) : t('direct')) + ' · <span class="nw">' + fareText(j) + '</span>' : t('walkOnly')}</span>
+          <span class="jlegs">${j.legs.filter(l => l.kind === 'ride' || l.m > 150 || j.legs.length === 1).map(legIcon).join('<i>›</i>')}</span><span class="chev" aria-hidden="true"></span>
         </button>`;
         return `<div class="jrn ${i === plan.open ? 'open' : ''}">${sum}${i === plan.open ? detail(j) : ''}</div>`;
       }).join('');
@@ -463,9 +518,9 @@
         const mid = l.inst.tr.st.slice(l.k0 + 1, l.k1).map(x => [x.dep + l.inst.base, feed.stops.get(x.stop).name]);
         out += `<li class="leg ride" style="--c:${l.route.color}">
           <div class="lh">${chip(l.route)}<span>${t('dirLeg', { h: '<b>' + esc(l.head) + '</b>' })}</span></div>
-          <div class="ls"><time>${GTFS.hhmm(l.dep)}</time><span>${esc(l.from.name)}</span></div>
+          <div class="ls a"><time>${GTFS.hhmm(l.dep)}</time><span>${esc(l.from.name)}</span></div>
           ${mid.length ? `<details class="lm"><summary>${n} ${pl('uStop', n)} · ${t('minutes', { n: mins(l.arr - l.dep) })}</summary><ul>${mid.map(([s, x]) => `<li><time>${GTFS.hhmm(s)}</time><span>${esc(x)}</span></li>`).join('')}</ul></details>` : `<div class="lm">${n} ${pl('uStop', n)} · ${t('minutes', { n: mins(l.arr - l.dep) })}</div>`}
-          <div class="ls"><time>${GTFS.hhmm(l.arr)}</time><span>${esc(l.to.name)}</span></div>
+          <div class="ls b"><time>${GTFS.hhmm(l.arr)}</time><span>${esc(l.to.name)}</span></div>
         </li>`;
       } else {
         out += `<li class="leg walk">${legIcon(l)}<span>${t('walkLeg', { n: mins(l.arr - l.dep), m: Math.round(l.m / 10) * 10 })}<br><small>${!l.acc && l.from.name === l.to.name ? t('walkCross') : ''}${t(String(l.to.id)[0] === '@' ? 'walkPlace' : 'walkTo', { s: esc(l.to.name) })}</small></span></li>`;
@@ -475,7 +530,7 @@
     return out + '</ol>';
   }
 
-  function drawJourney(fit) {
+  function drawJourney(zoom) {
     planLayer.clearLayers();
     const j = plan.res && plan.res.list[plan.open];
     if (!j || mode !== 'plan') return;
@@ -500,7 +555,7 @@
     const o = j.legs.length ? j.legs[0].from : j.origin, dst = j.dest;
     L.circleMarker([o.lat, o.lon], { renderer, interactive: false, radius: 8, color: panel, weight: 2.5, fillColor: ac, fillOpacity: 1 }).addTo(planLayer);
     L.circleMarker([dst.lat, dst.lon], { renderer, interactive: false, radius: 8, color: panel, weight: 2.5, fillColor: fg, fillOpacity: 1 }).addTo(planLayer);
-    if (fit && pts.length) map.fitBounds(L.latLngBounds(pts), { padding: [40, 40], maxZoom: 16 });
+    if (zoom && pts.length) fit(L.latLngBounds(pts), 40, 16);
   }
 
   const PICO = {
@@ -572,7 +627,7 @@
     const inp = $('#' + which), box = $('#' + which + '-sugg');
     inp.addEventListener('input', () => { plan[which] = null; plan.res = null; planLayer.clearLayers(); suggest(which); restyle(); });
     inp.addEventListener('focus', () => { if (ext) { loadPlaces(); loadNet(); } if (inp.value && !plan[which]) suggest(which); });
-    inp.addEventListener('blur', () => setTimeout(() => { box.hidden = true; }, 150));
+    inp.addEventListener('blur', () => setTimeout(() => { box.hidden = true; inp.scrollLeft = 0; }, 150));
     inp.addEventListener('keydown', e => {
       const items = [...box.querySelectorAll('.sg[data-name], .sg[data-place]')];
       if (box.hidden || !items.length) return;
@@ -600,7 +655,7 @@
     $('#' + which + '-sugg').hidden = true;
     restyle();
     if (plan.from && plan.to) runPlan();
-    else { showPlan(); const g = plan[which]; if (g) map.panTo(g.pt ? [g.pt.lat, g.pt.lon] : [g.stops[0].lat, g.stops[0].lon]); $('#' + (which === 'from' ? 'to' : 'from')).focus(); }
+    else { showPlan(); const g = plan[which]; if (g && !MOB.matches) map.panTo(g.pt ? [g.pt.lat, g.pt.lon] : [g.stops[0].lat, g.stops[0].lon]); $('#' + (which === 'from' ? 'to' : 'from')).focus(); }
   }
   function resolveTyped(which) {
     if (plan[which]) return;
@@ -720,11 +775,11 @@
     for (const el of document.querySelectorAll('[data-i18n-title]')) el.title = t(el.dataset.i18nTitle);
     for (const b of document.querySelectorAll('[data-lang]')) b.setAttribute('aria-pressed', b.dataset.lang === l);
     menuBtn.setAttribute('aria-label', t('dataTitle')); menuBtn.title = t('dataTitle');
-    syncTheme();
+    syncTheme(); syncSeg();
     if (!feed) return;
     if (baseTables && builtLang !== l) { setFeed(buildFeed(), source, false); return; }
     setAttr(); renderMeta(); renderExpiry();
-    if (mode === 'plan') showPlan(); else { const st = $('#panel').scrollTop; render(); $('#panel').scrollTop = st; }
+    if (mode === 'plan') showPlan(); else { const el = scr(), st = el.scrollTop; render(); el.scrollTop = st; }
   }
   const langBox = $('.lang');
   document.addEventListener('click', e => { if (!langBox.contains(e.target)) langBox.classList.remove('open'); });
