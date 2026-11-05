@@ -209,7 +209,7 @@
   const mil = (k, txt) => `<span class="mil"><svg class="mico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${MICO[k]}</svg><span>${txt}</span></span>`;
   const themeItem = () => { const d = document.documentElement.dataset.theme === 'dark'; return mil(d ? 'light' : 'dark', t(d ? 'themeLight' : 'themeDark')); };
 
-  const VERSION = '1.03';
+  const VERSION = '1.04';
   function renderMeta() {
     const aboutBody = `<p><b>${esc(t('title'))}</b><br>${esc(t('aboutDesc'))}</p><p>${esc(t('aboutCredits'))}</p><p><b>${esc(t('aboutAuthor'))}:</b> <a href="https://besaweb.al" target="_blank" rel="noopener">besaweb.al</a><br><b>${esc(t('aboutContact'))}:</b> <a href="mailto:info@besaweb.al">info@besaweb.al</a><br><b>${esc(t('aboutVer'))}:</b> ${esc(window.APP_VERSION || VERSION)}</p><p><a href="privacy.html">${esc(t('privacy'))}</a>${typeof Consent !== 'undefined' && Consent.enabled ? ` · <a href="#" class="adprefs">${esc(t('adPrefs'))}</a>` : ''}</p>`;
     const seo = window.APP_VERSION ? '' : `<a class="mi mlink" href="${I18N.lang}/lines/">${mil('bus', t('lines'))}</a><a class="mi mlink" href="${I18N.lang}/airport/">${mil('air', t('seoAirNav'))}</a>`;
