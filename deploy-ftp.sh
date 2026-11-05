@@ -18,8 +18,12 @@ unzip -tq "$S/gtfs.zip"
 V=$V node tools/build-pages.js "$S"
 sed -i -E "s#((src|href)=\"(css|js)/[^\"?]+\.(js|css))\"#\1?v=$V\"#g" "$S"/??/index.html
 
-args=()
-while IFS= read -r f; do args+=(-T "$S/$f" "ftp://$FTP_HOST$FTP_DIR/$f"); done < <(cd "$S" && find . -type f | sed 's#^\./##' | sort)
-echo "Nahrávám $(( ${#args[@]} / 3 )) souborů na $FTP_HOST$FTP_DIR (verze $V)"
-curl -sS --ftp-ssl-control --ftp-create-dirs --retry 2 -u "$FTP_USER:$FTP_PASS" "${args[@]}"
+SW=$(cygpath -m "$S" 2>/dev/null || echo "$S")
+CFG="$S/.curl-files"
+n=0
+while IFS= read -r f; do printf 'upload-file = "%s"
+url = "ftp://%s%s/%s"
+' "$SW/$f" "$FTP_HOST" "$FTP_DIR" "$f" >> "$CFG"; n=$((n + 1)); done < <(cd "$S" && find . -type f ! -name .curl-files | sed 's#^\./##' | sort)
+echo "Nahrávám $n souborů na $FTP_HOST$FTP_DIR (verze $V)"
+curl -sS --ftp-ssl-control --ftp-create-dirs --retry 2 -u "$FTP_USER:$FTP_PASS" -K "$CFG"
 echo "Hotovo: $URL"
