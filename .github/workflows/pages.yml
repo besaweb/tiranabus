@@ -36,6 +36,7 @@ jobs:
             curl -fsSL --retry 3 -o site/gtfs.zip https://pt.tirana.al/gtfs/gtfs.zip
           fi
           unzip -tq site/gtfs.zip
+          node tools/pages-build.js site site/gtfs.zip "${GITHUB_SHA::8}"
 
       - uses: actions/upload-pages-artifact@v5
         with:

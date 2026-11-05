@@ -485,3 +485,4 @@ header {
 .consent .cb { display: flex; gap: 8px; }
 .nojs { position: fixed; inset: 0; z-index: 6000; padding: 24px 16px; background: var(--bg); color: var(--fg); font: 400 16px/1.5 var(--ui); }
 .nojs a { color: var(--accent-fg); }
+.foot .seonav { margin-bottom: 2px; }

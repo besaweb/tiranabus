@@ -19,6 +19,19 @@
 <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#121A2C" media="(prefers-color-scheme: dark)">
 <link rel="canonical" href="https://tiranabus.al/">
+<link rel="alternate" hreflang="sq" href="https://tiranabus.al/sq/">
+<link rel="alternate" hreflang="en" href="https://tiranabus.al/">
+<link rel="alternate" hreflang="cs" href="https://tiranabus.al/cs/">
+<link rel="alternate" hreflang="it" href="https://tiranabus.al/it/">
+<link rel="alternate" hreflang="de" href="https://tiranabus.al/de/">
+<link rel="alternate" hreflang="pl" href="https://tiranabus.al/pl/">
+<link rel="alternate" hreflang="fr" href="https://tiranabus.al/fr/">
+<link rel="alternate" hreflang="es" href="https://tiranabus.al/es/">
+<link rel="alternate" hreflang="mk" href="https://tiranabus.al/mk/">
+<link rel="alternate" hreflang="el" href="https://tiranabus.al/el/">
+<link rel="alternate" hreflang="ru" href="https://tiranabus.al/ru/">
+<link rel="alternate" hreflang="tr" href="https://tiranabus.al/tr/">
+<link rel="alternate" hreflang="x-default" href="https://tiranabus.al/">
 <link rel="icon" href="favicon.ico" sizes="48x48">
 <link rel="icon" type="image/png" href="img/logo.png" sizes="192x192">
 <link rel="apple-touch-icon" href="img/logo.png">
@@ -32,8 +45,17 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Tirana Bus – public transport journey planner for Tirana">
 <meta property="og:locale" content="en_US">
-<meta property="og:locale:alternate" content="cs_CZ">
 <meta property="og:locale:alternate" content="sq_AL">
+<meta property="og:locale:alternate" content="cs_CZ">
+<meta property="og:locale:alternate" content="it_IT">
+<meta property="og:locale:alternate" content="de_DE">
+<meta property="og:locale:alternate" content="pl_PL">
+<meta property="og:locale:alternate" content="fr_FR">
+<meta property="og:locale:alternate" content="es_ES">
+<meta property="og:locale:alternate" content="mk_MK">
+<meta property="og:locale:alternate" content="el_GR">
+<meta property="og:locale:alternate" content="ru_RU">
+<meta property="og:locale:alternate" content="tr_TR">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Tirana Bus">
 <meta name="twitter:description" content="Map, timetables and journey planner for public transport in Tirana.">
@@ -45,7 +67,7 @@
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<noscript><div class="nojs"><h2>Tirana Bus</h2><p>Map of Tirana city bus lines and stops, timetables, next departures and a journey planner with transfers, including airport buses to Rinas. The map and planner need JavaScript.</p><p><a href="tickets.html">Bus tickets and fares in Tirana</a> · <a href="privacy.html">Privacy Policy</a></p></div></noscript>
+<noscript><div class="nojs"><h2>Tirana Bus</h2><p>Find Tirana city bus lines, stops and next departures on a map. Plan trips with transfers and catch the airport bus to Rinas. Free, in 12 languages.</p><p><a href="airport/">Airport bus</a> · <a href="lines/">Lines</a> · <a href="stops/">Stops</a> · <a href="tickets.html">Tickets &amp; fares</a> · <a href="privacy.html">Privacy Policy</a></p></div></noscript>
 <div class="boot" id="boot" role="status" aria-live="polite">
   <svg viewBox="0 0 800 400" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
     <path d="M0 250 L110 170 L190 205 L330 110 L450 195 L565 140 L690 205 L800 150 V400 H0Z" fill="#8FCBFF"/>
@@ -149,6 +171,7 @@
     <div class="tilenote" id="tilenote" hidden><span id="tiletext"></span><button type="button" id="tileclose" data-i18n-aria="close" aria-label="Close">×</button></div>
   </div>
   <footer class="foot">
+    <p class="seonav"><a href="lines/" data-seo="lines/" data-i18n="navLines">Lines</a> · <a href="stops/" data-seo="stops/" data-i18n="navStops">Stops</a> · <a href="airport/" data-seo="airport/" data-i18n="navAirport">Airport bus</a></p>
     <p>Website designed, developed &amp; maintained by <a href="https://besaweb.al" target="_blank" rel="noopener">BesaWeb</a> · © 2026 BesaWeb. All rights reserved. · <a href="privacy.html">Privacy Policy</a></p>
   </footer>
 </div>

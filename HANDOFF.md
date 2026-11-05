@@ -1,6 +1,6 @@
 # HANDOFF – MHD Tirana
 
-Stav k 29. 10. 2026. Pravidla pro práci na projektu jsou v `CLAUDE.md`.
+Stav k 5. 11. 2026. Pravidla pro práci na projektu jsou v `CLAUDE.md`.
 
 ## Co to je
 
@@ -9,6 +9,7 @@ Statická webová aplikace (vanilla JS, bez buildu) nad GTFS feedem MHD Tirany. 
 ## Hotovo
 
 - **Google Analytics 4** (gtag `G-XJ9EK9ZKWF`) na začátku `<head>` v `index.html`, `tickets.html`, `privacy.html`; bez consent mode. Popsáno v `privacy.html` (sekce Analytics / Analytika, EN i CS). Gtag je i v APK (bere `index.html`) – v Google Play Data safety uvést analytiku.
+- **SEO etapa 3** (5. 11. 2026): statické stránky generované z GTFS skriptem `tools/pages-build.js` (Node, bez závislostí; feed čte přes `unzip -p`, logiku bere z `gtfs-core.js`, `i18n.js` a `extra-airport.js`). Pro každý z 12 jazyků vzniká `/airport/` (RX a RT: cena a rozpis z i18n `tk*`, odjezdy a doba jízdy z dat), `/lines/` (seznam), `/stops/` (A–Z, ~300 názvů s linkami), `/line/<linka>/` (27 městských linek: první/poslední odjezd a interval pro pracovní den, sobotu a neděli z referenčních dnů podle data generování, seznam zastávek obou směrů, schematická SVG trasa, JSON-LD BreadcrumbList) a kopie úvodní stránky `/<jazyk>/` (title, description, canonical, OG, noscript přeložené; zbytek přeloží JS). Angličtina je bez prefixu (`/`, `/airport/`, …), ostatní jazyky `/<kód>/…`; `x-default` = angličtina. Každá stránka má hreflang na všech 12 verzí, `sitemap.xml` se generuje i s `xhtml:link` (v repu zůstává jen záložní). Texty stránek jsou v `tools/pages-i18n.js` (mimo bundle aplikace), v `i18n.js` přibyly klíče `navLines/navStops/navAirport` (patička `.seonav` s odkazy, v APK skrytá spolu s `.foot`). `app.js`: `data-root` a `data-pglang` na `<html>` jazykových kopií (cesty přes `U()`, jazyk z URL má přednost před uloženým, přepnutí jazyka na takové stránce naviguje na URL nového jazyka), hlubší odkaz `?line=5B` otevře linku (z tlačítka „Zobrazit na mapě“). `deploy-ftp.sh` a `pages.yml` generátor spouštějí po stažení feedu, takže se stránky obnovují s novým feedem (FTP ručně). `index.html`: hreflang, všechny `og:locale:alternate`, odkazy v noscriptu.
 - **SEO etapa 2** (2. 11. 2026): výchozí jazyk HTML je angličtina (`lang="en"`, texty, placeholdery a aria z `D.en`; JS je pak přeloží), `tickets.html` má title, description, canonical, OG a anglický text přímo v HTML, `privacy.html` canonical. OG obrázek `img/og.jpg` (1200×630, výřez z `TiranaBusCover.png`), `summary_large_image`. JSON-LD (WebSite, WebApplication, Organization BesaWeb) v `index.html`. `<noscript>` s popisem a odkazy (`.nojs`). `favicon.ico` (16/32/48) v kořeni, `img/logo.png` zmenšeno na 256 barev (50 → 9 KB). Alt promo obrázku z klíče `promoAlt`, title tickets z `tkTitle`.
 - **Rozšířené vyhledávání** (3. 11. 2026, volitelné, výchozí vypnuto): přepínač v menu (desktop: dole v nabídce Platnost dat, mobil: hamburger, APK: `android/menu.js`), stav v `localStorage` `tirana-mhd-ext`. Vypnuté = beze změny (našeptávač, plánovač, žádné stahování dat). Zapnuté: pole Odkud/Kam nabízejí i místa a ulice z `data/poi.json` (OSM, generuje `node tools/poi-build.js`, asi 2 350 míst + 1 850 ulic, 80 KB gzip, načte se až při prvním kliknutí do pole). Pořadí: zastávky (max 5, s ikonou autobusu), pak místa (max 5) podle kvality shody a skupiny (instituce → památky → ulice → ostatní). Hledání v `js/places.js` (bez diakritiky, slova v libovolném pořadí, začátky slov, 1 překlep od 5 znaků, všechny jazykové varianty, alternativní názvy a ruční aliasy). Vybrané místo → zastávky do 500 m chůze po ulicích (jinak 3 nejbližší do 1,5 km) s časem chůze; `GTFS.plan(..., acc)` počítá start/cíl s docházkou, přidá pěší úseky k místu a od místa a variantu „jen pěšky“ do 1,5 km. Chůze od poslední zastávky k cíli se při výběru počítá dvojnásobně (`ACC_K = 2`, jen hodnocení `cost`, zobrazené časy jsou skutečné), aby vyhrála spojení končící blíž cíli; chůze na začátku penalizovaná není (jinak by se ztrácely odjezdy hned po zadaném čase). Při stejné minutě odjezdu se řadí podle `cost`. Bez `acc` je plánovač beze změny (regrese 300 dotazů, 0 rozdílů).
 - **Stejně pojmenované zastávky na více místech** (3. 11. 2026): `groupStops` místo „Název (1)/(2)“ přidá ulici z `stop_desc` („Selitë – Bulevardi Gjergj Fishta“, „Selitë – Rruga Isuf Elezi“), bez popisu nebo při shodě linky („Xhamia (15B)“), až pak číslo. Týká se teď Selitë a Xhamia.
@@ -107,6 +108,8 @@ Letiště ve feedu není (Rinas leží mimo území města, linky provozuje souk
 - Mobilní rozhraní = stejné HTML jako desktop, přeskládání jen CSS gridem (mapa nahoře, panel pod ní).
 - Pěší vzdálenosti (docházka k místům i přestupy) po vlastní síti ulic z OSM (`data/walk.json`), ne vzdušnou čarou; jádro `gtfs-core.js` zůstává bez závislostí, síť mu předává aplikace přes `feed.walkFn`.
 
+- Statické stránky pro vyhledávače se generují při nasazení z GTFS (do gitu se nekomitují), ne ručně a ne za běhu v prohlížeči. Texty stránek leží v `tools/pages-i18n.js`, aby nezvětšovaly bundle aplikace. Úvodní SPA zůstává jediná, jazykové URL jsou kopie `index.html` s přeloženou hlavičkou. Letištní linky RX/RT nemají vlastní `/line/` stránky, vede na ně `/airport/`.
+
 ## TODO
 
 1. **Hlídání feedu:** po pushi workflow jednou spustit ručně (workflow_dispatch) a zkontrolovat vznik release `tirana-latest`. Pak případně přidat kontrolu stránky Luna (bod 4).
@@ -118,9 +121,11 @@ Letiště ve feedu není (Rinas leží mimo území města, linky provozuje souk
 7. Jízdné (`fare_*`) a odkazy na oficiální PDF jízdní řády (`timetable_pages.txt`).
 8. Po změně `extra-airport.js` ručně přegenerovat `data/gtfs-extra.zip` – zvážit skript.
 9. Android: zálohovat `android/tirana-bus.keystore` (bez něj nejde APK aktualizovat přes stávající instalaci), případně ikona se zaoblením (adaptive icon) a vydání APK do Releases.
-10. **SEO:** ověřit tiranabus.al v Google Search Console a Bing Webmaster Tools (DNS TXT u gigaserver.cz), odeslat `sitemap.xml`. Etapa 3: jazykové URL + hreflang, landing pages z GTFS (letiště, linky, zastávky), Consent Mode pro EU.
+10. **SEO:** ověřit tiranabus.al v Google Search Console a Bing Webmaster Tools (DNS TXT u gigaserver.cz), odeslat `sitemap.xml` (po nasazení etapy 3 ověřit, že se zaindexovaly jazykové verze a že hreflang nehlásí chyby). Dále: Consent Mode pro EU (GA běží i na všech generovaných stránkách), vlastní `og:image` pro letiště, `tickets.html` a `privacy.html` bez jazykových URL, komprese a cache v `.htaccess`, vlastní hosting písma Inter. Případně stránky konkrétních zastávek.
 
 ## Známé chyby a omezení
+
+- Generované stránky linek berou první/poslední odjezd z prvního zastavení spoje; u linek se zkrácenými spoji nebo půlnočními spoji (čas přes 24:00) se zobrazí čas modulo 24 h. Referenční dny se volí podle data generování (první středa, sobota a neděle bez výjimek v kalendáři), po konci platnosti feedu podle posledního týdne. Albánské názvy linek a zastávek z feedu se ve všech jazycích nepřekládají. Cena letištní linky RT: stránka `/airport/` používá texty `tkPriceB` (300 L / 3 €), data linky 3,50 € – k sjednocení po ověření (viz Jízdenky).
 
 - Rozšířené vyhledávání: kvalita a překlady míst podle OSM (překladů je málo, většinou se zobrazí albánský název). U ulic se bere celá ulice, bez čísel domů. Velké areály (park) mají bod uprostřed, docházka může vyjít delší. `data/poi.json` obnovovat zhruba jednou za měsíc (`node tools/poi-build.js`, Overpass občas vrací 502 – skript zkouší znovu).
 

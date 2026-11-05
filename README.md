@@ -31,6 +31,7 @@ a pak http://localhost:8000/
 | `js/places.js`, `data/poi.json` | volitelné rozšířené vyhledávání míst a ulic (data © OpenStreetMap contributors, ODbL; přegenerovat `node tools/poi-build.js`) |
 | `data/walk.json` | pěší síť ulic pro docházku k místům (© OpenStreetMap contributors, ODbL; přegenerovat `node tools/walk-build.js`) |
 | `robots.txt`, `sitemap.xml`, `favicon.ico`, `img/og.jpg` | pro vyhledávače (hlavní doména tiranabus.al) |
+| `tools/pages-build.js`, `tools/pages-i18n.js`, `css/pages.css` | generátor statických stránek pro vyhledávače (`/airport/`, `/lines/`, `/line/<linka>/`, `/stops/`, jazykové kopie úvodní stránky `/<jazyk>/`, `sitemap.xml` s hreflang); `node tools/pages-build.js <výstupní složka> [gtfs.zip] [verze]`, volá ho `deploy-ftp.sh` a `pages.yml`, výstup se do gitu necommituje |
 | `.htaccess`, `404.html` | přesměrování www a chybová stránka, jen na FTP |
 
 ## Doplňkové linky na letiště (LU-NA)

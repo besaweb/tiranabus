@@ -1,5 +1,7 @@
 (() => {
   const $ = s => document.querySelector(s);
+  const ROOT = document.documentElement.dataset.root || '', PGLANG = document.documentElement.dataset.pglang || '';
+  const U = p => ROOT + p;
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const tok = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
   const lum = h => {
@@ -32,7 +34,7 @@
   };
   const VEC = 'Offline mapa';
   if (window.OFFLINE_MAP && window.maplibregl) {
-    const sty = () => new URL('map/style-' + (document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light') + '.json', location.href).href;
+    const sty = () => new URL(U('map/style-' + (document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light') + '.json'), location.href).href;
     BASE[VEC] = L.Layer.extend({
       getAttribution: () => '© OpenMapTiles © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>',
       onAdd(m) {
@@ -97,7 +99,7 @@
   try { ext = localStorage.getItem('tirana-mhd-ext') === '1'; } catch (e) {}
   let wnet = null, wload = null;
   const loadNet = () => {
-    if (!wload) wload = fetch('data/walk.json').then(r => r.ok ? r.json() : Promise.reject()).then(d => { wnet = Places.net(d); useNet(); }).catch(() => { wload = null; });
+    if (!wload) wload = fetch(U('data/walk.json')).then(r => r.ok ? r.json() : Promise.reject()).then(d => { wnet = Places.net(d); useNet(); }).catch(() => { wload = null; });
     return wload;
   };
   loadNet();
@@ -435,7 +437,7 @@
     if (msg) html += `<div class="empty">${esc(msg)}</div>`;
     if (!r) {
       html += `<p class="hint lg">${t('hintPlan')}</p>`;
-      html += `<div class="gplay"><p class="hint lg">${t('gplaySoon')}</p><div class="gprow"><a class="gpbtn" href="https://ko-fi.com/tiranabus" target="_blank" rel="noopener"><svg viewBox="0 0 24 26" aria-hidden="true"><path fill="#00D7FE" d="M1.5 1.2 13 13 1.5 24.8c-.3-.3-.5-.7-.5-1.2V2.4c0-.5.2-.9.5-1.2z"/><path fill="#00F076" d="M16.8 9.2 13 13 1.5 1.2c.5-.3 1.1-.3 1.7 0z"/><path fill="#FF3A44" d="M16.8 16.8 3.2 24.8c-.6.3-1.2.3-1.7 0L13 13z"/><path fill="#FFD500" d="M22 11.9c.9.5.9 1.7 0 2.2l-5.2 2.7L13 13l3.8-3.8z"/></svg><span><small>DONATION FOR</small><b>Google Play</b></span></a><a class="gpbtn" href="https://ko-fi.com/tiranabus" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg><span><small>DONATION FOR</small><b>App Store</b></span></a></div><a href="https://ko-fi.com/tiranabus" target="_blank" rel="noopener"><img class="promo" src="img/promo.webp" alt="${esc(t('promoAlt'))}" width="640" height="640" loading="lazy"></a><a class="kofi" href="https://ko-fi.com/tiranabus" target="_blank" rel="noopener"><img src="img/kofi.webp" alt="${esc(t('kofiAlt'))}" width="400" height="212" loading="lazy"></a></div>`;
+      html += `<div class="gplay"><p class="hint lg">${t('gplaySoon')}</p><div class="gprow"><a class="gpbtn" href="https://ko-fi.com/tiranabus" target="_blank" rel="noopener"><svg viewBox="0 0 24 26" aria-hidden="true"><path fill="#00D7FE" d="M1.5 1.2 13 13 1.5 24.8c-.3-.3-.5-.7-.5-1.2V2.4c0-.5.2-.9.5-1.2z"/><path fill="#00F076" d="M16.8 9.2 13 13 1.5 1.2c.5-.3 1.1-.3 1.7 0z"/><path fill="#FF3A44" d="M16.8 16.8 3.2 24.8c-.6.3-1.2.3-1.7 0L13 13z"/><path fill="#FFD500" d="M22 11.9c.9.5.9 1.7 0 2.2l-5.2 2.7L13 13l3.8-3.8z"/></svg><span><small>DONATION FOR</small><b>Google Play</b></span></a><a class="gpbtn" href="https://ko-fi.com/tiranabus" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg><span><small>DONATION FOR</small><b>App Store</b></span></a></div><a href="https://ko-fi.com/tiranabus" target="_blank" rel="noopener"><img class="promo" src="${U('img/promo.webp')}" alt="${esc(t('promoAlt'))}" width="640" height="640" loading="lazy"></a><a class="kofi" href="https://ko-fi.com/tiranabus" target="_blank" rel="noopener"><img src="${U('img/kofi.webp')}" alt="${esc(t('kofiAlt'))}" width="400" height="212" loading="lazy"></a></div>`;
     } else if (r.same) {
       html += `<div class="empty">${t('same')}</div>`;
     } else if (!r.list.length) {
@@ -531,7 +533,7 @@
   const allStops = () => [...feed.stops.values()];
 
   function loadPlaces() {
-    if (!pload) pload = fetch('data/poi.json').then(r => r.ok ? r.json() : Promise.reject()).then(d => { pidx = Places.build(d); }).catch(() => { pload = null; });
+    if (!pload) pload = fetch(U('data/poi.json')).then(r => r.ok ? r.json() : Promise.reject()).then(d => { pidx = Places.build(d); }).catch(() => { pload = null; });
     return pload;
   }
   function setExt(v) {
@@ -718,6 +720,7 @@
     if (typeof Consent !== 'undefined') Consent.render();
     document.documentElement.lang = l;
     document.title = t('metaTitle');
+    for (const a of document.querySelectorAll('a[data-seo]')) a.href = U((l === 'en' ? '' : l + '/') + a.dataset.seo);
     for (const el of document.querySelectorAll('[data-i18n]')) el.textContent = t(el.dataset.i18n);
     for (const el of document.querySelectorAll('[data-i18n-html]')) el.innerHTML = t(el.dataset.i18nHtml);
     for (const el of document.querySelectorAll('[data-i18n-ph]')) el.placeholder = t(el.dataset.i18nPh);
@@ -738,11 +741,12 @@
     langBox.classList.remove('open');
     I18N.setLang(b.dataset.lang);
     try { localStorage.setItem('tirana-mhd-lang', b.dataset.lang); } catch (e) {}
+    if (PGLANG && b.dataset.lang !== PGLANG) { location.href = U(b.dataset.lang === 'en' ? '' : b.dataset.lang + '/') + location.search; return; }
     applyLang();
   });
   let savedLang = null;
   try { savedLang = localStorage.getItem('tirana-mhd-lang'); } catch (e) {}
-  I18N.setLang(savedLang || I18N.detect(navigator.languages || [navigator.language]));
+  I18N.setLang(PGLANG || savedLang || I18N.detect(navigator.languages || [navigator.language]));
 
   setFeed(GTFS.build(demoTables()), null, true);
   applyLang();
@@ -764,12 +768,17 @@
     if (!/^https?:$/.test(location.protocol)) { boot.classList.add('done'); return; }
     $('#demo').hidden = true;
     try {
-      const r = await fetch('gtfs.zip', { cache: 'no-cache' });
+      const r = await fetch(U('gtfs.zip'), { cache: 'no-cache' });
       if (!r.ok) throw 0;
       const b = await r.blob();
       if (source === null) await loadFile(new File([b], 'gtfs.zip'));
     } catch (e) {}
     endBoot(source === null);
+    const q = new URLSearchParams(location.search).get('line');
+    if (q && feed) {
+      const r = [...feed.routes.values()].find(x => x.short.toLowerCase() === q.toLowerCase());
+      if (r) openRoute(r);
+    }
   }
   autoLoad();
 })();
