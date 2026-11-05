@@ -202,7 +202,9 @@
     light: '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/>',
     data: '<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4M9 15l2 2 4-4"/>',
     about: '<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5M12 8h.01"/>',
-    ext: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5M10.5 7.5v6M7.5 10.5h6"/>'
+    ext: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5M10.5 7.5v6M7.5 10.5h6"/>',
+    bus: '<circle cx="6" cy="18" r="2.3"/><circle cx="18" cy="6" r="2.3"/><path d="M8.3 18H14a3.5 3.5 0 0 0 0-7h-4a3.5 3.5 0 0 1 0-7h5.7"/>',
+    air: '<path d="M10.5 4.5c0-1 .7-1.8 1.5-1.8s1.5.8 1.5 1.8v5.2l7 4.3v2l-7-2v3.7l2 1.5v1.5L12 20l-3.5 1v-1.5l2-1.5v-3.7l-7 2v-2l7-4.3z"/>'
   };
   const mil = (k, txt) => `<span class="mil"><svg class="mico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${MICO[k]}</svg><span>${txt}</span></span>`;
   const themeItem = () => { const d = document.documentElement.dataset.theme === 'dark'; return mil(d ? 'light' : 'dark', t(d ? 'themeLight' : 'themeDark')); };
@@ -210,7 +212,8 @@
   const VERSION = '1.03';
   function renderMeta() {
     const aboutBody = `<p><b>${esc(t('title'))}</b><br>${esc(t('aboutDesc'))}</p><p>${esc(t('aboutCredits'))}</p><p><b>${esc(t('aboutAuthor'))}:</b> <a href="https://besaweb.al" target="_blank" rel="noopener">besaweb.al</a><br><b>${esc(t('aboutContact'))}:</b> <a href="mailto:info@besaweb.al">info@besaweb.al</a><br><b>${esc(t('aboutVer'))}:</b> ${esc(window.APP_VERSION || VERSION)}</p><p><a href="privacy.html">${esc(t('privacy'))}</a>${typeof Consent !== 'undefined' && Consent.enabled ? ` · <a href="#" class="adprefs">${esc(t('adPrefs'))}</a>` : ''}</p>`;
-    $('#meta').innerHTML = `<a class="mi mlink" href="tickets.html">${mil('tk', t('tickets'))}</a>
+    const seo = window.APP_VERSION ? '' : `<a class="mi mlink" href="${I18N.lang}/lines/">${mil('bus', t('lines'))}</a><a class="mi mlink" href="${I18N.lang}/airport/">${mil('air', t('seoAirNav'))}</a>`;
+    $('#meta').innerHTML = `<a class="mi mlink" href="tickets.html">${mil('tk', t('tickets'))}</a>${seo}
       <button type="button" class="mi mtheme" id="themeitem">${themeItem()}</button>
       <button type="button" class="mi mtoggle" aria-expanded="false">${mil('data', t('dataTitle'))}</button><div class="mpane data">${metaData()}</div>
       <button type="button" class="mi mtoggle" aria-expanded="false">${mil('about', t('aboutTitle'))}</button><div class="mpane about">${aboutBody}</div>
@@ -643,6 +646,9 @@
     return f;
   }
 
+  let deepLine = null;
+  try { deepLine = new URLSearchParams(location.search).get('line'); } catch (e) {}
+
   async function loadFile(file) {
     if (!file) return;
     status(t('loading', { f: file.name }));
@@ -656,6 +662,11 @@
       baseTables = tb;
       setFeed(buildFeed(), file.name, false);
       status('');
+      if (deepLine) {
+        const q = deepLine.toLowerCase(), r = [...feed.routes.values()].find(x => x.short.toLowerCase() === q);
+        deepLine = null;
+        if (r) openRoute(r);
+      }
     } catch (e) {
       status((e && e.message) || t('errProc'), true);
     }
@@ -724,6 +735,7 @@
     for (const el of document.querySelectorAll('[data-i18n-aria]')) el.setAttribute('aria-label', t(el.dataset.i18nAria));
     for (const el of document.querySelectorAll('[data-i18n-title]')) el.title = t(el.dataset.i18nTitle);
     for (const b of document.querySelectorAll('[data-lang]')) b.setAttribute('aria-pressed', b.dataset.lang === l);
+    for (const a of document.querySelectorAll('[data-seo]')) a.setAttribute('href', l + '/' + a.dataset.seo + '/');
     menuBtn.setAttribute('aria-label', t('dataTitle')); menuBtn.title = t('dataTitle');
     syncTheme();
     if (!feed) return;
@@ -738,11 +750,16 @@
     langBox.classList.remove('open');
     I18N.setLang(b.dataset.lang);
     try { localStorage.setItem('tirana-mhd-lang', b.dataset.lang); } catch (e) {}
+    if (pageLang) {
+      pageLang = I18N.lang;
+      try { history.replaceState(null, '', location.pathname.replace(/[a-z]{2}\/?$/, pageLang + '/') + location.search + location.hash); } catch (e) {}
+    }
     applyLang();
   });
   let savedLang = null;
   try { savedLang = localStorage.getItem('tirana-mhd-lang'); } catch (e) {}
-  I18N.setLang(savedLang || I18N.detect(navigator.languages || [navigator.language]));
+  let pageLang = document.documentElement.dataset.pageLang || null;
+  I18N.setLang(pageLang || savedLang || I18N.detect(navigator.languages || [navigator.language]));
 
   setFeed(GTFS.build(demoTables()), null, true);
   applyLang();

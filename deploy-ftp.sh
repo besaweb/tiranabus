@@ -15,6 +15,8 @@ if ! curl -fsSL --retry 3 -o "$S/gtfs.zip" https://github.com/besaweb/tiranabus/
   cp gtfs.zip "$S/gtfs.zip"
 fi
 unzip -tq "$S/gtfs.zip"
+V=$V node tools/build-pages.js "$S"
+sed -i -E "s#((src|href)=\"(css|js)/[^\"?]+\.(js|css))\"#\1?v=$V\"#g" "$S"/??/index.html
 
 args=()
 while IFS= read -r f; do args+=(-T "$S/$f" "ftp://$FTP_HOST$FTP_DIR/$f"); done < <(cd "$S" && find . -type f | sed 's#^\./##' | sort)
