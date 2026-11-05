@@ -492,7 +492,7 @@
         L.polyline(path, { renderer, interactive: false, color: panel, weight: 11, opacity: .9, lineCap: 'round', lineJoin: 'round' }).addTo(planLayer);
         L.polyline(path, { renderer, interactive: false, color: l.route.color, weight: 7, opacity: 1, lineCap: 'round', lineJoin: 'round' }).addTo(planLayer);
       } else {
-        const path = l.acc ? Places.route(wnet, [l.from.lat, l.from.lon], [l.to.lat, l.to.lon]) : [[l.from.lat, l.from.lon], [l.to.lat, l.to.lon]];
+        const path = Places.route(wnet, [l.from.lat, l.from.lon], [l.to.lat, l.to.lon]);
         pts.push(...path);
         L.polyline(path, { renderer, interactive: false, color: fg, weight: 3.5, opacity: .85, dashArray: '1 8', lineCap: 'round' }).addTo(planLayer);
       }
