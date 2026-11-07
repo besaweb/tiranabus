@@ -65,5 +65,5 @@ Letiště ve feedu není (Rinas leží mimo území města, linky provozuje souk
 ## Monetizace
 
 - Dobrovolné příspěvky přes Ko-fi (na vývoj).
-- Plánovaná Pro verze v Google Play; přispěvatelé Ko-fi ji dostanou zdarma (kódy po vydání).
+- Pro verze: roční předplatné 4,99 € přes Google Play Billing, bez zkušební doby (D-026, AND-005); přispěvatelé Ko-fi ji dostanou zdarma přes promo kódy z Play Console (AND-007).
 - Připravený souhlas s reklamou (`js/consent.js`), zatím vypnutý.

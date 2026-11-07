@@ -21,7 +21,13 @@ Aktualizováno: 2026-11-07
 | CORE-004 | Jeden seznam souborů pro Pages / FTP / Android | SHARED | P2 | BACKLOG | – | 2026-11-07 |
 | CORE-005 | Sjednocená konfigurace jízdného, kurzů, verze a platnosti | SHARED | P2 | BACKLOG | – | 2026-11-07 |
 | BUG-001 | Cena RT: 3 € (tickets) vs. 3,50 € (data) | SHARED | P2 | READY | – | 2026-11-07 |
-| AND-005 | Pro verze a licence (Ko-fi kódy, Play Billing) | ANDROID | P2 | BACKLOG | – | 2026-11-07 |
+| AND-005 | Pro: roční předplatné 4,99 € přes Google Play Billing | ANDROID | P2 | BACKLOG | CORE-007, první vydání v Play | 2026-11-07 |
+| CORE-007 | Oprávnění Pro (`PLATFORM.pro`) a zamykání funkcí | SHARED | P2 | BACKLOG | CORE-001 | 2026-11-07 |
+| MAP-001 | Poloha z GPS na mapě (Pro) | ANDROID | P2 | BACKLOG | CORE-007 | 2026-11-07 |
+| UX-001 | Předvolby Domů / Práce / Škola pro Odkud a Kam (Pro) | ANDROID | P2 | BACKLOG | CORE-007 | 2026-11-07 |
+| POI-001 | Vlastní body na mapě, použitelné v Odkud a Kam (Pro) | ANDROID | P2 | BACKLOG | CORE-007 | 2026-11-07 |
+| AND-007 | Promo kódy z Play Console pro přispěvatele Ko-fi | ANDROID | P3 | BACKLOG | AND-005 | 2026-11-07 |
+| MKT-001 | Reklamy pro neplatící uživatele aplikace | ANDROID | P3 | BACKLOG | AND-005, SEO-003 | 2026-11-07 |
 | AND-006 | Barvy systémových lišt podle motivu stránky (přepínač v aplikaci vs. systém) | ANDROID | P3 | BACKLOG | – | 2026-11-07 |
 | I18N-002 | Korektury překladů rodilými mluvčími (sq, en prioritně) | SHARED | P2 | BACKLOG | – | 2026-11-07 |
 | GTFS-002 | Varianty tras linek (větve) | SHARED | P2 | BACKLOG | – | 2026-11-07 |
@@ -53,6 +59,41 @@ Aktualizováno: 2026-11-07
 ### WEB-001 Bezpečný FTP deploy
 - WEB (FTP jen pro web) · P1 · READY
 - Kritéria: `deploy-ftp.sh` odmítne běžet mimo `main`, s necommitovanými změnami nebo za `origin/main`.
+
+### AND-005 Pro: roční předplatné přes Google Play Billing
+- Oblast: Android / platby · ANDROID (Google Play Billing existuje jen v aplikaci z Play; D-026) · P2 · BACKLOG
+- Popis: předplatné „Tirana Bus Pro“ 4,99 € / rok, bez zkušební doby. Play Billing Library (nová nativní závislost v Gradle, schváleno volbou modelu 2026-11-07), most WebView ↔ nativní kód (stav, nákup, obnovení), potvrzení nákupu (acknowledge), stav uložený v zařízení pro offline.
+- Kritéria: [ ] produkt předplatného v Play Console · [ ] nákup, zrušení a obnovení na testovací stopě s testery licencí · [ ] stav Pro platí offline do konce zaplaceného období, po vypršení se zamkne · [ ] most vystavený jen stránce z `appassets.androidplatform.net` · [ ] texty ve 12 jazycích (`i18n.js`) · [ ] zásady soukromí a Data safety aktualizované
+- Poznámky: předplatné se dá testovat až s aplikací nahranou na testovací stopu v Play (první vydání). Ověření nákupu jen v zařízení (bez backendu, D-002). Kód je veřejný, proto žádná tajemství v aplikaci.
+
+### CORE-007 Oprávnění Pro a zamykání funkcí
+- Oblast: sdílený kód, platformní vrstva · SHARED (přepínač ve sdíleném kódu, chování se liší podle platformy) · P2 · BACKLOG
+- Popis: `PLATFORM.pro` (součást CORE-001) určuje dostupnost Pro funkcí. Web: rozšířené vyhledávání zdarma jako dnes, ostatní Pro funkce se nezobrazují. Android: rozšířené vyhledávání, poloha, předvolby a vlastní body jen s Pro; bez Pro výzva k předplatnému.
+- Kritéria: [ ] jeden zdroj pravdy (`PLATFORM.pro`), žádné kontroly roztroušené v kódu · [ ] web beze změny chování · [ ] APK bez Pro: rozšířené vyhledávání zamčené až od verze vydané v Play · [ ] ověřeno na webu i v APK (s Pro i bez)
+
+### MAP-001 Poloha z GPS na mapě
+- Oblast: mapa · ANDROID (Pro funkce jen v aplikaci, D-026) · P2 · BACKLOG
+- Popis: tlačítko „moje poloha“, tečka s přesností na mapě, poloha jako Odkud. Android: oprávnění polohy za běhu, `WebChromeClient` pro geolokaci.
+- Kritéria: [ ] oprávnění se žádá až při použití, zamítnutí se zvládne bez chyby · [ ] poloha jako start plánovače (docházka k zastávkám přes `Places`) · [ ] bez polohy a offline aplikace funguje dál · [ ] Data safety: poloha jen v zařízení
+
+### UX-001 Předvolby Domů / Práce / Škola
+- Oblast: plánovač, UI · ANDROID (Pro funkce jen v aplikaci, D-026) · P2 · BACKLOG
+- Popis: tři pojmenované předvolby (zastávka nebo místo), uložené v zařízení, jedním klepnutím do Odkud nebo Kam.
+- Kritéria: [ ] nastavení, změna a smazání předvolby · [ ] vložení do Odkud i Kam · [ ] texty ve 12 jazycích · [ ] světlý i tmavý režim, šířka telefonu
+
+### POI-001 Vlastní body na mapě
+- Oblast: mapa, místa · ANDROID (Pro funkce jen v aplikaci, D-026) · P2 · BACKLOG
+- Popis: přidat bod (dlouhý stisk na mapě), pojmenovat, zobrazit na mapě, použít v Odkud a Kam (docházka přes `Places` jako u míst z OSM), upravit a smazat. Uložené jen v zařízení.
+- Kritéria: [ ] přidání, přejmenování, smazání · [ ] vyhledání v Odkud/Kam a plánování s docházkou · [ ] zobrazení na mapě ve světlém i tmavém režimu · [ ] data přežijí aktualizaci aplikace
+
+### AND-007 Promo kódy pro přispěvatele Ko-fi
+- ANDROID · P3 · BACKLOG
+- Popis: přispěvatelé Ko-fi dostanou Pro zdarma přes promo kódy z Play Console.
+- Kritéria: [ ] ověřit, že Play promo kódy fungují pro roční předplatné a jaké mají limity · [ ] postup vydání kódů a evidence (bez osobních údajů v gitu)
+
+### MKT-001 Reklamy pro neplatící uživatele aplikace
+- ANDROID · P3 · BACKLOG (až po Pro funkcích, rozhodnutí 2026-11-07)
+- Popis: reklamy v aplikaci pro uživatele bez Pro; Pro je bez reklam. Způsob (např. AdMob) a souhlas (SEO-003) určit při zahájení. Reklamy na webu zatím nerozhodnuty.
 
 ### BUG-001 Cena RT
 - SHARED · P2 · READY
