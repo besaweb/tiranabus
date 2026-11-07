@@ -15,4 +15,9 @@ Jen **aktuálně rozpracované** úkoly. Po dokončení úkolu jeho sekci smaž 
 - Další krok: …
 ```
 
-_Žádná rozpracovaná práce._
+## AND-008 První vydání v Google Play
+- Chat: 03 Android · Větev: `doc/CORE-006-uzavreni` · Aktualizováno: 2026-11-07
+- Hotovo: podklady v `docs/play/` (grafika, 6 snímků, texty en/sq/cs, Data safety, IARC, postup).
+- Testy: délky textů v limitech Play ověřeny skriptem; snímky 1080 × 1920 (9:16).
+- Problémy: hlavní obrázek se starým logem; albánské texty strojové.
+- Další krok: uživatel čeká na ověření účtu Play (doklady odeslány 2026-11-07; keystore zálohován) → build AAB 1.8 (code 18) z `main` → nahrání na interní testování.

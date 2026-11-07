@@ -55,7 +55,7 @@ Letiště ve feedu není (Rinas leží mimo území města, linky provozuje souk
 
 | | |
 |---|---|
-| Repozitář | `github.com/besaweb/tiranabus` (soukromý), větev `main` |
+| Repozitář | `github.com/besaweb/tiranabus` (**veřejný**, ověřeno přes API 2026-11-07), větev `main`; v gitu nesmí být žádná tajemství |
 | GitHub Releases | `tirana-latest` (feed), `apk-latest` (APK) |
 | Hosting | gigaserver.cz, FTP `wh03.farma.gigaserver.cz`, složka `/tiranabus.al`, údaje v `.ftp.env` (mimo git) |
 | Analytika | GA4 `G-XJ9EK9ZKWF` (web i APK; uvést v Google Play Data safety) |
@@ -65,5 +65,5 @@ Letiště ve feedu není (Rinas leží mimo území města, linky provozuje souk
 ## Monetizace
 
 - Dobrovolné příspěvky přes Ko-fi (na vývoj).
-- Plánovaná Pro verze v Google Play; přispěvatelé Ko-fi ji dostanou zdarma (kódy po vydání).
+- Pro verze: roční předplatné 4,99 € přes Google Play Billing, bez zkušební doby (D-026, AND-005); přispěvatelé Ko-fi ji dostanou zdarma přes promo kódy z Play Console (AND-007).
 - Připravený souhlas s reklamou (`js/consent.js`), zatím vypnutý.
