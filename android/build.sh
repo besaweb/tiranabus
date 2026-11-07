@@ -7,9 +7,13 @@ SDK="${ANDROID_HOME:-$LOCALAPPDATA/Android/Sdk}"
 BT="$SDK/build-tools/36.0.0"
 AJAR="$SDK/platforms/android-34/android.jar"
 JH="${JAVA_HOME:-/c/Program Files/Android/Android Studio/jbr}"
-JAVA="$JH/bin/java"; JAVAC="$JH/bin/javac"; KEYTOOL="$JH/bin/keytool"
+JAVA="$JH/bin/java"; JAVAC="$JH/bin/javac"
 VER="${VERSION:-1.0}"; CODE="${VERSION_CODE:-1}"
-KS=tirana-bus.keystore; PASS=tiranabus
+KS=tirana-bus.keystore
+prop() { [ -f keystore.properties ] && grep -m1 "^$1=" keystore.properties | cut -d= -f2- | tr -d '\r' || true; }
+PASS="${TB_KS_PASS:-$(prop storePassword)}"; KPASS="${TB_KEY_PASS:-$(prop keyPassword)}"; KPASS="${KPASS:-$PASS}"; KALIAS="${TB_KEY_ALIAS:-$(prop keyAlias)}"; KALIAS="${KALIAS:-tiranabus}"
+[ -n "$PASS" ] || { echo 'Chybí heslo keystore: vytvoř android/keystore.properties (viz keystore.properties.example) nebo nastav TB_KS_PASS.'; exit 1; }
+[ -f $KS ] || { echo "Chybí android/$KS. Nový klíč by rozbil aktualizace stávajících instalací, obnov keystore ze zálohy."; exit 1; }
 
 rm -rf build; mkdir -p build/site build/classes build/dex out
 cp -r $ROOT/index.html $ROOT/tickets.html $ROOT/css $ROOT/js $ROOT/data $ROOT/img build/site/
@@ -36,7 +40,6 @@ sed -i "s#$CDN/leaflet/1.9.4/#lib/#; s#$CDN/jszip/3.10.1/#lib/#; s#$CDN/PapaPars
 python -c "import zipfile;z=zipfile.ZipFile('build/base.apk','a',zipfile.ZIP_DEFLATED);z.write('build/dex/classes.dex','classes.dex');z.close()"
 "$BT/zipalign.exe" -f 4 build/base.apk build/aligned.apk
 
-[ -f $KS ] || "$KEYTOOL" -genkeypair -keystore $KS -storepass $PASS -keypass $PASS -alias tiranabus -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Tirana Bus"
-"$JAVA" -jar "$BT/lib/apksigner.jar" sign --ks $KS --ks-pass pass:$PASS --out out/TiranaBus.apk build/aligned.apk
+TB_KS_PASS_V="$PASS" TB_KEY_PASS_V="$KPASS" "$JAVA" -jar "$BT/lib/apksigner.jar" sign --ks $KS --ks-pass env:TB_KS_PASS_V --key-pass env:TB_KEY_PASS_V --ks-key-alias "$KALIAS" --out out/TiranaBus.apk build/aligned.apk
 "$JAVA" -jar "$BT/lib/apksigner.jar" verify out/TiranaBus.apk
 ls -l out/TiranaBus.apk

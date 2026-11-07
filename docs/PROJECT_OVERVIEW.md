@@ -59,7 +59,7 @@ Letiště ve feedu není (Rinas leží mimo území města, linky provozuje souk
 | GitHub Releases | `tirana-latest` (feed), `apk-latest` (APK) |
 | Hosting | gigaserver.cz, FTP `wh03.farma.gigaserver.cz`, složka `/tiranabus.al`, údaje v `.ftp.env` (mimo git) |
 | Analytika | GA4 `G-XJ9EK9ZKWF` (web i APK; uvést v Google Play Data safety) |
-| Podepisovací klíč | `android/tirana-bus.keystore` – mimo git, **bez něj nejde APK aktualizovat** |
+| Podepisovací klíč | `android/tirana-bus.keystore` – mimo git, **bez něj nejde APK aktualizovat**; heslo v `android/keystore.properties` (mimo git) nebo `TB_KS_PASS` |
 | Podpora | Ko-fi (sbírka na vydání v Google Play) |
 
 ## Monetizace

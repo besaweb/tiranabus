@@ -7,3 +7,4 @@ android/*.keystore
 *.apk
 
 .ftp.env
+android/keystore.properties
