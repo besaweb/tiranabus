@@ -107,7 +107,8 @@ Stav verze 1.8: bez reklam, bez polohy, bez účtu. GA4 (`G-XJ9EK9ZKWF`) se v ap
 | Aktivita v aplikaci → Interakce s aplikací | Sbíráno · Analytika · povinné |
 | ID zařízení nebo jiná ID | Sbíráno (identifikátor GA) · Analytika · povinné |
 | Přibližná poloha | Sbíráno (GA odvozuje zemi a město z IP, shodně s `privacy.html`) · Analytika · povinné |
-| Přesná poloha, osobní údaje, finance, zprávy, fotky, kontakty | Ne |
+| Přesná a přibližná poloha (Moje poloha, MAP-001) | Nesbíráno – zpracovává se jen v zařízení, neodesílá se (ověřit při vyplnění; oprávnění `ACCESS_FINE_LOCATION` / `ACCESS_COARSE_LOCATION` je v manifestu) |
+| Osobní údaje, finance, zprávy, fotky, kontakty | Ne |
 
 Při MAP-001 (GPS), AND-005 (nákupy) a MKT-001 (reklamy) formulář aktualizovat. Souhlas s GA4 v EU řeší SEO-003.
 
@@ -121,7 +122,7 @@ Při MAP-001 (GPS), AND-005 (nákupy) a MKT-001 (reklamy) formulář aktualizova
 | Zpravodajská aplikace | Ne |
 | Vládní aplikace | Ne (neoficiální, viz popis) |
 | Finanční / zdravotní funkce | Ne |
-| Oprávnění | jen `INTERNET` |
+| Oprávnění | `INTERNET`; od verze s MAP-001 i `ACCESS_FINE_LOCATION` a `ACCESS_COARSE_LOCATION` (jen v popředí, po klepnutí) |
 
 ## Postup prvního vydání
 

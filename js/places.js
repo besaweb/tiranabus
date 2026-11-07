@@ -244,6 +244,51 @@ const Places = (() => {
     return it.pts.reduce((b, p) => dist(p, c) < dist(b, c) ? p : b, it.pts[0]);
   }
 
-  return { norm, build, search, label, access, between, route, stopWalks, net, center, dist, RANK, WALK_V };
+  const AREA = { s: 41.22, w: 19.62, n: 41.46, e: 20.02 };
+  const MAX_ACC = 1500;
+  const valid = p => Array.isArray(p) && Number.isFinite(p[0]) && Number.isFinite(p[1]) && Math.abs(p[0]) <= 90 && Math.abs(p[1]) <= 180 && !(p[0] === 0 && p[1] === 0);
+  const inArea = (p, a = AREA) => valid(p) && p[0] >= a.s && p[0] <= a.n && p[1] >= a.w && p[1] <= a.e;
+
+  function locate(p, acc, a = AREA) {
+    if (!valid(p)) return 'invalid';
+    if (!inArea(p, a)) return 'outside';
+    if (acc != null && !(acc <= MAX_ACC)) return 'inaccurate';
+    return 'ok';
+  }
+
+  function nearest(stops, p, n = 5, key = s => s.id) {
+    const best = new Map();
+    for (const s of stops) {
+      if (!valid([s.lat, s.lon])) continue;
+      const d = dist(p, [s.lat, s.lon]), k = key(s), b = best.get(k);
+      if (!b || d < b.d) best.set(k, { s, d });
+    }
+    return [...best.values()].sort((a, b) => a.d - b.d).slice(0, n);
+  }
+
+  const SLOTS = ['home', 'work', 'school'];
+  const KINDS = ['stop', 'place', 'gps', 'map'];
+
+  function presets(raw) {
+    let o;
+    try { o = typeof raw === 'string' ? JSON.parse(raw) : raw; } catch (e) { o = null; }
+    const out = {};
+    if (!o || typeof o !== 'object') return out;
+    for (const k of SLOTS) {
+      const p = o[k];
+      if (!p || typeof p !== 'object') continue;
+      const x = { n: typeof p.n === 'string' ? p.n.trim().slice(0, 24) : '' };
+      if (KINDS.includes(p.k) && valid([+p.lat, +p.lon])) Object.assign(x, { k: p.k, l: String(p.l || '').slice(0, 80), lat: +p.lat, lon: +p.lon });
+      if (x.n || x.k) out[k] = x;
+    }
+    return out;
+  }
+
+  function presetHit(name, q) {
+    const a = norm(name), b = norm(q);
+    return !!b && (a.startsWith(b) || a.split(' ').some(w => w.startsWith(b)));
+  }
+
+  return { norm, build, search, label, access, between, route, stopWalks, net, center, dist, locate, inArea, nearest, presets, presetHit, SLOTS, AREA, MAX_ACC, RANK, WALK_V };
 })();
 if (typeof module !== 'undefined') module.exports = Places;

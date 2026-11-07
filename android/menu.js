@@ -44,6 +44,7 @@
     '<div class="langslot" hidden></div>' +
     '<a class="mi" id="mi-tickets" href="tickets.html"><span data-k="tickets"></span></a>' +
     '<a class="mi" id="mi-data" href="validity.html"><span data-k="data"></span></a>' +
+    '<button type="button" class="mi" id="mi-pre"><span class="pre"></span></button>' +
     '<button type="button" class="mi" id="mi-about" aria-expanded="false"><span data-k="about"></span></button><div class="about" hidden></div>' +
     '<button type="button" class="mi" id="mi-ext" role="switch" aria-checked="false"><span class="ext"></span><span class="sw" aria-hidden="true"></span></button></div>';
   langBox.parentNode.insertBefore(wrap, langBox);
@@ -60,6 +61,8 @@
     miExt.setAttribute('aria-checked', String(v));
     document.dispatchEvent(new CustomEvent('tb-ext', { detail: v }));
   });
+
+  q('#mi-pre').addEventListener('click', () => { closeMenu(); document.dispatchEvent(new CustomEvent('tb-presets')); });
 
   const subs = [[miLang, slot], [miAbout, about]];
   const closeSubs = () => { for (const [b, box] of subs) { box.hidden = true; b.setAttribute('aria-expanded', 'false'); } };
@@ -85,6 +88,7 @@
     q('.cur').textContent = NAMES[l];
     const A = I18N.D[l] || I18N.D.en;
     q('#mi-ext .ext').textContent = A.extSearch;
+    q('#mi-pre .pre').textContent = A.preTitle;
     about.textContent = '';
     const bold = s => { const e = document.createElement('b'); e.textContent = s; return e; };
     const link = (h, s) => { const e = document.createElement('a'); e.href = h; e.textContent = s; return e; };

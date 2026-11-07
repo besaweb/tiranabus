@@ -21,3 +21,17 @@ Jen **aktuálně rozpracované** úkoly. Po dokončení úkolu jeho sekci smaž 
 - Testy: délky textů v limitech Play ověřeny skriptem; snímky 1080 × 1920 (9:16).
 - Problémy: hlavní obrázek se starým logem; albánské texty strojové.
 - Další krok: uživatel čeká na ověření účtu Play (doklady odeslány 2026-11-07; keystore zálohován) → build AAB 1.8 (code 18) z `main` → nahrání na interní testování.
+
+## MAP-001 Moje poloha a nejbližší zastávky
+- Chat: 03 Android · Větev: `feat/MAP-001-poloha` · Aktualizováno: 2026-11-07
+- Hotovo: implementace, Node testy 24/24 (1 todo), emulátor API 36 všechny stavy, web beze změny. Telefon: body 1 (oprávnění, odmítnutí) a 4 (mimo Tiranu).
+- Testovací APK: `android/out/TiranaBus-1.9-geo.apk` (z větve, `versionCode` 19).
+- Zbývá na telefonu: trvalé zakázání → Otevřít nastavení, vypnutá poloha → Zapnout polohu, bez internetu, úspěch v Tiraně.
+- Další krok: výsledky od uživatele → zapsat do MAP-001; po sloučení PR a dokončení testů DONE a smazat tento záznam.
+
+## UX-001 Předvolby Domů / Práce / Škola
+- Chat: 03 Android · Větev: `feat/UX-001-predvolby` (nad `feat/MAP-001-poloha`) · Aktualizováno: 2026-11-07
+- Hotovo: implementace, Node testy 27/27 (1 todo), emulátor API 36 celý průchod, web beze změny, oprava UX-002 pro ≤ 760 px.
+- Testovací APK: `android/out/TiranaBus-1.9-pre.apk` (`versionCode` 20).
+- Zbývá: test na telefonu (uživatel); PR až po sloučení MAP-001; UX-002 ověřit Chatem 02 na webu na telefonu.
+- Další krok: výsledky od uživatele → UX-001 DONE po sloučení PR.

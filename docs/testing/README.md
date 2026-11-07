@@ -44,3 +44,8 @@ V CI běží na každém Pull Requestu (`.github/workflows/tests.yml`, feed z re
 10. Zpět: z „Platnost dat“ na hlavní stránku, na hlavní stránce ukončí aplikaci (Android 13+ predictive back).
 
 Výsledek zapsat do úkolu (TASKS.md) a do `releases/` při vydání.
+
+## Poznámky k prostředí
+
+- Prohlížeč v aplikaci Claude (Browser pane) při načítání stránky z `python -m http.server` opakovaně přerušil přenos `js/i18n.js` (`ERR_CONNECTION_RESET`), i u nezměněné verze z `main`. Curl i `fetch` soubor stáhnou celý. Pro kontrolu webu v tomto prohlížeči použít jiný statický server (např. jednoduchý server v Node bez závislostí). Zjištěno 2026-11-07.
+- Poloha na emulátoru: `adb emu geo fix <lon> <lat>` (Tirana `19.8187 41.3275`, Praha `14.4378 50.0755`), polohové služby `adb shell cmd location set-location-enabled true|false`.
