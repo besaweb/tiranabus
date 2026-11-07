@@ -18,7 +18,7 @@ UPDATE_SNAPSHOT=1 node --test tests/planner.test.js      # nový snapshot pláno
 - Snapshot plánovače platí pro konkrétní `feed_version`; při jiném feedu se test přeskočí s výzvou k přegenerování. Změna snapshotu v PR = změna chování plánovače → popsat v PR a ověřit, že je to zlepšení (příjezd nikdy horší).
 - Test označený `# TODO <ID>` je známá chyba evidovaná v `TASKS.md`; neblokuje CI. Po opravě odstranit `todo`.
 
-V CI běží na každém Pull Requestu (`.github/workflows/tests.yml`, feed z release `tirana-latest`). Workflow navíc ověří generátor SEO stránek.
+V CI běží na každém Pull Requestu (`.github/workflows/tests.yml`, feed z release `tirana-latest`). Workflow navíc ověří generátor SEO stránek. Android build hlídá `.github/workflows/android.yml` (PR, které sahají do `android/` nebo sdíleného webu).
 
 ## Ruční ověření podle typu změny
 

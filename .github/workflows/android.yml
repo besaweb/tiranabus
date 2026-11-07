@@ -1,0 +1,79 @@
+name: android
+
+on:
+  pull_request:
+    paths:
+      - 'android/**'
+      - 'index.html'
+      - 'css/**'
+      - 'js/**'
+      - 'data/**'
+      - 'img/**'
+      - '.github/workflows/android.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'android/**'
+      - 'index.html'
+      - 'css/**'
+      - 'js/**'
+      - 'data/**'
+      - 'img/**'
+      - '.github/workflows/android.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('android/gradle/wrapper/gradle-wrapper.properties', 'android/build.gradle', 'android/settings.gradle') }}
+          restore-keys: gradle-${{ runner.os }}-
+
+      - name: Stáhnout feed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download tirana-latest -p gtfs.zip -R "$GITHUB_REPOSITORY" || curl -fsSL --retry 3 -o gtfs.zip https://pt.tirana.al/gtfs/gtfs.zip
+          unzip -tq gtfs.zip
+
+      - name: Gradle build (debug APK a AAB)
+        working-directory: android
+        run: ./gradlew assembleDebug bundleDebug --stacktrace --no-daemon
+
+      - name: Obsah APK
+        working-directory: android
+        run: |
+          apk=$(ls build/outputs/apk/debug/*.apk)
+          unzip -l "$apk" > apk.txt
+          for f in assets/index.html assets/gtfs.zip assets/lib/leaflet.min.js assets/lib/maplibre-gl.js assets/map/tirana.mbtiles assets/menu.js classes.dex; do
+            grep -q " $f\$" apk.txt || { echo "V APK chybí $f"; exit 1; }
+          done
+          unzip -p "$apk" assets/index.html | grep -q 'window.OFFLINE_MAP=1' || { echo 'index.html bez OFFLINE_MAP'; exit 1; }
+          test -s build/outputs/bundle/debug/*.aab
+
+      - name: Release bez hesla musí selhat (D-022)
+        working-directory: android
+        run: |
+          if ./gradlew assembleRelease --console=plain --no-daemon > release.txt 2>&1; then
+            echo 'assembleRelease bez keystore měl selhat'; exit 1
+          fi
+          grep -q 'Chybí heslo keystore' release.txt || { tail -30 release.txt; exit 1; }
