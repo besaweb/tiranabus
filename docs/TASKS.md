@@ -11,7 +11,7 @@ Aktualizováno: 2026-11-07
 | BUG-002 | Plánovač vrací spojení začínající před zadaným časem | SHARED | P1 | READY | – | 2026-11-07 |
 | CORE-003 | Android jako Gradle projekt | ANDROID | P0 | READY | – | 2026-11-07 |
 | AND-001 | Target API 36 + AAB pro Google Play | ANDROID | P0 | BLOCKED | CORE-003 | 2026-11-07 |
-| AND-002 | Bezpečné podepisování: heslo mimo skript, záloha keystore, Play App Signing | ANDROID | P0 | READY | – | 2026-11-07 |
+| AND-002 | Bezpečné podepisování: heslo mimo skript, záloha keystore, Play App Signing | ANDROID | P0 | REVIEW | – | 2026-11-07 |
 | DATA-001 | Ověřit běh `gtfs-watch` a `pages.yml` | SHARED | P0 | REVIEW | – | 2026-11-07 |
 | GTFS-001 | Feed 2027 (současný končí 31. 12. 2026) | SHARED | P0 | BLOCKED | DATA-001 | 2026-11-07 |
 | AND-003 | Ověřit offline režim na reálném telefonu | ANDROID | P1 | READY | – | 2026-11-07 |
@@ -60,7 +60,8 @@ Aktualizováno: 2026-11-07
 
 ### AND-002 Bezpečné podepisování
 - ANDROID · P0 · READY
-- Kritéria: [ ] keystore zálohován mimo počítač (uživatel) · [ ] heslo není v gitu · [ ] rozhodnutí o Play App Signing zapsáno v DECISIONS.
+- Kritéria: [ ] keystore zálohován mimo počítač (uživatel) · [x] heslo není ve skriptu (`keystore.properties` / `TB_KS_PASS`, heslo samotné beze změny, certifikát APK ověřen shodný) · [x] rozhodnutí o Play App Signing zapsáno v DECISIONS (D-022)
+- Zbývá: záloha keystore mimo počítač (uživatel); zapnutí Play App Signing při prvním nahrání AAB (AND-001).
 - Poznámky: repozitář je soukromý, heslo je ale v historii gitu.
 
 ### DATA-001 Ověřit workflow
