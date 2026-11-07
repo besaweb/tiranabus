@@ -485,3 +485,35 @@ header {
 .consent .cb { display: flex; gap: 8px; }
 .nojs { position: fixed; inset: 0; z-index: 6000; padding: 24px 16px; background: var(--bg); color: var(--fg); font: 400 16px/1.5 var(--ui); }
 .nojs a { color: var(--accent-fg); }
+
+.leaflet-right .locbtn { margin: 0 14px 12px 0; }
+.locbtn { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; color: var(--fg); cursor: pointer; }
+.locbtn svg { width: 22px; height: 22px; }
+.locbtn.busy svg { animation: gspin 1s linear infinite; color: #1A73E8; }
+.geo { position: relative; flex: none; padding: 12px 14px; display: grid; gap: 6px; }
+.geo .gx { position: absolute; top: 6px; right: 6px; width: 30px; height: 30px; border: 0; border-radius: 8px; background: none; color: var(--muted); font-size: 19px; cursor: pointer; }
+.geo .gx:hover { background: var(--soft); color: var(--fg); }
+.ghead { font-size: 11.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding-right: 30px; }
+.gname { font-size: 18px; font-weight: 700; line-height: 1.25; }
+.gdist { font-size: 14px; }
+.gchips { display: flex; flex-wrap: wrap; gap: 4px; }
+.gacc, .gmsg { margin: 0; font-size: 12.5px; color: var(--muted); line-height: 1.35; }
+.gmsg { font-size: 14px; color: var(--fg); padding-right: 30px; }
+.grow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
+.glist { margin: 0; padding: 0 0 0 20px; display: grid; gap: 2px; }
+.glist button { width: 100%; display: flex; justify-content: space-between; gap: 10px; padding: 6px 4px; border: 0; border-radius: 8px; background: none; color: var(--fg); font: inherit; font-size: 14px; text-align: left; cursor: pointer; }
+.glist button:hover { background: var(--soft); }
+.glist span { color: var(--muted); white-space: nowrap; }
+.gbusy { margin: 0; display: flex; align-items: center; gap: 10px; font-size: 14px; }
+.gspin { width: 16px; height: 16px; border: 2px solid var(--line); border-top-color: #1A73E8; border-radius: 50%; animation: gspin .8s linear infinite; }
+.leaflet-popup { position: absolute; text-align: left; margin-bottom: 14px; }
+.leaflet-popup-content-wrapper { padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); color: var(--fg); box-shadow: var(--shadow-lg); }
+.leaflet-popup-content { margin: 0; font-size: 14px; line-height: 1.35; }
+.leaflet-popup-tip-container { position: absolute; left: 50%; width: 24px; height: 12px; margin-left: -12px; overflow: hidden; pointer-events: none; }
+.leaflet-popup-tip { width: 12px; height: 12px; margin: -7px auto 0; transform: rotate(45deg); background: var(--panel); border: 1px solid var(--line); }
+.leaflet-popup-close-button { position: absolute; top: 4px; right: 4px; width: 26px; height: 26px; display: grid; place-items: center; border-radius: 8px; color: var(--muted); font-size: 18px; text-decoration: none; }
+.leaflet-popup-close-button:hover { background: var(--soft); color: var(--fg); }
+.gpop { display: grid; gap: 4px; min-width: 160px; padding-right: 22px; }
+.gpop > span { color: var(--muted); font-size: 12.5px; }
+.gpop .btn { justify-self: start; margin-top: 4px; }
+@keyframes gspin { to { transform: rotate(360deg); } }

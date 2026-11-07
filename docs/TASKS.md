@@ -23,7 +23,7 @@ Aktualizováno: 2026-11-07
 | AND-008 | První vydání v Google Play (podklady, testovací stopa) | ANDROID | P0 | IN_PROGRESS | ověření účtu Play | 2026-11-07 |
 | AND-005 | Pro: roční předplatné 4,99 € přes Google Play Billing | ANDROID | P2 | BACKLOG | CORE-007, první vydání v Play | 2026-11-07 |
 | CORE-007 | Oprávnění Pro (`PLATFORM.pro`) a zamykání funkcí | SHARED | P2 | BACKLOG | CORE-001 | 2026-11-07 |
-| MAP-001 | Poloha z GPS na mapě (Pro) | ANDROID | P2 | BACKLOG | CORE-007 | 2026-11-07 |
+| MAP-001 | Moje poloha a nejbližší zastávky (Pro později) | ANDROID | P2 | REVIEW | – | 2026-11-07 |
 | UX-001 | Předvolby Domů / Práce / Škola pro Odkud a Kam (Pro) | ANDROID | P2 | BACKLOG | CORE-007 | 2026-11-07 |
 | UX-002 | Našeptávač u pole Kam je na telefonu schovaný pod klávesnicí | SHARED | P2 | READY | – | 2026-11-07 |
 | POI-001 | Vlastní body na mapě, použitelné v Odkud a Kam (Pro) | ANDROID | P2 | BACKLOG | CORE-007 | 2026-11-07 |
@@ -76,10 +76,15 @@ Aktualizováno: 2026-11-07
 - Popis: `PLATFORM.pro` (součást CORE-001) určuje dostupnost Pro funkcí. Web: rozšířené vyhledávání zdarma jako dnes, ostatní Pro funkce se nezobrazují. Android: rozšířené vyhledávání, poloha, předvolby a vlastní body jen s Pro; bez Pro výzva k předplatnému.
 - Kritéria: [ ] jeden zdroj pravdy (`PLATFORM.pro`), žádné kontroly roztroušené v kódu · [ ] web beze změny chování · [ ] APK bez Pro: rozšířené vyhledávání zamčené až od verze vydané v Play · [ ] ověřeno na webu i v APK (s Pro i bez)
 
-### MAP-001 Poloha z GPS na mapě
-- Oblast: mapa · ANDROID (Pro funkce jen v aplikaci, D-026) · P2 · BACKLOG
-- Popis: tlačítko „moje poloha“, tečka s přesností na mapě, poloha jako Odkud. Android: oprávnění polohy za běhu, `WebChromeClient` pro geolokaci.
-- Kritéria: [ ] oprávnění se žádá až při použití, zamítnutí se zvládne bez chyby · [ ] poloha jako start plánovače (docházka k zastávkám přes `Places`) · [ ] bez polohy a offline aplikace funguje dál · [ ] Data safety: poloha jen v zařízení
+### MAP-001 Moje poloha a nejbližší zastávky
+- Oblast: mapa · ANDROID (rozhodl uživatel 2026-11-07; Pro funkce jen v aplikaci, D-026, D-028) · P2 · REVIEW
+- Popis: tlačítko „Moje poloha“ na mapě (vpravo dole), jednorázové zjištění polohy (`navigator.geolocation` ve WebView, oprávnění řeší `MainActivity`), kontrola oblasti (výřez offline mapy), 5 nejbližších zastávek podle vzdušné vzdálenosti (jedna za skupinu stejného názvu), modrý bod s kruhem přesnosti, zvýrazněná nejbližší zastávka, panel se seznamem, popisky s linkami a detailem zastávky. Zatím bez zámku Pro (zámek s CORE-007 / AND-005).
+- Kritéria:
+  - [x] sdílená logika `Places.locate`, `Places.inArea`, `Places.nearest`, `Places.AREA` + `tests/geo.test.js` (centrum, okraj, mimo, Praha, neplatné souřadnice, nízká přesnost, řazení, prázdná data, reálný feed offline); všech 493 zastávek uvnitř oblasti
+  - [x] emulátor API 36: dotaz na oprávnění až po klepnutí; zamítnutí; trvalé zakázání → „Otevřít nastavení“; vypnuté polohové služby → „Zapnout polohu“; poloha v Praze → „Lokalizace je dostupná pouze v oblasti Tirany“; úspěch na náměstí Skanderbeg (5 zastávek, přesnost ±5 m); „Zobrazit na mapě“, popisek, „Detail zastávky“; opakované spuštění; čerstvá instalace s „Při používání aplikace“; tmavý režim a albánština
+  - [x] web beze změny (bez tlačítka a panelu, bez chyb v konzoli), testy Node 24/24 (1 `todo` BUG-002)
+  - [ ] reálný telefon (uživatel) · [ ] Data safety v Play: poloha se zpracovává jen v zařízení (neodesílá se)
+- Poznámky: D-028. Vzdálenost je vzdušná a je tak označená. Opravena chyba nalezená testem: při vypnuté poloze WebView vracel starou uloženou polohu, teď se oprávnění WebView při vypnutých službách nepovolí.
 
 ### UX-001 Předvolby Domů / Práce / Škola
 - Oblast: plánovač, UI · ANDROID (Pro funkce jen v aplikaci, D-026) · P2 · BACKLOG

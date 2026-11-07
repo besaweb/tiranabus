@@ -533,6 +533,106 @@
   const picon = k => `<i class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${PICO[PK[k] || k] || PICO.pin}</svg></i>`;
   const allStops = () => [...feed.stops.values()];
 
+  const GEO = !!window.APP_VERSION && 'geolocation' in navigator;
+  const geoLayer = L.layerGroup().addTo(map);
+  let geo = null, locBtn = null;
+  const fmtD = d => d < 1000 ? t('geoM', { n: Math.round(d / 5) * 5 }) : t('geoKm', { n: new Intl.NumberFormat(I18N.loc(), { maximumFractionDigits: 1 }).format(d / 1000) });
+  const cssv = k => getComputedStyle(document.documentElement).getPropertyValue(k).trim();
+  const gchips = g => [...g.routes].sort(byName).map(r => chip(r)).join('');
+  function geoShow() {
+    const box = $('#geo');
+    if (!geo) { box.hidden = true; box.innerHTML = ''; return; }
+    box.hidden = false;
+    const x = `<button type="button" class="gx" data-geo="x" aria-label="${esc(t('close'))}">×</button>`;
+    if (geo.st === 'busy') { box.innerHTML = `${x}<p class="gbusy"><span class="gspin"></span>${esc(t('geoBusy'))}</p>`; return; }
+    if (geo.st !== 'ok') {
+      const link = geo.st === 'blocked' ? `<a class="btn sm" href="tbapp://settings">${esc(t('geoSettings'))}</a>` : geo.st === 'off' ? `<a class="btn sm" href="tbapp://location">${esc(t('geoLocSettings'))}</a>` : '';
+      box.innerHTML = `${x}<p class="gmsg">${esc(t(geo.k, geo.p))}</p><div class="grow">${link}<button type="button" class="btn sm" data-geo="retry">${esc(t('geoRetry'))}</button></div>`;
+      return;
+    }
+    const [a, ...rest] = geo.list, g = stopGroup.get(a.s.id);
+    box.innerHTML = `${x}<div class="ghead">${esc(t('geoHead'))}</div>
+      <div class="gname">${esc(g.label)}</div>
+      <div class="gdist">${esc(t('geoAir', { d: fmtD(a.d) }))}</div>
+      <div class="gchips">${gchips(g)}</div>
+      <p class="gacc">${esc(t('geoAcc', { m: Math.round(geo.acc) }))}${geo.acc > a.d ? ' ' + esc(t('geoAccWarn')) : ''}</p>
+      <div class="grow"><button type="button" class="btn sm" data-geo="0">${esc(t('geoShow'))}</button><button type="button" class="btn sm primary" data-geo="d0">${esc(t('geoDetail'))}</button></div>
+      ${rest.length ? `<div class="ghead">${esc(t('geoMore'))}</div><ol class="glist">${rest.map((r, i) => `<li><button type="button" data-geo="${i + 1}"><b>${esc(stopGroup.get(r.s.id).label)}</b><span>${esc(fmtD(r.d))}</span></button></li>`).join('')}</ol>` : ''}`;
+  }
+  function geoDraw() {
+    geoLayer.clearLayers();
+    const { p, acc, list } = geo, blue = '#1A73E8', ac = cssv('--accent'), sf = cssv('--stop-fill'), ss = cssv('--stop-stroke');
+    L.circle(p, { radius: acc, color: blue, weight: 1, opacity: .5, fillColor: blue, fillOpacity: .12, interactive: false }).addTo(geoLayer);
+    geo.mk = list.map((r, i) => {
+      const g = stopGroup.get(r.s.id);
+      const m = L.circleMarker([r.s.lat, r.s.lon], i ? { radius: 7, color: ss, weight: 2, fillColor: sf, fillOpacity: 1 } : { radius: 11, color: '#fff', weight: 3, fillColor: ac, fillOpacity: 1 }).addTo(geoLayer);
+      const el = document.createElement('div');
+      el.className = 'gpop';
+      el.innerHTML = `<b>${esc(g.label)}</b><span>${esc(t('geoAir', { d: fmtD(r.d) }))}</span><div class="gchips">${gchips(g)}</div><button type="button" class="btn sm">${esc(t('geoDetail'))}</button>`;
+      el.querySelector('button').addEventListener('click', () => geoDetail(i));
+      m.bindPopup(el, { autoPanPaddingTopLeft: [72, 16], autoPanPaddingBottomRight: [72, 56] });
+      return m;
+    });
+    L.circleMarker(p, { radius: 8, color: '#fff', weight: 3, fillColor: blue, fillOpacity: 1, interactive: false }).addTo(geoLayer);
+    fit(L.latLngBounds([p, ...list.map(r => [r.s.lat, r.s.lon])]), 40, 17);
+  }
+  function geoFocus(i) {
+    const r = geo.list[i];
+    map.setView([r.s.lat, r.s.lon], Math.max(map.getZoom(), 16));
+    geo.mk[i].openPopup();
+  }
+  function geoDetail(i) {
+    if (mode !== 'browse') setMode('browse', true);
+    openStop(geo.list[i].s);
+  }
+  function locate() {
+    if (geo && geo.st === 'busy') return;
+    geoLayer.clearLayers();
+    geo = { st: 'busy' };
+    geoShow();
+    locBtn.classList.add('busy');
+    window.tbGeo = null;
+    const done = (st, k, p, x) => { locBtn.classList.remove('busy'); geo = Object.assign({ st, k, p }, x); geoShow(); };
+    navigator.geolocation.getCurrentPosition(pos => {
+      const p = [pos.coords.latitude, pos.coords.longitude], acc = pos.coords.accuracy, st = Places.locate(p, acc);
+      if (st === 'invalid') return done('err', 'geoUnavail');
+      if (st === 'outside') return done('outside', 'geoOutside');
+      if (st === 'inaccurate') return done('err', 'geoInaccurate', { m: Math.round(acc) });
+      const list = Places.nearest(allStops(), p, 5, s => stopGroup.get(s.id) || s.id);
+      if (!list.length) return done('err', 'geoNone');
+      done('ok', '', null, { p, acc, list });
+      geoDraw();
+    }, err => setTimeout(() => {
+      const g = window.tbGeo;
+      if (g === 'off') done('off', 'geoOff');
+      else if (err.code === 1) done(g === 'blocked' ? 'blocked' : 'err', g === 'blocked' ? 'geoBlocked' : 'geoDenied');
+      else done('err', err.code === 3 ? 'geoTimeout' : 'geoUnavail');
+    }, 150), { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 });
+  }
+  $('#geo').addEventListener('click', e => {
+    const b = e.target.closest('[data-geo]');
+    if (!b) return;
+    const v = b.dataset.geo;
+    if (v === 'x') { geo = null; geoLayer.clearLayers(); geoShow(); }
+    else if (v === 'retry') locate();
+    else if (v[0] === 'd') geoDetail(+v.slice(1));
+    else geoFocus(+v);
+  });
+  if (GEO) {
+    const Loc = L.Control.extend({
+      onAdd() {
+        const b = L.DomUtil.create('button', 'leaflet-bar locbtn');
+        b.type = 'button';
+        b.dataset.i18nAria = b.dataset.i18nTitle = 'geoBtn';
+        b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="12" r="2.6" fill="currentColor"/><path d="M12 1.8v3M12 19.2v3M1.8 12h3M19.2 12h3"/></svg>';
+        L.DomEvent.disableClickPropagation(b);
+        b.addEventListener('click', locate);
+        return b;
+      }
+    });
+    locBtn = new Loc({ position: 'bottomright' }).addTo(map).getContainer();
+  }
+
   function loadPlaces() {
     if (!pload) pload = fetch('data/poi.json').then(r => r.ok ? r.json() : Promise.reject()).then(d => { pidx = Places.build(d); }).catch(() => { pload = null; });
     return pload;
@@ -740,7 +840,7 @@
     syncTheme();
     if (!feed) return;
     if (baseTables && builtLang !== l) { setFeed(buildFeed(), source, false); return; }
-    setAttr(); renderMeta(); renderExpiry();
+    setAttr(); renderMeta(); renderExpiry(); geoShow();
     if (mode === 'plan') showPlan(); else { const el = scr(), st = el.scrollTop; render(); el.scrollTop = st; }
   }
   const langBox = $('.lang');

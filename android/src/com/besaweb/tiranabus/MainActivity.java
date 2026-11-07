@@ -1,15 +1,21 @@
 package com.besaweb.tiranabus;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.view.WindowInsets;
+import android.webkit.GeolocationPermissions;
+import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -48,6 +54,8 @@ public class MainActivity extends Activity {
   WebView web;
   SQLiteDatabase tiles;
   long tilesFailed;
+  GeolocationPermissions.Callback geoCb;
+  String geoOrigin;
   DiskCache ext;
 
   @Override
@@ -88,6 +96,17 @@ public class MainActivity extends Activity {
     s.setJavaScriptEnabled(true);
     s.setDomStorageEnabled(true);
     s.setAllowFileAccess(false);
+    s.setGeolocationEnabled(true);
+    web.setWebChromeClient(new WebChromeClient() {
+      @Override
+      public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback cb) {
+        if (!HOST.equals(Uri.parse(origin).getHost())) { cb.invoke(origin, false, false); return; }
+        if (hasGeo()) { geoAllow(origin, cb); return; }
+        geoOrigin = origin;
+        geoCb = cb;
+        requestPermissions(new String[] { Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION }, 7);
+      }
+    });
     web.setWebViewClient(new WebViewClient() {
       @Override
       public WebResourceResponse shouldInterceptRequest(WebView v, WebResourceRequest r) {
@@ -112,11 +131,53 @@ public class MainActivity extends Activity {
       @Override
       public boolean shouldOverrideUrlLoading(WebView v, WebResourceRequest r) {
         if (HOST.equals(r.getUrl().getHost())) return false;
+        if ("tbapp".equals(r.getUrl().getScheme())) {
+          String h = r.getUrl().getHost();
+          Intent i = "location".equals(h) ? new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+            : new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", getPackageName(), null));
+          try { startActivity(i); } catch (Exception e) {}
+          return true;
+        }
         try { startActivity(new Intent(Intent.ACTION_VIEW, r.getUrl())); } catch (Exception e) {}
         return true;
       }
     });
     web.loadUrl("https://" + HOST + "/index.html");
+  }
+
+  boolean hasGeo() {
+    return checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+      || checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+  }
+
+  @SuppressWarnings("deprecation")
+  boolean geoOn() {
+    LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+    if (lm == null) return true;
+    if (Build.VERSION.SDK_INT >= 28) return lm.isLocationEnabled();
+    return lm.isProviderEnabled(LocationManager.GPS_PROVIDER) || lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+  }
+
+  void geoState(String st) {
+    web.evaluateJavascript("window.tbGeo='" + st + "'", null);
+  }
+
+  void geoAllow(String origin, GeolocationPermissions.Callback cb) {
+    boolean on = geoOn();
+    geoState(on ? "ok" : "off");
+    cb.invoke(origin, on, false);
+  }
+
+  @Override
+  public void onRequestPermissionsResult(int code, String[] perms, int[] res) {
+    if (code != 7 || geoCb == null) return;
+    GeolocationPermissions.Callback cb = geoCb;
+    geoCb = null;
+    if (hasGeo()) { geoAllow(geoOrigin, cb); return; }
+    boolean ask = shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)
+      || shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION);
+    geoState(ask || res.length == 0 ? "denied" : "blocked");
+    cb.invoke(geoOrigin, false, false);
   }
 
   @SuppressWarnings("deprecation")

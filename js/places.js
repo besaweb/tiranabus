@@ -244,6 +244,28 @@ const Places = (() => {
     return it.pts.reduce((b, p) => dist(p, c) < dist(b, c) ? p : b, it.pts[0]);
   }
 
-  return { norm, build, search, label, access, between, route, stopWalks, net, center, dist, RANK, WALK_V };
+  const AREA = { s: 41.22, w: 19.62, n: 41.46, e: 20.02 };
+  const MAX_ACC = 1500;
+  const valid = p => Array.isArray(p) && Number.isFinite(p[0]) && Number.isFinite(p[1]) && Math.abs(p[0]) <= 90 && Math.abs(p[1]) <= 180 && !(p[0] === 0 && p[1] === 0);
+  const inArea = (p, a = AREA) => valid(p) && p[0] >= a.s && p[0] <= a.n && p[1] >= a.w && p[1] <= a.e;
+
+  function locate(p, acc, a = AREA) {
+    if (!valid(p)) return 'invalid';
+    if (!inArea(p, a)) return 'outside';
+    if (acc != null && !(acc <= MAX_ACC)) return 'inaccurate';
+    return 'ok';
+  }
+
+  function nearest(stops, p, n = 5, key = s => s.id) {
+    const best = new Map();
+    for (const s of stops) {
+      if (!valid([s.lat, s.lon])) continue;
+      const d = dist(p, [s.lat, s.lon]), k = key(s), b = best.get(k);
+      if (!b || d < b.d) best.set(k, { s, d });
+    }
+    return [...best.values()].sort((a, b) => a.d - b.d).slice(0, n);
+  }
+
+  return { norm, build, search, label, access, between, route, stopWalks, net, center, dist, locate, inArea, nearest, AREA, MAX_ACC, RANK, WALK_V };
 })();
 if (typeof module !== 'undefined') module.exports = Places;
