@@ -62,7 +62,7 @@ Pořadí skriptů v `index.html`: Leaflet → JSZip → PapaParse → `gtfs-core
 | Offline vektorová mapa | – | ano | `window.OFFLINE_MAP` + `window.maplibregl` |
 | Odkazy Linky/Letiště (SEO stránky) | ano | skryté | `window.APP_VERSION` |
 | Menu | hlavička (desktop), hamburger (≤ 760 px) | `android/menu.js` (☰, třídy `am*`), přesouvá přepínač jazyka | vloženo `build.sh` |
-| Platnost dat | blok v menu (`renderExpiry`, `GTFS.validity`) | stránka `android/validity.html` + `validity.js` (vlastní parsování `feed_info`, jen cs/en/sq) | duplicita → I18N-001, CORE-005 |
+| Platnost dat | blok v menu (`renderExpiry`, `GTFS.validity`) | stránka `android/validity.html` + `validity.js` (vlastní parsování `feed_info`, vlastní slovník 12 jazyků) | duplicita → I18N-001, CORE-005 |
 | Pole času | nativní | cs/sq: textové pole HH:MM (proxy na `#time`), en nativní | `menu.js` |
 | Úvodní obrazovka | modrá | `splash.webp` + text a progress bar z `boot-extra.html` | vloženo `build.sh` |
 | Odznak Google Play | ano | skrytý (`.gplay` v `menu.css`) | CSS |
@@ -90,9 +90,9 @@ Vkládání do `index.html` v APK je přes `sed`/`python` na konkrétní řetěz
 ## Lokalizace
 
 - Jazyky: cs, en, sq, it, de, pl, fr, es, mk, el, ru, tr. Výchozí podle URL (`/{jazyk}/`), pak `localStorage`, pak prohlížeč, jinak en. Překlady strojové, bez korektury.
-- Plurály: cs/pl 3 tvary, ostatní 2. Názvy zastávek a linek se nepřekládají.
+- Plurály: cs, pl, ru 3 tvary, ostatní 2 (fr: 0 a 1 = jednotné). Názvy zastávek a linek se nepřekládají.
 - Statické texty v HTML přes `data-i18n*`, `applyLang()` přepíše a překreslí panel.
-- Výjimky mimo `i18n.js`: `android/menu.js`, `android/validity.js`, `android/boot-extra.html`, texty letiště v `extra-airport.js`.
+- Výjimky mimo `i18n.js` (vlastní slovníky, všech 12 jazyků, kontroluje `tests/i18n.test.js`): `android/menu.js`, `android/validity.js`, `android/boot-extra.html`, texty letiště v `extra-airport.js`.
 
 ## Nástroje (`tools/`)
 

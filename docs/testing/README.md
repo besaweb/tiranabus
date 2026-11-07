@@ -3,11 +3,22 @@
 ## Automatické testy (Node, bez npm)
 
 ```
-node --test tests/              # gtfs.zip v kořeni
-GTFS_ZIP=/cesta/gtfs.zip node --test tests/   # worktree
+node --test "tests/*.test.js"                            # gtfs.zip v kořeni
+GTFS_ZIP=/cesta/gtfs.zip node --test "tests/*.test.js"   # worktree
+UPDATE_SNAPSHOT=1 node --test tests/planner.test.js      # nový snapshot plánovače
 ```
 
-V CI běží na každém Pull Requestu (`.github/workflows/tests.yml`, feed z release `tirana-latest`). Zavádí TEST-001.
+| Soubor | Obsah |
+|---|---|
+| `tests/core.test.js` | čas, kalendář, platnost, `merge`, build reálného feedu, letiště, `groupStops`, odjezdy přes půlnoc |
+| `tests/planner.test.js` | 2 × 81 dotazů (vzdušná čára / pěší síť) – invarianty a snapshot `tests/fixtures/planner-snapshot.json` |
+| `tests/i18n.test.js` | 12 jazyků: shodné klíče, parametry, plurály; letištní texty; slovníky `android/menu.js`, `validity.js` |
+
+- Bez `gtfs.zip` se testy nad reálným feedem přeskočí (skip), ostatní běží.
+- Snapshot plánovače platí pro konkrétní `feed_version`; při jiném feedu se test přeskočí s výzvou k přegenerování. Změna snapshotu v PR = změna chování plánovače → popsat v PR a ověřit, že je to zlepšení (příjezd nikdy horší).
+- Test označený `# TODO <ID>` je známá chyba evidovaná v `TASKS.md`; neblokuje CI. Po opravě odstranit `todo`.
+
+V CI běží na každém Pull Requestu (`.github/workflows/tests.yml`, feed z release `tirana-latest`). Workflow navíc ověří generátor SEO stránek.
 
 ## Ruční ověření podle typu změny
 

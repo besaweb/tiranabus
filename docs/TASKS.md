@@ -9,17 +9,18 @@ Aktualizováno: 2026-11-07
 | ID | Název | Pl. | P | Stav | Závisí na | Akt. |
 |---|---|---|---|---|---|---|
 | DOC-001 | Dokumentační struktura `docs/`, nový CLAUDE.md | – | P1 | IN_PROGRESS | – | 2026-11-07 |
-| TEST-001 | Testy v Node + CI na Pull Requestech | SHARED | P1 | READY | – | 2026-11-07 |
-| TEST-002 | Kontrola úplnosti překladů (12 jazyků) | SHARED | P1 | READY | TEST-001 | 2026-11-07 |
+| TEST-001 | Testy v Node + CI na Pull Requestech | SHARED | P1 | REVIEW | – | 2026-11-07 |
+| TEST-002 | Kontrola úplnosti překladů (12 jazyků) | SHARED | P1 | REVIEW | TEST-001 | 2026-11-07 |
+| BUG-002 | Plánovač vrací spojení začínající před zadaným časem | SHARED | P1 | READY | – | 2026-11-07 |
 | CORE-003 | Android jako Gradle projekt | ANDROID | P0 | READY | – | 2026-11-07 |
 | AND-001 | Target API 36 + AAB pro Google Play | ANDROID | P0 | BLOCKED | CORE-003 | 2026-11-07 |
 | AND-002 | Bezpečné podepisování: heslo mimo skript, záloha keystore, Play App Signing | ANDROID | P0 | READY | – | 2026-11-07 |
-| DATA-001 | Ověřit běh `gtfs-watch` a `pages.yml` | SHARED | P0 | READY | – | 2026-11-07 |
+| DATA-001 | Ověřit běh `gtfs-watch` a `pages.yml` | SHARED | P0 | REVIEW | – | 2026-11-07 |
 | GTFS-001 | Feed 2027 (současný končí 31. 12. 2026) | SHARED | P0 | BLOCKED | DATA-001 | 2026-11-07 |
 | AND-003 | Ověřit offline režim na reálném telefonu | ANDROID | P1 | READY | – | 2026-11-07 |
 | CORE-001 | Objekt `PLATFORM` místo `OFFLINE_MAP`/`APP_VERSION` | SHARED | P1 | BACKLOG | TEST-001 | 2026-11-07 |
 | CORE-002 | Explicitní vkládací body pro Android místo `sed` | ANDROID | P1 | BACKLOG | CORE-003 | 2026-11-07 |
-| I18N-001 | Texty Android menu/platnosti/úvodu do `i18n.js` | SHARED | P1 | BACKLOG | TEST-002 | 2026-11-07 |
+| I18N-001 | Texty Android menu/platnosti/úvodu do `i18n.js` | SHARED | P2 | BACKLOG | TEST-002 | 2026-11-07 |
 | WEB-001 | `deploy-ftp.sh` jen z čistého `main` | WEB | P1 | READY | – | 2026-11-07 |
 | SEO-001 | Google Search Console + Bing, odeslat sitemap | WEB | P1 | READY | – | 2026-11-07 |
 | SEO-003 | Consent Mode v2 pro EU | SHARED | P1 | BACKLOG | – | 2026-11-07 |
@@ -52,14 +53,23 @@ Aktualizováno: 2026-11-07
 - Oblast: testování · SHARED · P1 · READY
 - Popis: `tests/*.test.js` přes vestavěný `node --test` (bez npm): build reálného feedu (počty linek/zastávek), kalendář a půlnoc, odjezdy, plánovač (snapshot regresní sady dotazů), `merge` letiště, `places`. Workflow `tests.yml` na každý PR stáhne `gtfs.zip` z release `tirana-latest`.
 - Akceptační kritéria:
-  - [ ] `node --test tests/` zelené lokálně i v CI
-  - [ ] regresní sada plánovače (≥ 100 dotazů) s uloženým očekávaným výsledkem
-  - [ ] `docs/testing/README.md` popisuje spuštění
-- Poznámky: worktree – cesta k feedu přes `GTFS_ZIP`.
+  - [x] `node --test "tests/*.test.js"` zelené lokálně (20 testů, 1 todo BUG-002)
+  - [x] zelené v CI (`.github/workflows/tests.yml`, PR #4)
+  - [x] regresní sada plánovače 2 × 81 dotazů se snapshotem
+  - [x] `docs/testing/README.md` popisuje spuštění
+- Poznámky: worktree – cesta k feedu přes `GTFS_ZIP`. Testovací den = úterý s nejvíce aktivními službami v platnosti feedu.
+- Historie: 2026-11-07 implementováno, PR
 
 ### TEST-002 Úplnost překladů
 - SHARED · P1 · READY · Závisí na TEST-001
-- Kritéria: test selže, pokud kterýkoli z 12 jazyků v `I18N.D` nemá stejnou sadu klíčů jako `en`; stejné pro `android/menu.js` a `validity.js` do dokončení I18N-001.
+- Kritéria: [x] test selže, pokud kterýkoli z 12 jazyků v `I18N.D` nemá stejnou sadu klíčů nebo parametrů jako `en` · [x] plurály · [x] letištní texty · [x] `android/menu.js`, `validity.js`
+- Historie: 2026-11-07 implementováno spolu s TEST-001.
+
+### BUG-002 Spojení začíná před zadaným časem
+- Oblast: plánovač · SHARED · P1 · READY
+- Popis: v režimu bez pěší sítě (vzdušná čára) plán vrátí spojení, jehož úvodní chůze začíná před zadaným časem – uživatel by spoj nestihl. Příklady (feed 2026-09-30, 1. 9. 2026): Pallati Brigadave → Haki Shehu 11:58 → start 11:57 (chůze 4 min na 8A v 12:01); Njësia 2 → Terminal D 12:00 → start 11:53. Pravděpodobně `tidy` (přesun nástupu na jinou zastávku téhož spoje) nebo dopočet úvodní chůze zpětně od odjezdu.
+- Kritéria: test „spojení nezačíná před zadaným časem“ bez `todo`; regresní snapshot – příjezd nikdy horší; ověřeno na webu i v APK.
+- Historie: 2026-11-07 nalezeno testem TEST-001.
 
 ### CORE-003 Android jako Gradle projekt
 - Oblast: Android / build · ANDROID (build nástroj jen pro Android) · P0 · READY
@@ -83,7 +93,7 @@ Aktualizováno: 2026-11-07
 
 ### DATA-001 Ověřit workflow
 - SHARED · P0 · READY
-- Kritéria: release `tirana-latest` existuje a obsahuje platný `gtfs.zip`; poslední běhy `gtfs-watch` a `pages.yml` zelené; Pages Source = GitHub Actions; web na Pages načte feed sám.
+- Kritéria: [x] release `tirana-latest` existuje a obsahuje platný `gtfs.zip` (feed 2026-09-30) · [x] denní běhy `gtfs-watch` a `pages.yml` zelené (ověřeno 7. 11. 2026, nasazení Pages úspěšné) · [ ] web na Pages načte feed sám (ověřit v prohlížeči)
 
 ### WEB-001 Bezpečný FTP deploy
 - WEB (FTP jen pro web) · P1 · READY

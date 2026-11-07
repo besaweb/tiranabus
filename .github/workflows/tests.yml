@@ -1,0 +1,41 @@
+name: tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Stáhnout feed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download tirana-latest -p gtfs.zip -R "$GITHUB_REPOSITORY" || curl -fsSL --retry 3 -o gtfs.zip https://pt.tirana.al/gtfs/gtfs.zip
+          unzip -tq gtfs.zip
+
+      - name: Testy
+        run: node --test "tests/*.test.js"
+
+      - name: Generátor SEO stránek
+        run: |
+          mkdir site
+          cp -r index.html css js data img gtfs.zip site/
+          node tools/build-pages.js site
+          test "$(find site -name index.html | wc -l)" -gt 100
