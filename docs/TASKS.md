@@ -9,8 +9,8 @@ Aktualizováno: 2026-11-07
 | ID | Název | Pl. | P | Stav | Závisí na | Akt. |
 |---|---|---|---|---|---|---|
 | BUG-002 | Plánovač vrací spojení začínající před zadaným časem | SHARED | P1 | READY | – | 2026-11-07 |
-| CORE-003 | Android jako Gradle projekt | ANDROID | P0 | READY | – | 2026-11-07 |
-| AND-001 | Target API 36 + AAB pro Google Play | ANDROID | P0 | BLOCKED | CORE-003 | 2026-11-07 |
+| CORE-003 | Android jako Gradle projekt | ANDROID | P0 | REVIEW | – | 2026-11-07 |
+| AND-001 | Target API 36 + AAB pro Google Play | ANDROID | P0 | READY | CORE-003 | 2026-11-07 |
 | AND-002 | Bezpečné podepisování: heslo mimo skript, záloha keystore, Play App Signing | ANDROID | P0 | REVIEW | – | 2026-11-07 |
 | DATA-001 | Ověřit běh `gtfs-watch` a `pages.yml` | SHARED | P0 | REVIEW | – | 2026-11-07 |
 | GTFS-001 | Feed 2027 (současný končí 31. 12. 2026) | SHARED | P0 | BLOCKED | DATA-001 | 2026-11-07 |
@@ -44,17 +44,17 @@ Aktualizováno: 2026-11-07
 - Historie: 2026-11-07 nalezeno testem TEST-001.
 
 ### CORE-003 Android jako Gradle projekt
-- Oblast: Android / build · ANDROID (build nástroj jen pro Android) · P0 · READY
+- Oblast: Android / build · ANDROID (build nástroj jen pro Android) · P0 · REVIEW
 - Popis: nahradit ruční `android/build.sh` minimálním Gradle projektem (bez Kotlinu, stávající `MainActivity.java`), který při buildu zkopíruje web do `assets` stejně jako dnes.
 - Kritéria:
-  - [ ] `gradlew assembleRelease` a `bundleRelease` fungují (Windows i Linux/CI)
-  - [ ] výsledné APK funkčně shodné s dnešním (checklist `testing/README.md`)
-  - [ ] podpis stejným klíčem (aktualizace přes stávající instalaci funguje)
-  - [ ] heslo keystore z `keystore.properties` / proměnných prostředí, ne ze skriptu
-- Poznámky: rozhodnutí D-018.
+  - [x] `./gradlew apk` a `aab` fungují na Windows · [ ] Linux/CI neověřeno
+  - [x] výsledné APK shodné s dnešním: `assets` stejné bajt po bajtu (kromě konců řádků), certifikát SHA-256 `0354…0d92` shodný; emulátor API 36: start, feed, offline mapa, menu · [ ] zbytek checklistu `testing/README.md` (režim letadlo, externí odkazy, Zpět)
+  - [x] podpis stejným klíčem (`adb install -r` přes stávající instalaci proběhl)
+  - [x] heslo z `keystore.properties` / `TB_KS_PASS`
+- Poznámky: rozhodnutí D-018, D-023. `build.sh` odstraněn. Zbývá: CI na Linuxu (workflow `android.yml`?), zbytek checklistu a PR.
 
 ### AND-001 Target API 36 + AAB
-- ANDROID · P0 · BLOCKED (čeká na CORE-003)
+- ANDROID · P0 · READY (CORE-003 hotové, čeká na sloučení)
 - Popis: Google Play od 31. 8. 2026 vyžaduje pro nové aplikace i aktualizace target API 36; nové aplikace jako AAB.
 - Kritéria: `targetSdkVersion 36`; ověřeno na emulátoru API 36 (edge-to-edge, WebView, zpět, odkazy); podepsaný `.aab` prochází `bundletool validate`.
 

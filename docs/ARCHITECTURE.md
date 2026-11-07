@@ -10,7 +10,7 @@ Statická aplikace bez backendu a bez buildu (vanilla JS). Jediný zdroj kódu; 
 index.html, tickets.html, privacy.html, css/, js/, data/, img/   ← SHARED zdroj
         ├── web:     pages.yml (GitHub Pages) / deploy-ftp.sh (tiranabus.al)
         │            + tools/build-pages.js (SEO stránky, sitemap)       ← WEB ONLY
-        └── android: android/build.sh → APK                              ← ANDROID ONLY doplňky
+        └── android: android/ (Gradle) → APK / AAB                              ← ANDROID ONLY doplňky
                      menu.js/css, validity.*, boot-extra.html, splash, MapLibre + mbtiles, MainActivity.java
 ```
 
@@ -58,15 +58,15 @@ Pořadí skriptů v `index.html`: Leaflet → JSZip → PapaParse → `gtfs-core
 
 | Funkce | Web | Android | Mechanismus |
 |---|---|---|---|
-| Verze v O aplikaci | `VERSION` v `app.js` | `window.APP_VERSION` z `build.sh` | `window.APP_VERSION \|\| VERSION` |
+| Verze v O aplikaci | `VERSION` v `app.js` | `window.APP_VERSION` z Gradle (`prepareSite`) | `window.APP_VERSION \|\| VERSION` |
 | Offline vektorová mapa | – | ano | `window.OFFLINE_MAP` + `window.maplibregl` |
 | Odkazy Linky/Letiště (SEO stránky) | ano | skryté | `window.APP_VERSION` |
-| Menu | hlavička (desktop), hamburger (≤ 760 px) | `android/menu.js` (☰, třídy `am*`), přesouvá přepínač jazyka | vloženo `build.sh` |
+| Menu | hlavička (desktop), hamburger (≤ 760 px) | `android/menu.js` (☰, třídy `am*`), přesouvá přepínač jazyka | vloženo Gradle taskem `prepareSite` |
 | Platnost dat | blok v menu (`renderExpiry`, `GTFS.validity`) | stránka `android/validity.html` + `validity.js` (vlastní parsování `feed_info`, vlastní slovník 12 jazyků) | duplicita → I18N-001, CORE-005 |
 | Pole času | nativní | cs/sq: textové pole HH:MM (proxy na `#time`), en nativní | `menu.js` |
-| Úvodní obrazovka | modrá | `splash.webp` + text a progress bar z `boot-extra.html` | vloženo `build.sh` |
+| Úvodní obrazovka | modrá | `splash.webp` + text a progress bar z `boot-extra.html` | vloženo Gradle taskem `prepareSite` |
 | Odznak Google Play | ano | skrytý (`.gplay` v `menu.css`) | CSS |
-| Knihovny | cdnjs | lokálně v `lib/` | `sed` v `build.sh` |
+| Knihovny | cdnjs | lokálně v `lib/` | Gradle `prepareSite` (stahuje z cdnjs, přepisuje `index.html`) |
 | Feed | `gtfs.zip` vedle webu | `MainActivity`: stáhne z Pages do `filesDir`, offline uložená, jinak vložená kopie | interceptor `gtfs.zip` |
 | Dlaždice a fonty | online | cache `cacheDir/ext` bez limitu | `MainActivity.external` |
 | GA4 | ano | ano (z `index.html`) | – |
@@ -75,7 +75,8 @@ Vkládání do `index.html` v APK je přes `sed`/`python` na konkrétní řetěz
 
 ## Android
 
-- WebView obálka bez Gradle: `android/build.sh` (Git Bash, Android SDK build-tools 36.0.0, platforma 34, JBR z Android Studia): aapt2 + javac + d8 + zipalign + apksigner → `android/out/TiranaBus.apk`. `release.sh` nahraje do release `apk-latest`. Plánován přechod na Gradle + AAB (CORE-003, AND-001).
+- Gradle projekt v `android/` (AGP 9.0.0, Gradle 9.1.0 přes wrapper, `compileSdk` 36, `targetSdk` 34 do AND-001): `./gradlew apk` → `android/out/TiranaBus.apk`, `./gradlew aab` → `android/out/TiranaBus.aab`. Verze z proměnných prostředí `VERSION` a `VERSION_CODE` (výchozí 1.0 / 1). Zdroje zůstávají v `android/src`, `android/res`, `android/AndroidManifest.xml`. Task `prepareSite` zkopíruje web do `assets`, stáhne Leaflet, JSZip, PapaParse a MapLibre z cdnjs, vloží `boot-extra.html`, `OFFLINE_MAP`, `APP_VERSION` a `menu.*` do `index.html` (náhrada původních `sed`/`python` z `build.sh`, výstup shodný až na konce řádků). Podpis: `keystore.properties` nebo `TB_KS_PASS` (D-022), v APK v1 + v2. Bez Kotlin runtime (`exclude org.jetbrains.kotlin`), `.mbtiles` se v APK nekomprimuje, VCS info vypnuto. `release.sh` nahraje do release `apk-latest`.
+- Lokální build: `JAVA_HOME` (JDK 17+), `ANDROID_HOME` nebo `android/local.properties`. Antivirus s inspekcí HTTPS (Avast Web Shield) podvrhuje certifikáty, kterým Java nedůvěřuje (`PKIX path building failed`): přidat výjimky pro `dl.google.com`, `repo.maven.apache.org`, `plugins.gradle.org`, `services.gradle.org` a `cdnjs.cloudflare.com`.
 - `MainActivity.java`: servíruje assety z `https://appassets.androidplatform.net/`, interceptuje `gtfs.zip` a `vt/`, externí odkazy otevírá v prohlížeči. min SDK 24, target 34.
 - Ikony: adaptivní `res/mipmap-anydpi-v26/ic_launcher.xml`, popředí 432 px (obrázek 320 px), pozadí `#7A0A0A`; `ic_launcher.png` 192 px pro Android < 8.
 
