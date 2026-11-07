@@ -9,7 +9,6 @@ Aktualizováno: 2026-11-07
 | ID | Název | Pl. | P | Stav | Závisí na | Akt. |
 |---|---|---|---|---|---|---|
 | BUG-002 | Plánovač vrací spojení začínající před zadaným časem | SHARED | P1 | READY | – | 2026-11-07 |
-| AND-002 | Bezpečné podepisování: heslo mimo skript, záloha keystore, Play App Signing | ANDROID | P0 | REVIEW | – | 2026-11-07 |
 | DATA-001 | Ověřit běh `gtfs-watch` a `pages.yml` | SHARED | P0 | REVIEW | – | 2026-11-07 |
 | GTFS-001 | Feed 2027 (současný končí 31. 12. 2026) | SHARED | P0 | BLOCKED | DATA-001 | 2026-11-07 |
 | CORE-001 | Objekt `PLATFORM` místo `OFFLINE_MAP`/`APP_VERSION` | SHARED | P1 | BACKLOG | TEST-001 | 2026-11-07 |
@@ -21,7 +20,7 @@ Aktualizováno: 2026-11-07
 | CORE-004 | Jeden seznam souborů pro Pages / FTP / Android | SHARED | P2 | BACKLOG | – | 2026-11-07 |
 | CORE-005 | Sjednocená konfigurace jízdného, kurzů, verze a platnosti | SHARED | P2 | BACKLOG | – | 2026-11-07 |
 | BUG-001 | Cena RT: 3 € (tickets) vs. 3,50 € (data) | SHARED | P2 | READY | – | 2026-11-07 |
-| AND-008 | První vydání v Google Play (podklady, testovací stopa) | ANDROID | P0 | IN_PROGRESS | AND-002 (záloha keystore) | 2026-11-07 |
+| AND-008 | První vydání v Google Play (podklady, testovací stopa) | ANDROID | P0 | IN_PROGRESS | ověření účtu Play | 2026-11-07 |
 | AND-005 | Pro: roční předplatné 4,99 € přes Google Play Billing | ANDROID | P2 | BACKLOG | CORE-007, první vydání v Play | 2026-11-07 |
 | CORE-007 | Oprávnění Pro (`PLATFORM.pro`) a zamykání funkcí | SHARED | P2 | BACKLOG | CORE-001 | 2026-11-07 |
 | MAP-001 | Poloha z GPS na mapě (Pro) | ANDROID | P2 | BACKLOG | CORE-007 | 2026-11-07 |
@@ -47,12 +46,6 @@ Aktualizováno: 2026-11-07
 - Kritéria: test „spojení nezačíná před zadaným časem“ bez `todo`; regresní snapshot – příjezd nikdy horší; ověřeno na webu i v APK.
 - Historie: 2026-11-07 nalezeno testem TEST-001.
 
-### AND-002 Bezpečné podepisování
-- ANDROID · P0 · READY
-- Kritéria: [ ] keystore zálohován mimo počítač (uživatel) · [x] heslo není ve skriptu (`keystore.properties` / `TB_KS_PASS`, heslo samotné beze změny, certifikát APK ověřen shodný) · [x] rozhodnutí o Play App Signing zapsáno v DECISIONS (D-022)
-- Zbývá: záloha keystore mimo počítač (uživatel); zapnutí Play App Signing při prvním nahrání AAB (AND-001).
-- Poznámky: repozitář je **veřejný** (zjištěno 2026-11-07, dřív chybně uvedeno „soukromý“). Staré heslo keystore je veřejně čitelné v historii (`android/build.sh`, commit `054063f`). Soubor keystore v gitu nikdy nebyl, takže heslo samo nic neodemkne. Uživatel 2026-11-07 rozhodl heslo neměnit; změna přes `keytool -storepasswd` / `-keypasswd` je možná bez změny klíče a certifikátu. S Play App Signing (D-022) je keystore jen upload key, který jde při úniku resetovat.
-
 ### DATA-001 Ověřit workflow
 - SHARED · P0 · READY
 - Kritéria: [x] release `tirana-latest` existuje a obsahuje platný `gtfs.zip` (feed 2026-09-30) · [x] denní běhy `gtfs-watch` a `pages.yml` zelené (ověřeno 7. 11. 2026, nasazení Pages úspěšné) · [ ] web na Pages načte feed sám (ověřit v prohlížeči)
@@ -67,8 +60,8 @@ Aktualizováno: 2026-11-07
 - Kritéria:
   - [x] ikona 512 × 512, hlavní obrázek 1024 × 500, 6 snímků 1080 × 1920 (emulátor API 36, 2026-11-07)
   - [x] texty listingu en, sq (strojově, ke kontrole), cs; odpovědi pro Data safety, IARC a ostatní formuláře; postup vydání
-  - [x] typ účtu: osobní, veřejné jméno „BesaWeb“ (2026-11-07) · [ ] uživatel založí účet a ověří totožnost · [ ] uzavřený test 12 testerů / 14 dní · [ ] záloha keystore (AND-002)
-  - [ ] AAB `1.8` / `versionCode 18` z čistého `main` nahrané na interní testování, Play App Signing zapnuté
+  - [x] typ účtu: osobní, veřejné jméno „BesaWeb“ (2026-11-07) · [ ] uživatel založí účet a ověří totožnost · [ ] uzavřený test 12 testerů / 14 dní · [x] záloha keystore provedena (uživatel, 2026-11-07)
+  - [ ] AAB `1.8` / `versionCode 18` z čistého `main` nahrané na interní testování, Play App Signing zapnuté při prvním nahrání (D-022)
 - Poznámky: hlavní obrázek je z obálky se starším modrým logem, doporučeno nahradit. Při snímcích nalezeno: našeptávač u pole Kam je na telefonu schovaný pod klávesnicí (navrhnout úkol pro Chat 02).
 
 ### AND-005 Pro: roční předplatné přes Google Play Billing
@@ -136,5 +129,6 @@ Aktualizováno: 2026-11-07
 | AND-003 | Offline režim ověřen na reálném telefonu (Samsung Galaxy S21, APK 1.8-test, checklist `testing/README.md`) | 2026-11-07 | – |
 | CORE-003 | Android jako Gradle projekt (AGP 9.0.0, wrapper, `apk`/`aab`, bez `build.sh`; assets a certifikát shodné s dřívějším APK, telefon Samsung S21) | 2026-11-07 | PR #7 |
 | CORE-006 | Android Gradle build v CI na Linuxu (`android.yml`: debug APK + AAB, kontrola obsahu APK, release bez hesla selže; běh na PR 68 s, na `main` s cache 52 s, Gradle krok 32 s, cache 322 MB) | 2026-11-07 | PR #11 |
+| AND-002 | Heslo keystore mimo skript (`keystore.properties` / `TB_KS_PASS`), záloha keystore mimo počítač (uživatel, 2026-11-07), rozhodnutí o Play App Signing (D-022); starý public hash hesla zůstává v historii gitu (heslo beze změny, rozhodl uživatel) | 2026-11-07 | PR #6 |
 | AND-004 | `DiskCache` (limit 100 MB, platnost 30 dní, SHA-256) a robustní kopie mbtiles | 2026-11-07 | PR #9 |
 | – | Práce do 6. 11. 2026 | – | viz `releases/history-2026-11.md` |

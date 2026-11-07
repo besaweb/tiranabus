@@ -126,7 +126,7 @@ Při MAP-001 (GPS), AND-005 (nákupy) a MKT-001 (reklamy) formulář aktualizova
 ## Postup prvního vydání
 
 1. **Účet (rozhodnuto 2026-11-07): osobní účet, veřejné jméno vývojáře „BesaWeb“.** Poplatek 25 USD, doklad a karta na vlastní jméno (ne předplacená), ověření telefonu s Androidem v aplikaci Play Console. Před produkcí uzavřený test: alespoň 12 testerů nepřetržitě 14 dní, pak kontrola Googlem (obvykle do 7 dní). Nové účty hned deklarují status obchodníka (DSA); obchodník s osobním účtem má na Google Play veřejný telefon a adresu – ověřit, zda jde uvést jinou než domácí adresu. Zdroj: Play Console Help (answer 14151465, 6112435, 13628312, 17594752), ověřeno 2026-11-07.
-2. **Keystore:** záloha `android/tirana-bus.keystore` mimo počítač (AND-002) – před prvním nahráním.
+2. **Keystore:** záloha `android/tirana-bus.keystore` mimo počítač provedena (uživatel, 2026-11-07, AND-002).
 3. **Build** z čistého aktuálního `main`:
    ```bash
    cd android && VERSION=1.8 VERSION_CODE=18 ./gradlew aab
