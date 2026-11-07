@@ -30,4 +30,4 @@ Jen **aktuálně rozpracované** úkoly. Po dokončení úkolu jeho sekci smaž 
 - Testy: lokálně 20 testů, 19 OK, 1 TODO (BUG-002); bez `gtfs.zip` 12 OK, 8 přeskočeno
 - Platformy: testy čisté logiky (sdílená pro web i APK)
 - Problémy: nalezena chyba BUG-002
-- Další krok: první zelený běh CI na PR, sloučit po DOC-001; pak BUG-002 (chat 04)
+- Další krok: CI zelené (PR #4); sloučit po DOC-001 (#3); pak BUG-002 (chat 04)

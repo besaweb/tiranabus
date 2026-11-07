@@ -54,7 +54,7 @@ Aktualizováno: 2026-11-07
 - Popis: `tests/*.test.js` přes vestavěný `node --test` (bez npm): build reálného feedu (počty linek/zastávek), kalendář a půlnoc, odjezdy, plánovač (snapshot regresní sady dotazů), `merge` letiště, `places`. Workflow `tests.yml` na každý PR stáhne `gtfs.zip` z release `tirana-latest`.
 - Akceptační kritéria:
   - [x] `node --test "tests/*.test.js"` zelené lokálně (20 testů, 1 todo BUG-002)
-  - [ ] zelené v CI (`.github/workflows/tests.yml`)
+  - [x] zelené v CI (`.github/workflows/tests.yml`, PR #4)
   - [x] regresní sada plánovače 2 × 81 dotazů se snapshotem
   - [x] `docs/testing/README.md` popisuje spuštění
 - Poznámky: worktree – cesta k feedu přes `GTFS_ZIP`. Testovací den = úterý s nejvíce aktivními službami v platnosti feedu.
