@@ -83,6 +83,7 @@ Vkládání do `index.html` v APK je přes `sed`/`python` na konkrétní řetěz
 
 ## Web – nasazení a SEO
 
+- `android.yml`: na PR a push do `main` s cestami `android/**`, `index.html`, `css|js|data|img/**` (a ručně) → JDK 21, feed z release, `./gradlew assembleDebug bundleDebug` bez podpisových tajemství, kontrola obsahu APK (`index.html` s `OFFLINE_MAP`, `gtfs.zip`, knihovny, mapa, `classes.dex`) a že `assembleRelease` bez hesla selže (D-022). Podepsané buildy jen lokálně.
 - `pages.yml`: push na `main` + denně → kopie webu, cache-busting `?v=<sha>`, `gtfs.zip` z release, `node tools/build-pages.js site`, deploy Pages.
 - `deploy-ftp.sh`: totéž, nahrání na tiranabus.al přes FTP (šifrovaný jen řídicí kanál – Pure-FTPd vrací 451 při TLS na datovém). Starší soubory nemaže. Nahrává pracovní adresář (WEB-001).
 - `tools/build-pages.js` (+ `tools/gtfs-node.js`, čtečka zipu bez závislostí): 12 × (`/{jazyk}/`, `/lines/`, `/airport/`, `/line/{linka}/`) = 384 stránek + `sitemap.xml` (387 URL, hreflang, x-default). Jazykové kopie `index.html` mají `<base href="../">`. Výstup se necommituje.

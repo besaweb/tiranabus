@@ -21,7 +21,7 @@ Aktualizováno: 2026-11-07
 | SEO-003 | Consent Mode v2 pro EU | SHARED | P1 | BACKLOG | – | 2026-11-07 |
 | CORE-004 | Jeden seznam souborů pro Pages / FTP / Android | SHARED | P2 | BACKLOG | CORE-003 | 2026-11-07 |
 | CORE-005 | Sjednocená konfigurace jízdného, kurzů, verze a platnosti | SHARED | P2 | BACKLOG | – | 2026-11-07 |
-| CORE-006 | Android Gradle build v CI na Linuxu | ANDROID | P2 | READY | CORE-003 | 2026-11-07 |
+| CORE-006 | Android Gradle build v CI na Linuxu | ANDROID | P2 | REVIEW | CORE-003 | 2026-11-07 |
 | BUG-001 | Cena RT: 3 € (tickets) vs. 3,50 € (data) | SHARED | P2 | READY | – | 2026-11-07 |
 | AND-005 | Pro verze a licence (Ko-fi kódy, Play Billing) | ANDROID | P2 | BACKLOG | – | 2026-11-07 |
 | AND-006 | Barvy systémových lišt podle motivu stránky (přepínač v aplikaci vs. systém) | ANDROID | P3 | BACKLOG | – | 2026-11-07 |
@@ -53,13 +53,14 @@ Aktualizováno: 2026-11-07
 - Poznámky: rozhodnutí D-018, D-023. `build.sh` odstraněn. Zbývá jen Linux/CI (CORE-006).
 
 ### CORE-006 Android Gradle build v CI na Linuxu
-- Oblast: CI / build · ANDROID (build jen pro Android) · P2 · READY
+- Oblast: CI / build · ANDROID (build jen pro Android) · P2 · REVIEW
 - Popis: ověřit, že `./gradlew` build funguje mimo Windows, a hlídat ho na Pull Requestech, které sahají do `android/` nebo sdíleného webu. Uzavírá poslední kritérium CORE-003.
 - Kritéria:
-  - [ ] workflow `.github/workflows/android.yml` (spouští se na PR s `android/**`, `index.html`, `css/**`, `js/**`, `data/**`, `img/**` a ručně), JDK 17+, Android SDK z runneru, `gtfs.zip` z release `tirana-latest`
-  - [ ] bez podpisových tajemství: sestaví nepodepsaný `assembleRelease` nebo `assembleDebug` + `bundleDebug` (podepisování zůstává lokálně z hlavní složky, D-022); kontrola `checkSigning` se pro release bez hesla musí chovat podle D-022
-  - [ ] `android/gradlew` spustitelný v gitu (opraveno 2026-11-07: `git update-index --chmod=+x`) · [ ] konce řádků `gradlew` LF na Linuxu
+  - [x] workflow `.github/workflows/android.yml` (spouští se na PR s `android/**`, `index.html`, `css/**`, `js/**`, `data/**`, `img/**` a ručně), JDK 17+, Android SDK z runneru, `gtfs.zip` z release `tirana-latest`
+  - [x] bez podpisových tajemství: sestaví nepodepsaný `assembleRelease` nebo `assembleDebug` + `bundleDebug` (podepisování zůstává lokálně z hlavní složky, D-022); kontrola `checkSigning` se pro release bez hesla musí chovat podle D-022
+  - [x] `android/gradlew` spustitelný v gitu (opraveno 2026-11-07: `git update-index --chmod=+x`) · [x] `gradlew` LF (`android/.gitattributes`)
   - [ ] CI zelené na PR, doba běhu a velikost cache Gradle zapsány
+- Stav: workflow napsán, kroky ověřeny lokálně v čistém worktree bez keystore (Windows): debug APK a AAB OK, obsah APK OK, `assembleRelease` bez hesla selže s hláškou z D-022. Chybí první zelený běh v GitHub Actions na Linuxu (otevřít PR, zapsat dobu běhu a velikost cache).
 - Poznámky: Gradle stahuje knihovny z cdnjs (`prepareSite`), CI musí mít síť. AGP 9.0.0 vyžaduje Gradle 9.1+ a JDK 17+.
 
 ### AND-002 Bezpečné podepisování
