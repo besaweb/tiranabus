@@ -4,7 +4,7 @@ set -euo pipefail
 cd "$(dirname "$0")"
 REPO=besaweb/tiranabus; TAG=apk-latest; APK=out/TiranaBus.apk
 : "${GITHUB_TOKEN:?Nastav GITHUB_TOKEN}"
-[ -f "$APK" ] || { echo "Chybí $APK, nejdřív spusť build.sh"; exit 1; }
+[ -f "$APK" ] || { echo "Chybí $APK, nejdřív spusť ./gradlew apk"; exit 1; }
 API=https://api.github.com/repos/$REPO
 H=(-H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json")
 REL=$(curl -fsSL "${H[@]}" "$API/releases/tags/$TAG")

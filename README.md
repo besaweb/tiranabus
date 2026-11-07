@@ -55,7 +55,7 @@ Městský feed letiště neobsahuje, protože Rinas leží mimo území Tirany a
 
 Web běží na https://tiranabus.al (nahrání: `bash deploy-ftp.sh`, údaje v `.ftp.env` mimo git) a na GitHub Pages.
 
-Ve složce `android/` je WebView obálka. `bash android/build.sh` (Git Bash, Android SDK a Android Studio JBR) vytvoří `android/out/TiranaBus.apk`, bez Gradle. APK obsahuje web, knihovny a lokální `gtfs.zip`, při startu zkusí stáhnout čerstvý feed z GitHub Pages. Obsahuje offline vektorovou mapu Tirany (`android/map/tirana.mbtiles`); ostatní podklady se při prohlížení ukládají do mezipaměti. Instalace: nahrát APK do telefonu a povolit instalaci z neznámých zdrojů. Klíč `android/tirana-bus.keystore` je mimo git, bez něj nejde aplikaci aktualizovat. Heslo se bere z `android/keystore.properties` (vzor `keystore.properties.example`) nebo z proměnné `TB_KS_PASS`.
+Ve složce `android/` je WebView obálka. `./gradlew apk` ve složce `android/` (potřebuje JDK 17+, např. JBR z Android Studia v `JAVA_HOME`, a Android SDK v `ANDROID_HOME`) vytvoří `android/out/TiranaBus.apk`, `./gradlew aab` pak `TiranaBus.aab`. APK obsahuje web, knihovny a lokální `gtfs.zip`, při startu zkusí stáhnout čerstvý feed z GitHub Pages. Obsahuje offline vektorovou mapu Tirany (`android/map/tirana.mbtiles`); ostatní podklady se při prohlížení ukládají do mezipaměti. Instalace: nahrát APK do telefonu a povolit instalaci z neznámých zdrojů. Klíč `android/tirana-bus.keystore` je mimo git, bez něj nejde aplikaci aktualizovat. Heslo se bere z `android/keystore.properties` (vzor `keystore.properties.example`) nebo z proměnné `TB_KS_PASS`.
 
 ## Parametry plánovače (`js/gtfs-core.js`)
 

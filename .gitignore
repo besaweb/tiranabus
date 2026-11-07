@@ -8,3 +8,5 @@ android/*.keystore
 
 .ftp.env
 android/keystore.properties
+android/local.properties
+android/.gradle/

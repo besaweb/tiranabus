@@ -24,8 +24,9 @@ Formát: `D-NNN` · datum · rozhodnutí · důvod / důsledky. Záznamy se nema
 
 - **D-016** **Jeden zdroj kódu pro web i Android, Android jako WebView obálka.** Splňuje SHARED BY DEFAULT bez dvojího vývoje; zpevnit platformní vrstvu (CORE-001, CORE-002, I18N-001, CORE-004, CORE-005). Capacitor/nativní Android zamítnuty (npm/duplicitní UI).
 - **D-017** **SHARED BY DEFAULT**; WEB ONLY / ANDROID ONLY jen s technickým zdůvodněním; SHARED úkol DONE až po ověření na obou platformách.
-- **D-018** **Android přejde na Gradle projekt** (kvůli AAB a target API 36 pro Google Play). Nahrazuje ruční `build.sh` po dokončení CORE-003.
+- **D-018** **Android přejde na Gradle projekt** (kvůli AAB a target API 36 pro Google Play). Provedeno v CORE-003 (2026-11-07), `build.sh` odstraněn.
 - **D-019** **Git: krátké větve na úkol, merge do `main` jen přes Pull Request s automatickými testy**, paralelní práce přes git worktree.
 - **D-020** **7 tematických chatů** (varianta S, `docs/CHATS.md`).
 - **D-021** **Dokumentace v `docs/`**, `HANDOFF.md` zrušen (obsah rozdělen do `docs/`).
 - **D-022** (2026-11-07) **Podepisování APK/AAB: heslo mimo git, Play App Signing zapnout.** Heslo keystore (beze změny, stávající klíč a certifikát zůstávají) se čte z `android/keystore.properties` (v `.gitignore`, šablona `keystore.properties.example`) nebo z `TB_KS_PASS` / `TB_KEY_PASS` / `TB_KEY_ALIAS`; `build.sh` bez nich skončí. Chybějící keystore už nevede k vygenerování nového klíče (rozbilo by aktualizace), build skončí s chybou. Staré heslo zůstává v historii gitu (soukromý repozitář), klíč ne. Při prvním nahrání AAB zapnout Play App Signing: Google drží podpisový klíč, `tirana-bus.keystore` slouží jako upload key a při ztrátě jde resetovat.
+- **D-023** (2026-11-07) **Android build: AGP 9.0.0 + Gradle 9.1.0 (wrapper je v gitu), Groovy DSL, zdroje na původních místech, příprava webu jako Gradle task místo bash/python/sed.** Důvod: stejný build na Windows i Linuxu bez závislosti na Git Bash a Pythonu. `targetSdk` zůstává 34 do AND-001. Výstup shodný s `build.sh` (assets, certifikát klíče); rozdíly jen kosmetické (zkrácené názvy souborů v `res/`, konce řádků).

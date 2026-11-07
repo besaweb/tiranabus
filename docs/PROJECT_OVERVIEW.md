@@ -13,7 +13,7 @@ Cílová skupina: turisté a obyvatelé Tirany (kampaň na Facebooku míří i n
 | | Desktop Web Application | Android Application |
 |---|---|---|
 | Adresa / distribuce | https://tiranabus.al (hlavní, FTP), zrcadlo GitHub Pages `besaweb.github.io/tiranabus` | APK z release `apk-latest`; připravuje se Google Play |
-| Verze | `VERSION` v `js/app.js` (1.04) | `VERSION` v `android/build.sh` (1.7) |
+| Verze | `VERSION` v `js/app.js` (1.04) | `VERSION` / `VERSION_CODE` při buildu (`./gradlew apk`) |
 | Data | `gtfs.zip` dodaný při nasazení | vložený `gtfs.zip` + stažení čerstvého z Pages, offline |
 | Mapa | rastrové podklady online | offline vektorová mapa Tirany (mbtiles) + online podklady |
 

@@ -1,0 +1,175 @@
+plugins {
+  id 'com.android.application' version '9.0.0'
+}
+
+def cdn = 'https://cdnjs.cloudflare.com/ajax/libs'
+def libs = [
+  'leaflet.min.js': "$cdn/leaflet/1.9.4/leaflet.min.js",
+  'jszip.min.js': "$cdn/jszip/3.10.1/jszip.min.js",
+  'papaparse.min.js': "$cdn/PapaParse/5.4.1/papaparse.min.js",
+  'maplibre-gl.js': "$cdn/maplibre-gl/4.7.1/maplibre-gl.js",
+  'maplibre-gl.css': "$cdn/maplibre-gl/4.7.1/maplibre-gl.css"
+]
+
+def ksProps = new Properties()
+def ksFile = file('keystore.properties')
+if (ksFile.exists()) ksFile.withInputStream { ksProps.load(it) }
+def secret = { String env, String key, String dflt = null -> System.getenv(env) ?: ksProps.getProperty(key) ?: dflt }
+def storePass = secret('TB_KS_PASS', 'storePassword')
+def keyPass = secret('TB_KEY_PASS', 'keyPassword', storePass)
+def ksAlias = secret('TB_KEY_ALIAS', 'keyAlias', 'tiranabus')
+def appVersion = System.getenv('VERSION') ?: '1.0'
+def appCode = (System.getenv('VERSION_CODE') ?: '1') as int
+
+abstract class PrepareSite extends DefaultTask {
+  @Input abstract Property<String> getVer()
+  @Input abstract MapProperty<String, String> getLibs()
+  @InputFiles @PathSensitive(PathSensitivity.RELATIVE) abstract ConfigurableFileCollection getSources()
+  @Internal abstract DirectoryProperty getRepo()
+  @Internal abstract DirectoryProperty getAndroidDir()
+  @OutputDirectory abstract DirectoryProperty getOutDir()
+  @Inject abstract FileSystemOperations getFs()
+
+  static String first(String line, String from, String to) {
+    int i = line.indexOf(from)
+    i < 0 ? line : line.substring(0, i) + to + line.substring(i + from.length())
+  }
+
+  @TaskAction
+  void run() {
+    File out = outDir.get().asFile
+    fs.delete { delete(out) }
+    out.mkdirs()
+    fs.copy {
+      from(repo) {
+        include 'index.html', 'tickets.html', 'gtfs.zip', 'css/**', 'js/**', 'data/**', 'img/**'
+        exclude 'data/etransport/**'
+      }
+      from(androidDir) {
+        include 'menu.js', 'menu.css', 'splash.webp', 'validity.html', 'validity.js'
+        include 'map/fonts/**', 'map/style-*.json', 'map/tirana.mbtiles'
+      }
+      into out
+    }
+    if (!new File(repo.get().asFile, 'gtfs.zip').exists()) logger.warn('Pozor: chybí gtfs.zip v kořeni, aplikace ho stáhne jen online.')
+
+    File lib = new File(out, 'lib')
+    lib.mkdirs()
+    libs.get().each { name, url ->
+      new URL(url).openStream().withCloseable { ins -> java.nio.file.Files.copy(ins, new File(lib, name).toPath()) }
+    }
+
+    File html = new File(out, 'index.html')
+    String boot = new File(androidDir.get().asFile, 'boot-extra.html').getText('UTF-8')
+    String s = html.getText('UTF-8')
+    s = first(s, '<p id="boottext"', boot + '<p id="boottext"')
+    String cdn = 'https://cdnjs.cloudflare.com/ajax/libs'
+    s = s.split('\n', -1).collect { String l ->
+      l = first(l, '<link rel="stylesheet" href="css/style.css">', '<link rel="stylesheet" href="lib/maplibre-gl.css"><link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="menu.css">')
+      l = first(l, '<script src="js/gtfs-core.js">', '<script>window.OFFLINE_MAP=1;window.APP_VERSION="' + ver.get() + '"</script><script src="lib/maplibre-gl.js"></script><script src="js/gtfs-core.js">')
+      l = first(l, '<script src="js/app.js"></script>', '<script src="js/app.js"></script><script src="menu.js"></script>')
+      l = first(l, cdn + '/leaflet/1.9.4/', 'lib/')
+      l = first(l, cdn + '/jszip/3.10.1/', 'lib/')
+      first(l, cdn + '/PapaParse/5.4.1/', 'lib/')
+    }.join('\n')
+    html.setText(s, 'UTF-8')
+  }
+}
+
+android {
+  namespace = 'com.besaweb.tiranabus'
+  compileSdk = 36
+
+  defaultConfig {
+    applicationId = 'com.besaweb.tiranabus'
+    minSdk = 24
+    targetSdk = 34
+    versionCode = appCode
+    versionName = appVersion
+  }
+
+  compileOptions {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+  }
+
+  sourceSets {
+    main {
+      manifest.srcFile 'AndroidManifest.xml'
+      java.directories.add('src')
+      res.directories.add('res')
+    }
+  }
+
+  signingConfigs {
+    release {
+      storeFile = file('tirana-bus.keystore')
+      storePassword = storePass
+      keyAlias = ksAlias
+      keyPassword = keyPass
+      enableV1Signing = true
+      enableV2Signing = true
+    }
+  }
+
+  androidResources {
+    noCompress.add('mbtiles')
+  }
+
+  buildTypes {
+    release {
+      signingConfig = signingConfigs.release
+      vcsInfo.include = false
+    }
+  }
+}
+
+configurations.configureEach {
+  exclude group: 'org.jetbrains.kotlin'
+  exclude group: 'org.jetbrains', module: 'annotations'
+}
+
+def prepareSite = tasks.register('prepareSite', PrepareSite) {
+  ver = appVersion
+  it.libs = libs
+  repo = layout.projectDirectory.dir('..')
+  androidDir = layout.projectDirectory
+  outDir = layout.buildDirectory.dir('site')
+  sources.from(fileTree('..') {
+    include 'index.html', 'tickets.html', 'gtfs.zip', 'css/**', 'js/**', 'data/**', 'img/**'
+    exclude 'data/etransport/**'
+  })
+  sources.from(fileTree('.') {
+    include 'menu.js', 'menu.css', 'splash.webp', 'validity.html', 'validity.js', 'boot-extra.html'
+    include 'map/fonts/**', 'map/style-*.json', 'map/tirana.mbtiles'
+  })
+}
+
+androidComponents {
+  onVariants(selector().all()) { variant ->
+    variant.sources.assets.addGeneratedSourceDirectory(prepareSite, PrepareSite::getOutDir)
+  }
+}
+
+def checkSigning = tasks.register('checkSigning') {
+  doLast {
+    if (!storePass) throw new GradleException('Chybí heslo keystore: vytvoř android/keystore.properties (viz keystore.properties.example) nebo nastav TB_KS_PASS.')
+    if (!file('tirana-bus.keystore').exists()) throw new GradleException('Chybí android/tirana-bus.keystore. Nový klíč by rozbil aktualizace stávajících instalací, obnov keystore ze zálohy.')
+  }
+}
+tasks.configureEach {
+  if (name in ['packageRelease', 'bundleRelease']) dependsOn checkSigning
+}
+
+tasks.register('apk', Copy) {
+  dependsOn 'assembleRelease'
+  from(layout.buildDirectory.dir('outputs/apk/release')) { include '*.apk'; rename { 'TiranaBus.apk' } }
+  into layout.projectDirectory.dir('out')
+}
+tasks.register('aab', Copy) {
+  dependsOn 'bundleRelease'
+  from(layout.buildDirectory.dir('outputs/bundle/release')) { include '*.aab'; rename { 'TiranaBus.aab' } }
+  into layout.projectDirectory.dir('out')
+}
+
+tasks.withType(JavaCompile).configureEach { options.compilerArgs << '-Xlint:-options' }
