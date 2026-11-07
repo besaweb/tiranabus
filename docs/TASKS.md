@@ -67,7 +67,7 @@ Aktualizováno: 2026-11-07
 - Kritéria:
   - [x] ikona 512 × 512, hlavní obrázek 1024 × 500, 6 snímků 1080 × 1920 (emulátor API 36, 2026-11-07)
   - [x] texty listingu en, sq (strojově, ke kontrole), cs; odpovědi pro Data safety, IARC a ostatní formuláře; postup vydání
-  - [ ] uživatel: typ vývojářského účtu a případná povinnost uzavřeného testu (12 testerů, 14 dní) · [ ] záloha keystore (AND-002)
+  - [x] typ účtu: osobní, veřejné jméno „BesaWeb“ (2026-11-07) · [ ] uživatel založí účet a ověří totožnost · [ ] uzavřený test 12 testerů / 14 dní · [ ] záloha keystore (AND-002)
   - [ ] AAB `1.8` / `versionCode 18` z čistého `main` nahrané na interní testování, Play App Signing zapnuté
 - Poznámky: hlavní obrázek je z obálky se starším modrým logem, doporučeno nahradit. Při snímcích nalezeno: našeptávač u pole Kam je na telefonu schovaný pod klávesnicí (navrhnout úkol pro Chat 02).
 

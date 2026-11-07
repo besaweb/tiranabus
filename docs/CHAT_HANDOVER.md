@@ -20,4 +20,4 @@ Jen **aktuálně rozpracované** úkoly. Po dokončení úkolu jeho sekci smaž 
 - Hotovo: podklady v `docs/play/` (grafika, 6 snímků, texty en/sq/cs, Data safety, IARC, postup).
 - Testy: délky textů v limitech Play ověřeny skriptem; snímky 1080 × 1920 (9:16).
 - Problémy: hlavní obrázek se starým logem; albánské texty strojové.
-- Další krok: uživatel ověří typ účtu Play a zálohuje keystore → build AAB 1.8 (code 18) z `main` → nahrání na interní testování.
+- Další krok: uživatel zakládá osobní účet Play (jméno vývojáře BesaWeb), zálohuje keystore → build AAB 1.8 (code 18) z `main` → nahrání na interní testování.
