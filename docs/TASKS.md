@@ -60,8 +60,8 @@ Aktualizováno: 2026-11-07
 - Kritéria:
   - [x] `targetSdk 36` (`aapt2 dump badging`: `targetSdkVersion:'36'`)
   - [x] emulátor API 36: edge-to-edge (nativní odsazení o systémové lišty a klávesnici, hlavička už nepřekrývá status bar), WebView, Zpět (`OnBackInvokedCallback`: vrací historii, na hlavní stránce ukončí), externí odkaz otevře Chrome a Zpět vrátí do aplikace, tmavý systémový režim · [ ] na reálném telefonu (AND-003)
-  - [x] `bundleRelease` projde, `jarsigner -verify` OK · [ ] `bundletool validate` (čeká na stažení bundletool)
-- Poznámky: změny v `MainActivity.java`, `AndroidManifest.xml` (`enableOnBackInvokedCallback`), téma `AppTheme` v `res/values*/`. D-024. Zbývá: `bundletool validate`, PR. Zapnutí Play App Signing až při prvním nahrání AAB (D-022).
+  - [x] `bundleRelease` projde, `jarsigner -verify` OK · [x] `bundletool validate` (1.18.3, 7. 11. 2026) bez chyb, manifest v AAB: min 24, target 36
+- Poznámky: změny v `MainActivity.java`, `AndroidManifest.xml` (`enableOnBackInvokedCallback`), téma `AppTheme` v `res/values*/`. D-024. Zbývá: PR a reálný telefon (AND-003). Zapnutí Play App Signing až při prvním nahrání AAB (D-022).
 
 ### AND-002 Bezpečné podepisování
 - ANDROID · P0 · READY
