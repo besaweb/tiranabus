@@ -266,6 +266,29 @@ const Places = (() => {
     return [...best.values()].sort((a, b) => a.d - b.d).slice(0, n);
   }
 
-  return { norm, build, search, label, access, between, route, stopWalks, net, center, dist, locate, inArea, nearest, AREA, MAX_ACC, RANK, WALK_V };
+  const SLOTS = ['home', 'work', 'school'];
+  const KINDS = ['stop', 'place', 'gps', 'map'];
+
+  function presets(raw) {
+    let o;
+    try { o = typeof raw === 'string' ? JSON.parse(raw) : raw; } catch (e) { o = null; }
+    const out = {};
+    if (!o || typeof o !== 'object') return out;
+    for (const k of SLOTS) {
+      const p = o[k];
+      if (!p || typeof p !== 'object') continue;
+      const x = { n: typeof p.n === 'string' ? p.n.trim().slice(0, 24) : '' };
+      if (KINDS.includes(p.k) && valid([+p.lat, +p.lon])) Object.assign(x, { k: p.k, l: String(p.l || '').slice(0, 80), lat: +p.lat, lon: +p.lon });
+      if (x.n || x.k) out[k] = x;
+    }
+    return out;
+  }
+
+  function presetHit(name, q) {
+    const a = norm(name), b = norm(q);
+    return !!b && (a.startsWith(b) || a.split(' ').some(w => w.startsWith(b)));
+  }
+
+  return { norm, build, search, label, access, between, route, stopWalks, net, center, dist, locate, inArea, nearest, presets, presetHit, SLOTS, AREA, MAX_ACC, RANK, WALK_V };
 })();
 if (typeof module !== 'undefined') module.exports = Places;

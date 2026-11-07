@@ -24,8 +24,8 @@ Aktualizováno: 2026-11-07
 | AND-005 | Pro: roční předplatné 4,99 € přes Google Play Billing | ANDROID | P2 | BACKLOG | CORE-007, první vydání v Play | 2026-11-07 |
 | CORE-007 | Oprávnění Pro (`PLATFORM.pro`) a zamykání funkcí | SHARED | P2 | BACKLOG | CORE-001 | 2026-11-07 |
 | MAP-001 | Moje poloha a nejbližší zastávky (Pro později) | ANDROID | P2 | REVIEW | – | 2026-11-07 |
-| UX-001 | Předvolby Domů / Práce / Škola pro Odkud a Kam (Pro) | ANDROID | P2 | BACKLOG | CORE-007 | 2026-11-07 |
-| UX-002 | Našeptávač u pole Kam je na telefonu schovaný pod klávesnicí | SHARED | P2 | READY | – | 2026-11-07 |
+| UX-001 | Předvolby Domů / Práce / Škola pro Odkud a Kam (Pro později) | ANDROID | P2 | REVIEW | MAP-001 | 2026-11-07 |
+| UX-002 | Našeptávač u pole Kam je na telefonu schovaný pod klávesnicí | SHARED | P2 | REVIEW | – | 2026-11-07 |
 | POI-001 | Vlastní body na mapě, použitelné v Odkud a Kam (Pro) | ANDROID | P2 | BACKLOG | CORE-007 | 2026-11-07 |
 | AND-007 | Promo kódy z Play Console pro přispěvatele Ko-fi | ANDROID | P3 | BACKLOG | AND-005 | 2026-11-07 |
 | MKT-001 | Reklamy pro neplatící uživatele aplikace | ANDROID | P3 | BACKLOG | AND-005, SEO-003 | 2026-11-07 |
@@ -87,9 +87,14 @@ Aktualizováno: 2026-11-07
 - Poznámky: D-028. Vzdálenost je vzdušná a je tak označená. Opravena chyba nalezená testem: při vypnuté poloze WebView vracel starou uloženou polohu, teď se oprávnění WebView při vypnutých službách nepovolí.
 
 ### UX-001 Předvolby Domů / Práce / Škola
-- Oblast: plánovač, UI · ANDROID (Pro funkce jen v aplikaci, D-026) · P2 · BACKLOG
-- Popis: tři pojmenované předvolby (zastávka nebo místo), uložené v zařízení, jedním klepnutím do Odkud nebo Kam.
-- Kritéria: [ ] nastavení, změna a smazání předvolby · [ ] vložení do Odkud i Kam · [ ] texty ve 12 jazycích · [ ] světlý i tmavý režim, šířka telefonu
+- Oblast: plánovač, UI · ANDROID (Pro funkce jen v aplikaci, D-026, D-029) · P2 · REVIEW
+- Popis: tři přejmenovatelné předvolby (`home`, `work`, `school`), cíl zastávka, místo nebo ulice, aktuální poloha nebo bod na mapě. Nabízejí se v našeptávači Odkud/Kam (v prázdném poli všechny, při psaní podle názvu). Nastavení v menu ☰ → Moje předvolby. Dlouhý stisk na mapě nabízí Odsud / Sem. Uloženo jen v zařízení (`localStorage` `tirana-presets`). Zatím bez zámku Pro.
+- Kritéria:
+  - [x] sdílená logika `Places.presets` (ověření a oříznutí uložených dat) a `Places.presetHit` + `tests/presets.test.js`
+  - [x] emulátor API 36 (cs, tmavý režim): menu → karta, přejmenování Práce → Fitko, Domů = zastávka Kombinat (vyhledání), Fitko = aktuální poloha, Škola = bod na mapě; po restartu aplikace uloženo; našeptávač v prázdném poli ukáže všechny tři, „do“ → Domů před zastávkami; Fitko → Domů naplánováno (5 spojení s chůzí); dlouhý stisk → Sem → Fitko → Bod na mapě
+  - [x] web beze změny (žádné předvolby, karta ani položka menu), Node testy 27/27 (1 `todo` BUG-002)
+  - [ ] reálný telefon (uživatel)
+- Poznámky: D-029. Zastávka se po novém feedu dohledá podle názvu, jinak podle souřadnic. Obsahuje i opravu UX-002 pro šířku ≤ 760 px (viz UX-002).
 
 ### POI-001 Vlastní body na mapě
 - Oblast: mapa, místa · ANDROID (Pro funkce jen v aplikaci, D-026) · P2 · BACKLOG
@@ -106,10 +111,10 @@ Aktualizováno: 2026-11-07
 - Popis: reklamy v aplikaci pro uživatele bez Pro; Pro je bez reklam. Způsob (např. AdMob) a souhlas (SEO-003) určit při zahájení. Reklamy na webu zatím nerozhodnuty.
 
 ### UX-002 Našeptávač schovaný pod klávesnicí
-- Oblast: plánovač, UI (Chat 02) · SHARED (nalezeno v APK na emulátoru API 36, 1080 × 1920; web na telefonu neověřen) · P2 · READY
+- Oblast: plánovač, UI (Chat 02) · SHARED (nalezeno v APK na emulátoru API 36, 1080 × 1920; web na telefonu neověřen) · P2 · REVIEW
 - Popis: při psaní do pole Kam (a Odkud) se seznam návrhů zobrazí pod klávesnicí a stránka se k němu neposune, uživatel návrhy nevidí. Pole Odkud je výš a návrhy jsou na hraně klávesnice.
 - Kritéria: [ ] návrhy jsou při otevřené klávesnici vidět (scroll do výhledu, nebo seznam nad polem) · [ ] ověřeno na webu v prohlížeči (šířka telefonu) i v APK s klávesnicí · [ ] světlý i tmavý režim
-- Poznámky: v APK se po AND-001 odsazuje okno o `ime`, takže pole je nad klávesnicí, ale seznam je pod ním. Chování ověřit nejdřív ve webu (stejný kód).
+- Poznámky: v APK se po AND-001 odsazuje okno o `ime`, takže pole je nad klávesnicí, ale seznam je pod ním. Oprava udělána v rámci UX-001 (Chat 03, větev `feat/UX-001-predvolby`), protože bez ní byly předvolby na telefonu nepoužitelné: do 760 px se při otevřeném seznamu přidá dolní odsazení `.side` (`body.sgpad`) a pole se posune k hornímu okraji (`sgView`, i při změně velikosti okna kvůli klávesnici). Ověřeno: APK na emulátoru (Odkud i Kam), web v prohlížeči na šířce 375 px (seznam vidět), desktop beze změny. Chybí: web na reálném telefonu s klávesnicí (Chat 02).
 
 ### BUG-001 Cena RT
 - SHARED · P2 · READY

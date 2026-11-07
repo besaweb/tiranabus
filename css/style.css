@@ -517,3 +517,16 @@ header {
 .gpop > span { color: var(--muted); font-size: 12.5px; }
 .gpop .btn { justify-self: start; margin-top: 4px; }
 @keyframes gspin { to { transform: rotate(360deg); } }
+.pslot { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 10px; margin-top: 6px; }
+.pslot .si { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; background: var(--soft); color: var(--fg); }
+.pslot .si svg { width: 20px; height: 20px; }
+.pmain { display: grid; gap: 2px; min-width: 0; }
+.pname { width: 100%; padding: 5px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--fg); font: 600 15px var(--ui); }
+.pname:focus { outline: 2px solid color-mix(in srgb, var(--accent) 40%, transparent); outline-offset: 1px; }
+.ptgt { font-size: 12.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pbtns { margin: 0 0 4px 44px; }
+.pedit { display: grid; gap: 6px; margin: 0 0 8px 44px; padding: 8px; border: 1px dashed var(--line); border-radius: 10px; }
+.pq { width: 100%; padding: 7px 9px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--fg); font: 14px var(--ui); }
+.plist { display: grid; }
+.plist:empty { display: none; }
+@media (max-width: 760px) { .sgpad .side { padding-bottom: 70vh; } }

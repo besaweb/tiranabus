@@ -122,7 +122,7 @@
     }
     for (const s of feed.stops.values()) {
       const m = L.circleMarker([s.lat, s.lon], { renderer, radius: 2, weight: 1.5 });
-      m.on('click', e => { L.DomEvent.stop(e); if (mode === 'plan') pickStop(s); else openStop(s); });
+      m.on('click', e => { L.DomEvent.stop(e); if (prePick) prePickAt(0, 0, s); else if (mode === 'plan') pickStop(s); else openStop(s); });
       m.bindTooltip(esc(s.name), { direction: 'top', offset: [0, -4] });
       m.addTo(stopLayer);
       markers.set(s.id, { s, m });
@@ -585,29 +585,34 @@
     if (mode !== 'browse') setMode('browse', true);
     openStop(geo.list[i].s);
   }
+  function geoOnce(ok, bad) {
+    window.tbGeo = null;
+    navigator.geolocation.getCurrentPosition(pos => {
+      const p = [pos.coords.latitude, pos.coords.longitude], acc = pos.coords.accuracy, st = Places.locate(p, acc);
+      if (st === 'invalid') return bad('err', 'geoUnavail');
+      if (st === 'outside') return bad('outside', 'geoOutside');
+      if (st === 'inaccurate') return bad('err', 'geoInaccurate', { m: Math.round(acc) });
+      ok(p, acc);
+    }, err => setTimeout(() => {
+      const g = window.tbGeo;
+      if (g === 'off') bad('off', 'geoOff');
+      else if (err.code === 1) bad(g === 'blocked' ? 'blocked' : 'err', g === 'blocked' ? 'geoBlocked' : 'geoDenied');
+      else bad('err', err.code === 3 ? 'geoTimeout' : 'geoUnavail');
+    }, 150), { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 });
+  }
   function locate() {
     if (geo && geo.st === 'busy') return;
     geoLayer.clearLayers();
     geo = { st: 'busy' };
     geoShow();
     locBtn.classList.add('busy');
-    window.tbGeo = null;
     const done = (st, k, p, x) => { locBtn.classList.remove('busy'); geo = Object.assign({ st, k, p }, x); geoShow(); };
-    navigator.geolocation.getCurrentPosition(pos => {
-      const p = [pos.coords.latitude, pos.coords.longitude], acc = pos.coords.accuracy, st = Places.locate(p, acc);
-      if (st === 'invalid') return done('err', 'geoUnavail');
-      if (st === 'outside') return done('outside', 'geoOutside');
-      if (st === 'inaccurate') return done('err', 'geoInaccurate', { m: Math.round(acc) });
+    geoOnce((p, acc) => {
       const list = Places.nearest(allStops(), p, 5, s => stopGroup.get(s.id) || s.id);
       if (!list.length) return done('err', 'geoNone');
       done('ok', '', null, { p, acc, list });
       geoDraw();
-    }, err => setTimeout(() => {
-      const g = window.tbGeo;
-      if (g === 'off') done('off', 'geoOff');
-      else if (err.code === 1) done(g === 'blocked' ? 'blocked' : 'err', g === 'blocked' ? 'geoBlocked' : 'geoDenied');
-      else done('err', err.code === 3 ? 'geoTimeout' : 'geoUnavail');
-    }, 150), { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 });
+    }, done);
   }
   $('#geo').addEventListener('click', e => {
     const b = e.target.closest('[data-geo]');
@@ -618,6 +623,109 @@
     else if (v[0] === 'd') geoDetail(+v.slice(1));
     else geoFocus(+v);
   });
+  const PREK = 'tirana-presets';
+  let pre = {}, preOpen = false, preEdit = null, prePick = null, preMsg = null;
+  try { pre = Places.presets(localStorage.getItem(PREK)); } catch (e) {}
+  const preSave = () => { try { localStorage.setItem(PREK, JSON.stringify(pre)); } catch (e) {} };
+  const PRE_IC = {
+    home: '<path d="M4 11 12 4l8 7"/><path d="M6 10v10h12V10"/><path d="M10 20v-5h4v5"/>',
+    work: '<rect x="3.5" y="7" width="17" height="12" rx="2"/><path d="M9 7V5h6v2M3.5 12h17"/>',
+    school: '<path d="M2.5 9 12 4.5 21.5 9 12 13.5z"/><path d="M6.5 11v4.5c0 1.5 2.5 3 5.5 3s5.5-1.5 5.5-3V11"/>'
+  };
+  const preIcon = k => `<i class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${PRE_IC[k]}</svg></i>`;
+  const preName = k => (pre[k] && pre[k].n) || t('pre_' + k);
+  const preList = q => GEO ? Places.SLOTS.filter(k => pre[k] && pre[k].k && (!q || Places.presetHit(preName(k), q))) : [];
+  const preRow = (k, act) => `<button type="button" class="sg st ${act ? 'act' : ''}" data-pre="${k}">${preIcon(k)}<b>${esc(preName(k))}</b><span>${esc(pre[k].l)}</span></button>`;
+  const ptEnd = (id, n, p, which) => placeEnd({ id, n, c: 'pin', pts: [p], t: {} }, which);
+  function preEnd(k, which) {
+    const p = pre[k];
+    if (p.k === 'stop') {
+      const near = Places.nearest(allStops(), [p.lat, p.lon], 1)[0];
+      const g = names.find(x => x.label === p.l) || (near && stopGroup.get(near.s.id));
+      if (g) return g;
+    }
+    return ptEnd('@pre-' + k, preName(k), [p.lat, p.lon], which);
+  }
+  function preSet(k, x) {
+    pre[k] = Object.assign({ n: (pre[k] && pre[k].n) || '' }, x);
+    preSave();
+    preEdit = prePick = preMsg = null;
+    preShow();
+  }
+  function preShow() {
+    const box = $('#pre');
+    if (!preOpen) { box.hidden = true; box.innerHTML = ''; return; }
+    box.hidden = false;
+    let h = `<button type="button" class="gx" data-pa="x" aria-label="${esc(t('close'))}">×</button><div class="ghead">${esc(t('preTitle'))}</div><p class="gacc">${esc(t('preHint'))}</p>`;
+    for (const k of Places.SLOTS) {
+      const p = pre[k] || {};
+      h += `<div class="pslot">${preIcon(k)}<div class="pmain"><input class="pname" data-slot="${k}" maxlength="24" value="${esc(preName(k))}" aria-label="${esc(t('preName'))}"><span class="ptgt">${esc(p.k ? p.l : t('preUnset'))}</span></div></div>`;
+      h += `<div class="grow pbtns"><button type="button" class="btn sm" data-pa="edit" data-slot="${k}">${esc(t(p.k ? 'preChange' : 'preSet'))}</button>${p.k || p.n ? `<button type="button" class="btn sm" data-pa="del" data-slot="${k}">${esc(t('preDel'))}</button>` : ''}</div>`;
+      if (preEdit === k) {
+        h += `<div class="pedit"><input type="search" class="pq" placeholder="${esc(t('preSearch'))}" aria-label="${esc(t('preSearch'))}" autocomplete="off"><div class="plist"></div>`;
+        h += `<div class="grow"><button type="button" class="btn sm" data-pa="gps">${esc(t('preHere'))}</button><button type="button" class="btn sm" data-pa="map">${esc(t('preOnMap'))}</button><button type="button" class="btn sm" data-pa="cancel">${esc(t('preCancel'))}</button></div>`;
+        if (prePick === k) h += `<p class="gmsg">${esc(t('prePickHint'))}</p>`;
+        if (preMsg) h += `<p class="gmsg">${esc(t(preMsg.k, preMsg.p))}</p>`;
+        h += '</div>';
+      }
+    }
+    box.innerHTML = h;
+  }
+  function preFind(v) {
+    const q = norm(v.trim()), box = $('#pre .plist');
+    if (!box) return;
+    if (!q) { box.innerHTML = ''; return; }
+    const ps = pidx ? Places.search(pidx, v, I18N.lang, 5) : [];
+    const hits = names.filter(g => g.key.includes(q)).sort((a, b) => (b.key.startsWith(q) - a.key.startsWith(q))).slice(0, ps.length ? 5 : 8);
+    box.innerHTML = hits.length || ps.length
+      ? hits.map(g => `<button type="button" class="sg st" data-pa="stop" data-name="${esc(g.id)}">${picon('stop')}<b>${esc(g.label)}</b></button>`).join('') + ps.map(it => `<button type="button" class="sg pl" data-pa="place" data-place="${esc(it.id)}">${picon(it.c)}<b>${esc(Places.label(it, I18N.lang))}</b><span>${esc(t('cats')[it.c] || '')}</span></button>`).join('')
+      : `<div class="sg none">${t('noStop')}</div>`;
+  }
+  $('#pre').addEventListener('click', e => {
+    const b = e.target.closest('[data-pa]');
+    if (!b) return;
+    const a = b.dataset.pa, k = b.dataset.slot || preEdit;
+    if (a === 'x') { preOpen = false; preEdit = prePick = preMsg = null; preShow(); }
+    else if (a === 'edit') { preEdit = preEdit === k ? null : k; prePick = preMsg = null; preShow(); loadPlaces(); loadNet(); const q = $('#pre .pq'); if (q) q.focus(); }
+    else if (a === 'del') { delete pre[k]; preSave(); if (preEdit === k) preEdit = prePick = preMsg = null; preShow(); }
+    else if (a === 'cancel') { preEdit = prePick = preMsg = null; preShow(); }
+    else if (a === 'map') { prePick = k; preMsg = null; preShow(); }
+    else if (a === 'gps') { preMsg = { k: 'geoBusy' }; preShow(); geoOnce(p => preSet(k, { k: 'gps', l: t('preGpsLbl'), lat: p[0], lon: p[1] }), (st, mk, mp) => { if (preEdit !== k) return; preMsg = { k: mk, p: mp }; preShow(); }); }
+    else if (a === 'stop') { const g = groups.get(b.dataset.name); if (g) preSet(k, { k: 'stop', l: g.label, lat: g.stops[0].lat, lon: g.stops[0].lon }); }
+    else if (a === 'place') { const it = pidx && pidx.items.find(x => x.id === b.dataset.place); if (it) { const c = Places.center(it); preSet(k, { k: 'place', l: Places.label(it, I18N.lang), lat: c[0], lon: c[1] }); } }
+  });
+  $('#pre').addEventListener('input', e => { if (e.target.classList.contains('pq')) preFind(e.target.value); });
+  $('#pre').addEventListener('change', e => {
+    const el = e.target;
+    if (!el.classList.contains('pname')) return;
+    const k = el.dataset.slot, v = el.value.trim(), n = v === t('pre_' + k) ? '' : v.slice(0, 24);
+    if (pre[k]) pre[k].n = n; else if (n) pre[k] = { n };
+    if (pre[k] && !pre[k].n && !pre[k].k) delete pre[k];
+    preSave();
+  });
+  document.addEventListener('tb-presets', () => { preOpen = true; preShow(); $('#pre').scrollIntoView({ block: 'nearest' }); });
+  function prePickAt(lat, lon, stop) {
+    const k = prePick;
+    if (stop) { const g = stopGroup.get(stop.id); preSet(k, { k: 'stop', l: g ? g.label : stop.name, lat: stop.lat, lon: stop.lon }); }
+    else preSet(k, { k: 'map', l: t('preMapPt'), lat, lon });
+  }
+  if (GEO) {
+    map.on('click', e => { if (prePick) prePickAt(e.latlng.lat, e.latlng.lng); });
+    map.on('contextmenu', e => {
+      if (prePick) return prePickAt(e.latlng.lat, e.latlng.lng);
+      const el = document.createElement('div');
+      el.className = 'gpop';
+      el.innerHTML = `<b>${esc(t('preMapPt'))}</b><div class="grow"><button type="button" class="btn sm" data-w="from">${esc(t('mapFrom'))}</button><button type="button" class="btn sm" data-w="to">${esc(t('mapTo'))}</button></div>`;
+      const pop = L.popup({ autoPanPaddingTopLeft: [72, 16], autoPanPaddingBottomRight: [72, 56] }).setLatLng(e.latlng).setContent(el).openOn(map);
+      el.addEventListener('click', ev => {
+        const b = ev.target.closest('[data-w]');
+        if (!b) return;
+        map.closePopup(pop);
+        if (mode !== 'plan') setMode('plan', true);
+        chooseEnd(b.dataset.w, ptEnd('@map-' + b.dataset.w, t('preMapPt'), [e.latlng.lat, e.latlng.lng], b.dataset.w));
+      });
+    });
+  }
   if (GEO) {
     const Loc = L.Control.extend({
       onAdd() {
@@ -658,10 +766,24 @@
     return { o: new Map(a.acc.map(x => [x.s.id, x])), d: new Map(b.acc.map(x => [x.s.id, x])), op: a.pt, dp: b.pt, walk: d == null ? null : { w: Math.max(30, Math.round(d / Places.WALK_V)), m: Math.round(d) } };
   }
 
+  const sgView = box => {
+    if (box.hidden || innerWidth > 760) return;
+    document.body.classList.add('sgpad');
+    requestAnimationFrame(() => box.parentNode.scrollIntoView({ block: 'start' }));
+  };
+  window.addEventListener('resize', () => {
+    const a = document.activeElement;
+    if (a && (a.id === 'from' || a.id === 'to')) sgView($('#' + a.id + '-sugg'));
+  });
   function suggest(which) {
     const inp = $('#' + which), box = $('#' + which + '-sugg');
-    const q = norm(inp.value.trim());
-    if (!q) { box.hidden = true; box.innerHTML = ''; return []; }
+    const q = norm(inp.value.trim()), pr = preList(inp.value.trim());
+    if (!q) {
+      box.innerHTML = pr.map((k, i) => preRow(k, !i)).join('');
+      box.hidden = !pr.length;
+      sgView(box);
+      return [];
+    }
     if (ext && !pidx) loadPlaces().then(() => { if (pidx && document.activeElement === inp && !plan[which]) suggest(which); });
     const ps = ext && pidx ? Places.search(pidx, inp.value, I18N.lang, 5) : [];
     const hits = names.filter(g => g.key.includes(q)).sort((a, b) => (b.key.startsWith(q) - a.key.startsWith(q))).slice(0, ps.length ? 5 : 8);
@@ -670,19 +792,20 @@
       const a = it.nr[2];
       return `<button type="button" class="sg pl ${act ? 'act' : ''}" data-place="${esc(it.id)}">${picon(it.c)}<b>${esc(Places.label(it, I18N.lang))}</b><span>${esc(t('cats')[it.c] || '')}${a ? ' · ' + esc(t('nearStop', { m: Math.round(a.m / 10) * 10, s: a.s.name })) : ''}</span></button>`;
     };
-    box.innerHTML = hits.length || ps.length
-      ? hits.map((g, i) => `<button type="button" class="sg ${i === 0 ? 'act' : ''}${ext ? ' st' : ''}" data-name="${esc(g.id)}">${ext ? picon('stop') : ''}<b>${esc(g.label)}</b><span>${[...g.routes].sort(byName).slice(0, 6).map(r => esc(r.short)).join(' · ')}</span></button>`).join('') + ps.map((it, i) => prow(it, !hits.length && !i)).join('')
-      : `<div class="sg none">${t('noStop')}</div>`;
+    box.innerHTML = pr.map((k, i) => preRow(k, !i)).join('') + (hits.length || ps.length
+      ? hits.map((g, i) => `<button type="button" class="sg ${i === 0 && !pr.length ? 'act' : ''}${ext ? ' st' : ''}" data-name="${esc(g.id)}">${ext ? picon('stop') : ''}<b>${esc(g.label)}</b><span>${[...g.routes].sort(byName).slice(0, 6).map(r => esc(r.short)).join(' · ')}</span></button>`).join('') + ps.map((it, i) => prow(it, !hits.length && !pr.length && !i)).join('')
+      : pr.length ? '' : `<div class="sg none">${t('noStop')}</div>`);
     box.hidden = false;
+    sgView(box);
     return hits;
   }
   for (const which of ['from', 'to']) {
     const inp = $('#' + which), box = $('#' + which + '-sugg');
     inp.addEventListener('input', () => { plan[which] = null; plan.res = null; planLayer.clearLayers(); suggest(which); restyle(); });
-    inp.addEventListener('focus', () => { if (ext) { loadPlaces(); loadNet(); } if (inp.value && !plan[which]) suggest(which); });
-    inp.addEventListener('blur', () => setTimeout(() => { box.hidden = true; inp.scrollLeft = 0; }, 150));
+    inp.addEventListener('focus', () => { if (ext) { loadPlaces(); loadNet(); } if (!plan[which] && (inp.value || preList('').length)) suggest(which); });
+    inp.addEventListener('blur', () => setTimeout(() => { box.hidden = true; inp.scrollLeft = 0; if (!/^(from|to)$/.test((document.activeElement || {}).id)) document.body.classList.remove('sgpad'); }, 150));
     inp.addEventListener('keydown', e => {
-      const items = [...box.querySelectorAll('.sg[data-name], .sg[data-place]')];
+      const items = [...box.querySelectorAll('.sg[data-name], .sg[data-place], .sg[data-pre]')];
       if (box.hidden || !items.length) return;
       let i = items.findIndex(x => x.classList.contains('act'));
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
@@ -696,15 +819,18 @@
       } else if (e.key === 'Escape') box.hidden = true;
     });
     box.addEventListener('mousedown', e => {
-      const b = e.target.closest('[data-name], [data-place]');
+      const b = e.target.closest('[data-name], [data-place], [data-pre]');
       if (!b) return;
       e.preventDefault();
       chooseEl(which, b);
     });
   }
-  const chooseEl = (which, b) => b.dataset.place ? choose(which, null, pidx.items.find(x => x.id === b.dataset.place)) : choose(which, b.dataset.name);
+  const chooseEl = (which, b) => b.dataset.pre ? chooseEnd(which, preEnd(b.dataset.pre, which)) : b.dataset.place ? choose(which, null, pidx.items.find(x => x.id === b.dataset.place)) : choose(which, b.dataset.name);
   function choose(which, name, it) {
-    setEnd(which, it ? placeEnd(it, which) : groups.get(name));
+    chooseEnd(which, it ? placeEnd(it, which) : groups.get(name));
+  }
+  function chooseEnd(which, e) {
+    setEnd(which, e);
     $('#' + which + '-sugg').hidden = true;
     restyle();
     if (plan.from && plan.to) runPlan();
@@ -714,6 +840,8 @@
     if (plan[which]) return;
     const v = norm($('#' + which).value.trim());
     if (!v) return;
+    const pk = preList('').find(k => norm(preName(k)) === v);
+    if (pk) { setEnd(which, preEnd(pk, which)); return; }
     const exact = names.filter(g => g.key === v);
     const hits = exact.length ? exact : names.filter(g => g.key.includes(v));
     if (hits.length === 1) setEnd(which, hits[0]);
@@ -840,7 +968,7 @@
     syncTheme();
     if (!feed) return;
     if (baseTables && builtLang !== l) { setFeed(buildFeed(), source, false); return; }
-    setAttr(); renderMeta(); renderExpiry(); geoShow();
+    setAttr(); renderMeta(); renderExpiry(); geoShow(); preShow();
     if (mode === 'plan') showPlan(); else { const el = scr(), st = el.scrollTop; render(); el.scrollTop = st; }
   }
   const langBox = $('.lang');

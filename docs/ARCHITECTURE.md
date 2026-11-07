@@ -68,6 +68,7 @@ Pořadí skriptů v `index.html`: Leaflet → JSZip → PapaParse → `gtfs-core
 | Odznak Google Play | ano | skrytý (`.gplay` v `menu.css`) | CSS |
 | Knihovny | cdnjs | lokálně v `lib/` | Gradle `prepareSite` (stahuje z cdnjs, přepisuje `index.html`) |
 | Feed | `gtfs.zip` vedle webu | `MainActivity`: stáhne z Pages do `filesDir`, offline uložená, jinak vložená kopie | interceptor `gtfs.zip` |
+| Předvolby, Odsud/Sem z mapy (UX-001) | není | karta `#pre` z menu ☰ (`tb-presets`), předvolby v našeptávači, `contextmenu` na mapě | `GEO` v `app.js` (`window.APP_VERSION` && `navigator.geolocation`) |
 | Moje poloha (MAP-001) | není | tlačítko na mapě, panel `#geo`, oprávnění k poloze v `MainActivity` | `window.APP_VERSION` && `navigator.geolocation` (`GEO` v `app.js`) |
 | Dlaždice a fonty | online | `DiskCache` v `cacheDir/ext`: klíč SHA-256 URL, limit 100 MB (při překročení se maže nejstarší na 80 %), platnost 30 dní (po vypršení se zkusí stáhnout znovu, offline se použije stará kopie), úklid při startu | `MainActivity.external`, `DiskCache.java` |
 | GA4 | ano | ano (z `index.html`) | – |
