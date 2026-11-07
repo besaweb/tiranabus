@@ -321,6 +321,26 @@ const Places = (() => {
     return hit ? hit[0] : SLOT_IC[slot] || 'map-pin';
   }
 
-  return { norm, build, search, label, access, between, route, stopWalks, net, center, dist, locate, inArea, nearest, presets, presetHit, presetIcon, SLOTS, ICONS, AREA, MAX_ACC, RANK, WALK_V };
+  const POI_MAX = 100;
+
+  function pois(raw) {
+    let o;
+    try { o = typeof raw === 'string' ? JSON.parse(raw) : raw; } catch (e) { o = null; }
+    const list = Array.isArray(o) ? o : o && Array.isArray(o.items) ? o.items : [];
+    const out = [], ids = new Set();
+    for (const p of list) {
+      if (!p || typeof p !== 'object' || typeof p.id !== 'string' || !/^[\w-]{1,40}$/.test(p.id) || ids.has(p.id)) continue;
+      const n = typeof p.n === 'string' ? p.n.trim().slice(0, 40) : '', pt = [+p.lat, +p.lon];
+      if (!n || !inArea(pt)) continue;
+      ids.add(p.id);
+      out.push({ id: p.id, n, d: typeof p.d === 'string' ? p.d.trim().slice(0, 200) : '', lat: pt[0], lon: pt[1], ts: +p.ts || 0 });
+      if (out.length >= POI_MAX) break;
+    }
+    return out;
+  }
+
+  const poiHit = (p, q) => presetHit(p.n, q) || (!!p.d && presetHit(p.d, q));
+
+  return { norm, build, search, label, access, between, route, stopWalks, net, center, dist, locate, inArea, nearest, presets, presetHit, presetIcon, pois, poiHit, SLOTS, ICONS, AREA, MAX_ACC, POI_MAX, RANK, WALK_V };
 })();
 if (typeof module !== 'undefined') module.exports = Places;

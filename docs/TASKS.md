@@ -29,7 +29,7 @@ Aktualizováno: 2026-11-07
 | UX-003 | Ikony předvoleb (20 ikon Lucide, výběr, zobrazení na mapě) | ANDROID | P2 | REVIEW | UX-001 | 2026-11-07 |
 | UX-004 | Ikony předvoleb přímo v polích Odkud / Kam | ANDROID | P2 | REVIEW | UX-003 | 2026-11-07 |
 | UX-005 | Tlačítko X pro vymazání polí Odkud / Kam | SHARED | P2 | REVIEW | UX-004 | 2026-11-07 |
-| POI-001 | Vlastní body na mapě, použitelné v Odkud a Kam (Pro) | ANDROID | P2 | BACKLOG | CORE-007 | 2026-11-07 |
+| POI-001 | Vlastní místa na mapě, použitelná v Odkud a Kam (Pro později) | ANDROID | P2 | REVIEW | – | 2026-11-07 |
 | AND-007 | Promo kódy z Play Console pro přispěvatele Ko-fi | ANDROID | P3 | BACKLOG | AND-005 | 2026-11-07 |
 | MKT-001 | Reklamy pro neplatící uživatele aplikace | ANDROID | P3 | BACKLOG | AND-005, SEO-003 | 2026-11-07 |
 | AND-006 | Barvy systémových lišt podle motivu stránky (přepínač v aplikaci vs. systém) | ANDROID | P3 | BACKLOG | – | 2026-11-07 |
@@ -100,10 +100,15 @@ Aktualizováno: 2026-11-07
   - [ ] reálný telefon (uživatel)
 - Poznámky: D-029. Zastávka se po novém feedu dohledá podle názvu, jinak podle souřadnic. Obsahuje i opravu UX-002 pro šířku ≤ 760 px (viz UX-002).
 
-### POI-001 Vlastní body na mapě
-- Oblast: mapa, místa · ANDROID (Pro funkce jen v aplikaci, D-026) · P2 · BACKLOG
-- Popis: přidat bod (dlouhý stisk na mapě), pojmenovat, zobrazit na mapě, použít v Odkud a Kam (docházka přes `Places` jako u míst z OSM), upravit a smazat. Uložené jen v zařízení.
-- Kritéria: [ ] přidání, přejmenování, smazání · [ ] vyhledání v Odkud/Kam a plánování s docházkou · [ ] zobrazení na mapě ve světlém i tmavém režimu · [ ] data přežijí aktualizaci aplikace
+### POI-001 Vlastní místa na mapě
+- Oblast: mapa, plánovač · ANDROID (Pro funkce jen v aplikaci, D-026, D-032) · P2 · REVIEW
+- Popis: uživatel si ukládá vlastní místa (název povinný, popis nepovinný, souřadnice z mapy), nejvýš 100, jen v oblasti Tirany (`Places.AREA`). Přidání: dlouhý stisk na mapě → Uložit místo, nebo menu ☰ → Moje místa → Přidat místo → klepnutí do mapy. Na mapě malý červený bod (velikost jako zastávka, `sr()`), klepnutí → název, popis, Odsud / Sem / Upravit. V Odkud / Kam se nabízejí při psaní (název i popis) s označením „Moje místo“; plánuje se jako bod na mapě (`ptEnd` → `placeEnd`, docházka k zastávkám do 1,5 km přes `Places.access`), do zastávek se nic nepřidává. Karta Moje místa: seznam, úprava názvu a popisu, přesun, mazání s potvrzením. Uloženo jen v zařízení (`localStorage` `tirana-pois`, `{ v: 1, items: [{ id, n, d, lat, lon, ts }] }` – stálé `id` a čas změny pro případnou synchronizaci). Zatím bez zámku Pro.
+- Kritéria:
+  - [x] sdílená logika `Places.pois` (ověření, oblast, limit, duplicity) a `Places.poiHit` + `tests/pois.test.js`; Node testy 32/32 (1 `todo` BUG-002)
+  - [x] prohlížeč v režimu aplikace (375 px): Přidat místo → klepnutí do mapy → formulář, prázdný název odmítnut, uložení; červený bod i po načtení stránky znovu; dlouhý stisk → Uložit místo; našeptávač „bab“ → Babička (Moje místo); přesun do centra a plánování Babička → Skënder Luarasi (3 spojení s chůzí na Spitali Ushtarak); přejmenování se promítne i do pole Odkud; mazání s potvrzením
+  - [x] emulátor API 36: položka menu Moje místa, karta, červené body, popup Odsud / Sem / Upravit; web beze změny (žádné body, karta ani „Uložit místo“)
+  - [ ] plánování na emulátoru (Avast zachytává HTTPS na `pt.tirana.al`) · [ ] reálný telefon (uživatel) · [ ] Data safety v Play (vlastní místa jen v zařízení)
+- Poznámky: D-032. Bod dál než 1,5 km od zastávky nemá docházku, plánovač pak spojení nenajde (stejně jako u bodu na mapě). Mapa se nedá oddálit mimo oblast, kontrola oblasti je i tak v kódu.
 
 ### AND-007 Promo kódy pro přispěvatele Ko-fi
 - ANDROID · P3 · BACKLOG

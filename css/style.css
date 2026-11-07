@@ -545,6 +545,12 @@ header {
 .picgrid svg { width: 22px; height: 22px; }
 .premk { display: grid; place-items: center; border: 2px solid var(--accent); border-radius: 50%; background: var(--panel); color: var(--accent); box-shadow: var(--shadow); }
 .premk svg { width: 18px; height: 18px; }
+.poidot { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; background: var(--soft); }
+.poidot::before { content: ""; width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid var(--stop-stroke); background: var(--accent); }
+.pmain .pn { font-size: 15px; overflow-wrap: anywhere; }
+.pedit .pdesc, .gpop .pdesc { font-weight: 400; font-size: 14px; margin-top: 6px; }
+.gpop .perr { color: var(--accent); }
+.sg.poi .si { color: var(--accent); }
 .pmain { display: grid; gap: 2px; min-width: 0; }
 .pname { width: 100%; padding: 5px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--fg); font: 600 15px var(--ui); }
 .pname:focus { outline: 2px solid color-mix(in srgb, var(--accent) 40%, transparent); outline-offset: 1px; }

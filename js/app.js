@@ -122,12 +122,13 @@
     }
     for (const s of feed.stops.values()) {
       const m = L.circleMarker([s.lat, s.lon], { renderer, radius: 2, weight: 1.5 });
-      m.on('click', e => { L.DomEvent.stop(e); if (prePick) prePickAt(s.lat, s.lon, s); else if (mode === 'plan') pickStop(s); else openStop(s); });
+      m.on('click', e => { L.DomEvent.stop(e); if (prePick) prePickAt(s.lat, s.lon, s); else if (poiPick) poiForm(s.lat, s.lon, poiPick); else if (mode === 'plan') pickStop(s); else openStop(s); });
       m.bindTooltip(esc(s.name), { direction: 'top', offset: [0, -4] });
       m.addTo(stopLayer);
       markers.set(s.id, { s, m });
     }
     restyle();
+    poiDraw();
     const b = L.latLngBounds([...feed.stops.values()].map(s => [s.lat, s.lon]));
     fit(b, 24);
   }
@@ -137,6 +138,7 @@
 
   function restyle() {
     if (!feed) return;
+    poiStyle();
     const sf = tok('--stop-fill'), ss = tok('--stop-stroke'), ac = tok('--accent');
     const R = sel.route, S = sel.stop;
     const J = mode === 'plan' && plan.res && plan.res.list[plan.open];
@@ -677,8 +679,7 @@
   function preShow() {
     const box = $('#pre');
     preDraw();
-    pkNote.hidden = !prePick;
-    pkNote.textContent = t('prePickHint');
+    pkSync();
     if (!preOpen) { box.hidden = true; box.innerHTML = ''; return; }
     box.hidden = false;
     let h = `<button type="button" class="gx" data-pa="x" aria-label="${esc(t('close'))}">×</button><div class="ghead">${esc(t('preTitle'))}</div><p class="gacc">${esc(t('preHint'))}</p>`;
@@ -717,7 +718,7 @@
     else if (a === 'edit') { preEdit = preEdit === k ? null : k; prePick = preMsg = null; preShow(); loadPlaces(); loadNet(); const q = $('#pre .pq'); if (q) q.focus(); }
     else if (a === 'del') { delete pre[k]; preSave(); if (preEdit === k) preEdit = prePick = preMsg = null; preShow(); }
     else if (a === 'cancel') { preEdit = prePick = preMsg = null; preShow(); map.closePopup(); }
-    else if (a === 'map') { prePick = k; preMsg = null; preShow(); if (innerWidth <= 760) $('#map').scrollIntoView({ block: 'nearest' }); }
+    else if (a === 'map') { prePick = k; preMsg = null; if (poiPick) { poiPick = null; poiShow(); } preShow(); if (innerWidth <= 760) $('#map').scrollIntoView({ block: 'nearest' }); }
     else if (a === 'gps') { preMsg = { k: 'geoBusy' }; preShow(); geoOnce(p => preSet(k, { k: 'gps', l: t('preGpsLbl'), lat: p[0], lon: p[1] }), (st, mk, mp) => { if (preEdit !== k) return; preMsg = { k: mk, p: mp }; preShow(); }); }
     else if (a === 'stop') { const g = groups.get(b.dataset.name); if (g) preSet(k, { k: 'stop', l: g.label, lat: g.stops[0].lat, lon: g.stops[0].lon }); }
     else if (a === 'place') { const it = pidx && pidx.items.find(x => x.id === b.dataset.place); if (it) { const c = Places.center(it); preSet(k, { k: 'place', l: Places.label(it, I18N.lang), lat: c[0], lon: c[1] }); } }
@@ -741,7 +742,7 @@
     L.circleMarker(ll, { radius: 9, color: '#fff', weight: 3, fillColor: cssv('--accent'), fillOpacity: 1, interactive: false }).addTo(ptLayer);
     const pop = L.popup({ autoPanPaddingTopLeft: [72, 16], autoPanPaddingBottomRight: [72, 56] }).setLatLng(ll).setContent(el).openOn(map);
     pkNote.hidden = true;
-    pop.on('remove', () => { ptLayer.clearLayers(); pkNote.hidden = !prePick; });
+    pop.on('remove', () => { ptLayer.clearLayers(); pkSync(); });
     return pop;
   }
   const preLayer = L.layerGroup().addTo(map);
@@ -805,22 +806,144 @@
     });
   }
   if (GEO) {
-    map.on('click', e => { if (prePick) prePickAt(e.latlng.lat, e.latlng.lng); });
+    map.on('click', e => { if (prePick) prePickAt(e.latlng.lat, e.latlng.lng); else if (poiPick) poiForm(e.latlng.lat, e.latlng.lng, poiPick); });
     map.on('contextmenu', e => {
       if (prePick) return prePickAt(e.latlng.lat, e.latlng.lng);
+      if (poiPick) return poiForm(e.latlng.lat, e.latlng.lng, poiPick);
       const el = document.createElement('div');
       el.className = 'gpop';
-      el.innerHTML = `<b>${esc(t('preMapPt'))}</b><div class="grow"><button type="button" class="btn sm" data-w="from">${esc(t('mapFrom'))}</button><button type="button" class="btn sm" data-w="to">${esc(t('mapTo'))}</button></div>`;
+      el.innerHTML = `<b>${esc(t('preMapPt'))}</b><div class="grow"><button type="button" class="btn sm" data-w="from">${esc(t('mapFrom'))}</button><button type="button" class="btn sm" data-w="to">${esc(t('mapTo'))}</button><button type="button" class="btn sm" data-w="poi">${esc(t('poiAddMap'))}</button></div>`;
       const pop = ptPop(e.latlng, el);
       el.addEventListener('click', ev => {
         const b = ev.target.closest('[data-w]');
         if (!b) return;
         map.closePopup(pop);
+        if (b.dataset.w === 'poi') return poiForm(e.latlng.lat, e.latlng.lng, { id: null });
         if (mode !== 'plan') setMode('plan', true);
         chooseEnd(b.dataset.w, ptEnd('@map-' + b.dataset.w, t('preMapPt'), [e.latlng.lat, e.latlng.lng], b.dataset.w));
       });
     });
   }
+  const POIK = 'tirana-pois';
+  let pois = [], poiOpen = false, poiEdit = null, poiPick = null, poiDel = null, poiMsg = null;
+  try { pois = Places.pois(localStorage.getItem(POIK)); } catch (e) {}
+  const poiId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  const poiEnd = (p, which) => ptEnd('@poi-' + p.id, p.n, [p.lat, p.lon], which);
+  const poiList = v => GEO && v ? pois.filter(p => Places.poiHit(p, v)).slice(0, 5) : [];
+  const poiRow = (p, act) => `<button type="button" class="sg pl poi ${act ? 'act' : ''}" data-poi="${esc(p.id)}">${picon('pin')}<b>${esc(p.n)}</b><span>${esc(p.d || t('poiLbl'))}</span></button>`;
+  const pkSync = () => { pkNote.hidden = !prePick && !poiPick; pkNote.textContent = t(poiPick ? 'poiPickHint' : 'prePickHint'); };
+  const poiLayer = L.layerGroup().addTo(map);
+  function poiSave(x) {
+    if (x) for (const w of ['from', 'to']) if (plan[w] && plan[w].place && plan[w].place.id === '@poi-' + x.id) { setEnd(w, poiEnd(x, w)); plan.res = null; planLayer.clearLayers(); showPlan(); restyle(); }
+    try { localStorage.setItem(POIK, JSON.stringify({ v: 1, items: pois })); } catch (e) {}
+    poiDraw();
+    poiShow();
+  }
+  function poiDraw() {
+    poiLayer.clearLayers();
+    if (!GEO) return;
+    for (const p of pois) {
+      const m = L.circleMarker([p.lat, p.lon], { renderer, radius: sr(), weight: 1.5, fillOpacity: 1 }).addTo(poiLayer);
+      m.bindTooltip(esc(p.n), { direction: 'top', offset: [0, -4] });
+      m.on('click', e => { L.DomEvent.stop(e); if (prePick) prePickAt(p.lat, p.lon); else if (poiPick) poiForm(p.lat, p.lon, poiPick); else poiPop(p); });
+    }
+    poiStyle();
+  }
+  function poiStyle() {
+    const ac = tok('--accent'), st = { radius: sr() + .5, color: ac, fillColor: ac };
+    poiLayer.eachLayer(m => { m.setStyle(st); m.bringToFront(); });
+  }
+  function poiPop(p) {
+    const el = document.createElement('div');
+    el.className = 'gpop';
+    el.innerHTML = `<b>${esc(p.n)}</b><span>${esc(p.d || t('poiLbl'))}</span><div class="grow"><button type="button" class="btn sm" data-w="from">${esc(t('mapFrom'))}</button><button type="button" class="btn sm" data-w="to">${esc(t('mapTo'))}</button><button type="button" class="btn sm" data-w="edit">${esc(t('poiEdit'))}</button></div>`;
+    const pop = L.popup({ offset: [0, -4], autoPanPaddingTopLeft: [72, 16], autoPanPaddingBottomRight: [72, 56] }).setLatLng([p.lat, p.lon]).setContent(el).openOn(map);
+    el.addEventListener('click', ev => {
+      const b = ev.target.closest('[data-w]');
+      if (!b) return;
+      map.closePopup(pop);
+      if (b.dataset.w === 'edit') { poiOpen = true; poiEdit = p.id; poiDel = poiMsg = null; poiShow(); $('#poi').scrollIntoView({ block: 'nearest' }); return; }
+      if (mode !== 'plan') setMode('plan', true);
+      chooseEnd(b.dataset.w, poiEnd(p, b.dataset.w));
+    });
+  }
+  function poiForm(lat, lon, pk) {
+    const old = pk.id && pois.find(x => x.id === pk.id);
+    const el = document.createElement('div');
+    el.className = 'gpop';
+    if (!Places.inArea([lat, lon])) {
+      el.innerHTML = `<b>${esc(t('poiAddMap'))}</b><span>${esc(t('poiOutside'))}</span>`;
+      ptPop([lat, lon], el);
+      return;
+    }
+    if (!old && pois.length >= Places.POI_MAX) {
+      el.innerHTML = `<b>${esc(t('poiAddMap'))}</b><span>${esc(t('poiMax', { n: Places.POI_MAX }))}</span>`;
+      ptPop([lat, lon], el);
+      return;
+    }
+    el.innerHTML = `<b>${esc(t(old ? 'poiMove' : 'poiAddMap'))}</b><input class="pname" maxlength="40" placeholder="${esc(t('poiName'))}" aria-label="${esc(t('poiName'))}" value="${esc(old ? old.n : '')}"><input class="pname pdesc" maxlength="200" placeholder="${esc(t('poiDesc'))}" aria-label="${esc(t('poiDesc'))}" value="${esc(old ? old.d : '')}"><span class="perr" hidden>${esc(t('poiNameReq'))}</span><div class="grow"><button type="button" class="btn sm" data-pp="save">${esc(t('preSave'))}</button><button type="button" class="btn sm" data-pp="cancel">${esc(t('preCancel'))}</button></div>`;
+    const pop = ptPop([lat, lon], el), [inN, inD] = el.querySelectorAll('input');
+    const save = () => {
+      const n = inN.value.trim().slice(0, 40);
+      if (!n) { el.querySelector('.perr').hidden = false; inN.setAttribute('aria-invalid', 'true'); inN.focus(); return; }
+      const x = { id: old ? old.id : poiId(), n, d: inD.value.trim().slice(0, 200), lat, lon, ts: Date.now() };
+      if (old) pois[pois.indexOf(old)] = x; else pois.push(x);
+      poiPick = poiEdit = null;
+      map.closePopup(pop);
+      poiSave(x);
+    };
+    for (const i of [inN, inD]) i.addEventListener('keydown', ev => { if (ev.key === 'Enter') save(); });
+    el.addEventListener('click', ev => {
+      const b = ev.target.closest('[data-pp]');
+      if (!b) return;
+      if (b.dataset.pp === 'save') save(); else map.closePopup(pop);
+    });
+  }
+  function poiShow() {
+    const box = $('#poi');
+    pkSync();
+    if (!poiOpen) { box.hidden = true; box.innerHTML = ''; return; }
+    box.hidden = false;
+    let h = `<button type="button" class="gx" data-pa="x" aria-label="${esc(t('close'))}">×</button><div class="ghead">${esc(t('poiTitle'))}</div><p class="gacc">${esc(t('poiHint'))}</p>`;
+    h += `<div class="grow"><button type="button" class="btn sm" data-pa="add" ${pois.length >= Places.POI_MAX ? 'disabled' : ''}>${esc(t('poiNew'))}</button>${poiPick && !poiPick.id ? `<button type="button" class="btn sm" data-pa="cancel">${esc(t('preCancel'))}</button>` : ''}</div>`;
+    if (pois.length >= Places.POI_MAX) h += `<p class="gmsg">${esc(t('poiMax', { n: Places.POI_MAX }))}</p>`;
+    if (poiPick && !poiPick.id) h += `<p class="gmsg">${esc(t('poiPickHint'))}</p>`;
+    if (!pois.length) h += `<p class="gmsg">${esc(t('poiEmpty'))}</p>`;
+    for (const p of pois) {
+      h += `<div class="pslot"><i class="si poidot" aria-hidden="true"></i><div class="pmain"><b class="pn">${esc(p.n)}</b><span class="ptgt">${esc(p.d || t('poiLbl'))}</span></div></div>`;
+      if (poiEdit === p.id) {
+        h += `<div class="pedit"><input class="pname" data-f="n" maxlength="40" value="${esc(p.n)}" placeholder="${esc(t('poiName'))}" aria-label="${esc(t('poiName'))}"><input class="pname pdesc" data-f="d" maxlength="200" value="${esc(p.d)}" placeholder="${esc(t('poiDesc'))}" aria-label="${esc(t('poiDesc'))}">${poiMsg ? `<p class="gmsg">${esc(t(poiMsg))}</p>` : ''}<div class="grow"><button type="button" class="btn sm" data-pa="save" data-id="${esc(p.id)}">${esc(t('preSave'))}</button><button type="button" class="btn sm" data-pa="cancel">${esc(t('preCancel'))}</button></div></div>`;
+      } else {
+        h += `<div class="grow pbtns"><button type="button" class="btn sm" data-pa="edit" data-id="${esc(p.id)}">${esc(t('poiEdit'))}</button><button type="button" class="btn sm" data-pa="move" data-id="${esc(p.id)}">${esc(t('poiMove'))}</button><button type="button" class="btn sm" data-pa="${poiDel === p.id ? 'del2' : 'del'}" data-id="${esc(p.id)}">${esc(t(poiDel === p.id ? 'poiDelSure' : 'preDel'))}</button></div>`;
+        if (poiPick && poiPick.id === p.id) h += `<p class="gmsg">${esc(t('poiPickHint'))} <button type="button" class="btn sm" data-pa="cancel">${esc(t('preCancel'))}</button></p>`;
+      }
+    }
+    box.innerHTML = h;
+  }
+  $('#poi').addEventListener('click', e => {
+    const b = e.target.closest('[data-pa]');
+    if (!b) return;
+    const a = b.dataset.pa, p = pois.find(x => x.id === b.dataset.id);
+    if (a !== 'del' && a !== 'del2') poiDel = null;
+    if (a === 'x') { poiOpen = false; poiEdit = poiPick = poiMsg = null; map.closePopup(); }
+    else if (a === 'add') { poiPick = { id: null }; poiEdit = poiMsg = null; if (prePick) { prePick = null; preShow(); } map.closePopup(); if (innerWidth <= 760) $('#map').scrollIntoView({ block: 'nearest' }); }
+    else if (a === 'cancel') { poiPick = poiEdit = poiMsg = null; map.closePopup(); }
+    else if (!p) return;
+    else if (a === 'edit') { poiEdit = p.id; poiPick = poiMsg = null; }
+    else if (a === 'move') { poiPick = { id: p.id }; poiEdit = poiMsg = null; if (prePick) { prePick = null; preShow(); } map.closePopup(); map.panTo([p.lat, p.lon]); if (innerWidth <= 760) $('#map').scrollIntoView({ block: 'nearest' }); }
+    else if (a === 'del') poiDel = p.id;
+    else if (a === 'del2') { pois = pois.filter(x => x !== p); poiDel = null; if (poiEdit === p.id) poiEdit = null; return poiSave(); }
+    else if (a === 'save') {
+      const n = $('#poi [data-f="n"]').value.trim().slice(0, 40), d = $('#poi [data-f="d"]').value.trim().slice(0, 200);
+      if (!n) { poiMsg = 'poiNameReq'; poiShow(); $('#poi [data-f="n"]').focus(); return; }
+      const x = pois[pois.indexOf(p)] = Object.assign({}, p, { n, d, ts: Date.now() });
+      poiEdit = poiMsg = null;
+      return poiSave(x);
+    }
+    poiShow();
+  });
+  document.addEventListener('tb-pois', () => { poiOpen = true; poiShow(); $('#poi').scrollIntoView({ block: 'nearest' }); });
+  poiDraw();
   if (GEO) {
     const Loc = L.Control.extend({
       onAdd() {
@@ -880,16 +1003,16 @@
       return [];
     }
     if (ext && !pidx) loadPlaces().then(() => { if (pidx && document.activeElement === inp && !plan[which]) suggest(which); });
-    const ps = ext && pidx ? Places.search(pidx, inp.value, I18N.lang, 5) : [];
+    const ps = ext && pidx ? Places.search(pidx, inp.value, I18N.lang, 5) : [], po = poiList(inp.value.trim()), pp = pr.length + po.length;
     const hits = names.filter(g => g.key.includes(q)).sort((a, b) => (b.key.startsWith(q) - a.key.startsWith(q))).slice(0, ps.length ? 5 : 8);
     const prow = (it, act) => {
       if (!it.nr || it.nr[0] !== feed || it.nr[1] !== wnet) it.nr = [feed, wnet, Places.access(allStops(), it.pts, wnet)[0]];
       const a = it.nr[2];
       return `<button type="button" class="sg pl ${act ? 'act' : ''}" data-place="${esc(it.id)}">${picon(it.c)}<b>${esc(Places.label(it, I18N.lang))}</b><span>${esc(t('cats')[it.c] || '')}${a ? ' · ' + esc(t('nearStop', { m: Math.round(a.m / 10) * 10, s: a.s.name })) : ''}</span></button>`;
     };
-    box.innerHTML = pr.map((k, i) => preRow(k, !i)).join('') + (hits.length || ps.length
-      ? hits.map((g, i) => `<button type="button" class="sg ${i === 0 && !pr.length ? 'act' : ''}${ext ? ' st' : ''}" data-name="${esc(g.id)}">${ext ? picon('stop') : ''}<b>${esc(g.label)}</b><span>${[...g.routes].sort(byName).slice(0, 6).map(r => esc(r.short)).join(' · ')}</span></button>`).join('') + ps.map((it, i) => prow(it, !hits.length && !pr.length && !i)).join('')
-      : pr.length ? '' : `<div class="sg none">${t('noStop')}</div>`);
+    box.innerHTML = pr.map((k, i) => preRow(k, !i)).join('') + po.map((p, i) => poiRow(p, !pr.length && !i)).join('') + (hits.length || ps.length
+      ? hits.map((g, i) => `<button type="button" class="sg ${i === 0 && !pp ? 'act' : ''}${ext ? ' st' : ''}" data-name="${esc(g.id)}">${ext ? picon('stop') : ''}<b>${esc(g.label)}</b><span>${[...g.routes].sort(byName).slice(0, 6).map(r => esc(r.short)).join(' · ')}</span></button>`).join('') + ps.map((it, i) => prow(it, !hits.length && !pp && !i)).join('')
+      : pp ? '' : `<div class="sg none">${t('noStop')}</div>`);
     box.hidden = false;
     sgView(box);
     return hits;
@@ -900,7 +1023,7 @@
     inp.addEventListener('focus', () => { if (ext) { loadPlaces(); loadNet(); } if (!plan[which] && (inp.value || preList('').length)) suggest(which); });
     inp.addEventListener('blur', () => setTimeout(() => { box.hidden = true; inp.scrollLeft = 0; if (!/^(from|to)$/.test((document.activeElement || {}).id)) document.body.classList.remove('sgpad'); }, 150));
     inp.addEventListener('keydown', e => {
-      const items = [...box.querySelectorAll('.sg[data-name], .sg[data-place], .sg[data-pre]')];
+      const items = [...box.querySelectorAll('.sg[data-name], .sg[data-place], .sg[data-pre], .sg[data-poi]')];
       if (box.hidden || !items.length) return;
       let i = items.findIndex(x => x.classList.contains('act'));
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
@@ -914,7 +1037,7 @@
       } else if (e.key === 'Escape') box.hidden = true;
     });
     box.addEventListener('mousedown', e => {
-      const b = e.target.closest('[data-name], [data-place], [data-pre]');
+      const b = e.target.closest('[data-name], [data-place], [data-pre], [data-poi]');
       if (!b) return;
       e.preventDefault();
       chooseEl(which, b);
@@ -929,7 +1052,7 @@
       inp.dispatchEvent(new Event('input'));
     });
   }
-  const chooseEl = (which, b) => b.dataset.pre ? chooseEnd(which, preEnd(b.dataset.pre, which)) : b.dataset.place ? choose(which, null, pidx.items.find(x => x.id === b.dataset.place)) : choose(which, b.dataset.name);
+  const chooseEl = (which, b) => b.dataset.poi ? chooseEnd(which, poiEnd(pois.find(p => p.id === b.dataset.poi), which)) : b.dataset.pre ? chooseEnd(which, preEnd(b.dataset.pre, which)) : b.dataset.place ? choose(which, null, pidx.items.find(x => x.id === b.dataset.place)) : choose(which, b.dataset.name);
   function choose(which, name, it) {
     chooseEnd(which, it ? placeEnd(it, which) : groups.get(name));
   }
@@ -946,6 +1069,8 @@
     if (!v) return;
     const pk = preList('').find(k => norm(preName(k)) === v);
     if (pk) { setEnd(which, preEnd(pk, which)); return; }
+    const pi = GEO && pois.find(p => norm(p.n) === v);
+    if (pi) { setEnd(which, poiEnd(pi, which)); return; }
     const exact = names.filter(g => g.key === v);
     const hits = exact.length ? exact : names.filter(g => g.key.includes(v));
     if (hits.length === 1) setEnd(which, hits[0]);
@@ -1072,7 +1197,7 @@
     syncTheme();
     if (!feed) return;
     if (baseTables && builtLang !== l) { setFeed(buildFeed(), source, false); return; }
-    setAttr(); renderMeta(); renderExpiry(); geoShow(); preShow();
+    setAttr(); renderMeta(); renderExpiry(); geoShow(); preShow(); poiShow();
     if (mode === 'plan') showPlan(); else { const el = scr(), st = el.scrollTop; render(); el.scrollTop = st; }
   }
   const langBox = $('.lang');

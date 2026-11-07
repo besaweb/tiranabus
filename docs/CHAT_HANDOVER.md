@@ -49,3 +49,9 @@ Jen **aktuálně rozpracované** úkoly. Po dokončení úkolu jeho sekci smaž 
 - Hotovo: implementace, ověření v prohlížeči (web i režim aplikace), Node testy.
 - Testovací APK: `android/out/TiranaBus-1.9-x.apk` (`versionCode` 24, obsahuje i UX-003/UX-004).
 - Zbývá: PR po sloučení `feat/UX-003-ikony`; test na telefonu (web i aplikace).
+
+## POI-001 Vlastní místa na mapě
+- Chat: 03 Android · Větev: `feat/POI-001-vlastni-mista` · Aktualizováno: 2026-11-07
+- Hotovo: implementace, Node testy, prohlížeč v režimu aplikace, emulátor (karta, body, popup), web beze změny, zásady soukromí.
+- Testovací APK: `android/out/TiranaBus-1.9-mista.apk` (`versionCode` 25, obsahuje vše z `main`).
+- Zbývá: PR; test na telefonu (uživatel); Data safety v Play.
