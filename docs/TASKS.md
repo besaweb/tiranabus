@@ -21,6 +21,7 @@ Aktualizováno: 2026-11-07
 | SEO-003 | Consent Mode v2 pro EU | SHARED | P1 | BACKLOG | – | 2026-11-07 |
 | CORE-004 | Jeden seznam souborů pro Pages / FTP / Android | SHARED | P2 | BACKLOG | CORE-003 | 2026-11-07 |
 | CORE-005 | Sjednocená konfigurace jízdného, kurzů, verze a platnosti | SHARED | P2 | BACKLOG | – | 2026-11-07 |
+| CORE-006 | Android Gradle build v CI na Linuxu | ANDROID | P2 | READY | CORE-003 | 2026-11-07 |
 | BUG-001 | Cena RT: 3 € (tickets) vs. 3,50 € (data) | SHARED | P2 | READY | – | 2026-11-07 |
 | AND-005 | Pro verze a licence (Ko-fi kódy, Play Billing) | ANDROID | P2 | BACKLOG | – | 2026-11-07 |
 | AND-006 | Barvy systémových lišt podle motivu stránky (přepínač v aplikaci vs. systém) | ANDROID | P3 | BACKLOG | – | 2026-11-07 |
@@ -49,7 +50,17 @@ Aktualizováno: 2026-11-07
   - [x] výsledné APK shodné s dnešním: `assets` stejné bajt po bajtu (kromě konců řádků), certifikát SHA-256 `0354…0d92` shodný; emulátor API 36: start, feed, offline mapa, menu · [x] zbytek checklistu na Samsung Galaxy S21 (7. 11. 2026, hlášeno uživatelem: vše v pořádku, vč. režimu letadlo, okrajů, Zpět)
   - [x] podpis stejným klíčem (`adb install -r` přes stávající instalaci proběhl)
   - [x] heslo z `keystore.properties` / `TB_KS_PASS`
-- Poznámky: rozhodnutí D-018, D-023. `build.sh` odstraněn. Zbývá jen Linux/CI (build Gradle v GitHub Actions, navrhnout samostatný úkol).
+- Poznámky: rozhodnutí D-018, D-023. `build.sh` odstraněn. Zbývá jen Linux/CI (CORE-006).
+
+### CORE-006 Android Gradle build v CI na Linuxu
+- Oblast: CI / build · ANDROID (build jen pro Android) · P2 · READY
+- Popis: ověřit, že `./gradlew` build funguje mimo Windows, a hlídat ho na Pull Requestech, které sahají do `android/` nebo sdíleného webu. Uzavírá poslední kritérium CORE-003.
+- Kritéria:
+  - [ ] workflow `.github/workflows/android.yml` (spouští se na PR s `android/**`, `index.html`, `css/**`, `js/**`, `data/**`, `img/**` a ručně), JDK 17+, Android SDK z runneru, `gtfs.zip` z release `tirana-latest`
+  - [ ] bez podpisových tajemství: sestaví nepodepsaný `assembleRelease` nebo `assembleDebug` + `bundleDebug` (podepisování zůstává lokálně z hlavní složky, D-022); kontrola `checkSigning` se pro release bez hesla musí chovat podle D-022
+  - [ ] `android/gradlew` spustitelný v gitu (opraveno 2026-11-07: `git update-index --chmod=+x`) · [ ] konce řádků `gradlew` LF na Linuxu
+  - [ ] CI zelené na PR, doba běhu a velikost cache Gradle zapsány
+- Poznámky: Gradle stahuje knihovny z cdnjs (`prepareSite`), CI musí mít síť. AGP 9.0.0 vyžaduje Gradle 9.1+ a JDK 17+.
 
 ### AND-002 Bezpečné podepisování
 - ANDROID · P0 · READY
