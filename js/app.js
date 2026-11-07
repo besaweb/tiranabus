@@ -920,6 +920,15 @@
       chooseEl(which, b);
     });
   }
+  for (const b of document.querySelectorAll('.fclr')) {
+    b.addEventListener('mousedown', e => e.preventDefault());
+    b.addEventListener('click', () => {
+      const inp = $('#' + b.dataset.for);
+      inp.value = '';
+      inp.focus();
+      inp.dispatchEvent(new Event('input'));
+    });
+  }
   const chooseEl = (which, b) => b.dataset.pre ? chooseEnd(which, preEnd(b.dataset.pre, which)) : b.dataset.place ? choose(which, null, pidx.items.find(x => x.id === b.dataset.place)) : choose(which, b.dataset.name);
   function choose(which, name, it) {
     chooseEnd(which, it ? placeEnd(it, which) : groups.get(name));

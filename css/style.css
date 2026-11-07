@@ -142,10 +142,15 @@ header {
 .field input::placeholder, .search input::placeholder { color: var(--muted); font-weight: 400; }
 .field input:focus, .search input:focus, .sel:focus-within { border-color: var(--navy); box-shadow: 0 0 0 3px color-mix(in srgb, var(--navy) 16%, transparent); }
 .field .pin { position: absolute; left: 11px; top: 9px; }
-.field.haspre input { padding-right: calc(var(--pn) * 34px + 10px); }
-.field.haspre input:focus { padding-right: 14px; }
+.field.haspre input:placeholder-shown { padding-right: calc(var(--pn) * 34px + 10px); }
+.field.haspre input:focus:placeholder-shown { padding-right: 14px; }
+.field input:not(:placeholder-shown) { padding-right: 44px; }
+.fclr { position: absolute; right: 3px; top: 3px; width: 36px; height: 36px; display: none; place-items: center; padding: 0; border: 0; border-radius: 9px; background: none; color: var(--muted); cursor: pointer; }
+.field input:not(:placeholder-shown) ~ .fclr { display: grid; }
+.fclr:hover, .fclr:focus-visible { background: var(--soft); color: var(--fg); }
+.fclr svg { width: 20px; height: 20px; }
 .fpre { position: absolute; right: 5px; top: 4px; display: flex; gap: 0; }
-.fpre[hidden], .field input:focus ~ .fpre { display: none; }
+.fpre[hidden], .field input:focus ~ .fpre, .field input:not(:placeholder-shown) ~ .fpre { display: none; }
 .fpre button { width: 34px; height: 34px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 9px; background: none; color: var(--navy); cursor: pointer; }
 .fpre button:hover, .fpre button:focus-visible { background: var(--soft); }
 .fpre svg { width: 20px; height: 20px; }

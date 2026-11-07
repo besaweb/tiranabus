@@ -28,6 +28,7 @@ Aktualizováno: 2026-11-07
 | UX-002 | Našeptávač u pole Kam je na telefonu schovaný pod klávesnicí | SHARED | P2 | REVIEW | – | 2026-11-07 |
 | UX-003 | Ikony předvoleb (20 ikon Lucide, výběr, zobrazení na mapě) | ANDROID | P2 | REVIEW | UX-001 | 2026-11-07 |
 | UX-004 | Ikony předvoleb přímo v polích Odkud / Kam | ANDROID | P2 | REVIEW | UX-003 | 2026-11-07 |
+| UX-005 | Tlačítko X pro vymazání polí Odkud / Kam | SHARED | P2 | REVIEW | UX-004 | 2026-11-07 |
 | POI-001 | Vlastní body na mapě, použitelné v Odkud a Kam (Pro) | ANDROID | P2 | BACKLOG | CORE-007 | 2026-11-07 |
 | AND-007 | Promo kódy z Play Console pro přispěvatele Ko-fi | ANDROID | P3 | BACKLOG | AND-005 | 2026-11-07 |
 | MKT-001 | Reklamy pro neplatící uživatele aplikace | ANDROID | P3 | BACKLOG | AND-005, SEO-003 | 2026-11-07 |
@@ -137,6 +138,15 @@ Aktualizováno: 2026-11-07
   - [x] web beze změny i s uloženými předvolbami, bez chyb v konzoli; Node testy 28/28 (1 `todo` BUG-002)
   - [ ] emulátor (nenačte data, Avast zachytává HTTPS na `pt.tirana.al`) · [ ] reálný telefon (uživatel)
 - Poznámky: D-031.
+
+### UX-005 Vymazání polí Odkud / Kam
+- Oblast: plánovač, UI · SHARED (není vázané na předvolby, funguje i na webu) · P2 · REVIEW
+- Popis: pole Odkud / Kam s textem má vpravo tlačítko X (Lucide `x`, 36 × 36 px). Klepnutí pole vymaže, nechá v něm kurzor (klávesnice zůstane otevřená, `mousedown` nepřesune fokus) a vyvolá stejnou událost `input` jako ruční mazání (zruší vybraný cíl a výsledky, otevře našeptávač); vyhledávání nespustí, druhé pole ani předvolby nemění. Viditelnost čistě v CSS přes `:placeholder-shown`: text → X místo ikon předvoleb, prázdné a neaktivní → ikony předvoleb (UX-004), prázdné a aktivní → nic.
+- Kritéria:
+  - [x] prohlížeč v režimu aplikace (375 px): po výběru ikonou předvolby X místo ikon; X v neaktivním poli → prázdné, aktivní, našeptávač s předvolbami, druhé pole a předvolby beze změny, bez vyhledání; psaní → X; X v aktivním poli → fokus zůstává; výběr z našeptávače → X
+  - [x] web (375 px i desktop, světlý i tmavý režim): ruční zadání a výběr Enterem → X, bez ikon předvoleb; Node testy 28/28 (1 `todo` BUG-002)
+  - [ ] emulátor (nenačte data, Avast zachytává HTTPS na `pt.tirana.al`) · [ ] reálný telefon s klávesnicí – web i aplikace (uživatel)
+- Poznámky: text `clearField` ve 12 jazycích.
 
 ### BUG-001 Cena RT
 - SHARED · P2 · READY

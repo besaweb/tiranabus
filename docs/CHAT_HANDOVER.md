@@ -43,3 +43,9 @@ Jen **aktuálně rozpracované** úkoly. Po dokončení úkolu jeho sekci smaž 
 - Obsahuje i UX-004 (ikony v polích Odkud / Kam). Testovací APK: `android/out/TiranaBus-1.9-pole.apk` (`versionCode` 23).
 - Zbývá: PR po sloučení `fix/UX-001-bod-na-mape`; test na telefonu (uživatel).
 - Další krok: výsledky od uživatele → UX-003 DONE.
+
+## UX-005 Vymazání polí Odkud / Kam
+- Chat: 03 Android · Větev: `feat/UX-005-vymazat` (nad `feat/UX-003-ikony`) · Aktualizováno: 2026-11-07
+- Hotovo: implementace, ověření v prohlížeči (web i režim aplikace), Node testy.
+- Testovací APK: `android/out/TiranaBus-1.9-x.apk` (`versionCode` 24, obsahuje i UX-003/UX-004).
+- Zbývá: PR po sloučení `feat/UX-003-ikony`; test na telefonu (web i aplikace).
