@@ -5,12 +5,18 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
+import android.view.WindowInsets;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.window.OnBackInvokedCallback;
+import android.widget.FrameLayout;
+import android.window.OnBackInvokedDispatcher;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -45,7 +51,29 @@ public class MainActivity extends Activity {
   protected void onCreate(Bundle b) {
     super.onCreate(b);
     web = new WebView(this);
-    setContentView(web);
+    FrameLayout root = new FrameLayout(this);
+    root.addView(web, new FrameLayout.LayoutParams(-1, -1));
+    setContentView(root);
+    root.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+      @Override
+      public WindowInsets onApplyWindowInsets(View v, WindowInsets in) {
+        if (Build.VERSION.SDK_INT >= 30) {
+          android.graphics.Insets i = in.getInsets(WindowInsets.Type.systemBars() | WindowInsets.Type.displayCutout() | WindowInsets.Type.ime());
+          v.setPadding(i.left, i.top, i.right, i.bottom);
+          return WindowInsets.CONSUMED;
+        }
+        v.setPadding(in.getSystemWindowInsetLeft(), in.getSystemWindowInsetTop(), in.getSystemWindowInsetRight(), in.getSystemWindowInsetBottom());
+        return in.consumeSystemWindowInsets();
+      }
+    });
+    if (Build.VERSION.SDK_INT >= 33) {
+      getOnBackInvokedDispatcher().registerOnBackInvokedCallback(OnBackInvokedDispatcher.PRIORITY_DEFAULT, new OnBackInvokedCallback() {
+        @Override
+        public void onBackInvoked() {
+          if (web.canGoBack()) web.goBack(); else finish();
+        }
+      });
+    }
     WebSettings s = web.getSettings();
     s.setJavaScriptEnabled(true);
     s.setDomStorageEnabled(true);

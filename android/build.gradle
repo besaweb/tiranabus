@@ -83,7 +83,7 @@ android {
   defaultConfig {
     applicationId = 'com.besaweb.tiranabus'
     minSdk = 24
-    targetSdk = 34
+    targetSdk = 36
     versionCode = appCode
     versionName = appVersion
   }
