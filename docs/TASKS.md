@@ -21,6 +21,7 @@ Aktualizováno: 2026-11-07
 | CORE-004 | Jeden seznam souborů pro Pages / FTP / Android | SHARED | P2 | BACKLOG | – | 2026-11-07 |
 | CORE-005 | Sjednocená konfigurace jízdného, kurzů, verze a platnosti | SHARED | P2 | BACKLOG | – | 2026-11-07 |
 | BUG-001 | Cena RT: 3 € (tickets) vs. 3,50 € (data) | SHARED | P2 | READY | – | 2026-11-07 |
+| AND-008 | První vydání v Google Play (podklady, testovací stopa) | ANDROID | P0 | IN_PROGRESS | AND-002 (záloha keystore) | 2026-11-07 |
 | AND-005 | Pro: roční předplatné 4,99 € přes Google Play Billing | ANDROID | P2 | BACKLOG | CORE-007, první vydání v Play | 2026-11-07 |
 | CORE-007 | Oprávnění Pro (`PLATFORM.pro`) a zamykání funkcí | SHARED | P2 | BACKLOG | CORE-001 | 2026-11-07 |
 | MAP-001 | Poloha z GPS na mapě (Pro) | ANDROID | P2 | BACKLOG | CORE-007 | 2026-11-07 |
@@ -59,6 +60,16 @@ Aktualizováno: 2026-11-07
 ### WEB-001 Bezpečný FTP deploy
 - WEB (FTP jen pro web) · P1 · READY
 - Kritéria: `deploy-ftp.sh` odmítne běžet mimo `main`, s necommitovanými změnami nebo za `origin/main`.
+
+### AND-008 První vydání v Google Play
+- Oblast: Android / vydání · ANDROID (Google Play) · P0 · IN_PROGRESS
+- Popis: podklady pro Play Console a první nahrání AAB na testovací stopu. Podklady v `docs/play/`.
+- Kritéria:
+  - [x] ikona 512 × 512, hlavní obrázek 1024 × 500, 6 snímků 1080 × 1920 (emulátor API 36, 2026-11-07)
+  - [x] texty listingu en, sq (strojově, ke kontrole), cs; odpovědi pro Data safety, IARC a ostatní formuláře; postup vydání
+  - [ ] uživatel: typ vývojářského účtu a případná povinnost uzavřeného testu (12 testerů, 14 dní) · [ ] záloha keystore (AND-002)
+  - [ ] AAB `1.8` / `versionCode 18` z čistého `main` nahrané na interní testování, Play App Signing zapnuté
+- Poznámky: hlavní obrázek je z obálky se starším modrým logem, doporučeno nahradit. Při snímcích nalezeno: našeptávač u pole Kam je na telefonu schovaný pod klávesnicí (navrhnout úkol pro Chat 02).
 
 ### AND-005 Pro: roční předplatné přes Google Play Billing
 - Oblast: Android / platby · ANDROID (Google Play Billing existuje jen v aplikaci z Play; D-026) · P2 · BACKLOG
