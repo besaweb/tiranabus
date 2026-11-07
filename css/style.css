@@ -142,6 +142,18 @@ header {
 .field input::placeholder, .search input::placeholder { color: var(--muted); font-weight: 400; }
 .field input:focus, .search input:focus, .sel:focus-within { border-color: var(--navy); box-shadow: 0 0 0 3px color-mix(in srgb, var(--navy) 16%, transparent); }
 .field .pin { position: absolute; left: 11px; top: 9px; }
+.field.haspre input:placeholder-shown { padding-right: calc(var(--pn) * 34px + 10px); }
+.field.haspre input:focus:placeholder-shown { padding-right: 14px; }
+.field input:not(:placeholder-shown) { padding-right: 44px; }
+.fclr { position: absolute; right: 3px; top: 3px; width: 36px; height: 36px; display: none; place-items: center; padding: 0; border: 0; border-radius: 9px; background: none; color: var(--muted); cursor: pointer; }
+.field input:not(:placeholder-shown) ~ .fclr { display: grid; }
+.fclr:hover, .fclr:focus-visible { background: var(--soft); color: var(--fg); }
+.fclr svg { width: 20px; height: 20px; }
+.fpre { position: absolute; right: 5px; top: 4px; display: flex; gap: 0; }
+.fpre[hidden], .field input:focus ~ .fpre, .field input:not(:placeholder-shown) ~ .fpre { display: none; }
+.fpre button { width: 34px; height: 34px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 9px; background: none; color: var(--navy); cursor: pointer; }
+.fpre button:hover, .fpre button:focus-visible { background: var(--soft); }
+.fpre svg { width: 20px; height: 20px; }
 .pin { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; font: 700 13px/1 var(--ui); flex: none; }
 .pin.a { background: var(--accent); color: var(--accent-ink); }
 .pin.b { background: var(--navy); color: var(--navy-ink); }
@@ -344,6 +356,7 @@ header {
 .leaflet-grab { cursor: grab; }
 .leaflet-dragging .leaflet-grab, .leaflet-dragging .leaflet-grab .leaflet-interactive { cursor: grabbing; }
 .leaflet-marker-icon, .leaflet-marker-shadow, .leaflet-image-layer, .leaflet-pane > svg path, .leaflet-tile-container { pointer-events: none; }
+.leaflet-marker-icon.leaflet-interactive { pointer-events: auto; }
 .leaflet-bar { overflow: hidden; }
 .leaflet-bar a { display: block; width: 44px; height: 44px; line-height: 44px; text-align: center; text-decoration: none; color: var(--fg); font: 500 24px/44px var(--ui); }
 .leaflet-bar a + a { border-top: 1px solid var(--line); }
@@ -514,12 +527,24 @@ header {
 .leaflet-popup-close-button { position: absolute; top: 4px; right: 4px; width: 26px; height: 26px; display: grid; place-items: center; border-radius: 8px; color: var(--muted); font-size: 18px; text-decoration: none; }
 .leaflet-popup-close-button:hover { background: var(--soft); color: var(--fg); }
 .gpop { display: grid; gap: 4px; min-width: 160px; padding-right: 22px; }
+.pknote { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 1000; width: max-content; max-width: calc(100% - 150px); padding: 7px 12px; border-radius: 12px; background: var(--panel); color: var(--fg); box-shadow: var(--shadow); font-size: 13.5px; text-align: center; pointer-events: none; }
+.pknote[hidden] { display: none; }
+.gpop .pname { margin-top: 4px; min-width: 190px; }
 .gpop > span { color: var(--muted); font-size: 12.5px; }
 .gpop .btn { justify-self: start; margin-top: 4px; }
 @keyframes gspin { to { transform: rotate(360deg); } }
 .pslot { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 10px; margin-top: 6px; }
 .pslot .si { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; background: var(--soft); color: var(--fg); }
 .pslot .si svg { width: 20px; height: 20px; }
+.pslot .picbtn { padding: 0; border: 1px solid transparent; cursor: pointer; }
+.pslot .picbtn:hover, .pslot .picbtn[aria-expanded="true"] { border-color: var(--accent); color: var(--accent); }
+.picgrid { display: grid; grid-template-columns: repeat(4, 44px); gap: 6px; margin: 8px 0 2px 44px; }
+.picgrid button { width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--fg); cursor: pointer; }
+.picgrid button:hover { border-color: var(--muted); }
+.picgrid button.on { border: 2px solid var(--accent); color: var(--accent); }
+.picgrid svg { width: 22px; height: 22px; }
+.premk { display: grid; place-items: center; border: 2px solid var(--accent); border-radius: 50%; background: var(--panel); color: var(--accent); box-shadow: var(--shadow); }
+.premk svg { width: 18px; height: 18px; }
 .pmain { display: grid; gap: 2px; min-width: 0; }
 .pname { width: 100%; padding: 5px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--fg); font: 600 15px var(--ui); }
 .pname:focus { outline: 2px solid color-mix(in srgb, var(--accent) 40%, transparent); outline-offset: 1px; }

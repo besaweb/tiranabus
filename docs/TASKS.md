@@ -26,6 +26,9 @@ Aktualizováno: 2026-11-07
 | MAP-001 | Moje poloha a nejbližší zastávky (Pro později) | ANDROID | P2 | REVIEW | – | 2026-11-07 |
 | UX-001 | Předvolby Domů / Práce / Škola pro Odkud a Kam (Pro později) | ANDROID | P2 | REVIEW | MAP-001 | 2026-11-07 |
 | UX-002 | Našeptávač u pole Kam je na telefonu schovaný pod klávesnicí | SHARED | P2 | REVIEW | – | 2026-11-07 |
+| UX-003 | Ikony předvoleb (20 ikon Lucide, výběr, zobrazení na mapě) | ANDROID | P2 | REVIEW | UX-001 | 2026-11-07 |
+| UX-004 | Ikony předvoleb přímo v polích Odkud / Kam | ANDROID | P2 | REVIEW | UX-003 | 2026-11-07 |
+| UX-005 | Tlačítko X pro vymazání polí Odkud / Kam | SHARED | P2 | REVIEW | UX-004 | 2026-11-07 |
 | POI-001 | Vlastní body na mapě, použitelné v Odkud a Kam (Pro) | ANDROID | P2 | BACKLOG | CORE-007 | 2026-11-07 |
 | AND-007 | Promo kódy z Play Console pro přispěvatele Ko-fi | ANDROID | P3 | BACKLOG | AND-005 | 2026-11-07 |
 | MKT-001 | Reklamy pro neplatící uživatele aplikace | ANDROID | P3 | BACKLOG | AND-005, SEO-003 | 2026-11-07 |
@@ -93,6 +96,7 @@ Aktualizováno: 2026-11-07
   - [x] sdílená logika `Places.presets` (ověření a oříznutí uložených dat) a `Places.presetHit` + `tests/presets.test.js`
   - [x] emulátor API 36 (cs, tmavý režim): menu → karta, přejmenování Práce → Fitko, Domů = zastávka Kombinat (vyhledání), Fitko = aktuální poloha, Škola = bod na mapě; po restartu aplikace uloženo; našeptávač v prázdném poli ukáže všechny tři, „do“ → Domů před zastávkami; Fitko → Domů naplánováno (5 spojení s chůzí); dlouhý stisk → Sem → Fitko → Bod na mapě
   - [x] web beze změny (žádné předvolby, karta ani položka menu), Node testy 27/27 (1 `todo` BUG-002)
+  - [x] oprava po testu na telefonu (uživatel 2026-11-07: „Vybrat na mapě“ uložilo bod hned po klepnutí, bez značky a bez názvu): v režimu výběru klepnutí nebo podržení prstu na mapě či zastávce ukáže značku a popup s polem pro název a tlačítky Uložit / Zrušit, další klepnutí značku přesune; nápověda je v mapě (pod mapou na telefonu nebyla vidět). Ověřeno na emulátoru API 36 (světlý i tmavý režim, klávesnice, přesun, Zrušit, Odsud/Sem beze změny), web beze změny
   - [ ] reálný telefon (uživatel)
 - Poznámky: D-029. Zastávka se po novém feedu dohledá podle názvu, jinak podle souřadnic. Obsahuje i opravu UX-002 pro šířku ≤ 760 px (viz UX-002).
 
@@ -115,6 +119,34 @@ Aktualizováno: 2026-11-07
 - Popis: při psaní do pole Kam (a Odkud) se seznam návrhů zobrazí pod klávesnicí a stránka se k němu neposune, uživatel návrhy nevidí. Pole Odkud je výš a návrhy jsou na hraně klávesnice.
 - Kritéria: [ ] návrhy jsou při otevřené klávesnici vidět (scroll do výhledu, nebo seznam nad polem) · [ ] ověřeno na webu v prohlížeči (šířka telefonu) i v APK s klávesnicí · [ ] světlý i tmavý režim
 - Poznámky: v APK se po AND-001 odsazuje okno o `ime`, takže pole je nad klávesnicí, ale seznam je pod ním. Oprava udělána v rámci UX-001 (Chat 03, větev `feat/UX-001-predvolby`), protože bez ní byly předvolby na telefonu nepoužitelné: do 760 px se při otevřeném seznamu přidá dolní odsazení `.side` (`body.sgpad`) a pole se posune k hornímu okraji (`sgView`, i při změně velikosti okna kvůli klávesnici). Ověřeno: APK na emulátoru (Odkud i Kam), web v prohlížeči na šířce 375 px (seznam vidět), desktop beze změny. Chybí: web na reálném telefonu s klávesnicí (Chat 02).
+
+### UX-003 Ikony předvoleb
+- Oblast: předvolby, mapa · ANDROID (předvolby jsou jen v aplikaci, D-029, D-030) · P2 · REVIEW
+- Popis: každá ze 3 předvoleb má ikonu z pevné sady 20 ikon Lucide (house, briefcase-business, graduation-cap, building-2, shopping-cart, shopping-bag, utensils, coffee, heart-pulse, dumbbell, landmark, plane, train-front, bus-front, car-front, map-pin, users, church, tree-pine, star). Klepnutí na ikonu v kartě Moje předvolby otevře mřížku 4 × 5 bez popisků (popisy jen pro čtečky), vybraná ikona je zvýrazněná. Bez ruční volby se ikona odhaduje z názvu (klíčová slova cs/en/sq), jinak podle slotu. Nastavené předvolby se ukazují na mapě jako značky s ikonou, klepnutí nabídne Odsud / Sem. Klepnutí na předvolbu v našeptávači beze změny. Vlastní obrázky ne.
+- Kritéria:
+  - [x] sdílená logika `Places.ICONS`, `Places.presetIcon`, ukládání `i` v `Places.presets` + testy (`tests/presets.test.js`), Node testy 28/28 (1 `todo` BUG-002)
+  - [x] emulátor API 36: odhad Fitko → dumbbell, výběr kávy uložen a promítnut do karty, našeptávače i značky na mapě; mřížka ve světlém i tmavém režimu; klepnutí na značku → popup Odsud / Sem
+  - [x] web beze změny (žádné značky ani karta, bez chyb v konzoli)
+  - [ ] naplánování trasy z popupu značky (na emulátoru nešlo ověřit: Avast zachytává HTTPS na `pt.tirana.al`, emulátor jeho certifikátu nevěří) · [ ] reálný telefon (uživatel)
+- Poznámky: D-030. Ikony vložené jako SVG v `app.js` (bez knihovny), licence ISC uvedena u nich. Opraveno: ve vlastních stylech Leafletu chybělo `pointer-events` pro klikací značky (`.leaflet-marker-icon.leaflet-interactive`).
+
+### UX-004 Ikony předvoleb v polích Odkud / Kam
+- Oblast: plánovač, UI · ANDROID (předvolby jsou jen v aplikaci, D-029, D-031) · P2 · REVIEW
+- Popis: nastavené předvolby (max. 3) se zobrazují jako ikony vpravo uvnitř polí Odkud a Kam (`#from-pre`, `#to-pre`), text pole se zkrátí o jejich šířku (`.field.haspre`, `--pn`). Při aktivaci pole (`:focus`) se ikony u něj skryjí a pole má celou šířku, po opuštění se vrátí; každé pole zvlášť. Klepnutí na ikonu vyplní pole stejně jako výběr v našeptávači (`chooseEnd` + `preEnd`), ale nepřesune kurzor do druhého pole. Bez předvoleb beze změny.
+- Kritéria:
+  - [x] prohlížeč v režimu aplikace (`APP_VERSION` vložené lokálním serverem, 375 px i desktop, světlý i tmavý režim): 0 / 1 / 2 / 3 předvolby (odsazení 14 / 44 / 78 / 112 px), dlouhý text se zkrátí, klepnutí do Odkud skryje jen jeho ikony a otevře našeptávač, po opuštění se vrátí; ikona Kam vyplní „Fitko“ bez fokusu, ikona Odkud pak spustí vyhledání (5 spojení Domů → Fitko, značky předvoleb na mapě)
+  - [x] web beze změny i s uloženými předvolbami, bez chyb v konzoli; Node testy 28/28 (1 `todo` BUG-002)
+  - [ ] emulátor (nenačte data, Avast zachytává HTTPS na `pt.tirana.al`) · [ ] reálný telefon (uživatel)
+- Poznámky: D-031.
+
+### UX-005 Vymazání polí Odkud / Kam
+- Oblast: plánovač, UI · SHARED (není vázané na předvolby, funguje i na webu) · P2 · REVIEW
+- Popis: pole Odkud / Kam s textem má vpravo tlačítko X (Lucide `x`, 36 × 36 px). Klepnutí pole vymaže, nechá v něm kurzor (klávesnice zůstane otevřená, `mousedown` nepřesune fokus) a vyvolá stejnou událost `input` jako ruční mazání (zruší vybraný cíl a výsledky, otevře našeptávač); vyhledávání nespustí, druhé pole ani předvolby nemění. Viditelnost čistě v CSS přes `:placeholder-shown`: text → X místo ikon předvoleb, prázdné a neaktivní → ikony předvoleb (UX-004), prázdné a aktivní → nic.
+- Kritéria:
+  - [x] prohlížeč v režimu aplikace (375 px): po výběru ikonou předvolby X místo ikon; X v neaktivním poli → prázdné, aktivní, našeptávač s předvolbami, druhé pole a předvolby beze změny, bez vyhledání; psaní → X; X v aktivním poli → fokus zůstává; výběr z našeptávače → X
+  - [x] web (375 px i desktop, světlý i tmavý režim): ruční zadání a výběr Enterem → X, bez ikon předvoleb; Node testy 28/28 (1 `todo` BUG-002)
+  - [ ] emulátor (nenačte data, Avast zachytává HTTPS na `pt.tirana.al`) · [ ] reálný telefon s klávesnicí – web i aplikace (uživatel)
+- Poznámky: text `clearField` ve 12 jazycích.
 
 ### BUG-001 Cena RT
 - SHARED · P2 · READY

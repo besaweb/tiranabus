@@ -268,6 +268,30 @@ const Places = (() => {
 
   const SLOTS = ['home', 'work', 'school'];
   const KINDS = ['stop', 'place', 'gps', 'map'];
+  const ICONS = ['house', 'briefcase-business', 'graduation-cap', 'building-2', 'shopping-cart', 'shopping-bag', 'utensils', 'coffee', 'heart-pulse', 'dumbbell',
+    'landmark', 'plane', 'train-front', 'bus-front', 'car-front', 'map-pin', 'users', 'church', 'tree-pine', 'star'];
+  const SLOT_IC = { home: 'house', work: 'briefcase-business', school: 'graduation-cap' };
+  const IC_WORDS = [
+    ['plane', 'letist airport aeroport rinas'],
+    ['house', 'domov doma domu home shtepi chata chalupa'],
+    ['briefcase-business', 'prace work job puna kancelar'],
+    ['graduation-cap', 'skola skolka school shkoll univerzit universit fakult kolej'],
+    ['building-2', 'urad office zyra bashki ministr banka bank posta'],
+    ['shopping-cart', 'obchod supermarket market potravin dyqan carrefour spar conad lidl'],
+    ['shopping-bag', 'nakup shopping mall qendr'],
+    ['utensils', 'restaura restoran jidl obed vecer food lunch dinner pizz'],
+    ['coffee', 'kav cafe coffee kafe bar'],
+    ['heart-pulse', 'lekar nemocn zdravi doctor hospital klinik spital mjek poliklin farmaci pharmac'],
+    ['dumbbell', 'fit gym posilov palestr sport'],
+    ['landmark', 'pamat muze museum muzeu monument'],
+    ['train-front', 'vlak nadrazi train tren'],
+    ['bus-front', 'autobus bus terminal'],
+    ['car-front', 'auto car parking parkovist makin garaz'],
+    ['users', 'rodin family famil babick dedeck rodic prind mama tata kamarad pratel friend shok gjysh'],
+    ['church', 'kostel church kish xhami mosque mesit'],
+    ['tree-pine', 'park prirod les nature liqen lake dajti hory zahrad garden'],
+    ['star', 'oblib favorit fav']
+  ].map(([i, w]) => [i, w.split(' ')]);
 
   function presets(raw) {
     let o;
@@ -279,7 +303,8 @@ const Places = (() => {
       if (!p || typeof p !== 'object') continue;
       const x = { n: typeof p.n === 'string' ? p.n.trim().slice(0, 24) : '' };
       if (KINDS.includes(p.k) && valid([+p.lat, +p.lon])) Object.assign(x, { k: p.k, l: String(p.l || '').slice(0, 80), lat: +p.lat, lon: +p.lon });
-      if (x.n || x.k) out[k] = x;
+      if (ICONS.includes(p.i)) x.i = p.i;
+      if (x.n || x.k || x.i) out[k] = x;
     }
     return out;
   }
@@ -289,6 +314,13 @@ const Places = (() => {
     return !!b && (a.startsWith(b) || a.split(' ').some(w => w.startsWith(b)));
   }
 
-  return { norm, build, search, label, access, between, route, stopWalks, net, center, dist, locate, inArea, nearest, presets, presetHit, SLOTS, AREA, MAX_ACC, RANK, WALK_V };
+  function presetIcon(p, slot) {
+    if (p && ICONS.includes(p.i)) return p.i;
+    const ws = norm(p && p.n || '').split(/[^a-z0-9]+/).filter(Boolean);
+    const hit = IC_WORDS.find(([, keys]) => ws.some(w => keys.some(k => w.startsWith(k))));
+    return hit ? hit[0] : SLOT_IC[slot] || 'map-pin';
+  }
+
+  return { norm, build, search, label, access, between, route, stopWalks, net, center, dist, locate, inArea, nearest, presets, presetHit, presetIcon, SLOTS, ICONS, AREA, MAX_ACC, RANK, WALK_V };
 })();
 if (typeof module !== 'undefined') module.exports = Places;

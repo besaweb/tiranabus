@@ -122,7 +122,7 @@
     }
     for (const s of feed.stops.values()) {
       const m = L.circleMarker([s.lat, s.lon], { renderer, radius: 2, weight: 1.5 });
-      m.on('click', e => { L.DomEvent.stop(e); if (prePick) prePickAt(0, 0, s); else if (mode === 'plan') pickStop(s); else openStop(s); });
+      m.on('click', e => { L.DomEvent.stop(e); if (prePick) prePickAt(s.lat, s.lon, s); else if (mode === 'plan') pickStop(s); else openStop(s); });
       m.bindTooltip(esc(s.name), { direction: 'top', offset: [0, -4] });
       m.addTo(stopLayer);
       markers.set(s.id, { s, m });
@@ -624,15 +624,35 @@
     else geoFocus(+v);
   });
   const PREK = 'tirana-presets';
-  let pre = {}, preOpen = false, preEdit = null, prePick = null, preMsg = null;
+  let pre = {}, preOpen = false, preEdit = null, prePick = null, preMsg = null, preIcOpen = null;
   try { pre = Places.presets(localStorage.getItem(PREK)); } catch (e) {}
   const preSave = () => { try { localStorage.setItem(PREK, JSON.stringify(pre)); } catch (e) {} };
-  const PRE_IC = {
-    home: '<path d="M4 11 12 4l8 7"/><path d="M6 10v10h12V10"/><path d="M10 20v-5h4v5"/>',
-    work: '<rect x="3.5" y="7" width="17" height="12" rx="2"/><path d="M9 7V5h6v2M3.5 12h17"/>',
-    school: '<path d="M2.5 9 12 4.5 21.5 9 12 13.5z"/><path d="M6.5 11v4.5c0 1.5 2.5 3 5.5 3s5.5-1.5 5.5-3V11"/>'
+  // Lucide 0.460.0, ISC License, (c) Lucide Contributors 2022, portions (c) Cole Bemis 2013-2022 (Feather, MIT), https://lucide.dev/license
+  const PRE_ICO = {
+    'house': '<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+    'briefcase-business': '<path d="M12 12h.01"/><path d="M16 6V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M22 13a18.15 18.15 0 0 1-20 0"/><rect width="20" height="14" x="2" y="6" rx="2"/>',
+    'graduation-cap': '<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>',
+    'building-2': '<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>',
+    'shopping-cart': '<circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>',
+    'shopping-bag': '<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>',
+    'utensils': '<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>',
+    'coffee': '<path d="M10 2v2"/><path d="M14 2v2"/><path d="M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1"/><path d="M6 2v2"/>',
+    'heart-pulse': '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/>',
+    'dumbbell': '<path d="M14.4 14.4 9.6 9.6"/><path d="M18.657 21.485a2 2 0 1 1-2.829-2.828l-1.767 1.768a2 2 0 1 1-2.829-2.829l6.364-6.364a2 2 0 1 1 2.829 2.829l-1.768 1.767a2 2 0 1 1 2.828 2.829z"/><path d="m21.5 21.5-1.4-1.4"/><path d="M3.9 3.9 2.5 2.5"/><path d="M6.404 12.768a2 2 0 1 1-2.829-2.829l1.768-1.767a2 2 0 1 1-2.828-2.829l2.828-2.828a2 2 0 1 1 2.829 2.828l1.767-1.768a2 2 0 1 1 2.829 2.829z"/>',
+    'landmark': '<line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/>',
+    'plane': '<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>',
+    'train-front': '<path d="M8 3.1V7a4 4 0 0 0 8 0V3.1"/><path d="m9 15-1-1"/><path d="m15 15 1-1"/><path d="M9 19c-2.8 0-5-2.2-5-5v-4a8 8 0 0 1 16 0v4c0 2.8-2.2 5-5 5Z"/><path d="m8 19-2 3"/><path d="m16 19 2 3"/>',
+    'bus-front': '<path d="M4 6 2 7"/><path d="M10 6h4"/><path d="m22 7-2-1"/><rect width="16" height="16" x="4" y="3" rx="2"/><path d="M4 11h16"/><path d="M8 15h.01"/><path d="M16 15h.01"/><path d="M6 19v2"/><path d="M18 21v-2"/>',
+    'car-front': '<path d="m21 8-2 2-1.5-3.7A2 2 0 0 0 15.646 5H8.4a2 2 0 0 0-1.903 1.257L5 10 3 8"/><path d="M7 14h.01"/><path d="M17 14h.01"/><rect width="18" height="8" x="3" y="10" rx="2"/><path d="M5 18v2"/><path d="M19 18v2"/>',
+    'map-pin': '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
+    'users': '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+    'church': '<path d="M10 9h4"/><path d="M12 7v5"/><path d="M14 22v-4a2 2 0 0 0-4 0v4"/><path d="M18 22V5.618a1 1 0 0 0-.553-.894l-4.553-2.277a2 2 0 0 0-1.788 0L6.553 4.724A1 1 0 0 0 6 5.618V22"/><path d="m18 7 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.618a1 1 0 0 1 .553-.894L6 7"/>',
+    'tree-pine': '<path d="m17 14 3 3.3a1 1 0 0 1-.7 1.7H4.7a1 1 0 0 1-.7-1.7L7 14h-.3a1 1 0 0 1-.7-1.7L9 9h-.2A1 1 0 0 1 8 7.3L12 3l4 4.3a1 1 0 0 1-.8 1.7H15l3 3.3a1 1 0 0 1-.7 1.7H17Z"/><path d="M12 22v-3"/>',
+    'star': '<path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/>'
   };
-  const preIcon = k => `<i class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${PRE_IC[k]}</svg></i>`;
+  const icSvg = i => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${PRE_ICO[i]}</svg>`;
+  const preIc = k => Places.presetIcon(pre[k], k);
+  const preIcon = k => `<i class="si">${icSvg(preIc(k))}</i>`;
   const preName = k => (pre[k] && pre[k].n) || t('pre_' + k);
   const preList = q => GEO ? Places.SLOTS.filter(k => pre[k] && pre[k].k && (!q || Places.presetHit(preName(k), q))) : [];
   const preRow = (k, act) => `<button type="button" class="sg st ${act ? 'act' : ''}" data-pre="${k}">${preIcon(k)}<b>${esc(preName(k))}</b><span>${esc(pre[k].l)}</span></button>`;
@@ -646,20 +666,26 @@
     }
     return ptEnd('@pre-' + k, preName(k), [p.lat, p.lon], which);
   }
-  function preSet(k, x) {
-    pre[k] = Object.assign({ n: (pre[k] && pre[k].n) || '' }, x);
+  function preSet(k, x, n) {
+    pre[k] = Object.assign({ n: n !== undefined ? n : (pre[k] && pre[k].n) || '' }, x);
     preSave();
     preEdit = prePick = preMsg = null;
     preShow();
   }
+  const pkNote = L.DomUtil.create('div', 'pknote', map.getContainer());
+  pkNote.hidden = true;
   function preShow() {
     const box = $('#pre');
+    preDraw();
+    pkNote.hidden = !prePick;
+    pkNote.textContent = t('prePickHint');
     if (!preOpen) { box.hidden = true; box.innerHTML = ''; return; }
     box.hidden = false;
     let h = `<button type="button" class="gx" data-pa="x" aria-label="${esc(t('close'))}">×</button><div class="ghead">${esc(t('preTitle'))}</div><p class="gacc">${esc(t('preHint'))}</p>`;
     for (const k of Places.SLOTS) {
       const p = pre[k] || {};
-      h += `<div class="pslot">${preIcon(k)}<div class="pmain"><input class="pname" data-slot="${k}" maxlength="24" value="${esc(preName(k))}" aria-label="${esc(t('preName'))}"><span class="ptgt">${esc(p.k ? p.l : t('preUnset'))}</span></div></div>`;
+      h += `<div class="pslot"><button type="button" class="si picbtn" data-pa="icon" data-slot="${k}" aria-expanded="${preIcOpen === k}" aria-label="${esc(t('preIcon'))}" title="${esc(t('preIcon'))}">${icSvg(preIc(k))}</button><div class="pmain"><input class="pname" data-slot="${k}" maxlength="24" value="${esc(preName(k))}" aria-label="${esc(t('preName'))}"><span class="ptgt">${esc(p.k ? p.l : t('preUnset'))}</span></div></div>`;
+      if (preIcOpen === k) h += `<div class="picgrid" role="group" aria-label="${esc(t('preIcon'))}">${Places.ICONS.map(i => `<button type="button" class="${i === preIc(k) ? 'on' : ''}" data-pa="seticon" data-slot="${k}" data-ic="${i}" aria-pressed="${i === preIc(k)}" aria-label="${esc(t('ic')[i])}" title="${esc(t('ic')[i])}">${icSvg(i)}</button>`).join('')}</div>`;
       h += `<div class="grow pbtns"><button type="button" class="btn sm" data-pa="edit" data-slot="${k}">${esc(t(p.k ? 'preChange' : 'preSet'))}</button>${p.k || p.n ? `<button type="button" class="btn sm" data-pa="del" data-slot="${k}">${esc(t('preDel'))}</button>` : ''}</div>`;
       if (preEdit === k) {
         h += `<div class="pedit"><input type="search" class="pq" placeholder="${esc(t('preSearch'))}" aria-label="${esc(t('preSearch'))}" autocomplete="off"><div class="plist"></div>`;
@@ -685,11 +711,13 @@
     const b = e.target.closest('[data-pa]');
     if (!b) return;
     const a = b.dataset.pa, k = b.dataset.slot || preEdit;
-    if (a === 'x') { preOpen = false; preEdit = prePick = preMsg = null; preShow(); }
+    if (a === 'x') { preOpen = false; preEdit = prePick = preMsg = preIcOpen = null; preShow(); }
+    else if (a === 'icon') { preIcOpen = preIcOpen === k ? null : k; preShow(); }
+    else if (a === 'seticon') { pre[k] = Object.assign(pre[k] || { n: '' }, { i: b.dataset.ic }); preIcOpen = null; preSave(); preShow(); const f = $(`#pre .picbtn[data-slot="${k}"]`); if (f) f.focus(); }
     else if (a === 'edit') { preEdit = preEdit === k ? null : k; prePick = preMsg = null; preShow(); loadPlaces(); loadNet(); const q = $('#pre .pq'); if (q) q.focus(); }
     else if (a === 'del') { delete pre[k]; preSave(); if (preEdit === k) preEdit = prePick = preMsg = null; preShow(); }
-    else if (a === 'cancel') { preEdit = prePick = preMsg = null; preShow(); }
-    else if (a === 'map') { prePick = k; preMsg = null; preShow(); }
+    else if (a === 'cancel') { preEdit = prePick = preMsg = null; preShow(); map.closePopup(); }
+    else if (a === 'map') { prePick = k; preMsg = null; preShow(); if (innerWidth <= 760) $('#map').scrollIntoView({ block: 'nearest' }); }
     else if (a === 'gps') { preMsg = { k: 'geoBusy' }; preShow(); geoOnce(p => preSet(k, { k: 'gps', l: t('preGpsLbl'), lat: p[0], lon: p[1] }), (st, mk, mp) => { if (preEdit !== k) return; preMsg = { k: mk, p: mp }; preShow(); }); }
     else if (a === 'stop') { const g = groups.get(b.dataset.name); if (g) preSet(k, { k: 'stop', l: g.label, lat: g.stops[0].lat, lon: g.stops[0].lon }); }
     else if (a === 'place') { const it = pidx && pidx.items.find(x => x.id === b.dataset.place); if (it) { const c = Places.center(it); preSet(k, { k: 'place', l: Places.label(it, I18N.lang), lat: c[0], lon: c[1] }); } }
@@ -700,14 +728,81 @@
     if (!el.classList.contains('pname')) return;
     const k = el.dataset.slot, v = el.value.trim(), n = v === t('pre_' + k) ? '' : v.slice(0, 24);
     if (pre[k]) pre[k].n = n; else if (n) pre[k] = { n };
-    if (pre[k] && !pre[k].n && !pre[k].k) delete pre[k];
+    if (pre[k] && !pre[k].n && !pre[k].k && !pre[k].i) delete pre[k];
     preSave();
+    const ib = $(`#pre .picbtn[data-slot="${k}"]`);
+    if (ib) ib.innerHTML = icSvg(preIc(k));
+    preDraw();
   });
   document.addEventListener('tb-presets', () => { preOpen = true; preShow(); $('#pre').scrollIntoView({ block: 'nearest' }); });
+  const ptLayer = L.layerGroup().addTo(map);
+  function ptPop(ll, el) {
+    map.closePopup();
+    L.circleMarker(ll, { radius: 9, color: '#fff', weight: 3, fillColor: cssv('--accent'), fillOpacity: 1, interactive: false }).addTo(ptLayer);
+    const pop = L.popup({ autoPanPaddingTopLeft: [72, 16], autoPanPaddingBottomRight: [72, 56] }).setLatLng(ll).setContent(el).openOn(map);
+    pkNote.hidden = true;
+    pop.on('remove', () => { ptLayer.clearLayers(); pkNote.hidden = !prePick; });
+    return pop;
+  }
+  const preLayer = L.layerGroup().addTo(map);
+  function preFields() {
+    const ks = preList('');
+    for (const w of ['from', 'to']) {
+      const box = $('#' + w + '-pre');
+      box.hidden = !ks.length;
+      box.parentNode.classList.toggle('haspre', !!ks.length);
+      box.parentNode.style.setProperty('--pn', ks.length);
+      box.innerHTML = ks.map(k => `<button type="button" data-pre="${k}" aria-label="${esc(preName(k))}" title="${esc(preName(k))}">${icSvg(preIc(k))}</button>`).join('');
+    }
+  }
+  for (const w of ['from', 'to']) $('#' + w + '-pre').addEventListener('click', e => {
+    const b = e.target.closest('[data-pre]');
+    if (!b || !pre[b.dataset.pre]) return;
+    if (mode !== 'plan') setMode('plan', true);
+    chooseEnd(w, preEnd(b.dataset.pre, w), true);
+  });
+  function preDraw() {
+    preLayer.clearLayers();
+    preFields();
+    if (!GEO) return;
+    for (const k of Places.SLOTS) {
+      const p = pre[k];
+      if (!p || !p.k) continue;
+      const m = L.marker([p.lat, p.lon], { icon: L.divIcon({ className: 'premk', html: icSvg(preIc(k)), iconSize: [32, 32], iconAnchor: [16, 16] }), title: preName(k), keyboard: false, zIndexOffset: 500 }).addTo(preLayer);
+      m.on('click', e => { L.DomEvent.stop(e); if (prePick) prePickAt(p.lat, p.lon); else prePop(k); });
+    }
+  }
+  function prePop(k) {
+    const p = pre[k], el = document.createElement('div');
+    el.className = 'gpop';
+    el.innerHTML = `<b>${esc(preName(k))}</b><span>${esc(p.l)}</span><div class="grow"><button type="button" class="btn sm" data-w="from">${esc(t('mapFrom'))}</button><button type="button" class="btn sm" data-w="to">${esc(t('mapTo'))}</button></div>`;
+    const pop = L.popup({ offset: [0, -10], autoPanPaddingTopLeft: [72, 16], autoPanPaddingBottomRight: [72, 56] }).setLatLng([p.lat, p.lon]).setContent(el).openOn(map);
+    el.addEventListener('click', ev => {
+      const b = ev.target.closest('[data-w]');
+      if (!b) return;
+      map.closePopup(pop);
+      if (mode !== 'plan') setMode('plan', true);
+      chooseEnd(b.dataset.w, preEnd(k, b.dataset.w));
+    });
+  }
   function prePickAt(lat, lon, stop) {
-    const k = prePick;
-    if (stop) { const g = stopGroup.get(stop.id); preSet(k, { k: 'stop', l: g ? g.label : stop.name, lat: stop.lat, lon: stop.lon }); }
-    else preSet(k, { k: 'map', l: t('preMapPt'), lat, lon });
+    const k = prePick, g = stop && stopGroup.get(stop.id);
+    const x = stop ? { k: 'stop', l: g ? g.label : stop.name, lat: stop.lat, lon: stop.lon } : { k: 'map', l: t('preMapPt'), lat, lon };
+    const el = document.createElement('div');
+    el.className = 'gpop';
+    el.innerHTML = `<b>${esc(x.l)}</b><input class="pname" maxlength="24" value="${esc(preName(k))}" aria-label="${esc(t('preName'))}"><div class="grow"><button type="button" class="btn sm" data-pp="save">${esc(t('preSave'))}</button><button type="button" class="btn sm" data-pp="cancel">${esc(t('preCancel'))}</button></div>`;
+    const pop = ptPop([x.lat, x.lon], el), inp = el.querySelector('input');
+    const save = () => {
+      const v = inp.value.trim();
+      map.closePopup(pop);
+      preSet(k, x, v === t('pre_' + k) ? '' : v.slice(0, 24));
+    };
+    inp.addEventListener('keydown', ev => { if (ev.key === 'Enter') save(); });
+    el.addEventListener('click', ev => {
+      const b = ev.target.closest('[data-pp]');
+      if (!b) return;
+      if (b.dataset.pp === 'save') save(); else map.closePopup(pop);
+    });
   }
   if (GEO) {
     map.on('click', e => { if (prePick) prePickAt(e.latlng.lat, e.latlng.lng); });
@@ -716,7 +811,7 @@
       const el = document.createElement('div');
       el.className = 'gpop';
       el.innerHTML = `<b>${esc(t('preMapPt'))}</b><div class="grow"><button type="button" class="btn sm" data-w="from">${esc(t('mapFrom'))}</button><button type="button" class="btn sm" data-w="to">${esc(t('mapTo'))}</button></div>`;
-      const pop = L.popup({ autoPanPaddingTopLeft: [72, 16], autoPanPaddingBottomRight: [72, 56] }).setLatLng(e.latlng).setContent(el).openOn(map);
+      const pop = ptPop(e.latlng, el);
       el.addEventListener('click', ev => {
         const b = ev.target.closest('[data-w]');
         if (!b) return;
@@ -825,16 +920,25 @@
       chooseEl(which, b);
     });
   }
+  for (const b of document.querySelectorAll('.fclr')) {
+    b.addEventListener('mousedown', e => e.preventDefault());
+    b.addEventListener('click', () => {
+      const inp = $('#' + b.dataset.for);
+      inp.value = '';
+      inp.focus();
+      inp.dispatchEvent(new Event('input'));
+    });
+  }
   const chooseEl = (which, b) => b.dataset.pre ? chooseEnd(which, preEnd(b.dataset.pre, which)) : b.dataset.place ? choose(which, null, pidx.items.find(x => x.id === b.dataset.place)) : choose(which, b.dataset.name);
   function choose(which, name, it) {
     chooseEnd(which, it ? placeEnd(it, which) : groups.get(name));
   }
-  function chooseEnd(which, e) {
+  function chooseEnd(which, e, quiet) {
     setEnd(which, e);
     $('#' + which + '-sugg').hidden = true;
     restyle();
     if (plan.from && plan.to) runPlan();
-    else { showPlan(); const g = plan[which]; if (g) map.panTo(g.pt ? [g.pt.lat, g.pt.lon] : [g.stops[0].lat, g.stops[0].lon]); $('#' + (which === 'from' ? 'to' : 'from')).focus(); }
+    else { showPlan(); const g = plan[which]; if (g) map.panTo(g.pt ? [g.pt.lat, g.pt.lon] : [g.stops[0].lat, g.stops[0].lon]); if (!quiet) $('#' + (which === 'from' ? 'to' : 'from')).focus(); }
   }
   function resolveTyped(which) {
     if (plan[which]) return;
