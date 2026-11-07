@@ -745,8 +745,25 @@
     return pop;
   }
   const preLayer = L.layerGroup().addTo(map);
+  function preFields() {
+    const ks = preList('');
+    for (const w of ['from', 'to']) {
+      const box = $('#' + w + '-pre');
+      box.hidden = !ks.length;
+      box.parentNode.classList.toggle('haspre', !!ks.length);
+      box.parentNode.style.setProperty('--pn', ks.length);
+      box.innerHTML = ks.map(k => `<button type="button" data-pre="${k}" aria-label="${esc(preName(k))}" title="${esc(preName(k))}">${icSvg(preIc(k))}</button>`).join('');
+    }
+  }
+  for (const w of ['from', 'to']) $('#' + w + '-pre').addEventListener('click', e => {
+    const b = e.target.closest('[data-pre]');
+    if (!b || !pre[b.dataset.pre]) return;
+    if (mode !== 'plan') setMode('plan', true);
+    chooseEnd(w, preEnd(b.dataset.pre, w), true);
+  });
   function preDraw() {
     preLayer.clearLayers();
+    preFields();
     if (!GEO) return;
     for (const k of Places.SLOTS) {
       const p = pre[k];
@@ -907,12 +924,12 @@
   function choose(which, name, it) {
     chooseEnd(which, it ? placeEnd(it, which) : groups.get(name));
   }
-  function chooseEnd(which, e) {
+  function chooseEnd(which, e, quiet) {
     setEnd(which, e);
     $('#' + which + '-sugg').hidden = true;
     restyle();
     if (plan.from && plan.to) runPlan();
-    else { showPlan(); const g = plan[which]; if (g) map.panTo(g.pt ? [g.pt.lat, g.pt.lon] : [g.stops[0].lat, g.stops[0].lon]); $('#' + (which === 'from' ? 'to' : 'from')).focus(); }
+    else { showPlan(); const g = plan[which]; if (g) map.panTo(g.pt ? [g.pt.lat, g.pt.lon] : [g.stops[0].lat, g.stops[0].lon]); if (!quiet) $('#' + (which === 'from' ? 'to' : 'from')).focus(); }
   }
   function resolveTyped(which) {
     if (plan[which]) return;

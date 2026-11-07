@@ -27,6 +27,7 @@ Aktualizováno: 2026-11-07
 | UX-001 | Předvolby Domů / Práce / Škola pro Odkud a Kam (Pro později) | ANDROID | P2 | REVIEW | MAP-001 | 2026-11-07 |
 | UX-002 | Našeptávač u pole Kam je na telefonu schovaný pod klávesnicí | SHARED | P2 | REVIEW | – | 2026-11-07 |
 | UX-003 | Ikony předvoleb (20 ikon Lucide, výběr, zobrazení na mapě) | ANDROID | P2 | REVIEW | UX-001 | 2026-11-07 |
+| UX-004 | Ikony předvoleb přímo v polích Odkud / Kam | ANDROID | P2 | REVIEW | UX-003 | 2026-11-07 |
 | POI-001 | Vlastní body na mapě, použitelné v Odkud a Kam (Pro) | ANDROID | P2 | BACKLOG | CORE-007 | 2026-11-07 |
 | AND-007 | Promo kódy z Play Console pro přispěvatele Ko-fi | ANDROID | P3 | BACKLOG | AND-005 | 2026-11-07 |
 | MKT-001 | Reklamy pro neplatící uživatele aplikace | ANDROID | P3 | BACKLOG | AND-005, SEO-003 | 2026-11-07 |
@@ -127,6 +128,15 @@ Aktualizováno: 2026-11-07
   - [x] web beze změny (žádné značky ani karta, bez chyb v konzoli)
   - [ ] naplánování trasy z popupu značky (na emulátoru nešlo ověřit: Avast zachytává HTTPS na `pt.tirana.al`, emulátor jeho certifikátu nevěří) · [ ] reálný telefon (uživatel)
 - Poznámky: D-030. Ikony vložené jako SVG v `app.js` (bez knihovny), licence ISC uvedena u nich. Opraveno: ve vlastních stylech Leafletu chybělo `pointer-events` pro klikací značky (`.leaflet-marker-icon.leaflet-interactive`).
+
+### UX-004 Ikony předvoleb v polích Odkud / Kam
+- Oblast: plánovač, UI · ANDROID (předvolby jsou jen v aplikaci, D-029, D-031) · P2 · REVIEW
+- Popis: nastavené předvolby (max. 3) se zobrazují jako ikony vpravo uvnitř polí Odkud a Kam (`#from-pre`, `#to-pre`), text pole se zkrátí o jejich šířku (`.field.haspre`, `--pn`). Při aktivaci pole (`:focus`) se ikony u něj skryjí a pole má celou šířku, po opuštění se vrátí; každé pole zvlášť. Klepnutí na ikonu vyplní pole stejně jako výběr v našeptávači (`chooseEnd` + `preEnd`), ale nepřesune kurzor do druhého pole. Bez předvoleb beze změny.
+- Kritéria:
+  - [x] prohlížeč v režimu aplikace (`APP_VERSION` vložené lokálním serverem, 375 px i desktop, světlý i tmavý režim): 0 / 1 / 2 / 3 předvolby (odsazení 14 / 44 / 78 / 112 px), dlouhý text se zkrátí, klepnutí do Odkud skryje jen jeho ikony a otevře našeptávač, po opuštění se vrátí; ikona Kam vyplní „Fitko“ bez fokusu, ikona Odkud pak spustí vyhledání (5 spojení Domů → Fitko, značky předvoleb na mapě)
+  - [x] web beze změny i s uloženými předvolbami, bez chyb v konzoli; Node testy 28/28 (1 `todo` BUG-002)
+  - [ ] emulátor (nenačte data, Avast zachytává HTTPS na `pt.tirana.al`) · [ ] reálný telefon (uživatel)
+- Poznámky: D-031.
 
 ### BUG-001 Cena RT
 - SHARED · P2 · READY

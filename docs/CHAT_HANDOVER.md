@@ -40,5 +40,6 @@ Jen **aktuálně rozpracované** úkoly. Po dokončení úkolu jeho sekci smaž 
 - Chat: 03 Android · Větev: `feat/UX-003-ikony` (nad `fix/UX-001-bod-na-mape`) · Aktualizováno: 2026-11-07
 - Hotovo: implementace, Node testy, emulátor API 36 (bez plánování trasy, viz TASKS), web beze změny.
 - Testovací APK: `android/out/TiranaBus-1.9-ikony.apk` (`versionCode` 22).
+- Obsahuje i UX-004 (ikony v polích Odkud / Kam). Testovací APK: `android/out/TiranaBus-1.9-pole.apk` (`versionCode` 23).
 - Zbývá: PR po sloučení `fix/UX-001-bod-na-mape`; test na telefonu (uživatel).
 - Další krok: výsledky od uživatele → UX-003 DONE.

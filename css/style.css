@@ -142,6 +142,13 @@ header {
 .field input::placeholder, .search input::placeholder { color: var(--muted); font-weight: 400; }
 .field input:focus, .search input:focus, .sel:focus-within { border-color: var(--navy); box-shadow: 0 0 0 3px color-mix(in srgb, var(--navy) 16%, transparent); }
 .field .pin { position: absolute; left: 11px; top: 9px; }
+.field.haspre input { padding-right: calc(var(--pn) * 34px + 10px); }
+.field.haspre input:focus { padding-right: 14px; }
+.fpre { position: absolute; right: 5px; top: 4px; display: flex; gap: 0; }
+.fpre[hidden], .field input:focus ~ .fpre { display: none; }
+.fpre button { width: 34px; height: 34px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 9px; background: none; color: var(--navy); cursor: pointer; }
+.fpre button:hover, .fpre button:focus-visible { background: var(--soft); }
+.fpre svg { width: 20px; height: 20px; }
 .pin { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; font: 700 13px/1 var(--ui); flex: none; }
 .pin.a { background: var(--accent); color: var(--accent-ink); }
 .pin.b { background: var(--navy); color: var(--navy-ink); }
