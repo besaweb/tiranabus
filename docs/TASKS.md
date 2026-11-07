@@ -10,11 +10,9 @@ Aktualizováno: 2026-11-07
 |---|---|---|---|---|---|---|
 | BUG-002 | Plánovač vrací spojení začínající před zadaným časem | SHARED | P1 | READY | – | 2026-11-07 |
 | CORE-003 | Android jako Gradle projekt | ANDROID | P0 | REVIEW | – | 2026-11-07 |
-| AND-001 | Target API 36 + AAB pro Google Play | ANDROID | P0 | REVIEW | CORE-003 | 2026-11-07 |
 | AND-002 | Bezpečné podepisování: heslo mimo skript, záloha keystore, Play App Signing | ANDROID | P0 | REVIEW | – | 2026-11-07 |
 | DATA-001 | Ověřit běh `gtfs-watch` a `pages.yml` | SHARED | P0 | REVIEW | – | 2026-11-07 |
 | GTFS-001 | Feed 2027 (současný končí 31. 12. 2026) | SHARED | P0 | BLOCKED | DATA-001 | 2026-11-07 |
-| AND-003 | Ověřit offline režim na reálném telefonu | ANDROID | P1 | READY | – | 2026-11-07 |
 | CORE-001 | Objekt `PLATFORM` místo `OFFLINE_MAP`/`APP_VERSION` | SHARED | P1 | BACKLOG | TEST-001 | 2026-11-07 |
 | CORE-002 | Explicitní vkládací body pro Android místo `sed` | ANDROID | P1 | BACKLOG | CORE-003 | 2026-11-07 |
 | I18N-001 | Texty Android menu/platnosti/úvodu do `i18n.js` | SHARED | P2 | BACKLOG | TEST-002 | 2026-11-07 |
@@ -24,16 +22,15 @@ Aktualizováno: 2026-11-07
 | CORE-004 | Jeden seznam souborů pro Pages / FTP / Android | SHARED | P2 | BACKLOG | CORE-003 | 2026-11-07 |
 | CORE-005 | Sjednocená konfigurace jízdného, kurzů, verze a platnosti | SHARED | P2 | BACKLOG | – | 2026-11-07 |
 | BUG-001 | Cena RT: 3 € (tickets) vs. 3,50 € (data) | SHARED | P2 | READY | – | 2026-11-07 |
-| AND-004 | Limit cache dlaždic, robustní kopie mbtiles | ANDROID | P2 | REVIEW | – | 2026-11-07 |
-| AND-005 | Pro verze a licence (Ko-fi kódy, Play Billing) | ANDROID | P2 | BACKLOG | AND-001 | 2026-11-07 |
-| AND-006 | Barvy systémových lišt podle motivu stránky (přepínač v aplikaci vs. systém) | ANDROID | P3 | BACKLOG | AND-001 | 2026-11-07 |
+| AND-005 | Pro verze a licence (Ko-fi kódy, Play Billing) | ANDROID | P2 | BACKLOG | – | 2026-11-07 |
+| AND-006 | Barvy systémových lišt podle motivu stránky (přepínač v aplikaci vs. systém) | ANDROID | P3 | BACKLOG | – | 2026-11-07 |
 | I18N-002 | Korektury překladů rodilými mluvčími (sq, en prioritně) | SHARED | P2 | BACKLOG | – | 2026-11-07 |
 | GTFS-002 | Varianty tras linek (větve) | SHARED | P2 | BACKLOG | – | 2026-11-07 |
 | GTFS-003 | Libovolné datum v plánovači | SHARED | P2 | BACKLOG | – | 2026-11-07 |
 | GTFS-004 | `fare_*` a odkazy na PDF řády (`timetable_pages.txt`) | SHARED | P3 | BACKLOG | – | 2026-11-07 |
 | DATA-002 | Skript pro přegenerování `data/gtfs-extra.zip` | SHARED | P3 | BACKLOG | – | 2026-11-07 |
 | DATA-003 | Kontrola stránky Luna v hlídání feedu | SHARED | P3 | BACKLOG | DATA-001 | 2026-11-07 |
-| WEB-002 | Odznak Google Play jako odkaz na aplikaci | WEB | P3 | BLOCKED | AND-001 | 2026-11-07 |
+| WEB-002 | Odznak Google Play jako odkaz na aplikaci | WEB | P3 | BLOCKED | publikace v Play | 2026-11-07 |
 | SEO-002 | Stránky zastávek (493 × 12), schema.org pro linky | WEB | P3 | BACKLOG | – | 2026-11-07 |
 
 ## Detail
@@ -49,19 +46,10 @@ Aktualizováno: 2026-11-07
 - Popis: nahradit ruční `android/build.sh` minimálním Gradle projektem (bez Kotlinu, stávající `MainActivity.java`), který při buildu zkopíruje web do `assets` stejně jako dnes.
 - Kritéria:
   - [x] `./gradlew apk` a `aab` fungují na Windows · [ ] Linux/CI neověřeno
-  - [x] výsledné APK shodné s dnešním: `assets` stejné bajt po bajtu (kromě konců řádků), certifikát SHA-256 `0354…0d92` shodný; emulátor API 36: start, feed, offline mapa, menu · [ ] zbytek checklistu `testing/README.md` (režim letadlo, externí odkazy, Zpět)
+  - [x] výsledné APK shodné s dnešním: `assets` stejné bajt po bajtu (kromě konců řádků), certifikát SHA-256 `0354…0d92` shodný; emulátor API 36: start, feed, offline mapa, menu · [x] zbytek checklistu na Samsung Galaxy S21 (7. 11. 2026, hlášeno uživatelem: vše v pořádku, vč. režimu letadlo, okrajů, Zpět)
   - [x] podpis stejným klíčem (`adb install -r` přes stávající instalaci proběhl)
   - [x] heslo z `keystore.properties` / `TB_KS_PASS`
-- Poznámky: rozhodnutí D-018, D-023. `build.sh` odstraněn. Zbývá: CI na Linuxu (workflow `android.yml`?), zbytek checklistu a PR.
-
-### AND-001 Target API 36 + AAB
-- ANDROID · P0 · REVIEW
-- Popis: Google Play od 31. 8. 2026 vyžaduje pro nové aplikace i aktualizace target API 36; nové aplikace jako AAB.
-- Kritéria:
-  - [x] `targetSdk 36` (`aapt2 dump badging`: `targetSdkVersion:'36'`)
-  - [x] emulátor API 36: edge-to-edge (nativní odsazení o systémové lišty a klávesnici, hlavička už nepřekrývá status bar), WebView, Zpět (`OnBackInvokedCallback`: vrací historii, na hlavní stránce ukončí), externí odkaz otevře Chrome a Zpět vrátí do aplikace, tmavý systémový režim · [ ] na reálném telefonu (AND-003)
-  - [x] `bundleRelease` projde, `jarsigner -verify` OK · [x] `bundletool validate` (1.18.3, 7. 11. 2026) bez chyb, manifest v AAB: min 24, target 36
-- Poznámky: změny v `MainActivity.java`, `AndroidManifest.xml` (`enableOnBackInvokedCallback`), téma `AppTheme` v `res/values*/`. D-024. Zbývá: PR a reálný telefon (AND-003). Zapnutí Play App Signing až při prvním nahrání AAB (D-022).
+- Poznámky: rozhodnutí D-018, D-023. `build.sh` odstraněn. Zbývá jen Linux/CI (build Gradle v GitHub Actions, navrhnout samostatný úkol).
 
 ### AND-002 Bezpečné podepisování
 - ANDROID · P0 · READY
@@ -76,15 +64,6 @@ Aktualizováno: 2026-11-07
 ### WEB-001 Bezpečný FTP deploy
 - WEB (FTP jen pro web) · P1 · READY
 - Kritéria: `deploy-ftp.sh` odmítne běžet mimo `main`, s necommitovanými změnami nebo za `origin/main`.
-
-### AND-004 Cache dlaždic a kopie mbtiles
-- ANDROID · P2 · REVIEW
-- Popis: cache `cacheDir/ext` neměla limit, platnost ani bezpečný klíč (`hashCode` + délka URL mohl splynout, špatná dlaždice); kopie `tirana.mbtiles` se zapisovala rovnou do cíle a po chybě se zkoušela při každé dlaždici.
-- Kritéria:
-  - [x] klíč SHA-256, limit 100 MB, platnost 30 dní se zálohou offline, úklid starých názvů a `.tmp` (`DiskCache`, test v Javě na počítači: 12 kontrol OK)
-  - [x] kopie mbtiles přes `.tmp` + `rename`, marker verze, ověření databáze, jeden pokus o obnovu, pauza 60 s; emulátor API 36 (debug build): čistá kopie, zkrácený soubor (1 000 B) obnoven, marker `0:1` vynutí překopírování, bez pádů
-  - [ ] cache externích dlaždic ověřena v emulátoru end-to-end (stahování blokuje Avast, ověřeno jen jednotkovým testem) · [ ] telefon (AND-003)
-- Poznámky: D-025. `DiskCache` nemá Android závislosti. Zbývá: PR.
 
 ### BUG-001 Cena RT
 - SHARED · P2 · READY
@@ -101,7 +80,7 @@ Aktualizováno: 2026-11-07
 - Inter z Google Fonts; offline (APK bez cache) systémové písmo.
 - Z `file://` nefunguje OSM podklad; v náhledu artefaktu se podklad nemusí načíst.
 - Ukázková síť se s letištním doplňkem neslučuje.
-- APK: offline režim a dlaždice ověřeny jen v emulátoru (AND-003); cache dlaždic má limit a platnost (AND-004), ale na telefonu neověřeno.
+- APK: ověřeno na emulátoru API 36 a Samsung Galaxy S21 (7. 11. 2026, výsledek od uživatele bez podrobností o verzi Androidu); build na Linuxu/CI zatím ne.
 - Překlady všech jazyků strojové, bez korektury (I18N-002). Kurzy měn pevné (ručně aktualizovat).
 - Jízdné 40 lekë dodal uživatel bez zdroje – ověřit (tirana.al).
 
@@ -112,4 +91,7 @@ Aktualizováno: 2026-11-07
 | DOC-001 | Dokumentační struktura `docs/`, nový CLAUDE.md | 2026-11-07 | PR #3 |
 | TEST-001 | Testy v Node + CI na Pull Requestech (CI zelené) | 2026-11-07 | PR #4 |
 | TEST-002 | Kontrola úplnosti překladů (12 jazyků, i Android slovníky) | 2026-11-07 | PR #4 |
+| AND-001 | Target API 36, edge-to-edge a Zpět v obálce, AAB (`bundletool validate` OK; emulátor API 36 a Samsung S21) | 2026-11-07 | PR #8 |
+| AND-003 | Offline režim ověřen na reálném telefonu (Samsung Galaxy S21, APK 1.8-test, checklist `testing/README.md`) | 2026-11-07 | – |
+| AND-004 | `DiskCache` (limit 100 MB, platnost 30 dní, SHA-256) a robustní kopie mbtiles | 2026-11-07 | PR #9 |
 | – | Práce do 6. 11. 2026 | – | viz `releases/history-2026-11.md` |
