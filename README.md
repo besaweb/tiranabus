@@ -2,6 +2,8 @@
 
 Prototyp mapy městské dopravy v Tiraně nad GTFS feedem: linky, zastávky, odjezdy a vyhledání spojení.
 
+Vývojová dokumentace (architektura, úkoly, rozhodnutí, testování) je ve složce [`docs/`](docs/), pravidla pro Claude Code v `CLAUDE.md`.
+
 ## Spuštění
 
 Otevři `index.html` v prohlížeči. Podklad OpenStreetMap funguje jen přes web server:
@@ -53,7 +55,7 @@ Městský feed letiště neobsahuje, protože Rinas leží mimo území Tirany a
 
 Web běží na https://tiranabus.al (nahrání: `bash deploy-ftp.sh`, údaje v `.ftp.env` mimo git) a na GitHub Pages.
 
-Ve složce `android/` je WebView obálka. `bash android/build.sh` (Git Bash, Android SDK a Android Studio JBR) vytvoří `android/out/TiranaBus.apk`, bez Gradle. APK obsahuje web, knihovny a lokální `gtfs.zip`, při startu zkusí stáhnout čerstvý feed z GitHub Pages. Mapové dlaždice potřebují internet. Instalace: nahrát APK do telefonu a povolit instalaci z neznámých zdrojů. Klíč `android/tirana-bus.keystore` je mimo git, bez něj nejde aplikaci aktualizovat.
+Ve složce `android/` je WebView obálka. `bash android/build.sh` (Git Bash, Android SDK a Android Studio JBR) vytvoří `android/out/TiranaBus.apk`, bez Gradle. APK obsahuje web, knihovny a lokální `gtfs.zip`, při startu zkusí stáhnout čerstvý feed z GitHub Pages. Obsahuje offline vektorovou mapu Tirany (`android/map/tirana.mbtiles`); ostatní podklady se při prohlížení ukládají do mezipaměti. Instalace: nahrát APK do telefonu a povolit instalaci z neznámých zdrojů. Klíč `android/tirana-bus.keystore` je mimo git, bez něj nejde aplikaci aktualizovat.
 
 ## Parametry plánovače (`js/gtfs-core.js`)
 
