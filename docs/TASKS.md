@@ -24,7 +24,7 @@ Aktualizováno: 2026-11-07
 | CORE-004 | Jeden seznam souborů pro Pages / FTP / Android | SHARED | P2 | BACKLOG | CORE-003 | 2026-11-07 |
 | CORE-005 | Sjednocená konfigurace jízdného, kurzů, verze a platnosti | SHARED | P2 | BACKLOG | – | 2026-11-07 |
 | BUG-001 | Cena RT: 3 € (tickets) vs. 3,50 € (data) | SHARED | P2 | READY | – | 2026-11-07 |
-| AND-004 | Limit cache dlaždic, robustní kopie mbtiles | ANDROID | P2 | BACKLOG | – | 2026-11-07 |
+| AND-004 | Limit cache dlaždic, robustní kopie mbtiles | ANDROID | P2 | REVIEW | – | 2026-11-07 |
 | AND-005 | Pro verze a licence (Ko-fi kódy, Play Billing) | ANDROID | P2 | BACKLOG | AND-001 | 2026-11-07 |
 | AND-006 | Barvy systémových lišt podle motivu stránky (přepínač v aplikaci vs. systém) | ANDROID | P3 | BACKLOG | AND-001 | 2026-11-07 |
 | I18N-002 | Korektury překladů rodilými mluvčími (sq, en prioritně) | SHARED | P2 | BACKLOG | – | 2026-11-07 |
@@ -77,6 +77,15 @@ Aktualizováno: 2026-11-07
 - WEB (FTP jen pro web) · P1 · READY
 - Kritéria: `deploy-ftp.sh` odmítne běžet mimo `main`, s necommitovanými změnami nebo za `origin/main`.
 
+### AND-004 Cache dlaždic a kopie mbtiles
+- ANDROID · P2 · REVIEW
+- Popis: cache `cacheDir/ext` neměla limit, platnost ani bezpečný klíč (`hashCode` + délka URL mohl splynout, špatná dlaždice); kopie `tirana.mbtiles` se zapisovala rovnou do cíle a po chybě se zkoušela při každé dlaždici.
+- Kritéria:
+  - [x] klíč SHA-256, limit 100 MB, platnost 30 dní se zálohou offline, úklid starých názvů a `.tmp` (`DiskCache`, test v Javě na počítači: 12 kontrol OK)
+  - [x] kopie mbtiles přes `.tmp` + `rename`, marker verze, ověření databáze, jeden pokus o obnovu, pauza 60 s; emulátor API 36 (debug build): čistá kopie, zkrácený soubor (1 000 B) obnoven, marker `0:1` vynutí překopírování, bez pádů
+  - [ ] cache externích dlaždic ověřena v emulátoru end-to-end (stahování blokuje Avast, ověřeno jen jednotkovým testem) · [ ] telefon (AND-003)
+- Poznámky: D-025. `DiskCache` nemá Android závislosti. Zbývá: PR.
+
 ### BUG-001 Cena RT
 - SHARED · P2 · READY
 - Kritéria: ověřená cena na luna.al, sjednocená v `tickets` textech (`i18n.js`) i `extra-airport.js`, zdroj a datum v `PROJECT_OVERVIEW.md`.
@@ -92,7 +101,7 @@ Aktualizováno: 2026-11-07
 - Inter z Google Fonts; offline (APK bez cache) systémové písmo.
 - Z `file://` nefunguje OSM podklad; v náhledu artefaktu se podklad nemusí načíst.
 - Ukázková síť se s letištním doplňkem neslučuje.
-- APK: offline režim a dlaždice ověřeny jen v emulátoru (AND-003); cache dlaždic bez limitu (AND-004).
+- APK: offline režim a dlaždice ověřeny jen v emulátoru (AND-003); cache dlaždic má limit a platnost (AND-004), ale na telefonu neověřeno.
 - Překlady všech jazyků strojové, bez korektury (I18N-002). Kurzy měn pevné (ručně aktualizovat).
 - Jízdné 40 lekë dodal uživatel bez zdroje – ověřit (tirana.al).
 
