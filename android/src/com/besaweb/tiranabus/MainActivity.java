@@ -2,6 +2,7 @@ package com.besaweb.tiranabus;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -46,10 +47,19 @@ public class MainActivity extends Activity {
 
   WebView web;
   SQLiteDatabase tiles;
+  long tilesFailed;
+  DiskCache ext;
 
   @Override
   protected void onCreate(Bundle b) {
     super.onCreate(b);
+    ext = new DiskCache(new File(getCacheDir(), "ext"), 100L << 20, 30L * 86400000L);
+    new Thread(new Runnable() {
+      @Override
+      public void run() {
+        ext.trim();
+      }
+    }).start();
     web = new WebView(this);
     FrameLayout root = new FrameLayout(this);
     root.addView(web, new FrameLayout.LayoutParams(-1, -1));
@@ -109,21 +119,84 @@ public class MainActivity extends Activity {
     web.loadUrl("https://" + HOST + "/index.html");
   }
 
-  SQLiteDatabase db() {
-    if (tiles != null) return tiles;
+  @SuppressWarnings("deprecation")
+  String mapVersion() throws Exception {
+    long len = -1;
     try {
-      File f = new File(getFilesDir(), "tirana.mbtiles");
-      InputStream in = getAssets().open("map/tirana.mbtiles");
-      if (!f.exists() || f.length() != in.available()) {
-        FileOutputStream o = new FileOutputStream(f);
+      AssetFileDescriptor fd = getAssets().openFd("map/tirana.mbtiles");
+      len = fd.getLength();
+      fd.close();
+    } catch (Exception e) {}
+    return getPackageManager().getPackageInfo(getPackageName(), 0).versionCode + ":" + len;
+  }
+
+  String read(File f) {
+    try {
+      FileInputStream in = new FileInputStream(f);
+      try {
+        byte[] d = new byte[(int) f.length()];
+        int o = 0, n;
+        while (o < d.length && (n = in.read(d, o, d.length - o)) > 0) o += n;
+        return new String(d, 0, o, "UTF-8");
+      } finally {
+        in.close();
+      }
+    } catch (Exception e) {
+      return "";
+    }
+  }
+
+  void copyMap(File f, File v, String ver) throws Exception {
+    File t = new File(f.getPath() + ".tmp");
+    InputStream in = getAssets().open("map/tirana.mbtiles");
+    try {
+      FileOutputStream o = new FileOutputStream(t);
+      try {
         byte[] buf = new byte[65536];
         int n;
         while ((n = in.read(buf)) > 0) o.write(buf, 0, n);
+        o.getFD().sync();
+      } finally {
         o.close();
       }
+      f.delete();
+      if (!t.renameTo(f)) throw new Exception("rename");
+      FileOutputStream m = new FileOutputStream(v);
+      m.write(ver.getBytes("UTF-8"));
+      m.close();
+    } catch (Exception e) {
+      t.delete();
+      throw e;
+    } finally {
       in.close();
-      tiles = SQLiteDatabase.openDatabase(f.getPath(), null, SQLiteDatabase.OPEN_READONLY);
+    }
+  }
+
+  SQLiteDatabase db() {
+    if (tiles != null) return tiles;
+    if (System.currentTimeMillis() - tilesFailed < 60000) return null;
+    File f = new File(getFilesDir(), "tirana.mbtiles"), v = new File(getFilesDir(), "tirana.mbtiles.ver");
+    try {
+      String want = mapVersion();
+      for (int i = 0; i < 2 && tiles == null; i++) {
+        try {
+          if (!f.exists() || !want.equals(read(v))) copyMap(f, v, want);
+          SQLiteDatabase d = SQLiteDatabase.openDatabase(f.getPath(), null, SQLiteDatabase.OPEN_READONLY);
+          Cursor c = d.rawQuery("SELECT 1 FROM tiles LIMIT 1", null);
+          boolean ok = c.moveToFirst();
+          c.close();
+          if (!ok) {
+            d.close();
+            throw new Exception("empty");
+          }
+          tiles = d;
+        } catch (Exception e) {
+          f.delete();
+          v.delete();
+        }
+      }
     } catch (Exception e) {}
+    if (tiles == null) tilesFailed = System.currentTimeMillis();
     return tiles;
   }
 
@@ -138,8 +211,11 @@ public class MainActivity extends Activity {
       Cursor c = d.rawQuery("SELECT tile_data FROM tiles WHERE zoom_level=? AND tile_column=? AND tile_row=?",
         new String[] { "" + z, "" + x, "" + ((1 << z) - 1 - y) });
       byte[] b = null;
-      if (c.moveToFirst()) b = c.getBlob(0);
-      c.close();
+      try {
+        if (c.moveToFirst()) b = c.getBlob(0);
+      } finally {
+        c.close();
+      }
       if (b == null) return new WebResourceResponse("application/x-protobuf", null, 404, "Not Found", hd, new ByteArrayInputStream(new byte[0]));
       InputStream in = new ByteArrayInputStream(b);
       if (b.length > 2 && (b[0] & 0xff) == 0x1f && (b[1] & 0xff) == 0x8b) in = new GZIPInputStream(in);
@@ -193,21 +269,14 @@ public class MainActivity extends Activity {
   WebResourceResponse external(Uri u) {
     String url = u.toString();
     if (!url.startsWith("https://")) return null;
-    File f = new File(new File(getCacheDir(), "ext"), Integer.toHexString(url.hashCode()) + "_" + url.length());
     String h = u.getHost();
     String mime = h.contains("googleapis") ? "text/css" : h.contains("gstatic") ? "font/woff2" : url.contains("opentopomap") || url.contains("openstreetmap") || url.contains("arcgisonline") ? "image/png" : null;
     if (mime == null) return null;
     try {
-      byte[] d = null;
-      if (f.exists()) {
-        FileInputStream in = new FileInputStream(f);
-        d = new byte[(int) f.length()];
-        int o = 0, n;
-        while (o < d.length && (n = in.read(d, o, d.length - o)) > 0) o += n;
-        in.close();
-      } else {
+      byte[] d = ext.get(url, false);
+      if (d == null) {
         d = download(url, 5000, 8000);
-        if (d != null) save(f, d);
+        if (d != null) ext.put(url, d); else d = ext.get(url, true);
       }
       if (d == null) return null;
       Map<String, String> hd = new HashMap<>();
