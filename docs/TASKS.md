@@ -25,6 +25,7 @@ Aktualizováno: 2026-11-07
 | CORE-007 | Oprávnění Pro (`PLATFORM.pro`) a zamykání funkcí | SHARED | P2 | BACKLOG | CORE-001 | 2026-11-07 |
 | MAP-001 | Poloha z GPS na mapě (Pro) | ANDROID | P2 | BACKLOG | CORE-007 | 2026-11-07 |
 | UX-001 | Předvolby Domů / Práce / Škola pro Odkud a Kam (Pro) | ANDROID | P2 | BACKLOG | CORE-007 | 2026-11-07 |
+| UX-002 | Našeptávač u pole Kam je na telefonu schovaný pod klávesnicí | SHARED | P2 | READY | – | 2026-11-07 |
 | POI-001 | Vlastní body na mapě, použitelné v Odkud a Kam (Pro) | ANDROID | P2 | BACKLOG | CORE-007 | 2026-11-07 |
 | AND-007 | Promo kódy z Play Console pro přispěvatele Ko-fi | ANDROID | P3 | BACKLOG | AND-005 | 2026-11-07 |
 | MKT-001 | Reklamy pro neplatící uživatele aplikace | ANDROID | P3 | BACKLOG | AND-005, SEO-003 | 2026-11-07 |
@@ -99,6 +100,12 @@ Aktualizováno: 2026-11-07
 - ANDROID · P3 · BACKLOG (až po Pro funkcích, rozhodnutí 2026-11-07)
 - Popis: reklamy v aplikaci pro uživatele bez Pro; Pro je bez reklam. Způsob (např. AdMob) a souhlas (SEO-003) určit při zahájení. Reklamy na webu zatím nerozhodnuty.
 
+### UX-002 Našeptávač schovaný pod klávesnicí
+- Oblast: plánovač, UI (Chat 02) · SHARED (nalezeno v APK na emulátoru API 36, 1080 × 1920; web na telefonu neověřen) · P2 · READY
+- Popis: při psaní do pole Kam (a Odkud) se seznam návrhů zobrazí pod klávesnicí a stránka se k němu neposune, uživatel návrhy nevidí. Pole Odkud je výš a návrhy jsou na hraně klávesnice.
+- Kritéria: [ ] návrhy jsou při otevřené klávesnici vidět (scroll do výhledu, nebo seznam nad polem) · [ ] ověřeno na webu v prohlížeči (šířka telefonu) i v APK s klávesnicí · [ ] světlý i tmavý režim
+- Poznámky: v APK se po AND-001 odsazuje okno o `ime`, takže pole je nad klávesnicí, ale seznam je pod ním. Chování ověřit nejdřív ve webu (stejný kód).
+
 ### BUG-001 Cena RT
 - SHARED · P2 · READY
 - Kritéria: ověřená cena na luna.al, sjednocená v `tickets` textech (`i18n.js`) i `extra-airport.js`, zdroj a datum v `PROJECT_OVERVIEW.md`.
@@ -129,6 +136,6 @@ Aktualizováno: 2026-11-07
 | AND-003 | Offline režim ověřen na reálném telefonu (Samsung Galaxy S21, APK 1.8-test, checklist `testing/README.md`) | 2026-11-07 | – |
 | CORE-003 | Android jako Gradle projekt (AGP 9.0.0, wrapper, `apk`/`aab`, bez `build.sh`; assets a certifikát shodné s dřívějším APK, telefon Samsung S21) | 2026-11-07 | PR #7 |
 | CORE-006 | Android Gradle build v CI na Linuxu (`android.yml`: debug APK + AAB, kontrola obsahu APK, release bez hesla selže; běh na PR 68 s, na `main` s cache 52 s, Gradle krok 32 s, cache 322 MB) | 2026-11-07 | PR #11 |
-| AND-002 | Heslo keystore mimo skript (`keystore.properties` / `TB_KS_PASS`), záloha keystore mimo počítač (uživatel, 2026-11-07), rozhodnutí o Play App Signing (D-022); starý public hash hesla zůstává v historii gitu (heslo beze změny, rozhodl uživatel) | 2026-11-07 | PR #6 |
+| AND-002 | Heslo keystore mimo skript (`keystore.properties` / `TB_KS_PASS`), záloha keystore mimo počítač (uživatel, 2026-11-07), rozhodnutí o Play App Signing (D-022); heslo keystore změněno 2026-11-07 přes `keytool -storepasswd` (klíč i certifikát SHA-256 `0354…0d92` beze změny, ověřeno podpisem APK), staré heslo z historie gitu je tím k ničemu | 2026-11-07 | PR #6 |
 | AND-004 | `DiskCache` (limit 100 MB, platnost 30 dní, SHA-256) a robustní kopie mbtiles | 2026-11-07 | PR #9 |
 | – | Práce do 6. 11. 2026 | – | viz `releases/history-2026-11.md` |
