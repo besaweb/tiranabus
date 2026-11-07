@@ -83,7 +83,7 @@ Aktualizováno: 2026-11-07
   - [x] sdílená logika `Places.locate`, `Places.inArea`, `Places.nearest`, `Places.AREA` + `tests/geo.test.js` (centrum, okraj, mimo, Praha, neplatné souřadnice, nízká přesnost, řazení, prázdná data, reálný feed offline); všech 493 zastávek uvnitř oblasti
   - [x] emulátor API 36: dotaz na oprávnění až po klepnutí; zamítnutí; trvalé zakázání → „Otevřít nastavení“; vypnuté polohové služby → „Zapnout polohu“; poloha v Praze → „Lokalizace je dostupná pouze v oblasti Tirany“; úspěch na náměstí Skanderbeg (5 zastávek, přesnost ±5 m); „Zobrazit na mapě“, popisek, „Detail zastávky“; opakované spuštění; čerstvá instalace s „Při používání aplikace“; tmavý režim a albánština
   - [x] web beze změny (bez tlačítka a panelu, bez chyb v konzoli), testy Node 24/24 (1 `todo` BUG-002)
-  - [ ] reálný telefon (uživatel) · [ ] Data safety v Play: poloha se zpracovává jen v zařízení (neodesílá se)
+  - [~] reálný telefon (APK 1.9-geo, uživatel 2026-11-07): dotaz na oprávnění a odmítnutí, poloha mimo Tiranu → hláška o oblasti; zbývá trvalé zakázání a nastavení, vypnutá poloha, bez internetu, úspěch v Tiraně · [ ] Data safety v Play: poloha se zpracovává jen v zařízení (neodesílá se)
 - Poznámky: D-028. Vzdálenost je vzdušná a je tak označená. Opravena chyba nalezená testem: při vypnuté poloze WebView vracel starou uloženou polohu, teď se oprávnění WebView při vypnutých službách nepovolí.
 
 ### UX-001 Předvolby Domů / Práce / Škola
