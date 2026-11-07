@@ -60,7 +60,7 @@ Po implementaci: ověřit na všech relevantních platformách · regrese · akt
 
 ## Testy
 
-- `node --test tests/` (potřebuje `gtfs.zip` v kořeni nebo `GTFS_ZIP=cesta`). Běží i v CI na každém PR.
+- `node --test "tests/*.test.js"` (potřebuje `gtfs.zip` v kořeni nebo `GTFS_ZIP=cesta`). Běží i v CI na každém PR.
 - Kalendář/odjezdy/plánovač: navíc čas kolem půlnoci a zítřejší den.
 - UI: prohlížeč (Playwright), světlý i tmavý režim, šířka telefonu.
 - Android: checklist v `docs/testing/README.md`.
