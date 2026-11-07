@@ -8,9 +8,6 @@ Aktualizováno: 2026-11-07
 
 | ID | Název | Pl. | P | Stav | Závisí na | Akt. |
 |---|---|---|---|---|---|---|
-| DOC-001 | Dokumentační struktura `docs/`, nový CLAUDE.md | – | P1 | IN_PROGRESS | – | 2026-11-07 |
-| TEST-001 | Testy v Node + CI na Pull Requestech | SHARED | P1 | REVIEW | – | 2026-11-07 |
-| TEST-002 | Kontrola úplnosti překladů (12 jazyků) | SHARED | P1 | REVIEW | TEST-001 | 2026-11-07 |
 | BUG-002 | Plánovač vrací spojení začínající před zadaným časem | SHARED | P1 | READY | – | 2026-11-07 |
 | CORE-003 | Android jako Gradle projekt | ANDROID | P0 | READY | – | 2026-11-07 |
 | AND-001 | Target API 36 + AAB pro Google Play | ANDROID | P0 | BLOCKED | CORE-003 | 2026-11-07 |
@@ -39,31 +36,6 @@ Aktualizováno: 2026-11-07
 | SEO-002 | Stránky zastávek (493 × 12), schema.org pro linky | WEB | P3 | BACKLOG | – | 2026-11-07 |
 
 ## Detail
-
-### DOC-001 Dokumentační struktura
-- Oblast: dokumentace · Platforma: – · P1 · IN_PROGRESS
-- Popis: rozdělit `HANDOFF.md` a README do `docs/` dle schváleného návrhu, nový `CLAUDE.md`.
-- Akceptační kritéria:
-  - [x] `docs/` se soubory PROJECT_OVERVIEW, ARCHITECTURE, ROADMAP, DECISIONS, TASKS, CHAT_HANDOVER, CHATS, releases/, testing/
-  - [x] každá informace z `HANDOFF.md` dohledatelná v `docs/`
-  - [ ] PR schválen uživatelem a sloučen
-- Historie: 2026-11-07 založeno a zahájeno
-
-### TEST-001 Testy v Node + CI
-- Oblast: testování · SHARED · P1 · READY
-- Popis: `tests/*.test.js` přes vestavěný `node --test` (bez npm): build reálného feedu (počty linek/zastávek), kalendář a půlnoc, odjezdy, plánovač (snapshot regresní sady dotazů), `merge` letiště, `places`. Workflow `tests.yml` na každý PR stáhne `gtfs.zip` z release `tirana-latest`.
-- Akceptační kritéria:
-  - [x] `node --test "tests/*.test.js"` zelené lokálně (20 testů, 1 todo BUG-002)
-  - [x] zelené v CI (`.github/workflows/tests.yml`, PR #4)
-  - [x] regresní sada plánovače 2 × 81 dotazů se snapshotem
-  - [x] `docs/testing/README.md` popisuje spuštění
-- Poznámky: worktree – cesta k feedu přes `GTFS_ZIP`. Testovací den = úterý s nejvíce aktivními službami v platnosti feedu.
-- Historie: 2026-11-07 implementováno, PR
-
-### TEST-002 Úplnost překladů
-- SHARED · P1 · READY · Závisí na TEST-001
-- Kritéria: [x] test selže, pokud kterýkoli z 12 jazyků v `I18N.D` nemá stejnou sadu klíčů nebo parametrů jako `en` · [x] plurály · [x] letištní texty · [x] `android/menu.js`, `validity.js`
-- Historie: 2026-11-07 implementováno spolu s TEST-001.
 
 ### BUG-002 Spojení začíná před zadaným časem
 - Oblast: plánovač · SHARED · P1 · READY
@@ -122,4 +94,7 @@ Aktualizováno: 2026-11-07
 
 | ID | Název | Dokončeno | Release |
 |---|---|---|---|
+| DOC-001 | Dokumentační struktura `docs/`, nový CLAUDE.md | 2026-11-07 | PR #3 |
+| TEST-001 | Testy v Node + CI na Pull Requestech (CI zelené) | 2026-11-07 | PR #4 |
+| TEST-002 | Kontrola úplnosti překladů (12 jazyků, i Android slovníky) | 2026-11-07 | PR #4 |
 | – | Práce do 6. 11. 2026 | – | viz `releases/history-2026-11.md` |
