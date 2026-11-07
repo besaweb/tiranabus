@@ -93,6 +93,7 @@ Aktualizováno: 2026-11-07
   - [x] sdílená logika `Places.presets` (ověření a oříznutí uložených dat) a `Places.presetHit` + `tests/presets.test.js`
   - [x] emulátor API 36 (cs, tmavý režim): menu → karta, přejmenování Práce → Fitko, Domů = zastávka Kombinat (vyhledání), Fitko = aktuální poloha, Škola = bod na mapě; po restartu aplikace uloženo; našeptávač v prázdném poli ukáže všechny tři, „do“ → Domů před zastávkami; Fitko → Domů naplánováno (5 spojení s chůzí); dlouhý stisk → Sem → Fitko → Bod na mapě
   - [x] web beze změny (žádné předvolby, karta ani položka menu), Node testy 27/27 (1 `todo` BUG-002)
+  - [x] oprava po testu na telefonu (uživatel 2026-11-07: „Vybrat na mapě“ uložilo bod hned po klepnutí, bez značky a bez názvu): v režimu výběru klepnutí nebo podržení prstu na mapě či zastávce ukáže značku a popup s polem pro název a tlačítky Uložit / Zrušit, další klepnutí značku přesune; nápověda je v mapě (pod mapou na telefonu nebyla vidět). Ověřeno na emulátoru API 36 (světlý i tmavý režim, klávesnice, přesun, Zrušit, Odsud/Sem beze změny), web beze změny
   - [ ] reálný telefon (uživatel)
 - Poznámky: D-029. Zastávka se po novém feedu dohledá podle názvu, jinak podle souřadnic. Obsahuje i opravu UX-002 pro šířku ≤ 760 px (viz UX-002).
 

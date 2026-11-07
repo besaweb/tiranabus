@@ -514,6 +514,9 @@ header {
 .leaflet-popup-close-button { position: absolute; top: 4px; right: 4px; width: 26px; height: 26px; display: grid; place-items: center; border-radius: 8px; color: var(--muted); font-size: 18px; text-decoration: none; }
 .leaflet-popup-close-button:hover { background: var(--soft); color: var(--fg); }
 .gpop { display: grid; gap: 4px; min-width: 160px; padding-right: 22px; }
+.pknote { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 1000; width: max-content; max-width: calc(100% - 150px); padding: 7px 12px; border-radius: 12px; background: var(--panel); color: var(--fg); box-shadow: var(--shadow); font-size: 13.5px; text-align: center; pointer-events: none; }
+.pknote[hidden] { display: none; }
+.gpop .pname { margin-top: 4px; min-width: 190px; }
 .gpop > span { color: var(--muted); font-size: 12.5px; }
 .gpop .btn { justify-self: start; margin-top: 4px; }
 @keyframes gspin { to { transform: rotate(360deg); } }

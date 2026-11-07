@@ -122,7 +122,7 @@
     }
     for (const s of feed.stops.values()) {
       const m = L.circleMarker([s.lat, s.lon], { renderer, radius: 2, weight: 1.5 });
-      m.on('click', e => { L.DomEvent.stop(e); if (prePick) prePickAt(0, 0, s); else if (mode === 'plan') pickStop(s); else openStop(s); });
+      m.on('click', e => { L.DomEvent.stop(e); if (prePick) prePickAt(s.lat, s.lon, s); else if (mode === 'plan') pickStop(s); else openStop(s); });
       m.bindTooltip(esc(s.name), { direction: 'top', offset: [0, -4] });
       m.addTo(stopLayer);
       markers.set(s.id, { s, m });
@@ -646,14 +646,18 @@
     }
     return ptEnd('@pre-' + k, preName(k), [p.lat, p.lon], which);
   }
-  function preSet(k, x) {
-    pre[k] = Object.assign({ n: (pre[k] && pre[k].n) || '' }, x);
+  function preSet(k, x, n) {
+    pre[k] = Object.assign({ n: n !== undefined ? n : (pre[k] && pre[k].n) || '' }, x);
     preSave();
     preEdit = prePick = preMsg = null;
     preShow();
   }
+  const pkNote = L.DomUtil.create('div', 'pknote', map.getContainer());
+  pkNote.hidden = true;
   function preShow() {
     const box = $('#pre');
+    pkNote.hidden = !prePick;
+    pkNote.textContent = t('prePickHint');
     if (!preOpen) { box.hidden = true; box.innerHTML = ''; return; }
     box.hidden = false;
     let h = `<button type="button" class="gx" data-pa="x" aria-label="${esc(t('close'))}">×</button><div class="ghead">${esc(t('preTitle'))}</div><p class="gacc">${esc(t('preHint'))}</p>`;
@@ -688,8 +692,8 @@
     if (a === 'x') { preOpen = false; preEdit = prePick = preMsg = null; preShow(); }
     else if (a === 'edit') { preEdit = preEdit === k ? null : k; prePick = preMsg = null; preShow(); loadPlaces(); loadNet(); const q = $('#pre .pq'); if (q) q.focus(); }
     else if (a === 'del') { delete pre[k]; preSave(); if (preEdit === k) preEdit = prePick = preMsg = null; preShow(); }
-    else if (a === 'cancel') { preEdit = prePick = preMsg = null; preShow(); }
-    else if (a === 'map') { prePick = k; preMsg = null; preShow(); }
+    else if (a === 'cancel') { preEdit = prePick = preMsg = null; preShow(); map.closePopup(); }
+    else if (a === 'map') { prePick = k; preMsg = null; preShow(); if (innerWidth <= 760) $('#map').scrollIntoView({ block: 'nearest' }); }
     else if (a === 'gps') { preMsg = { k: 'geoBusy' }; preShow(); geoOnce(p => preSet(k, { k: 'gps', l: t('preGpsLbl'), lat: p[0], lon: p[1] }), (st, mk, mp) => { if (preEdit !== k) return; preMsg = { k: mk, p: mp }; preShow(); }); }
     else if (a === 'stop') { const g = groups.get(b.dataset.name); if (g) preSet(k, { k: 'stop', l: g.label, lat: g.stops[0].lat, lon: g.stops[0].lon }); }
     else if (a === 'place') { const it = pidx && pidx.items.find(x => x.id === b.dataset.place); if (it) { const c = Places.center(it); preSet(k, { k: 'place', l: Places.label(it, I18N.lang), lat: c[0], lon: c[1] }); } }
@@ -704,10 +708,33 @@
     preSave();
   });
   document.addEventListener('tb-presets', () => { preOpen = true; preShow(); $('#pre').scrollIntoView({ block: 'nearest' }); });
+  const ptLayer = L.layerGroup().addTo(map);
+  function ptPop(ll, el) {
+    map.closePopup();
+    L.circleMarker(ll, { radius: 9, color: '#fff', weight: 3, fillColor: cssv('--accent'), fillOpacity: 1, interactive: false }).addTo(ptLayer);
+    const pop = L.popup({ autoPanPaddingTopLeft: [72, 16], autoPanPaddingBottomRight: [72, 56] }).setLatLng(ll).setContent(el).openOn(map);
+    pkNote.hidden = true;
+    pop.on('remove', () => { ptLayer.clearLayers(); pkNote.hidden = !prePick; });
+    return pop;
+  }
   function prePickAt(lat, lon, stop) {
-    const k = prePick;
-    if (stop) { const g = stopGroup.get(stop.id); preSet(k, { k: 'stop', l: g ? g.label : stop.name, lat: stop.lat, lon: stop.lon }); }
-    else preSet(k, { k: 'map', l: t('preMapPt'), lat, lon });
+    const k = prePick, g = stop && stopGroup.get(stop.id);
+    const x = stop ? { k: 'stop', l: g ? g.label : stop.name, lat: stop.lat, lon: stop.lon } : { k: 'map', l: t('preMapPt'), lat, lon };
+    const el = document.createElement('div');
+    el.className = 'gpop';
+    el.innerHTML = `<b>${esc(x.l)}</b><input class="pname" maxlength="24" value="${esc(preName(k))}" aria-label="${esc(t('preName'))}"><div class="grow"><button type="button" class="btn sm" data-pp="save">${esc(t('preSave'))}</button><button type="button" class="btn sm" data-pp="cancel">${esc(t('preCancel'))}</button></div>`;
+    const pop = ptPop([x.lat, x.lon], el), inp = el.querySelector('input');
+    const save = () => {
+      const v = inp.value.trim();
+      map.closePopup(pop);
+      preSet(k, x, v === t('pre_' + k) ? '' : v.slice(0, 24));
+    };
+    inp.addEventListener('keydown', ev => { if (ev.key === 'Enter') save(); });
+    el.addEventListener('click', ev => {
+      const b = ev.target.closest('[data-pp]');
+      if (!b) return;
+      if (b.dataset.pp === 'save') save(); else map.closePopup(pop);
+    });
   }
   if (GEO) {
     map.on('click', e => { if (prePick) prePickAt(e.latlng.lat, e.latlng.lng); });
@@ -716,7 +743,7 @@
       const el = document.createElement('div');
       el.className = 'gpop';
       el.innerHTML = `<b>${esc(t('preMapPt'))}</b><div class="grow"><button type="button" class="btn sm" data-w="from">${esc(t('mapFrom'))}</button><button type="button" class="btn sm" data-w="to">${esc(t('mapTo'))}</button></div>`;
-      const pop = L.popup({ autoPanPaddingTopLeft: [72, 16], autoPanPaddingBottomRight: [72, 56] }).setLatLng(e.latlng).setContent(el).openOn(map);
+      const pop = ptPop(e.latlng, el);
       el.addEventListener('click', ev => {
         const b = ev.target.closest('[data-w]');
         if (!b) return;
