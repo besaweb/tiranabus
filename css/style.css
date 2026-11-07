@@ -344,6 +344,7 @@ header {
 .leaflet-grab { cursor: grab; }
 .leaflet-dragging .leaflet-grab, .leaflet-dragging .leaflet-grab .leaflet-interactive { cursor: grabbing; }
 .leaflet-marker-icon, .leaflet-marker-shadow, .leaflet-image-layer, .leaflet-pane > svg path, .leaflet-tile-container { pointer-events: none; }
+.leaflet-marker-icon.leaflet-interactive { pointer-events: auto; }
 .leaflet-bar { overflow: hidden; }
 .leaflet-bar a { display: block; width: 44px; height: 44px; line-height: 44px; text-align: center; text-decoration: none; color: var(--fg); font: 500 24px/44px var(--ui); }
 .leaflet-bar a + a { border-top: 1px solid var(--line); }
@@ -523,6 +524,15 @@ header {
 .pslot { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 10px; margin-top: 6px; }
 .pslot .si { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; background: var(--soft); color: var(--fg); }
 .pslot .si svg { width: 20px; height: 20px; }
+.pslot .picbtn { padding: 0; border: 1px solid transparent; cursor: pointer; }
+.pslot .picbtn:hover, .pslot .picbtn[aria-expanded="true"] { border-color: var(--accent); color: var(--accent); }
+.picgrid { display: grid; grid-template-columns: repeat(4, 44px); gap: 6px; margin: 8px 0 2px 44px; }
+.picgrid button { width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--fg); cursor: pointer; }
+.picgrid button:hover { border-color: var(--muted); }
+.picgrid button.on { border: 2px solid var(--accent); color: var(--accent); }
+.picgrid svg { width: 22px; height: 22px; }
+.premk { display: grid; place-items: center; border: 2px solid var(--accent); border-radius: 50%; background: var(--panel); color: var(--accent); box-shadow: var(--shadow); }
+.premk svg { width: 18px; height: 18px; }
 .pmain { display: grid; gap: 2px; min-width: 0; }
 .pname { width: 100%; padding: 5px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--fg); font: 600 15px var(--ui); }
 .pname:focus { outline: 2px solid color-mix(in srgb, var(--accent) 40%, transparent); outline-offset: 1px; }

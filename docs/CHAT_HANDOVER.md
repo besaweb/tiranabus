@@ -35,3 +35,10 @@ Jen **aktuálně rozpracované** úkoly. Po dokončení úkolu jeho sekci smaž 
 - Testovací APK: `android/out/TiranaBus-1.9-bod.apk` (`versionCode` 21).
 - Zbývá: PR opravy; test na telefonu (uživatel); UX-002 ověřit Chatem 02 na webu na telefonu.
 - Další krok: výsledky od uživatele → UX-001 DONE.
+
+## UX-003 Ikony předvoleb
+- Chat: 03 Android · Větev: `feat/UX-003-ikony` (nad `fix/UX-001-bod-na-mape`) · Aktualizováno: 2026-11-07
+- Hotovo: implementace, Node testy, emulátor API 36 (bez plánování trasy, viz TASKS), web beze změny.
+- Testovací APK: `android/out/TiranaBus-1.9-ikony.apk` (`versionCode` 22).
+- Zbývá: PR po sloučení `fix/UX-001-bod-na-mape`; test na telefonu (uživatel).
+- Další krok: výsledky od uživatele → UX-003 DONE.

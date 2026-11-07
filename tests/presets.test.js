@@ -38,3 +38,23 @@ test('presetHit: začátek názvu nebo slova, bez diakritiky', () => {
   assert.ok(!Places.presetHit('Domů', ''));
   assert.ok(!Places.presetHit('Domů', '  '));
 });
+
+test('presets: ikona se uloží jen ze základní sady', () => {
+  const p = Places.presets({ home: { i: 'coffee' }, work: { n: 'X', i: 'neznama' }, school: { i: '<svg>' } });
+  assert.deepEqual(p.home, { n: '', i: 'coffee' });
+  assert.deepEqual(p.work, { n: 'X' });
+  assert.equal(p.school, undefined);
+  assert.equal(Places.ICONS.length, 20);
+});
+
+test('presetIcon: ruční volba, odhad podle názvu, výchozí podle slotu', () => {
+  assert.equal(Places.presetIcon({ n: 'Fitko', i: 'star' }, 'work'), 'star');
+  assert.equal(Places.presetIcon({ n: 'Fitko' }, 'work'), 'dumbbell');
+  assert.equal(Places.presetIcon({ n: 'Letiště Rinas' }, 'home'), 'plane');
+  assert.equal(Places.presetIcon({ n: 'Shtëpia' }, 'school'), 'house');
+  assert.equal(Places.presetIcon({ n: 'Parking' }, 'home'), 'car-front');
+  assert.equal(Places.presetIcon({ n: 'Carrefour' }, 'home'), 'shopping-cart');
+  assert.equal(Places.presetIcon({ n: 'Xyz' }, 'school'), 'graduation-cap');
+  assert.equal(Places.presetIcon(undefined, 'home'), 'house');
+  assert.equal(Places.presetIcon({}, 'jiny'), 'map-pin');
+});

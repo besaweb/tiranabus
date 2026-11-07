@@ -26,6 +26,7 @@ Aktualizováno: 2026-11-07
 | MAP-001 | Moje poloha a nejbližší zastávky (Pro později) | ANDROID | P2 | REVIEW | – | 2026-11-07 |
 | UX-001 | Předvolby Domů / Práce / Škola pro Odkud a Kam (Pro později) | ANDROID | P2 | REVIEW | MAP-001 | 2026-11-07 |
 | UX-002 | Našeptávač u pole Kam je na telefonu schovaný pod klávesnicí | SHARED | P2 | REVIEW | – | 2026-11-07 |
+| UX-003 | Ikony předvoleb (20 ikon Lucide, výběr, zobrazení na mapě) | ANDROID | P2 | REVIEW | UX-001 | 2026-11-07 |
 | POI-001 | Vlastní body na mapě, použitelné v Odkud a Kam (Pro) | ANDROID | P2 | BACKLOG | CORE-007 | 2026-11-07 |
 | AND-007 | Promo kódy z Play Console pro přispěvatele Ko-fi | ANDROID | P3 | BACKLOG | AND-005 | 2026-11-07 |
 | MKT-001 | Reklamy pro neplatící uživatele aplikace | ANDROID | P3 | BACKLOG | AND-005, SEO-003 | 2026-11-07 |
@@ -116,6 +117,16 @@ Aktualizováno: 2026-11-07
 - Popis: při psaní do pole Kam (a Odkud) se seznam návrhů zobrazí pod klávesnicí a stránka se k němu neposune, uživatel návrhy nevidí. Pole Odkud je výš a návrhy jsou na hraně klávesnice.
 - Kritéria: [ ] návrhy jsou při otevřené klávesnici vidět (scroll do výhledu, nebo seznam nad polem) · [ ] ověřeno na webu v prohlížeči (šířka telefonu) i v APK s klávesnicí · [ ] světlý i tmavý režim
 - Poznámky: v APK se po AND-001 odsazuje okno o `ime`, takže pole je nad klávesnicí, ale seznam je pod ním. Oprava udělána v rámci UX-001 (Chat 03, větev `feat/UX-001-predvolby`), protože bez ní byly předvolby na telefonu nepoužitelné: do 760 px se při otevřeném seznamu přidá dolní odsazení `.side` (`body.sgpad`) a pole se posune k hornímu okraji (`sgView`, i při změně velikosti okna kvůli klávesnici). Ověřeno: APK na emulátoru (Odkud i Kam), web v prohlížeči na šířce 375 px (seznam vidět), desktop beze změny. Chybí: web na reálném telefonu s klávesnicí (Chat 02).
+
+### UX-003 Ikony předvoleb
+- Oblast: předvolby, mapa · ANDROID (předvolby jsou jen v aplikaci, D-029, D-030) · P2 · REVIEW
+- Popis: každá ze 3 předvoleb má ikonu z pevné sady 20 ikon Lucide (house, briefcase-business, graduation-cap, building-2, shopping-cart, shopping-bag, utensils, coffee, heart-pulse, dumbbell, landmark, plane, train-front, bus-front, car-front, map-pin, users, church, tree-pine, star). Klepnutí na ikonu v kartě Moje předvolby otevře mřížku 4 × 5 bez popisků (popisy jen pro čtečky), vybraná ikona je zvýrazněná. Bez ruční volby se ikona odhaduje z názvu (klíčová slova cs/en/sq), jinak podle slotu. Nastavené předvolby se ukazují na mapě jako značky s ikonou, klepnutí nabídne Odsud / Sem. Klepnutí na předvolbu v našeptávači beze změny. Vlastní obrázky ne.
+- Kritéria:
+  - [x] sdílená logika `Places.ICONS`, `Places.presetIcon`, ukládání `i` v `Places.presets` + testy (`tests/presets.test.js`), Node testy 28/28 (1 `todo` BUG-002)
+  - [x] emulátor API 36: odhad Fitko → dumbbell, výběr kávy uložen a promítnut do karty, našeptávače i značky na mapě; mřížka ve světlém i tmavém režimu; klepnutí na značku → popup Odsud / Sem
+  - [x] web beze změny (žádné značky ani karta, bez chyb v konzoli)
+  - [ ] naplánování trasy z popupu značky (na emulátoru nešlo ověřit: Avast zachytává HTTPS na `pt.tirana.al`, emulátor jeho certifikátu nevěří) · [ ] reálný telefon (uživatel)
+- Poznámky: D-030. Ikony vložené jako SVG v `app.js` (bez knihovny), licence ISC uvedena u nich. Opraveno: ve vlastních stylech Leafletu chybělo `pointer-events` pro klikací značky (`.leaflet-marker-icon.leaflet-interactive`).
 
 ### BUG-001 Cena RT
 - SHARED · P2 · READY
