@@ -55,7 +55,7 @@ Letiště ve feedu není (Rinas leží mimo území města, linky provozuje souk
 
 | | |
 |---|---|
-| Repozitář | `github.com/besaweb/tiranabus` (soukromý), větev `main` |
+| Repozitář | `github.com/besaweb/tiranabus` (**veřejný**, ověřeno přes API 2026-11-07), větev `main`; v gitu nesmí být žádná tajemství |
 | GitHub Releases | `tirana-latest` (feed), `apk-latest` (APK) |
 | Hosting | gigaserver.cz, FTP `wh03.farma.gigaserver.cz`, složka `/tiranabus.al`, údaje v `.ftp.env` (mimo git) |
 | Analytika | GA4 `G-XJ9EK9ZKWF` (web i APK; uvést v Google Play Data safety) |

@@ -50,7 +50,7 @@ Aktualizováno: 2026-11-07
 - ANDROID · P0 · READY
 - Kritéria: [ ] keystore zálohován mimo počítač (uživatel) · [x] heslo není ve skriptu (`keystore.properties` / `TB_KS_PASS`, heslo samotné beze změny, certifikát APK ověřen shodný) · [x] rozhodnutí o Play App Signing zapsáno v DECISIONS (D-022)
 - Zbývá: záloha keystore mimo počítač (uživatel); zapnutí Play App Signing při prvním nahrání AAB (AND-001).
-- Poznámky: repozitář je soukromý, heslo je ale v historii gitu.
+- Poznámky: repozitář je **veřejný** (zjištěno 2026-11-07, dřív chybně uvedeno „soukromý“). Staré heslo keystore je veřejně čitelné v historii (`android/build.sh`, commit `054063f`). Soubor keystore v gitu nikdy nebyl, takže heslo samo nic neodemkne. Uživatel 2026-11-07 rozhodl heslo neměnit; změna přes `keytool -storepasswd` / `-keypasswd` je možná bez změny klíče a certifikátu. S Play App Signing (D-022) je keystore jen upload key, který jde při úniku resetovat.
 
 ### DATA-001 Ověřit workflow
 - SHARED · P0 · READY
