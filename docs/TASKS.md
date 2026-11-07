@@ -10,7 +10,7 @@ Aktualizováno: 2026-11-07
 |---|---|---|---|---|---|---|
 | BUG-002 | Plánovač vrací spojení začínající před zadaným časem | SHARED | P1 | READY | – | 2026-11-07 |
 | CORE-003 | Android jako Gradle projekt | ANDROID | P0 | REVIEW | – | 2026-11-07 |
-| AND-001 | Target API 36 + AAB pro Google Play | ANDROID | P0 | READY | CORE-003 | 2026-11-07 |
+| AND-001 | Target API 36 + AAB pro Google Play | ANDROID | P0 | REVIEW | CORE-003 | 2026-11-07 |
 | AND-002 | Bezpečné podepisování: heslo mimo skript, záloha keystore, Play App Signing | ANDROID | P0 | REVIEW | – | 2026-11-07 |
 | DATA-001 | Ověřit běh `gtfs-watch` a `pages.yml` | SHARED | P0 | REVIEW | – | 2026-11-07 |
 | GTFS-001 | Feed 2027 (současný končí 31. 12. 2026) | SHARED | P0 | BLOCKED | DATA-001 | 2026-11-07 |
@@ -26,6 +26,7 @@ Aktualizováno: 2026-11-07
 | BUG-001 | Cena RT: 3 € (tickets) vs. 3,50 € (data) | SHARED | P2 | READY | – | 2026-11-07 |
 | AND-004 | Limit cache dlaždic, robustní kopie mbtiles | ANDROID | P2 | BACKLOG | – | 2026-11-07 |
 | AND-005 | Pro verze a licence (Ko-fi kódy, Play Billing) | ANDROID | P2 | BACKLOG | AND-001 | 2026-11-07 |
+| AND-006 | Barvy systémových lišt podle motivu stránky (přepínač v aplikaci vs. systém) | ANDROID | P3 | BACKLOG | AND-001 | 2026-11-07 |
 | I18N-002 | Korektury překladů rodilými mluvčími (sq, en prioritně) | SHARED | P2 | BACKLOG | – | 2026-11-07 |
 | GTFS-002 | Varianty tras linek (větve) | SHARED | P2 | BACKLOG | – | 2026-11-07 |
 | GTFS-003 | Libovolné datum v plánovači | SHARED | P2 | BACKLOG | – | 2026-11-07 |
@@ -54,9 +55,13 @@ Aktualizováno: 2026-11-07
 - Poznámky: rozhodnutí D-018, D-023. `build.sh` odstraněn. Zbývá: CI na Linuxu (workflow `android.yml`?), zbytek checklistu a PR.
 
 ### AND-001 Target API 36 + AAB
-- ANDROID · P0 · READY (CORE-003 hotové, čeká na sloučení)
+- ANDROID · P0 · REVIEW
 - Popis: Google Play od 31. 8. 2026 vyžaduje pro nové aplikace i aktualizace target API 36; nové aplikace jako AAB.
-- Kritéria: `targetSdkVersion 36`; ověřeno na emulátoru API 36 (edge-to-edge, WebView, zpět, odkazy); podepsaný `.aab` prochází `bundletool validate`.
+- Kritéria:
+  - [x] `targetSdk 36` (`aapt2 dump badging`: `targetSdkVersion:'36'`)
+  - [x] emulátor API 36: edge-to-edge (nativní odsazení o systémové lišty a klávesnici, hlavička už nepřekrývá status bar), WebView, Zpět (`OnBackInvokedCallback`: vrací historii, na hlavní stránce ukončí), externí odkaz otevře Chrome a Zpět vrátí do aplikace, tmavý systémový režim · [ ] na reálném telefonu (AND-003)
+  - [x] `bundleRelease` projde, `jarsigner -verify` OK · [ ] `bundletool validate` (čeká na stažení bundletool)
+- Poznámky: změny v `MainActivity.java`, `AndroidManifest.xml` (`enableOnBackInvokedCallback`), téma `AppTheme` v `res/values*/`. D-024. Zbývá: `bundletool validate`, PR. Zapnutí Play App Signing až při prvním nahrání AAB (D-022).
 
 ### AND-002 Bezpečné podepisování
 - ANDROID · P0 · READY

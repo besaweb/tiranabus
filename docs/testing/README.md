@@ -40,5 +40,7 @@ V CI běží na každém Pull Requestu (`.github/workflows/tests.yml`, feed z re
 6. **Režim letadlo** (po předchozím spuštění online): start, plánovač, offline mapa, dříve viděné online dlaždice.
 7. Externí odkazy se otevřou v prohlížeči, tlačítko Zpět.
 8. Na reálném telefonu i emulátoru (aktuální target API).
+9. Edge-to-edge: hlavička nepřekrývá status bar, obsah nezasahuje pod navigační lištu ani klávesnici; světlý i tmavý systémový režim.
+10. Zpět: z „Platnost dat“ na hlavní stránku, na hlavní stránce ukončí aplikaci (Android 13+ predictive back).
 
 Výsledek zapsat do úkolu (TASKS.md) a do `releases/` při vydání.
