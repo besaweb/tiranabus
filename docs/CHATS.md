@@ -1,6 +1,6 @@
 # Pracovní chaty – Tirana Bus
 
-7 tematických chatů (D-020). Nový chat jen pro novou oblast, ne pro drobnou úpravu. Každý chat na začátku čte `CLAUDE.md`, `docs/TASKS.md`, `docs/CHAT_HANDOVER.md` + dokumenty uvedené níže.
+8 tematických chatů (D-020). Nový chat jen pro novou oblast, ne pro drobnou úpravu. Každý chat na začátku čte `CLAUDE.md`, `docs/TASKS.md`, `docs/CHAT_HANDOVER.md` + dokumenty uvedené níže.
 
 | Chat | Účel a rozsah | Prefixy úkolů | Navíc načítá | Spolupracuje s |
 |---|---|---|---|---|
@@ -11,6 +11,7 @@
 | **04 ROUTES & GTFS & DATA** | plánovač, kalendář, odjezdy, letištní linky, feed a jeho hlídání, importy dat, eTransport | GTFS, DATA | `ARCHITECTURE.md` (Plánovač, Data), `PROJECT_OVERVIEW.md` | 01, 06 (regrese) |
 | **05 MAPS & POI** | Leaflet, MapLibre, mbtiles, `poi.json`, `walk.json`, kategorie, navigace | POI, MAP | `ARCHITECTURE.md` (Mapy, Data) | 03 (offline mapa), 04 |
 | **06 BUGS & TESTING** | chyby, testy, regrese, výkon | BUG, TEST | `testing/README.md` | všemi |
+| **07 PROMO VIDEO** | scénář, záběry a export promo videa pro Google Play, Facebook a Ko-fi; texty a titulky. Aplikaci ani web nemění. | MKT (video) | `PROJECT_OVERVIEW.md`, `play/README.md` | 03 (záběry z APK, termín vydání), 02 (texty) |
 
 ## Předávání práce
 
