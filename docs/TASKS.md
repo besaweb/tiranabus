@@ -110,7 +110,7 @@ Aktualizováno: 2026-11-07
 
 ### UX-013 Poloha uživatele na mapě jako ikona postavičky
 - Oblast: poloha, mapa · ANDROID ONLY (`GEO`) · P3 · REVIEW
-- Popis: nalezená poloha (`geoDraw`) je místo modrého bodu značka s ikonou postavičky (Lucide `person-standing`, modrá postavička bez kruhu s bílým obrysem, `.gme`); kruh přesnosti a červená značka nejbližší zastávky beze změny.
+- Popis: nalezená poloha (`geoDraw`) je místo modrého bodu značka s ikonou postavičky (Lucide `person-standing`, modrá postavička bez kruhu s bílým obrysem, `.gme`, plynule pulzuje (`gpulse`, 1,6 s; při „omezit pohyb“ vypnuto)); kruh přesnosti a červená značka nejbližší zastávky beze změny.
 - Kritéria:
   - [ ] emulátor (poloha v Tiranně): postavička viditelná nad zastávkami
   - [ ] telefon (uživatel)
