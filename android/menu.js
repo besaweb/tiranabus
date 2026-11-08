@@ -44,6 +44,8 @@
     pre: '<path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/>',
     poi: '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
     about: '<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5M12 8h.01"/>',
+    moon: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
+    sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>',
     ext: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>'
   };
   const ic = k => '<svg class="mico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + IC[k] + '</svg>';
@@ -53,6 +55,7 @@
     '<div class="ammenu" hidden><button type="button" class="mi" id="mi-lang" aria-expanded="false">' + ic('lang') + '<span data-k="lang"></span><span class="cur"></span></button>' +
     '<div class="langslot" hidden></div>' +
     '<a class="mi" id="mi-tickets" href="tickets.html">' + ic('tickets') + '<span data-k="tickets"></span></a>' +
+    '<button type="button" class="mi" id="mi-theme">' + ic('moon') + '<span class="thm"></span></button>' +
     '<a class="mi" id="mi-data" href="validity.html">' + ic('data') + '<span data-k="data"></span></a>' +
     '<button type="button" class="mi" id="mi-pre">' + ic('pre') + '<span class="pre"></span></button>' +
     '<button type="button" class="mi" id="mi-poi">' + ic('poi') + '<span class="poi"></span></button>' +
@@ -111,8 +114,16 @@
     add(bold(A.aboutAuthor + ': '), link('https://besaweb.al', 'besaweb.al'), document.createElement('br'), bold(A.aboutContact + ': '), link('mailto:info@besaweb.al', 'info@besaweb.al'));
     add(bold(x.ver + ': '), window.APP_VERSION || '?');
   };
-  new MutationObserver(sync).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
+  const syncTheme = () => {
+    const l = T[document.documentElement.lang] ? document.documentElement.lang : 'en', A = I18N.D[l] || I18N.D.en;
+    const d = document.documentElement.dataset.theme === 'dark';
+    q('#mi-theme .thm').textContent = d ? A.themeLight : A.themeDark;
+    q('#mi-theme .mico').innerHTML = IC[d ? 'sun' : 'moon'];
+  };
+  q('#mi-theme').addEventListener('click', () => { const b = document.getElementById('theme'); if (b) b.click(); });
+  new MutationObserver(() => { sync(); syncTheme(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['lang', 'data-theme'] });
   sync();
+  syncTheme();
 })();
 
 (function () {

@@ -20,11 +20,7 @@
 .about p { margin: 0 0 8px; }
 .about p:last-child { margin: 0; }
 .about a { color: var(--accent); }
-.theme { margin-left: 8px; }
-.theme::before { display: none; }
-@media (max-width: 760px) {
-  .theme { display: flex; width: 44px; height: 44px; margin: 0; border: 1px solid var(--line); border-radius: 12px; }
-}
+#theme { display: none; }
 #time24 { flex: 1; width: 100%; min-width: 0; padding: 0; border: 0; background: transparent; color: var(--fg); font: 500 15px var(--ui); font-variant-numeric: tabular-nums; outline: none; }
 #time24[hidden], #time[hidden] { display: none; }
 .boot { background: #0b2a6b url(splash.webp) center / cover no-repeat; }
