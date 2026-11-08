@@ -30,7 +30,7 @@ Aktualizováno: 2026-11-07
 | UX-004 | Ikony předvoleb přímo v polích Odkud / Kam | ANDROID | P2 | REVIEW | UX-003 | 2026-11-07 |
 | UX-005 | Tlačítko X pro vymazání polí Odkud / Kam | SHARED | P2 | REVIEW | UX-004 | 2026-11-07 |
 | UX-006 | Redesign karet Moje předvolby a Moje místa | ANDROID | P2 | REVIEW | POI-001 | 2026-11-08 |
-| UX-013 | Poloha uživatele na mapě jako ikona postavičky | ANDROID ONLY | P3 | REVIEW | – | 2026-11-08 |
+| UX-013 | Poloha uživatele na mapě jako malý smajlík | ANDROID ONLY | P3 | REVIEW | – | 2026-11-08 |
 | UX-012 | Ikona upozornění u hlášky „Lokalizace je dostupná pouze v oblasti Tirany“ | ANDROID ONLY | P3 | REVIEW | – | 2026-11-08 |
 | UX-011 | Nabídka po podržení prstu na mapě jako menu s ikonami | ANDROID ONLY | P3 | REVIEW | POI-001 | 2026-11-08 |
 | UX-010 | Zkrácená atribuce pod mapou (jedna řádka) | SHARED | P3 | REVIEW | – | 2026-11-08 |
@@ -108,9 +108,9 @@ Aktualizováno: 2026-11-07
   - [ ] reálný telefon (uživatel)
 - Poznámky: D-029. Při psaní do Odkud / Kam (2026-11-08, zadání uživatele) se předvolby v našeptávači vůbec nezobrazují (rozhodl uživatel: „úplně skrýt“), ani po klepnutí do prázdného pole (našeptávač se v prázdném poli neotevře); předvolby jsou jen jako ikony v polích Odkud / Kam a v kartě Moje předvolby. Značky předvoleb na mapě se po načtení nezobrazují; objeví se, až je uživatel vybere nebo napíše do Odkud / Kam (zmizí po smazání pole nebo změně výběru). Napsaný přesný název předvolby se při hledání stále rozpozná. Zastávka se po novém feedu dohledá podle názvu, jinak podle souřadnic. Obsahuje i opravu UX-002 pro šířku ≤ 760 px (viz UX-002).
 
-### UX-013 Poloha uživatele na mapě jako ikona postavičky
+### UX-013 Poloha uživatele na mapě jako malý smajlík
 - Oblast: poloha, mapa · ANDROID ONLY (`GEO`) · P3 · REVIEW
-- Popis: nalezená poloha (`geoDraw`) je místo modrého bodu značka s ikonou postavičky (Lucide `person-standing`, modrá postavička bez kruhu s bílým obrysem, `.gme`, plynule pulzuje (`gpulse`, 1,6 s; při „omezit pohyb“ vypnuto)); kruh přesnosti a červená značka nejbližší zastávky beze změny.
+- Popis: nalezená poloha (`geoDraw`) je místo modrého bodu malý statický smajlík (Lucide `smile`, 22 px, modrý s bílým obrysem, `.gme`, bez kruhu pozadí a bez animace); kruh přesnosti a červená značka nejbližší zastávky beze změny.
 - Kritéria:
   - [ ] emulátor (poloha v Tiranně): postavička viditelná nad zastávkami
   - [ ] telefon (uživatel)
