@@ -49,3 +49,34 @@ Jen **aktuálně rozpracované** úkoly. Po dokončení úkolu jeho sekci smaž 
 - Hotovo: implementace, ověření v prohlížeči (web i režim aplikace), Node testy.
 - Testovací APK: `android/out/TiranaBus-1.9-x.apk` (`versionCode` 24, obsahuje i UX-003/UX-004).
 - Zbývá: PR po sloučení `feat/UX-003-ikony`; test na telefonu (web i aplikace).
+
+## POI-001 Vlastní místa na mapě
+- Chat: 03 Android · Větev: `feat/POI-001-vlastni-mista` · Aktualizováno: 2026-11-07
+- Hotovo: implementace, Node testy, prohlížeč v režimu aplikace, emulátor (karta, body, popup), web beze změny, zásady soukromí.
+- Testovací APK: `android/out/TiranaBus-1.9-mista.apk` (`versionCode` 25, obsahuje vše z `main`).
+- Zbývá: PR; test na telefonu (uživatel); Data safety v Play.
+
+## UX-006 Redesign karet Moje předvolby a Moje místa
+- Chat: 03 Android · Větev: `feat/UX-006-moje-mista` (nad `feat/POI-001-vlastni-mista`) · Aktualizováno: 2026-11-08
+- Hotovo: implementace, prohlížeč v režimu aplikace (telefon, desktop, světlý/tmavý), web beze změny, Node testy.
+- Rozdělení na dvě karty podle zadání z 2026-11-08 (D-034). Testovací APK: `android/out/TiranaBus-1.9-karty.apk` (`versionCode` 27, obsahuje i POI-001).
+- Zbývá: PR po sloučení POI-001 (nebo jen tento PR, obsahuje obojí); test na telefonu.
+
+## UX-007 Ikony v hlavním menu aplikace
+- Chat: 03 Android · Větev: `feat/UX-007-ikony-menu` (nad `feat/UX-006-moje-mista`) · Aktualizováno: 2026-11-08
+- Hotovo: implementace, emulátor (světlý i tmavý režim).
+- Testovací APK: `android/out/TiranaBus-1.9-menu.apk` (`versionCode` 28, obsahuje i POI-001 a UX-006).
+- Zbývá: PR (stačí jeden pro POI-001 + UX-006 + UX-007); test na telefonu.
+
+## UX-008 Přepínač režimu v menu aplikace
+- Chat: 03 Android · Větev: `feat/UX-008-tema-v-menu` (nad `feat/UX-007-ikony-menu`) · Aktualizováno: 2026-11-08
+- Hotovo: implementace, nové pořadí položek menu, emulátor (světlý i tmavý režim, cs i en).
+- Testovací APK: `android/out/TiranaBus-1.9-tema.apk` (`versionCode` 29, obsahuje i POI-001, UX-006, UX-007).
+- Zbývá: PR (stačí jeden pro POI-001 + UX-006 + UX-007 + UX-008); test na telefonu.
+
+## UX-009 Nápověda k Rozšířenému vyhledávání
+- Chat: 03 Android · Větev: `feat/UX-009-napoveda-rozsirene` (nad `feat/UX-008-tema-v-menu`) · Aktualizováno: 2026-11-08
+- Hotovo: implementace (web i aplikace), web v prohlížeči, emulátor.
+- Testovací APK: `android/out/TiranaBus-1.9-napoveda.apk` (`versionCode` 31, obsahuje i POI-001, UX-006 až UX-008).
+- Zbývá: PR (stačí jeden pro celý řetěz); test na telefonu; web se změní až po sloučení.
+- Přidáno do téže větve: předvolby se v našeptávači Odkud / Kam nezobrazují vůbec, ani po klepnutí do prázdného pole Značky předvoleb na mapě jen pro vybrané v Odkud / Kam (APK `TiranaBus-1.9-bez-predvoleb.apk`, `versionCode` 35). Položka menu a karta Moje předvolby přejmenovány na „Oblíbené zastávky“.

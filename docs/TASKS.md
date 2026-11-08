@@ -29,7 +29,11 @@ Aktualizováno: 2026-11-07
 | UX-003 | Ikony předvoleb (20 ikon Lucide, výběr, zobrazení na mapě) | ANDROID | P2 | REVIEW | UX-001 | 2026-11-07 |
 | UX-004 | Ikony předvoleb přímo v polích Odkud / Kam | ANDROID | P2 | REVIEW | UX-003 | 2026-11-07 |
 | UX-005 | Tlačítko X pro vymazání polí Odkud / Kam | SHARED | P2 | REVIEW | UX-004 | 2026-11-07 |
-| POI-001 | Vlastní body na mapě, použitelné v Odkud a Kam (Pro) | ANDROID | P2 | BACKLOG | CORE-007 | 2026-11-07 |
+| UX-006 | Redesign karet Moje předvolby a Moje místa | ANDROID | P2 | REVIEW | POI-001 | 2026-11-08 |
+| UX-009 | Rozbalovací nápověda u Rozšířeného vyhledávání | SHARED | P3 | REVIEW | UX-008 | 2026-11-08 |
+| UX-008 | Přepínač světlého / tmavého režimu a pořadí položek v menu aplikace | ANDROID | P3 | REVIEW | UX-007 | 2026-11-08 |
+| UX-007 | Ikony v hlavním menu aplikace | ANDROID | P3 | REVIEW | UX-006 | 2026-11-08 |
+| POI-001 | Vlastní místa na mapě, použitelná v Odkud a Kam (Pro později) | ANDROID | P2 | REVIEW | – | 2026-11-07 |
 | AND-007 | Promo kódy z Play Console pro přispěvatele Ko-fi | ANDROID | P3 | BACKLOG | AND-005 | 2026-11-07 |
 | MKT-001 | Reklamy pro neplatící uživatele aplikace | ANDROID | P3 | BACKLOG | AND-005, SEO-003 | 2026-11-07 |
 | AND-006 | Barvy systémových lišt podle motivu stránky (přepínač v aplikaci vs. systém) | ANDROID | P3 | BACKLOG | – | 2026-11-07 |
@@ -98,12 +102,49 @@ Aktualizováno: 2026-11-07
   - [x] web beze změny (žádné předvolby, karta ani položka menu), Node testy 27/27 (1 `todo` BUG-002)
   - [x] oprava po testu na telefonu (uživatel 2026-11-07: „Vybrat na mapě“ uložilo bod hned po klepnutí, bez značky a bez názvu): v režimu výběru klepnutí nebo podržení prstu na mapě či zastávce ukáže značku a popup s polem pro název a tlačítky Uložit / Zrušit, další klepnutí značku přesune; nápověda je v mapě (pod mapou na telefonu nebyla vidět). Ověřeno na emulátoru API 36 (světlý i tmavý režim, klávesnice, přesun, Zrušit, Odsud/Sem beze změny), web beze změny
   - [ ] reálný telefon (uživatel)
-- Poznámky: D-029. Zastávka se po novém feedu dohledá podle názvu, jinak podle souřadnic. Obsahuje i opravu UX-002 pro šířku ≤ 760 px (viz UX-002).
+- Poznámky: D-029. Při psaní do Odkud / Kam (2026-11-08, zadání uživatele) se předvolby v našeptávači vůbec nezobrazují (rozhodl uživatel: „úplně skrýt“), ani po klepnutí do prázdného pole (našeptávač se v prázdném poli neotevře); předvolby jsou jen jako ikony v polích Odkud / Kam a v kartě Moje předvolby. Značky předvoleb na mapě se po načtení nezobrazují; objeví se, až je uživatel vybere nebo napíše do Odkud / Kam (zmizí po smazání pole nebo změně výběru). Napsaný přesný název předvolby se při hledání stále rozpozná. Zastávka se po novém feedu dohledá podle názvu, jinak podle souřadnic. Obsahuje i opravu UX-002 pro šířku ≤ 760 px (viz UX-002).
 
-### POI-001 Vlastní body na mapě
-- Oblast: mapa, místa · ANDROID (Pro funkce jen v aplikaci, D-026) · P2 · BACKLOG
-- Popis: přidat bod (dlouhý stisk na mapě), pojmenovat, zobrazit na mapě, použít v Odkud a Kam (docházka přes `Places` jako u míst z OSM), upravit a smazat. Uložené jen v zařízení.
-- Kritéria: [ ] přidání, přejmenování, smazání · [ ] vyhledání v Odkud/Kam a plánování s docházkou · [ ] zobrazení na mapě ve světlém i tmavém režimu · [ ] data přežijí aktualizaci aplikace
+### UX-009 Rozbalovací nápověda u Rozšířeného vyhledávání
+- Oblast: UI, texty · SHARED (menu aplikace i menu webu; rozdíl jen ve výčtu zdrojů) · P3 · REVIEW
+- Popis: vedle přepínače Rozšířené vyhledávání je tlačítko „?“, které rozbalí text pod položkou (znovu klepnutím se sbalí; přepínač je nezávislý). Aplikace: „Při psaní do polí Odkud a Kam nabídne kromě zastávek, vašich předvoleb a Mých míst také ulice, náměstí, městské části a zajímavá místa (úřady, školy, nemocnice, památky, obchody, restaurace…). K vybranému místu pak plánovač najde nejbližší zastávky.“ (zadání uživatele); web má stejný text bez předvoleb a Mých míst (klíč `extHelpW`, předvolby a místa jsou jen v aplikaci). Texty `extHelp`, `extHelpW`, `extHelpLbl` ve 12 jazycích. V aplikaci otevření jazyků nebo jiné podnabídky nápovědu sbalí; menu aplikace je širší (330 px), aby se název nezalamoval.
+- Kritéria:
+  - [x] web (375 px a desktop): tlačítko, rozbalení a sbalení, přepínač nezávislý, text bez předvoleb
+  - [x] emulátor API 36: tlačítko, rozbalení, sbalení při otevření Jazyka, přepínač, výška položek 46 px
+  - [ ] reálný telefon (uživatel)
+
+### UX-008 Přepínač světlého / tmavého režimu a pořadí položek v menu aplikace
+- Oblast: UI · ANDROID (menu ☰ je jen v aplikaci; web má přepínač v hlavičce na desktopu a v menu na telefonu, beze změny) · P3 · REVIEW
+- Popis: v menu aplikace je nová položka mezi Jízdným a Platností dat (jako v menu webu na telefonu): měsíc + „Tmavý režim“, ve tmavém režimu slunce + „Světlý režim“ (texty z `I18N.D`, 12 jazyků). Klepnutí volá stávající `toggleTheme` (klik na skryté `#theme`), takže volba se ukládá do `tirana-mhd-theme` jako dřív. Tlačítko měsíce/slunce v hlavičce aplikace je skryté (`#theme { display: none }` v `android/menu.css`). Menu se po přepnutí zavře. Pořadí položek (zadání uživatele 2026-11-08): Moje předvolby, Moje místa, Rozšířené vyhledávání, Jazyk, Tmavý režim, Jízdné, Platnost dat, O aplikaci. Podnabídky Jazyka a O aplikaci zůstávají pod svými položkami.
+- Kritéria:
+  - [x] emulátor API 36 (ladicí APK): nové pořadí položek (emulátor), podnabídky jazyka i O aplikaci, přepínač rozšířeného vyhledávání, položka se jménem i ikonou podle režimu (cs i en), přepnutí tam i zpět, uložení volby, tlačítko v hlavičce zmizelo, mapa i karty se přebarví
+  - [ ] reálný telefon (uživatel)
+
+### UX-007 Ikony v hlavním menu aplikace
+- Oblast: UI · ANDROID (menu ☰ existuje jen v aplikaci, `android/menu.js`; web má v hlavičce samostatná tlačítka s ikonami) · P3 · REVIEW
+- Popis: každá položka menu má vlevo obrysovou ikonu 20 px (čára 1,8 jako ve zbytku aplikace, barva `--muted`, ve tmavém režimu světlá): Jazyk `languages`, Jízdné lístek z hlavičky webu, Platnost dat `calendar-check`, Moje předvolby `bookmark`, Moje místa `map-pin`, O aplikaci `info` z hlavičky webu, Rozšířené vyhledávání `search` (Lucide 0.460.0). Ikona je uvnitř tlačítka/odkazu položky. Hodnota jazyka a přepínač zůstávají vpravo (`margin-left: auto`). Pořadí, názvy, odkazy a chování beze změny.
+- Kritéria:
+  - [x] emulátor API 36 (ladicí APK): světlý i tmavý režim, výška všech položek 46 px, podnabídka jazyka, přepínač rozšířeného vyhledávání
+  - [ ] reálný telefon (uživatel)
+
+### UX-006 Redesign karet Moje předvolby a Moje místa
+- Oblast: předvolby, vlastní místa, UI · ANDROID (D-026, D-033, D-034) · P2 · REVIEW
+- Popis: dvě samostatné karty, každá z vlastní položky menu ☰ (Moje předvolby `#precard`, Moje místa `#places`), s hlavičkou (název, počet, šipka sbalit/rozbalit s pamětí `tirana-pre-col` / `tirana-pl-col`, zavřít). Moje místa mají podtitul „Uložená místa pro rychlé plánování cest“ a dole „+ Přidat nové místo“ (60 px, přerušovaný okraj). Řádek: předvolby jednobarevná ikona 24 px bez podkladu, vlastní místa červený bod 10 px (`--accent`, bez okraje, stejný jako bod na mapě; i v našeptávači), název a adresa/popis na jeden řádek se zkrácením, vpravo kruhová tlačítka 48 px Změnit cíl (tužka) a Smazat (koš, s potvrzením v řádku). Klepnutí na řádek: místo na mapě + popup Odsud / Sem (nenastavená předvolba otevře editor). Editor předvolby: přejmenování, výběr ikony, cíl (hledání, poloha, mapa); editor místa: název, adresa/popis, přesun. Tlačítka jsou sourozenci řádku, klepnutí se nepropaguje.
+- Kritéria:
+  - [x] první verze (jedna karta, D-033): prohlížeč v režimu aplikace 375 / 320 px a desktop, světlý i tmavý režim, emulátor
+  - [x] rozdělení (D-034), prohlížeč v režimu aplikace 375 px, světlý i tmavý režim: dvě karty, nezávislé sbalení a zavření; ikony předvoleb bez podkladu; červené body u míst i v našeptávači; smazání s potvrzením, úprava názvu a adresy, editor předvolby, klepnutí na řádek → mapa + popup, Odsud → pole Odkud; dlouhé názvy se zkrátí, bez vodorovného posunu; zastávky zůstávají modré
+  - [x] web beze změny; Node testy 32/32 (1 `todo` BUG-002)
+  - [ ] reálný telefon (uživatel)
+- Poznámky: D-033, D-034. Bez grafického návrhu, podle textového zadání uživatele. Karta a položka menu Moje předvolby se od 2026-11-08 jmenují „Oblíbené zastávky“ (klíč `preTitle`, 12 jazyků; zadání uživatele).
+
+### POI-001 Vlastní místa na mapě
+- Oblast: mapa, plánovač · ANDROID (Pro funkce jen v aplikaci, D-026, D-032) · P2 · REVIEW
+- Popis: uživatel si ukládá vlastní místa (název povinný, popis nepovinný, souřadnice z mapy), nejvýš 100, jen v oblasti Tirany (`Places.AREA`). Přidání: dlouhý stisk na mapě → Uložit místo, nebo menu ☰ → Moje místa → Přidat místo → klepnutí do mapy. Na mapě malý červený bod (velikost jako zastávka, `sr()`), klepnutí → název, popis, Odsud / Sem / Upravit. V Odkud / Kam se nabízejí při psaní (název i popis) s označením „Moje místo“; plánuje se jako bod na mapě (`ptEnd` → `placeEnd`, docházka k zastávkám do 1,5 km přes `Places.access`), do zastávek se nic nepřidává. Karta Moje místa: seznam, úprava názvu a popisu, přesun, mazání s potvrzením. Uloženo jen v zařízení (`localStorage` `tirana-pois`, `{ v: 1, items: [{ id, n, d, lat, lon, ts }] }` – stálé `id` a čas změny pro případnou synchronizaci). Zatím bez zámku Pro.
+- Kritéria:
+  - [x] sdílená logika `Places.pois` (ověření, oblast, limit, duplicity) a `Places.poiHit` + `tests/pois.test.js`; Node testy 32/32 (1 `todo` BUG-002)
+  - [x] prohlížeč v režimu aplikace (375 px): Přidat místo → klepnutí do mapy → formulář, prázdný název odmítnut, uložení; červený bod i po načtení stránky znovu; dlouhý stisk → Uložit místo; našeptávač „bab“ → Babička (Moje místo); přesun do centra a plánování Babička → Skënder Luarasi (3 spojení s chůzí na Spitali Ushtarak); přejmenování se promítne i do pole Odkud; mazání s potvrzením
+  - [x] emulátor API 36: položka menu Moje místa, karta, červené body, popup Odsud / Sem / Upravit; web beze změny (žádné body, karta ani „Uložit místo“)
+  - [ ] plánování na emulátoru (Avast zachytává HTTPS na `pt.tirana.al`) · [ ] reálný telefon (uživatel) · [ ] Data safety v Play (vlastní místa jen v zařízení)
+- Poznámky: D-032. Bod dál než 1,5 km od zastávky nemá docházku, plánovač pak spojení nenajde (stejně jako u bodu na mapě). Mapa se nedá oddálit mimo oblast, kontrola oblasti je i tak v kódu.
 
 ### AND-007 Promo kódy pro přispěvatele Ko-fi
 - ANDROID · P3 · BACKLOG
