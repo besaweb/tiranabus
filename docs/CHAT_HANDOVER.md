@@ -93,3 +93,9 @@ Jen **aktuálně rozpracované** úkoly. Po dokončení úkolu jeho sekci smaž 
 - Hotovo: implementace, web (375 / 320 px), emulátor (offline mapa), Node testy.
 - Testovací APK: `android/out/TiranaBus-1.9-atribuce.apk` (`versionCode` 36).
 - Zbývá: PR; test na telefonu.
+
+## UX-012 Ikona upozornění u hlášky mimo oblast Tirany
+- Chat: 03 Android · Větev: `feat/UX-012-varovani-lokalizace` (nad `feat/UX-011-menu-bodu`) · Aktualizováno: 2026-11-08
+- Hotovo: implementace, prohlížeč (simulovaná poloha), Node testy.
+- Testovací APK: `android/out/TiranaBus-1.9-varovani.apk` (`versionCode` 39).
+- Zbývá: PR; test na telefonu.

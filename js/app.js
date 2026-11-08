@@ -557,7 +557,7 @@
     if (geo.st === 'busy') { box.innerHTML = `${x}<p class="gbusy"><span class="gspin"></span>${esc(t('geoBusy'))}</p>`; return; }
     if (geo.st !== 'ok') {
       const link = geo.st === 'blocked' ? `<a class="btn sm" href="tbapp://settings">${esc(t('geoSettings'))}</a>` : geo.st === 'off' ? `<a class="btn sm" href="tbapp://location">${esc(t('geoLocSettings'))}</a>` : '';
-      box.innerHTML = `${x}<p class="gmsg">${esc(t(geo.k, geo.p))}</p><div class="grow">${link}<button type="button" class="btn sm" data-geo="retry">${esc(t('geoRetry'))}</button></div>`;
+      box.innerHTML = `${x}<p class="gmsg${geo.st === 'outside' ? ' gwarn' : ''}">${geo.st === 'outside' ? `<i>${icSvg('triangle-alert')}</i>` : ''}${esc(t(geo.k, geo.p))}</p><div class="grow">${link}<button type="button" class="btn sm" data-geo="retry">${esc(t('geoRetry'))}</button></div>`;
       return;
     }
     const [a, ...rest] = geo.list, g = stopGroup.get(a.s.id);
@@ -658,6 +658,7 @@
     'users': '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
     'church': '<path d="M10 9h4"/><path d="M12 7v5"/><path d="M14 22v-4a2 2 0 0 0-4 0v4"/><path d="M18 22V5.618a1 1 0 0 0-.553-.894l-4.553-2.277a2 2 0 0 0-1.788 0L6.553 4.724A1 1 0 0 0 6 5.618V22"/><path d="m18 7 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.618a1 1 0 0 1 .553-.894L6 7"/>',
     'tree-pine': '<path d="m17 14 3 3.3a1 1 0 0 1-.7 1.7H4.7a1 1 0 0 1-.7-1.7L7 14h-.3a1 1 0 0 1-.7-1.7L9 9h-.2A1 1 0 0 1 8 7.3L12 3l4 4.3a1 1 0 0 1-.8 1.7H15l3 3.3a1 1 0 0 1-.7 1.7H17Z"/><path d="M12 22v-3"/>',
+    'triangle-alert': '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
     'flag': '<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/>',
     'star': '<path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/>'
   };
