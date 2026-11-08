@@ -79,4 +79,4 @@ Jen **aktuálně rozpracované** úkoly. Po dokončení úkolu jeho sekci smaž 
 - Hotovo: implementace (web i aplikace), web v prohlížeči, emulátor.
 - Testovací APK: `android/out/TiranaBus-1.9-napoveda.apk` (`versionCode` 31, obsahuje i POI-001, UX-006 až UX-008).
 - Zbývá: PR (stačí jeden pro celý řetěz); test na telefonu; web se změní až po sloučení.
-- Přidáno do téže větve: předvolby při psaní do Odkud / Kam až na konec našeptávače (APK `TiranaBus-1.9-poradi-nas.apk`, `versionCode` 32).
+- Přidáno do téže větve: předvolby se při psaní do Odkud / Kam v našeptávači nezobrazují (APK `TiranaBus-1.9-bez-predvoleb.apk`, `versionCode` 32).

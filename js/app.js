@@ -1032,7 +1032,7 @@
   });
   function suggest(which) {
     const inp = $('#' + which), box = $('#' + which + '-sugg');
-    const q = norm(inp.value.trim()), pr = preList(inp.value.trim());
+    const q = norm(inp.value.trim()), pr = q ? [] : preList('');
     if (!q) {
       box.innerHTML = pr.map((k, i) => preRow(k, !i)).join('');
       box.hidden = !pr.length;
@@ -1049,7 +1049,7 @@
     };
     box.innerHTML = po.map((p, i) => poiRow(p, !i)).join('') + (hits.length || ps.length
       ? hits.map((g, i) => `<button type="button" class="sg ${i === 0 && !po.length ? 'act' : ''}${ext ? ' st' : ''}" data-name="${esc(g.id)}">${ext ? picon('stop') : ''}<b>${esc(g.label)}</b><span>${[...g.routes].sort(byName).slice(0, 6).map(r => esc(r.short)).join(' · ')}</span></button>`).join('') + ps.map((it, i) => prow(it, !hits.length && !po.length && !i)).join('')
-      : pp ? '' : `<div class="sg none">${t('noStop')}</div>`) + pr.map((k, i) => preRow(k, !po.length && !hits.length && !ps.length && !i)).join('');
+      : pp ? '' : `<div class="sg none">${t('noStop')}</div>`);
     box.hidden = false;
     sgView(box);
     return hits;
