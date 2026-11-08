@@ -134,7 +134,7 @@ Aktualizováno: 2026-11-07
   - [x] rozdělení (D-034), prohlížeč v režimu aplikace 375 px, světlý i tmavý režim: dvě karty, nezávislé sbalení a zavření; ikony předvoleb bez podkladu; červené body u míst i v našeptávači; smazání s potvrzením, úprava názvu a adresy, editor předvolby, klepnutí na řádek → mapa + popup, Odsud → pole Odkud; dlouhé názvy se zkrátí, bez vodorovného posunu; zastávky zůstávají modré
   - [x] web beze změny; Node testy 32/32 (1 `todo` BUG-002)
   - [ ] reálný telefon (uživatel)
-- Poznámky: D-033, D-034. Bez grafického návrhu, podle textového zadání uživatele.
+- Poznámky: D-033, D-034. Bez grafického návrhu, podle textového zadání uživatele. Karta a položka menu Moje předvolby se od 2026-11-08 jmenují „Oblíbené zastávky“ (klíč `preTitle`, 12 jazyků; zadání uživatele).
 
 ### POI-001 Vlastní místa na mapě
 - Oblast: mapa, plánovač · ANDROID (Pro funkce jen v aplikaci, D-026, D-032) · P2 · REVIEW
