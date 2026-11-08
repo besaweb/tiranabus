@@ -73,3 +73,9 @@ Jen **aktuálně rozpracované** úkoly. Po dokončení úkolu jeho sekci smaž 
 - Hotovo: implementace, nové pořadí položek menu, emulátor (světlý i tmavý režim, cs i en).
 - Testovací APK: `android/out/TiranaBus-1.9-tema.apk` (`versionCode` 29, obsahuje i POI-001, UX-006, UX-007).
 - Zbývá: PR (stačí jeden pro POI-001 + UX-006 + UX-007 + UX-008); test na telefonu.
+
+## UX-009 Nápověda k Rozšířenému vyhledávání
+- Chat: 03 Android · Větev: `feat/UX-009-napoveda-rozsirene` (nad `feat/UX-008-tema-v-menu`) · Aktualizováno: 2026-11-08
+- Hotovo: implementace (web i aplikace), web v prohlížeči, emulátor.
+- Testovací APK: `android/out/TiranaBus-1.9-napoveda.apk` (`versionCode` 31, obsahuje i POI-001, UX-006 až UX-008).
+- Zbývá: PR (stačí jeden pro celý řetěz); test na telefonu; web se změní až po sloučení.

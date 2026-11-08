@@ -46,6 +46,7 @@
     about: '<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5M12 8h.01"/>',
     moon: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
     sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>',
+    help: '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',
     ext: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>'
   };
   const ic = k => '<svg class="mico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + IC[k] + '</svg>';
@@ -54,7 +55,7 @@
   wrap.innerHTML = '<button type="button" class="ambtn" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>' +
     '<div class="ammenu" hidden><button type="button" class="mi" id="mi-pre">' + ic('pre') + '<span class="pre"></span></button>' +
     '<button type="button" class="mi" id="mi-poi">' + ic('poi') + '<span class="poi"></span></button>' +
-    '<button type="button" class="mi" id="mi-ext" role="switch" aria-checked="false">' + ic('ext') + '<span class="ext"></span><span class="sw" aria-hidden="true"></span></button>' +
+    '<div class="miwrap"><button type="button" class="mi" id="mi-ext" role="switch" aria-checked="false">' + ic('ext') + '<span class="ext"></span><span class="sw" aria-hidden="true"></span></button><button type="button" class="mihelp" id="mi-exthelp" aria-expanded="false" aria-controls="mi-exthelptx">' + ic('help') + '</button></div><p class="mihelptx" id="mi-exthelptx" hidden></p>' +
     '<button type="button" class="mi" id="mi-lang" aria-expanded="false">' + ic('lang') + '<span data-k="lang"></span><span class="cur"></span></button>' +
     '<div class="langslot" hidden></div>' +
     '<button type="button" class="mi" id="mi-theme">' + ic('moon') + '<span class="thm"></span></button>' +
@@ -76,11 +77,16 @@
     document.dispatchEvent(new CustomEvent('tb-ext', { detail: v }));
   });
 
+  q('#mi-exthelp').addEventListener('click', () => {
+    const p = q('#mi-exthelptx'), open = p.hidden;
+    closeSubs();
+    p.hidden = !open; q('#mi-exthelp').setAttribute('aria-expanded', String(open));
+  });
   q('#mi-pre').addEventListener('click', () => { closeMenu(); document.dispatchEvent(new CustomEvent('tb-presets')); });
   q('#mi-poi').addEventListener('click', () => { closeMenu(); document.dispatchEvent(new CustomEvent('tb-pois')); });
 
   const subs = [[miLang, slot], [miAbout, about]];
-  const closeSubs = () => { for (const [b, box] of subs) { box.hidden = true; b.setAttribute('aria-expanded', 'false'); } };
+  const closeSubs = () => { for (const [b, box] of subs) { box.hidden = true; b.setAttribute('aria-expanded', 'false'); } q('#mi-exthelptx').hidden = true; q('#mi-exthelp').setAttribute('aria-expanded', 'false'); };
   const closeMenu = () => { closeSubs(); menu.hidden = true; btn.setAttribute('aria-expanded', 'false'); };
   for (const [b, box] of subs) b.addEventListener('click', () => {
     const open = box.hidden;
@@ -103,6 +109,8 @@
     q('.cur').textContent = NAMES[l];
     const A = I18N.D[l] || I18N.D.en;
     q('#mi-ext .ext').textContent = A.extSearch;
+    q('#mi-exthelptx').textContent = A.extHelp;
+    q('#mi-exthelp').setAttribute('aria-label', A.extHelpLbl); q('#mi-exthelp').title = A.extHelpLbl;
     q('#mi-pre .pre').textContent = A.preTitle;
     q('#mi-poi .poi').textContent = A.poiTitle;
     about.textContent = '';

@@ -211,6 +211,7 @@
   const mil = (k, txt) => `<span class="mil"><svg class="mico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${MICO[k]}</svg><span>${txt}</span></span>`;
   const themeItem = () => { const d = document.documentElement.dataset.theme === 'dark'; return mil(d ? 'light' : 'dark', t(d ? 'themeLight' : 'themeDark')); };
 
+  let extHelpOpen = false;
   const VERSION = '1.04';
   function renderMeta() {
     const aboutBody = `<p><b>${esc(t('title'))}</b><br>${esc(t('aboutDesc'))}</p><p>${esc(t('aboutCredits'))}</p><p><b>${esc(t('aboutAuthor'))}:</b> <a href="https://besaweb.al" target="_blank" rel="noopener">besaweb.al</a><br><b>${esc(t('aboutContact'))}:</b> <a href="mailto:info@besaweb.al">info@besaweb.al</a><br><b>${esc(t('aboutVer'))}:</b> ${esc(window.APP_VERSION || VERSION)}</p><p><a href="privacy.html">${esc(t('privacy'))}</a>${typeof Consent !== 'undefined' && Consent.enabled ? ` · <a href="#" class="adprefs">${esc(t('adPrefs'))}</a>` : ''}</p>`;
@@ -219,7 +220,7 @@
       <button type="button" class="mi mtheme" id="themeitem">${themeItem()}</button>
       <button type="button" class="mi mtoggle" aria-expanded="false">${mil('data', t('dataTitle'))}</button><div class="mpane data">${metaData()}</div>
       <button type="button" class="mi mtoggle" aria-expanded="false">${mil('about', t('aboutTitle'))}</button><div class="mpane about">${aboutBody}</div>
-      <button type="button" class="mi mext" role="switch" aria-checked="${ext}">${mil('ext', t('extSearch'))}<span class="sw" aria-hidden="true"></span></button>`;
+      <div class="mextwrap"><button type="button" class="mi mext" role="switch" aria-checked="${ext}">${mil('ext', t('extSearch'))}<span class="sw" aria-hidden="true"></span></button><button type="button" class="mhelp" aria-expanded="${extHelpOpen}" aria-controls="exthelp" aria-label="${esc(t('extHelpLbl'))}" title="${esc(t('extHelpLbl'))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></button></div><p class="mexthelp" id="exthelp" ${extHelpOpen ? '' : 'hidden'}>${esc(t(window.APP_VERSION ? 'extHelp' : 'extHelpW'))}</p>`;
     $('#aboutbox').innerHTML = `<h2>${t('aboutTitle')}</h2><div class="aboutbody">${aboutBody}</div>`;
   }
 
@@ -1190,6 +1191,8 @@
   document.addEventListener('click', e => { if (!menuBox.contains(e.target)) setMenu(false); if (!aboutBox.contains(e.target)) setAbout(false); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') { setMenu(false); setAbout(false); } });
   menuBox.addEventListener('click', e => {
+    const hb = e.target.closest('.mhelp');
+    if (hb) { extHelpOpen = !extHelpOpen; hb.setAttribute('aria-expanded', extHelpOpen); menuBox.querySelector('.mexthelp').hidden = !extHelpOpen; fitPop(menuBox); return; }
     if (e.target.closest('.mtheme')) { toggleTheme(); return; }
     if (e.target.closest('.mext')) { setExt(!ext); return; }
     const b = e.target.closest('.mtoggle');

@@ -30,6 +30,7 @@ Aktualizováno: 2026-11-07
 | UX-004 | Ikony předvoleb přímo v polích Odkud / Kam | ANDROID | P2 | REVIEW | UX-003 | 2026-11-07 |
 | UX-005 | Tlačítko X pro vymazání polí Odkud / Kam | SHARED | P2 | REVIEW | UX-004 | 2026-11-07 |
 | UX-006 | Redesign karet Moje předvolby a Moje místa | ANDROID | P2 | REVIEW | POI-001 | 2026-11-08 |
+| UX-009 | Rozbalovací nápověda u Rozšířeného vyhledávání | SHARED | P3 | REVIEW | UX-008 | 2026-11-08 |
 | UX-008 | Přepínač světlého / tmavého režimu a pořadí položek v menu aplikace | ANDROID | P3 | REVIEW | UX-007 | 2026-11-08 |
 | UX-007 | Ikony v hlavním menu aplikace | ANDROID | P3 | REVIEW | UX-006 | 2026-11-08 |
 | POI-001 | Vlastní místa na mapě, použitelná v Odkud a Kam (Pro později) | ANDROID | P2 | REVIEW | – | 2026-11-07 |
@@ -102,6 +103,14 @@ Aktualizováno: 2026-11-07
   - [x] oprava po testu na telefonu (uživatel 2026-11-07: „Vybrat na mapě“ uložilo bod hned po klepnutí, bez značky a bez názvu): v režimu výběru klepnutí nebo podržení prstu na mapě či zastávce ukáže značku a popup s polem pro název a tlačítky Uložit / Zrušit, další klepnutí značku přesune; nápověda je v mapě (pod mapou na telefonu nebyla vidět). Ověřeno na emulátoru API 36 (světlý i tmavý režim, klávesnice, přesun, Zrušit, Odsud/Sem beze změny), web beze změny
   - [ ] reálný telefon (uživatel)
 - Poznámky: D-029. Zastávka se po novém feedu dohledá podle názvu, jinak podle souřadnic. Obsahuje i opravu UX-002 pro šířku ≤ 760 px (viz UX-002).
+
+### UX-009 Rozbalovací nápověda u Rozšířeného vyhledávání
+- Oblast: UI, texty · SHARED (menu aplikace i menu webu; rozdíl jen ve výčtu zdrojů) · P3 · REVIEW
+- Popis: vedle přepínače Rozšířené vyhledávání je tlačítko „?“, které rozbalí text pod položkou (znovu klepnutím se sbalí; přepínač je nezávislý). Aplikace: „Při psaní do polí Odkud a Kam nabídne kromě zastávek, vašich předvoleb a Mých míst také ulice, náměstí, městské části a zajímavá místa (úřady, školy, nemocnice, památky, obchody, restaurace…). K vybranému místu pak plánovač najde nejbližší zastávky.“ (zadání uživatele); web má stejný text bez předvoleb a Mých míst (klíč `extHelpW`, předvolby a místa jsou jen v aplikaci). Texty `extHelp`, `extHelpW`, `extHelpLbl` ve 12 jazycích. V aplikaci otevření jazyků nebo jiné podnabídky nápovědu sbalí; menu aplikace je širší (330 px), aby se název nezalamoval.
+- Kritéria:
+  - [x] web (375 px a desktop): tlačítko, rozbalení a sbalení, přepínač nezávislý, text bez předvoleb
+  - [x] emulátor API 36: tlačítko, rozbalení, sbalení při otevření Jazyka, přepínač, výška položek 46 px
+  - [ ] reálný telefon (uživatel)
 
 ### UX-008 Přepínač světlého / tmavého režimu a pořadí položek v menu aplikace
 - Oblast: UI · ANDROID (menu ☰ je jen v aplikaci; web má přepínač v hlavičce na desktopu a v menu na telefonu, beze změny) · P3 · REVIEW
