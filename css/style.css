@@ -520,6 +520,12 @@ header {
 .gchips { display: flex; flex-wrap: wrap; gap: 4px; }
 .gacc, .gmsg { margin: 0; font-size: 12.5px; color: var(--muted); line-height: 1.35; }
 .gmsg { font-size: 14px; color: var(--fg); padding-right: 30px; }
+.gme { display: grid; place-items: center; color: #1A73E8; filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff) drop-shadow(0 1px 2px rgba(0, 0, 0, .35)); }
+.gme svg { width: 22px; height: 22px; stroke-width: 2.4; }
+.gme circle:first-child { fill: #FFD43B; }
+.gwarn { display: flex; align-items: flex-start; gap: 10px; }
+.gwarn i { display: grid; place-items: center; flex: none; width: 22px; height: 22px; color: #D97706; }
+.gwarn svg { width: 22px; height: 22px; }
 .grow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
 .glist { margin: 0; padding: 0 0 0 20px; display: grid; gap: 2px; }
 .glist button { width: 100%; display: flex; justify-content: space-between; gap: 10px; padding: 6px 4px; border: 0; border-radius: 8px; background: none; color: var(--fg); font: inherit; font-size: 14px; text-align: left; cursor: pointer; }
@@ -537,6 +543,14 @@ header {
 .gpop { display: grid; gap: 4px; min-width: 160px; padding-right: 22px; }
 .pknote { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 1000; width: max-content; max-width: calc(100% - 150px); padding: 7px 12px; border-radius: 12px; background: var(--panel); color: var(--fg); box-shadow: var(--shadow); font-size: 13.5px; text-align: center; pointer-events: none; }
 .pknote[hidden] { display: none; }
+.gmenu { gap: 0; min-width: 190px; padding: 0; }
+.gmenu b { display: flex; align-items: center; gap: 10px; padding: 2px 22px 10px 0; font-size: 15px; }
+.gmenu button { display: flex; align-items: center; gap: 12px; width: 100%; padding: 11px 4px; border: 0; border-top: 1px solid var(--line); border-radius: 0; background: none; color: var(--fg); font: inherit; font-size: 14.5px; text-align: left; cursor: pointer; }
+.gmenu button:hover { background: var(--soft); }
+.gmenu i { display: grid; place-items: center; width: 22px; height: 22px; flex: none; }
+.gmenu svg { width: 22px; height: 22px; }
+.gm-red { color: var(--accent); }
+.gm-blue { color: #1A73E8; }
 .gpop .pname { margin-top: 4px; min-width: 190px; }
 .gpop > span { color: var(--muted); font-size: 12.5px; }
 .gpop .btn { justify-self: start; margin-top: 4px; }

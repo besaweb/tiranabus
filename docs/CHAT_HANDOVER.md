@@ -65,6 +65,7 @@ Jen **aktuálně rozpracované** úkoly. Po dokončení úkolu jeho sekci smaž 
 ## UX-007 Ikony v hlavním menu aplikace
 - Chat: 03 Android · Větev: `feat/UX-007-ikony-menu` (nad `feat/UX-006-moje-mista`) · Aktualizováno: 2026-11-08
 - Hotovo: implementace, emulátor (světlý i tmavý režim).
+- Poznámka: větev obsahuje i UX-010 (sloučeno kvůli společnému APK); po sloučení PR s UX-010 zůstane v PR jen UX-011.
 - Testovací APK: `android/out/TiranaBus-1.9-menu.apk` (`versionCode` 28, obsahuje i POI-001 a UX-006).
 - Zbývá: PR (stačí jeden pro POI-001 + UX-006 + UX-007); test na telefonu.
 
@@ -80,3 +81,26 @@ Jen **aktuálně rozpracované** úkoly. Po dokončení úkolu jeho sekci smaž 
 - Testovací APK: `android/out/TiranaBus-1.9-napoveda.apk` (`versionCode` 31, obsahuje i POI-001, UX-006 až UX-008).
 - Zbývá: PR (stačí jeden pro celý řetěz); test na telefonu; web se změní až po sloučení.
 - Přidáno do téže větve: předvolby se v našeptávači Odkud / Kam nezobrazují vůbec, ani po klepnutí do prázdného pole Značky předvoleb na mapě jen pro vybrané v Odkud / Kam (APK `TiranaBus-1.9-bez-predvoleb.apk`, `versionCode` 35). Položka menu a karta Moje předvolby přejmenovány na „Oblíbené zastávky“.
+
+## UX-011 Menu s ikonami po podržení prstu na mapě
+- Chat: 03 Android · Větev: `feat/UX-011-menu-bodu` · Aktualizováno: 2026-11-08
+- Hotovo: implementace, ověření v prohlížeči (režim aplikace, 375 px), Node testy.
+- Testovací APK: `android/out/TiranaBus-1.9-menu-bodu.apk` (`versionCode` 37).
+- Zbývá: PR; test na telefonu (světlý i tmavý režim).
+
+## UX-010 Zkrácená atribuce pod mapou
+- Chat: 03 Android · Větev: `feat/UX-010-atribuce` (nad `main` po PR #16) · Aktualizováno: 2026-11-08
+- Hotovo: implementace, web (375 / 320 px), emulátor (offline mapa), Node testy.
+- Testovací APK: `android/out/TiranaBus-1.9-atribuce.apk` (`versionCode` 36).
+- Zbývá: PR; test na telefonu.
+
+## UX-012 Ikona upozornění u hlášky mimo oblast Tirany
+- Chat: 03 Android · Větev: `feat/UX-012-varovani-lokalizace` (nad `feat/UX-011-menu-bodu`) · Aktualizováno: 2026-11-08
+- Hotovo: implementace, prohlížeč (simulovaná poloha), Node testy.
+- Testovací APK: `android/out/TiranaBus-1.9-varovani.apk` (`versionCode` 39).
+- Zbývá: PR; test na telefonu.
+
+## UX-013 Poloha uživatele jako postavička
+- Chat: 03 Android · Větev: `feat/UX-013-ikona-polohy` (nad `feat/UX-012-varovani-lokalizace`) · Aktualizováno: 2026-11-08
+- Testovací APK: `android/out/TiranaBus-1.9-postavicka.apk` (`versionCode` 40).
+- Zbývá: ověření v emulátoru, PR, test na telefonu.
