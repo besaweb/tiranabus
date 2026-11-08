@@ -520,6 +520,8 @@ header {
 .gchips { display: flex; flex-wrap: wrap; gap: 4px; }
 .gacc, .gmsg { margin: 0; font-size: 12.5px; color: var(--muted); line-height: 1.35; }
 .gmsg { font-size: 14px; color: var(--fg); padding-right: 30px; }
+.gme { display: grid; place-items: center; border-radius: 50%; background: #1A73E8; border: 3px solid #fff; box-shadow: 0 1px 6px rgba(0, 0, 0, .35); color: #fff; box-sizing: border-box; }
+.gme svg { width: 20px; height: 20px; stroke-width: 2.2; }
 .gwarn { display: flex; align-items: flex-start; gap: 10px; }
 .gwarn i { display: grid; place-items: center; flex: none; width: 22px; height: 22px; color: #D97706; }
 .gwarn svg { width: 22px; height: 22px; }

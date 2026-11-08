@@ -99,3 +99,8 @@ Jen **aktuálně rozpracované** úkoly. Po dokončení úkolu jeho sekci smaž 
 - Hotovo: implementace, prohlížeč (simulovaná poloha), Node testy.
 - Testovací APK: `android/out/TiranaBus-1.9-varovani.apk` (`versionCode` 39).
 - Zbývá: PR; test na telefonu.
+
+## UX-013 Poloha uživatele jako postavička
+- Chat: 03 Android · Větev: `feat/UX-013-ikona-polohy` (nad `feat/UX-012-varovani-lokalizace`) · Aktualizováno: 2026-11-08
+- Testovací APK: `android/out/TiranaBus-1.9-postavicka.apk` (`versionCode` 40).
+- Zbývá: ověření v emulátoru, PR, test na telefonu.
