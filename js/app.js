@@ -686,25 +686,26 @@
   const plBtns = (sc, id, del) => `<button type="button" class="plb" data-pa="edit" ${sc}="${id}" aria-label="${esc(t('preChange'))}" title="${esc(t('preChange'))}">${uiSvg('edit')}</button>` +
     (del ? `<button type="button" class="plb del" data-pa="del" ${sc}="${id}" aria-label="${esc(t('preDel'))}" title="${esc(t('preDel'))}">${uiSvg('del')}</button>` : '<span class="plb ghost"></span>');
   const plConf = (sc, id) => `<div class="plconf" role="alert"><span>${esc(t('poiDelSure'))}</span><button type="button" class="btn sm danger" data-pa="del2" ${sc}="${id}">${esc(t('preDel'))}</button><button type="button" class="btn sm" data-pa="nodel">${esc(t('preCancel'))}</button></div>`;
-  let plOpen = false, plCol = false, preDel = null;
-  try { plCol = localStorage.getItem('tirana-pl-col') === '1'; } catch (e) {}
-  function plHead() {
-    const box = $('#places');
-    box.hidden = !plOpen;
-    box.classList.toggle('col', plCol);
-    const n = Places.SLOTS.filter(k => pre[k] && pre[k].k).length + pois.length;
-    $('#places .plhead').innerHTML = `<div class="pltop"><h2 class="ghead">${esc(t('poiTitle'))}</h2>${n ? `<span class="plnum" title="${esc(t('plSaved', { n }))}" aria-label="${esc(t('plSaved', { n }))}">${n}</span>` : ''}<button type="button" class="plb sm" data-pl="col" aria-expanded="${!plCol}" aria-controls="plbody" aria-label="${esc(t(plCol ? 'plOpen' : 'plClose'))}" title="${esc(t(plCol ? 'plOpen' : 'plClose'))}">${uiSvg('down')}</button><button type="button" class="plb sm" data-pl="x" aria-label="${esc(t('close'))}" title="${esc(t('close'))}">×</button></div><p class="plsub">${esc(t('plSub'))}</p>`;
+  const SEC = { pre: { card: '#precard', open: false, col: false, key: 'tirana-pre-col', title: 'preTitle' }, poi: { card: '#places', open: false, col: false, key: 'tirana-pl-col', title: 'poiTitle', sub: 'plSub' } };
+  let preDel = null;
+  for (const x of Object.values(SEC)) try { x.col = localStorage.getItem(x.key) === '1'; } catch (e) {}
+  function plHead(sec) {
+    const x = SEC[sec], box = $(x.card);
+    box.hidden = !x.open;
+    box.classList.toggle('col', x.col);
+    const n = sec === 'pre' ? Places.SLOTS.filter(k => pre[k] && pre[k].k).length : pois.length;
+    box.querySelector('.plhead').innerHTML = `<div class="pltop"><h2 class="ghead">${esc(t(x.title))}</h2>${n ? `<span class="plnum" title="${esc(t('plSaved', { n }))}" aria-label="${esc(t('plSaved', { n }))}">${n}</span>` : ''}<button type="button" class="plb sm" data-pl="col" aria-expanded="${!x.col}" aria-controls="${sec}body" aria-label="${esc(t(x.col ? 'plOpen' : 'plClose'))}" title="${esc(t(x.col ? 'plOpen' : 'plClose'))}">${uiSvg('down')}</button><button type="button" class="plb sm" data-pl="x" aria-label="${esc(t('close'))}" title="${esc(t('close'))}">×</button></div>${x.sub ? `<p class="plsub">${esc(t(x.sub))}</p>` : ''}`;
   }
   function preShow() {
     const box = $('#pre');
     preDraw();
     pkSync();
-    plHead();
-    if (!plOpen) { box.innerHTML = ''; return; }
+    plHead('pre');
+    if (!SEC.pre.open) { box.innerHTML = ''; return; }
     let h = '';
     for (const k of Places.SLOTS) {
       const p = pre[k] || {};
-      h += `<div class="plrow"><button type="button" class="plgo" data-pa="go" data-slot="${k}"><span class="plic c-${k}">${icSvg(preIc(k))}</span><span class="pltx"><b>${esc(preName(k))}</b><span>${esc(p.k ? p.l : t('preUnset'))}</span></span></button>${plBtns('data-slot', k, p.k || p.n || p.i)}</div>`;
+      h += `<div class="plrow"><button type="button" class="plgo" data-pa="go" data-slot="${k}"><span class="plic">${icSvg(preIc(k))}</span><span class="pltx"><b>${esc(preName(k))}</b><span>${esc(p.k ? p.l : t('preUnset'))}</span></span></button>${plBtns('data-slot', k, p.k || p.n || p.i)}</div>`;
       if (preDel === k) h += plConf('data-slot', k);
       if (preEdit === k) {
         h += `<div class="pedit"><input class="pname" data-slot="${k}" maxlength="24" value="${esc(preName(k))}" aria-label="${esc(t('preName'))}"><div class="picgrid" role="group" aria-label="${esc(t('preIcon'))}">${Places.ICONS.map(i => `<button type="button" class="${i === preIc(k) ? 'on' : ''}" data-pa="seticon" data-slot="${k}" data-ic="${i}" aria-pressed="${i === preIc(k)}" aria-label="${esc(t('ic')[i])}" title="${esc(t('ic')[i])}">${icSvg(i)}</button>`).join('')}</div>`;
@@ -758,14 +759,18 @@
     if (r) { r.querySelector('b').textContent = preName(k); r.querySelector('.plic').innerHTML = icSvg(preIc(k)); }
     for (const x of document.querySelectorAll(`#pre .picgrid [data-slot="${k}"]`)) { const on = x.dataset.ic === preIc(k); x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); }
   });
-  function plShow() { plCol = false; plOpen = true; preShow(); poiShow(); $('#places').scrollIntoView({ block: 'nearest' }); }
-  document.addEventListener('tb-presets', plShow);
-  $('#places .plhead').addEventListener('click', e => {
-    const b = e.target.closest('[data-pl]');
+  const secShow = sec => sec === 'pre' ? preShow() : poiShow();
+  function plShow(sec) { Object.assign(SEC[sec], { open: true, col: false }); secShow(sec); $(SEC[sec].card).scrollIntoView({ block: 'nearest' }); }
+  document.addEventListener('tb-presets', () => plShow('pre'));
+  for (const sec of ['pre', 'poi']) $(SEC[sec].card + ' .plhead').addEventListener('click', e => {
+    const b = e.target.closest('[data-pl]'), x = SEC[sec];
     if (!b) return;
-    if (b.dataset.pl === 'x') { plOpen = false; preEdit = prePick = preMsg = preDel = null; poiEdit = poiPick = poiMsg = poiDel = null; map.closePopup(); }
-    else { plCol = !plCol; try { localStorage.setItem('tirana-pl-col', plCol ? '1' : '0'); } catch (e) {} }
-    preShow(); poiShow();
+    if (b.dataset.pl === 'x') {
+      x.open = false;
+      if (sec === 'pre') preEdit = prePick = preMsg = preDel = null; else poiEdit = poiPick = poiMsg = poiDel = null;
+      map.closePopup();
+    } else { x.col = !x.col; try { localStorage.setItem(x.key, x.col ? '1' : '0'); } catch (e) {} }
+    secShow(sec);
   });
   const ptLayer = L.layerGroup().addTo(map);
   function ptPop(ll, el) {
@@ -861,7 +866,7 @@
   const poiId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
   const poiEnd = (p, which) => ptEnd('@poi-' + p.id, p.n, [p.lat, p.lon], which);
   const poiList = v => GEO && v ? pois.filter(p => Places.poiHit(p, v)).slice(0, 5) : [];
-  const poiRow = (p, act) => `<button type="button" class="sg pl poi ${act ? 'act' : ''}" data-poi="${esc(p.id)}">${picon('pin')}<b>${esc(p.n)}</b><span>${esc(p.d || t('poiLbl'))}</span></button>`;
+  const poiRow = (p, act) => `<button type="button" class="sg pl poi ${act ? 'act' : ''}" data-poi="${esc(p.id)}"><i class="si"><span class="pldot"></span></i><b>${esc(p.n)}</b><span>${esc(p.d || t('poiLbl'))}</span></button>`;
   const pkSync = () => { pkNote.hidden = !prePick && !poiPick; pkNote.textContent = t(poiPick ? 'poiPickHint' : 'prePickHint'); };
   const poiLayer = L.layerGroup().addTo(map);
   function poiSave(x) {
@@ -893,7 +898,7 @@
       const b = ev.target.closest('[data-w]');
       if (!b) return;
       map.closePopup(pop);
-      if (b.dataset.w === 'edit') { poiEdit = p.id; poiDel = poiMsg = null; plShow(); return; }
+      if (b.dataset.w === 'edit') { poiEdit = p.id; poiDel = poiMsg = null; plShow('poi'); return; }
       if (mode !== 'plan') setMode('plan', true);
       chooseEnd(b.dataset.w, poiEnd(p, b.dataset.w));
     });
@@ -933,11 +938,11 @@
   function poiShow() {
     const box = $('#poi');
     pkSync();
-    plHead();
-    if (!plOpen) { box.innerHTML = ''; return; }
+    plHead('poi');
+    if (!SEC.poi.open) { box.innerHTML = ''; return; }
     let h = pois.length ? '' : `<p class="gmsg plempty">${esc(t('poiEmpty'))}</p>`;
     for (const p of pois) {
-      h += `<div class="plrow"><button type="button" class="plgo" data-pa="go" data-id="${esc(p.id)}"><span class="plic c-poi">${icSvg('map-pin')}</span><span class="pltx"><b>${esc(p.n)}</b><span>${esc(p.d || t('poiLbl'))}</span></span></button>${plBtns('data-id', esc(p.id), true)}</div>`;
+      h += `<div class="plrow"><button type="button" class="plgo poi" data-pa="go" data-id="${esc(p.id)}"><span class="pldot" aria-hidden="true"></span><span class="pltx"><b>${esc(p.n)}</b><span>${esc(p.d || t('poiLbl'))}</span></span></button>${plBtns('data-id', esc(p.id), true)}</div>`;
       if (poiDel === p.id) h += plConf('data-id', esc(p.id));
       if (poiEdit === p.id) {
         h += `<div class="pedit"><input class="pname" data-f="n" maxlength="40" value="${esc(p.n)}" placeholder="${esc(t('poiName'))}" aria-label="${esc(t('poiName'))}"><input class="pname pdesc" data-f="d" maxlength="200" value="${esc(p.d)}" placeholder="${esc(t('poiDesc'))}" aria-label="${esc(t('poiDesc'))}">${poiMsg ? `<p class="gmsg">${esc(t(poiMsg))}</p>` : ''}<div class="grow"><button type="button" class="btn sm" data-pa="save" data-id="${esc(p.id)}">${esc(t('preSave'))}</button><button type="button" class="btn sm" data-pa="move" data-id="${esc(p.id)}">${esc(t('poiMove'))}</button><button type="button" class="btn sm" data-pa="cancel">${esc(t('preCancel'))}</button></div></div>`;
@@ -973,7 +978,7 @@
     }
     poiShow();
   });
-  document.addEventListener('tb-pois', plShow);
+  document.addEventListener('tb-pois', () => plShow('poi'));
   poiDraw();
   if (GEO) {
     const Loc = L.Control.extend({

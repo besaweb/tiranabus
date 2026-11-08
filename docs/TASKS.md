@@ -29,7 +29,7 @@ Aktualizováno: 2026-11-07
 | UX-003 | Ikony předvoleb (20 ikon Lucide, výběr, zobrazení na mapě) | ANDROID | P2 | REVIEW | UX-001 | 2026-11-07 |
 | UX-004 | Ikony předvoleb přímo v polích Odkud / Kam | ANDROID | P2 | REVIEW | UX-003 | 2026-11-07 |
 | UX-005 | Tlačítko X pro vymazání polí Odkud / Kam | SHARED | P2 | REVIEW | UX-004 | 2026-11-07 |
-| UX-006 | Redesign karty Moje místa (předvolby i vlastní místa v jedné kartě) | ANDROID | P2 | REVIEW | POI-001 | 2026-11-08 |
+| UX-006 | Redesign karet Moje předvolby a Moje místa | ANDROID | P2 | REVIEW | POI-001 | 2026-11-08 |
 | POI-001 | Vlastní místa na mapě, použitelná v Odkud a Kam (Pro později) | ANDROID | P2 | REVIEW | – | 2026-11-07 |
 | AND-007 | Promo kódy z Play Console pro přispěvatele Ko-fi | ANDROID | P3 | BACKLOG | AND-005 | 2026-11-07 |
 | MKT-001 | Reklamy pro neplatící uživatele aplikace | ANDROID | P3 | BACKLOG | AND-005, SEO-003 | 2026-11-07 |
@@ -101,14 +101,15 @@ Aktualizováno: 2026-11-07
   - [ ] reálný telefon (uživatel)
 - Poznámky: D-029. Zastávka se po novém feedu dohledá podle názvu, jinak podle souřadnic. Obsahuje i opravu UX-002 pro šířku ≤ 760 px (viz UX-002).
 
-### UX-006 Redesign karty Moje místa
-- Oblast: předvolby, vlastní místa, UI · ANDROID (D-026, D-033) · P2 · REVIEW
-- Popis: Domů / Práce / Škola a vlastní místa v jedné kartě `#places` (menu ☰ → Moje místa; položka Moje předvolby zrušena). Hlavička: název, počet uložených míst, šipka sbalit/rozbalit (pamatuje si `tirana-pl-col`), zavřít; podtitul „Uložená místa pro rychlé plánování cest“. Řádek: ikona 56 × 56 px v zaobleném čtverci (barvy: domov modrá, práce oranžová, škola zelená, vlastní místa červená; pozadí 14 % barvy, světlý i tmavý režim), název a adresa/popis na jeden řádek se zkrácením, vpravo kruhová tlačítka 48 px Změnit cíl (tužka) a Smazat (koš, s potvrzením v řádku). Klepnutí na řádek: místo na mapě + popup Odsud / Sem (nenastavená předvolba otevře editor). Dole „+ Přidat nové místo“ (60 px, přerušovaný okraj). Editor předvolby obsahuje přejmenování, výběr ikony a cíl (hledání, poloha, mapa); editor místa název, adresu/popis, přesun. Ikony Lucide `pencil`, `trash-2`, `chevron-down`, `plus`, `map-pin`. Tlačítka jsou sourozenci řádku, ne jeho potomci, klepnutí se nepropaguje.
+### UX-006 Redesign karet Moje předvolby a Moje místa
+- Oblast: předvolby, vlastní místa, UI · ANDROID (D-026, D-033, D-034) · P2 · REVIEW
+- Popis: dvě samostatné karty, každá z vlastní položky menu ☰ (Moje předvolby `#precard`, Moje místa `#places`), s hlavičkou (název, počet, šipka sbalit/rozbalit s pamětí `tirana-pre-col` / `tirana-pl-col`, zavřít). Moje místa mají podtitul „Uložená místa pro rychlé plánování cest“ a dole „+ Přidat nové místo“ (60 px, přerušovaný okraj). Řádek: předvolby jednobarevná ikona 24 px bez podkladu, vlastní místa červený bod 10 px (`--accent`, bez okraje, stejný jako bod na mapě; i v našeptávači), název a adresa/popis na jeden řádek se zkrácením, vpravo kruhová tlačítka 48 px Změnit cíl (tužka) a Smazat (koš, s potvrzením v řádku). Klepnutí na řádek: místo na mapě + popup Odsud / Sem (nenastavená předvolba otevře editor). Editor předvolby: přejmenování, výběr ikony, cíl (hledání, poloha, mapa); editor místa: název, adresa/popis, přesun. Tlačítka jsou sourozenci řádku, klepnutí se nepropaguje.
 - Kritéria:
-  - [x] prohlížeč v režimu aplikace (375 px, 320 px, desktop; světlý i tmavý režim): Domů / Práce / Škola i vlastní místa, dlouhé názvy a adresy se zkrátí, tlačítka zůstanou na obrazovce (bez vodorovného posunu); smazání s potvrzením i zrušením, smaže jen vybrané; úprava názvu a adresy; ikona předvolby z editoru; klepnutí na řádek → mapa + popup, Sem → pole Kam; přidání nového místa; sbalení a rozbalení; tlačítka nespouští řádek
+  - [x] první verze (jedna karta, D-033): prohlížeč v režimu aplikace 375 / 320 px a desktop, světlý i tmavý režim, emulátor
+  - [x] rozdělení (D-034), prohlížeč v režimu aplikace 375 px, světlý i tmavý režim: dvě karty, nezávislé sbalení a zavření; ikony předvoleb bez podkladu; červené body u míst i v našeptávači; smazání s potvrzením, úprava názvu a adresy, editor předvolby, klepnutí na řádek → mapa + popup, Odsud → pole Odkud; dlouhé názvy se zkrátí, bez vodorovného posunu; zastávky zůstávají modré
   - [x] web beze změny; Node testy 32/32 (1 `todo` BUG-002)
-  - [ ] emulátor / reálný telefon (uživatel)
-- Poznámky: D-033. Bez grafického návrhu, podle textového zadání uživatele.
+  - [ ] reálný telefon (uživatel)
+- Poznámky: D-033, D-034. Bez grafického návrhu, podle textového zadání uživatele.
 
 ### POI-001 Vlastní místa na mapě
 - Oblast: mapa, plánovač · ANDROID (Pro funkce jen v aplikaci, D-026, D-032) · P2 · REVIEW
