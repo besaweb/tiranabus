@@ -19,6 +19,12 @@
   };
   const byName = (a, b) => a.short.localeCompare(b.short, 'cs', { numeric: true });
 
+  L.Control.Attribution.include({
+    _update() {
+      if (!this._map) return;
+      this._container.innerHTML = Object.keys(this._attributions).filter(k => this._attributions[k]).join(' · ');
+    }
+  });
   const map = L.map('map', { preferCanvas: true, zoomSnap: .5, attributionControl: true }).setView([41.3275, 19.8187], 13);
   map.attributionControl.setPrefix(false);
   const renderer = L.canvas({ padding: .5, tolerance: 6 });
@@ -34,7 +40,7 @@
   if (window.OFFLINE_MAP && window.maplibregl) {
     const sty = () => new URL('map/style-' + (document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light') + '.json', location.href).href;
     BASE[VEC] = L.Layer.extend({
-      getAttribution: () => '© OpenMapTiles © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>',
+      getAttribution: () => '© OpenMapTiles, <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>',
       onAdd(m) {
         this._m = m;
         this._el = L.DomUtil.create('div', 'vec-map');
@@ -345,7 +351,7 @@
   function setAttr() {
     map.attributionControl.removeAttribution(map._gtfsAttr || '');
     if (document.body.classList.contains('nodata')) return;
-    map._gtfsAttr = demoMode ? t('attrDemo') : t('attr', { a: esc(feed.agencies.join(', ') || source) });
+    map._gtfsAttr = demoMode ? t('attrDemo') : t('attr', { a: esc(feed.agencies.map(x => x.replace(/\s*\([^)]*\)/g, '')).join(', ') || source) });
     map.attributionControl.addAttribution(map._gtfsAttr);
   }
 

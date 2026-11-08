@@ -65,6 +65,7 @@ Jen **aktuálně rozpracované** úkoly. Po dokončení úkolu jeho sekci smaž 
 ## UX-007 Ikony v hlavním menu aplikace
 - Chat: 03 Android · Větev: `feat/UX-007-ikony-menu` (nad `feat/UX-006-moje-mista`) · Aktualizováno: 2026-11-08
 - Hotovo: implementace, emulátor (světlý i tmavý režim).
+- Poznámka: větev obsahuje i UX-010 (sloučeno kvůli společnému APK); po sloučení PR s UX-010 zůstane v PR jen UX-011.
 - Testovací APK: `android/out/TiranaBus-1.9-menu.apk` (`versionCode` 28, obsahuje i POI-001 a UX-006).
 - Zbývá: PR (stačí jeden pro POI-001 + UX-006 + UX-007); test na telefonu.
 
@@ -86,3 +87,9 @@ Jen **aktuálně rozpracované** úkoly. Po dokončení úkolu jeho sekci smaž 
 - Hotovo: implementace, ověření v prohlížeči (režim aplikace, 375 px), Node testy.
 - Testovací APK: `android/out/TiranaBus-1.9-menu-bodu.apk` (`versionCode` 37).
 - Zbývá: PR; test na telefonu (světlý i tmavý režim).
+
+## UX-010 Zkrácená atribuce pod mapou
+- Chat: 03 Android · Větev: `feat/UX-010-atribuce` (nad `main` po PR #16) · Aktualizováno: 2026-11-08
+- Hotovo: implementace, web (375 / 320 px), emulátor (offline mapa), Node testy.
+- Testovací APK: `android/out/TiranaBus-1.9-atribuce.apk` (`versionCode` 36).
+- Zbývá: PR; test na telefonu.
