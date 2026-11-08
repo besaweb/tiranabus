@@ -407,6 +407,7 @@
     $('#' + which).value = g ? g.label : '';
     plan.res = null;
     planLayer.clearLayers();
+    preMarkers();
   }
 
   function pickStop(s) {
@@ -659,14 +660,18 @@
   const preName = k => (pre[k] && pre[k].n) || t('pre_' + k);
   const preList = q => GEO ? Places.SLOTS.filter(k => pre[k] && pre[k].k && (!q || Places.presetHit(preName(k), q))) : [];
   const ptEnd = (id, n, p, which) => placeEnd({ id, n, c: 'pin', pts: [p], t: {} }, which);
+  function preGroup(p) {
+    if (p.k !== 'stop') return null;
+    const near = Places.nearest(allStops(), [p.lat, p.lon], 1)[0];
+    return names.find(x => x.label === p.l) || (near && stopGroup.get(near.s.id)) || null;
+  }
   function preEnd(k, which) {
     const p = pre[k];
-    if (p.k === 'stop') {
-      const near = Places.nearest(allStops(), [p.lat, p.lon], 1)[0];
-      const g = names.find(x => x.label === p.l) || (near && stopGroup.get(near.s.id));
-      if (g) return g;
-    }
-    return ptEnd('@pre-' + k, preName(k), [p.lat, p.lon], which);
+    return preGroup(p) || ptEnd('@pre-' + k, preName(k), [p.lat, p.lon], which);
+  }
+  function preActive(k) {
+    const p = pre[k], g = preGroup(p);
+    return ['from', 'to'].some(w => { const e = plan[w]; return e && (e.place ? e.place.id === '@pre-' + k : g && e === g); });
   }
   function preSet(k, x, n) {
     pre[k] = Object.assign({ n: n !== undefined ? n : (pre[k] && pre[k].n) || '' }, x);
@@ -799,12 +804,15 @@
     chooseEnd(w, preEnd(b.dataset.pre, w), true);
   });
   function preDraw() {
-    preLayer.clearLayers();
     preFields();
+    preMarkers();
+  }
+  function preMarkers() {
+    preLayer.clearLayers();
     if (!GEO) return;
     for (const k of Places.SLOTS) {
       const p = pre[k];
-      if (!p || !p.k) continue;
+      if (!p || !p.k || !preActive(k)) continue;
       const m = L.marker([p.lat, p.lon], { icon: L.divIcon({ className: 'premk', html: icSvg(preIc(k)), iconSize: [32, 32], iconAnchor: [16, 16] }), title: preName(k), keyboard: false, zIndexOffset: 500 }).addTo(preLayer);
       m.on('click', e => { L.DomEvent.stop(e); if (prePick) prePickAt(p.lat, p.lon); else prePop(k); });
     }
@@ -1054,7 +1062,7 @@
   }
   for (const which of ['from', 'to']) {
     const inp = $('#' + which), box = $('#' + which + '-sugg');
-    inp.addEventListener('input', () => { plan[which] = null; plan.res = null; planLayer.clearLayers(); suggest(which); restyle(); });
+    inp.addEventListener('input', () => { plan[which] = null; plan.res = null; planLayer.clearLayers(); preMarkers(); suggest(which); restyle(); });
     inp.addEventListener('focus', () => { if (ext) { loadPlaces(); loadNet(); } if (!plan[which] && inp.value) suggest(which); });
     inp.addEventListener('blur', () => setTimeout(() => { box.hidden = true; inp.scrollLeft = 0; if (!/^(from|to)$/.test((document.activeElement || {}).id)) document.body.classList.remove('sgpad'); }, 150));
     inp.addEventListener('keydown', e => {
@@ -1115,6 +1123,7 @@
     const a = plan.from, b = plan.to, va = $('#from').value, vb = $('#to').value;
     plan.from = b; plan.to = a; $('#from').value = vb; $('#to').value = va;
     plan.res = null; planLayer.clearLayers();
+    preMarkers();
     restyle();
     if (plan.from && plan.to) runPlan(); else showPlan();
   });
