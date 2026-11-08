@@ -36,6 +36,7 @@ Aktualizováno: 2026-11-07
 | POI-001 | Vlastní místa na mapě, použitelná v Odkud a Kam (Pro později) | ANDROID | P2 | REVIEW | – | 2026-11-07 |
 | AND-007 | Promo kódy z Play Console pro přispěvatele Ko-fi | ANDROID | P3 | BACKLOG | AND-005 | 2026-11-07 |
 | MKT-001 | Reklamy pro neplatící uživatele aplikace | ANDROID | P3 | BACKLOG | AND-005, SEO-003 | 2026-11-07 |
+| MKT-002 | Promo video aplikace | – | P3 | BACKLOG | vydání v Google Play | 2026-11-08 |
 | AND-006 | Barvy systémových lišt podle motivu stránky (přepínač v aplikaci vs. systém) | ANDROID | P3 | BACKLOG | – | 2026-11-07 |
 | I18N-002 | Korektury překladů rodilými mluvčími (sq, en prioritně) | SHARED | P2 | BACKLOG | – | 2026-11-07 |
 | GTFS-002 | Varianty tras linek (větve) | SHARED | P2 | BACKLOG | – | 2026-11-07 |
@@ -154,6 +155,13 @@ Aktualizováno: 2026-11-07
 ### MKT-001 Reklamy pro neplatící uživatele aplikace
 - ANDROID · P3 · BACKLOG (až po Pro funkcích, rozhodnutí 2026-11-07)
 - Popis: reklamy v aplikaci pro uživatele bez Pro; Pro je bez reklam. Způsob (např. AdMob) a souhlas (SEO-003) určit při zahájení. Reklamy na webu zatím nerozhodnuty.
+
+### MKT-002 Promo video aplikace
+- Oblast: marketing (Chat 07) · Platforma: – (video, žádný kód) · P3 · BACKLOG
+- Popis: krátké promo video Tirana Bus pro Google Play, Facebook (turisté, i čeští cestovatelé) a Ko-fi. Ukazuje hlavní přínosy: spojení z letiště, plánovač, mapa a linky, offline mapa, 12 jazyků.
+- Kritéria: [ ] scénář a délka schváleny · [ ] formáty pro Google Play, Facebook a Ko-fi · [ ] titulky ve 12 jazycích (texty z `i18n.js`) · [ ] záběry z aplikace natočené na reálném telefonu po vydání v Google Play · [ ] hotové video mimo git, v repozitáři jen scénář a odkaz
+- Poznámky: záběry z aplikace nesmí být generované (musí odpovídat skutečným obrazovkám); generování (Kling AI) nanejvýš na úvodní či závěrečný záběr města. Scénář a titulky lze připravit předem, natáčet až s finálním vzhledem.
+- Historie: 2026-11-08 založeno
 
 ### UX-002 Našeptávač schovaný pod klávesnicí
 - Oblast: plánovač, UI (Chat 02) · SHARED (nalezeno v APK na emulátoru API 36, 1080 × 1920; web na telefonu neověřen) · P2 · REVIEW
