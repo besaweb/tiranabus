@@ -658,7 +658,6 @@
   const preIcon = k => `<i class="si">${icSvg(preIc(k))}</i>`;
   const preName = k => (pre[k] && pre[k].n) || t('pre_' + k);
   const preList = q => GEO ? Places.SLOTS.filter(k => pre[k] && pre[k].k && (!q || Places.presetHit(preName(k), q))) : [];
-  const preRow = (k, act) => `<button type="button" class="sg st ${act ? 'act' : ''}" data-pre="${k}">${preIcon(k)}<b>${esc(preName(k))}</b><span>${esc(pre[k].l)}</span></button>`;
   const ptEnd = (id, n, p, which) => placeEnd({ id, n, c: 'pin', pts: [p], t: {} }, which);
   function preEnd(k, which) {
     const p = pre[k];
@@ -1032,15 +1031,14 @@
   });
   function suggest(which) {
     const inp = $('#' + which), box = $('#' + which + '-sugg');
-    const q = norm(inp.value.trim()), pr = q ? [] : preList('');
+    const q = norm(inp.value.trim());
     if (!q) {
-      box.innerHTML = pr.map((k, i) => preRow(k, !i)).join('');
-      box.hidden = !pr.length;
-      sgView(box);
+      box.innerHTML = '';
+      box.hidden = true;
       return [];
     }
     if (ext && !pidx) loadPlaces().then(() => { if (pidx && document.activeElement === inp && !plan[which]) suggest(which); });
-    const ps = ext && pidx ? Places.search(pidx, inp.value, I18N.lang, 5) : [], po = poiList(inp.value.trim()), pp = pr.length + po.length;
+    const ps = ext && pidx ? Places.search(pidx, inp.value, I18N.lang, 5) : [], po = poiList(inp.value.trim());
     const hits = names.filter(g => g.key.includes(q)).sort((a, b) => (b.key.startsWith(q) - a.key.startsWith(q))).slice(0, ps.length ? 5 : 8);
     const prow = (it, act) => {
       if (!it.nr || it.nr[0] !== feed || it.nr[1] !== wnet) it.nr = [feed, wnet, Places.access(allStops(), it.pts, wnet)[0]];
@@ -1049,7 +1047,7 @@
     };
     box.innerHTML = po.map((p, i) => poiRow(p, !i)).join('') + (hits.length || ps.length
       ? hits.map((g, i) => `<button type="button" class="sg ${i === 0 && !po.length ? 'act' : ''}${ext ? ' st' : ''}" data-name="${esc(g.id)}">${ext ? picon('stop') : ''}<b>${esc(g.label)}</b><span>${[...g.routes].sort(byName).slice(0, 6).map(r => esc(r.short)).join(' · ')}</span></button>`).join('') + ps.map((it, i) => prow(it, !hits.length && !po.length && !i)).join('')
-      : pp ? '' : `<div class="sg none">${t('noStop')}</div>`);
+      : po.length ? '' : `<div class="sg none">${t('noStop')}</div>`);
     box.hidden = false;
     sgView(box);
     return hits;
@@ -1057,10 +1055,10 @@
   for (const which of ['from', 'to']) {
     const inp = $('#' + which), box = $('#' + which + '-sugg');
     inp.addEventListener('input', () => { plan[which] = null; plan.res = null; planLayer.clearLayers(); suggest(which); restyle(); });
-    inp.addEventListener('focus', () => { if (ext) { loadPlaces(); loadNet(); } if (!plan[which] && (inp.value || preList('').length)) suggest(which); });
+    inp.addEventListener('focus', () => { if (ext) { loadPlaces(); loadNet(); } if (!plan[which] && inp.value) suggest(which); });
     inp.addEventListener('blur', () => setTimeout(() => { box.hidden = true; inp.scrollLeft = 0; if (!/^(from|to)$/.test((document.activeElement || {}).id)) document.body.classList.remove('sgpad'); }, 150));
     inp.addEventListener('keydown', e => {
-      const items = [...box.querySelectorAll('.sg[data-name], .sg[data-place], .sg[data-pre], .sg[data-poi]')];
+      const items = [...box.querySelectorAll('.sg[data-name], .sg[data-place], .sg[data-poi]')];
       if (box.hidden || !items.length) return;
       let i = items.findIndex(x => x.classList.contains('act'));
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
@@ -1074,7 +1072,7 @@
       } else if (e.key === 'Escape') box.hidden = true;
     });
     box.addEventListener('mousedown', e => {
-      const b = e.target.closest('[data-name], [data-place], [data-pre], [data-poi]');
+      const b = e.target.closest('[data-name], [data-place], [data-poi]');
       if (!b) return;
       e.preventDefault();
       chooseEl(which, b);
@@ -1089,7 +1087,7 @@
       inp.dispatchEvent(new Event('input'));
     });
   }
-  const chooseEl = (which, b) => b.dataset.poi ? chooseEnd(which, poiEnd(pois.find(p => p.id === b.dataset.poi), which)) : b.dataset.pre ? chooseEnd(which, preEnd(b.dataset.pre, which)) : b.dataset.place ? choose(which, null, pidx.items.find(x => x.id === b.dataset.place)) : choose(which, b.dataset.name);
+  const chooseEl = (which, b) => b.dataset.poi ? chooseEnd(which, poiEnd(pois.find(p => p.id === b.dataset.poi), which)) : b.dataset.place ? choose(which, null, pidx.items.find(x => x.id === b.dataset.place)) : choose(which, b.dataset.name);
   function choose(which, name, it) {
     chooseEnd(which, it ? placeEnd(it, which) : groups.get(name));
   }
