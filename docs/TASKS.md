@@ -102,7 +102,7 @@ Aktualizováno: 2026-11-07
   - [x] web beze změny (žádné předvolby, karta ani položka menu), Node testy 27/27 (1 `todo` BUG-002)
   - [x] oprava po testu na telefonu (uživatel 2026-11-07: „Vybrat na mapě“ uložilo bod hned po klepnutí, bez značky a bez názvu): v režimu výběru klepnutí nebo podržení prstu na mapě či zastávce ukáže značku a popup s polem pro název a tlačítky Uložit / Zrušit, další klepnutí značku přesune; nápověda je v mapě (pod mapou na telefonu nebyla vidět). Ověřeno na emulátoru API 36 (světlý i tmavý režim, klávesnice, přesun, Zrušit, Odsud/Sem beze změny), web beze změny
   - [ ] reálný telefon (uživatel)
-- Poznámky: D-029. Zastávka se po novém feedu dohledá podle názvu, jinak podle souřadnic. Obsahuje i opravu UX-002 pro šířku ≤ 760 px (viz UX-002).
+- Poznámky: D-029. Při psaní do Odkud / Kam (2026-11-08, zadání uživatele) se předvolby už nezobrazují jako první, ale až na konci výsledků (po vlastních místech, zastávkách a místech z rozšířeného hledání); v prázdném poli zůstávají všechny předvolby nahoře. Zastávka se po novém feedu dohledá podle názvu, jinak podle souřadnic. Obsahuje i opravu UX-002 pro šířku ≤ 760 px (viz UX-002).
 
 ### UX-009 Rozbalovací nápověda u Rozšířeného vyhledávání
 - Oblast: UI, texty · SHARED (menu aplikace i menu webu; rozdíl jen ve výčtu zdrojů) · P3 · REVIEW

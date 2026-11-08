@@ -1047,9 +1047,9 @@
       const a = it.nr[2];
       return `<button type="button" class="sg pl ${act ? 'act' : ''}" data-place="${esc(it.id)}">${picon(it.c)}<b>${esc(Places.label(it, I18N.lang))}</b><span>${esc(t('cats')[it.c] || '')}${a ? ' · ' + esc(t('nearStop', { m: Math.round(a.m / 10) * 10, s: a.s.name })) : ''}</span></button>`;
     };
-    box.innerHTML = pr.map((k, i) => preRow(k, !i)).join('') + po.map((p, i) => poiRow(p, !pr.length && !i)).join('') + (hits.length || ps.length
-      ? hits.map((g, i) => `<button type="button" class="sg ${i === 0 && !pp ? 'act' : ''}${ext ? ' st' : ''}" data-name="${esc(g.id)}">${ext ? picon('stop') : ''}<b>${esc(g.label)}</b><span>${[...g.routes].sort(byName).slice(0, 6).map(r => esc(r.short)).join(' · ')}</span></button>`).join('') + ps.map((it, i) => prow(it, !hits.length && !pp && !i)).join('')
-      : pp ? '' : `<div class="sg none">${t('noStop')}</div>`);
+    box.innerHTML = po.map((p, i) => poiRow(p, !i)).join('') + (hits.length || ps.length
+      ? hits.map((g, i) => `<button type="button" class="sg ${i === 0 && !po.length ? 'act' : ''}${ext ? ' st' : ''}" data-name="${esc(g.id)}">${ext ? picon('stop') : ''}<b>${esc(g.label)}</b><span>${[...g.routes].sort(byName).slice(0, 6).map(r => esc(r.short)).join(' · ')}</span></button>`).join('') + ps.map((it, i) => prow(it, !hits.length && !po.length && !i)).join('')
+      : pp ? '' : `<div class="sg none">${t('noStop')}</div>`) + pr.map((k, i) => preRow(k, !po.length && !hits.length && !ps.length && !i)).join('');
     box.hidden = false;
     sgView(box);
     return hits;
