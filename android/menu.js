@@ -37,17 +37,27 @@
   }
   const langBox = document.querySelector('.lang');
   if (!langBox) return;
+  const IC = {
+    lang: '<path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/>',
+    tickets: '<path d="M3 8.5V7a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v1.5a2.5 2.5 0 0 0 0 5V17a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-3.5a2.5 2.5 0 0 0 0-5z"/><path d="M14 6.5v11" stroke-dasharray="2 2.2"/>',
+    data: '<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/>',
+    pre: '<path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/>',
+    poi: '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
+    about: '<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5M12 8h.01"/>',
+    ext: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>'
+  };
+  const ic = k => '<svg class="mico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + IC[k] + '</svg>';
   const wrap = document.createElement('div');
   wrap.className = 'amwrap';
   wrap.innerHTML = '<button type="button" class="ambtn" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>' +
-    '<div class="ammenu" hidden><button type="button" class="mi" id="mi-lang" aria-expanded="false"><span data-k="lang"></span><span class="cur"></span></button>' +
+    '<div class="ammenu" hidden><button type="button" class="mi" id="mi-lang" aria-expanded="false">' + ic('lang') + '<span data-k="lang"></span><span class="cur"></span></button>' +
     '<div class="langslot" hidden></div>' +
-    '<a class="mi" id="mi-tickets" href="tickets.html"><span data-k="tickets"></span></a>' +
-    '<a class="mi" id="mi-data" href="validity.html"><span data-k="data"></span></a>' +
-    '<button type="button" class="mi" id="mi-pre"><span class="pre"></span></button>' +
-    '<button type="button" class="mi" id="mi-poi"><span class="poi"></span></button>' +
-    '<button type="button" class="mi" id="mi-about" aria-expanded="false"><span data-k="about"></span></button><div class="about" hidden></div>' +
-    '<button type="button" class="mi" id="mi-ext" role="switch" aria-checked="false"><span class="ext"></span><span class="sw" aria-hidden="true"></span></button></div>';
+    '<a class="mi" id="mi-tickets" href="tickets.html">' + ic('tickets') + '<span data-k="tickets"></span></a>' +
+    '<a class="mi" id="mi-data" href="validity.html">' + ic('data') + '<span data-k="data"></span></a>' +
+    '<button type="button" class="mi" id="mi-pre">' + ic('pre') + '<span class="pre"></span></button>' +
+    '<button type="button" class="mi" id="mi-poi">' + ic('poi') + '<span class="poi"></span></button>' +
+    '<button type="button" class="mi" id="mi-about" aria-expanded="false">' + ic('about') + '<span data-k="about"></span></button><div class="about" hidden></div>' +
+    '<button type="button" class="mi" id="mi-ext" role="switch" aria-checked="false">' + ic('ext') + '<span class="ext"></span><span class="sw" aria-hidden="true"></span></button></div>';
   langBox.parentNode.insertBefore(wrap, langBox);
   const q = s => wrap.querySelector(s);
   const btn = q('.ambtn'), menu = q('.ammenu'), slot = q('.langslot'), about = q('.about'), miLang = q('#mi-lang'), miAbout = q('#mi-about');

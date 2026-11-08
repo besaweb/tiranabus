@@ -30,6 +30,7 @@ Aktualizováno: 2026-11-07
 | UX-004 | Ikony předvoleb přímo v polích Odkud / Kam | ANDROID | P2 | REVIEW | UX-003 | 2026-11-07 |
 | UX-005 | Tlačítko X pro vymazání polí Odkud / Kam | SHARED | P2 | REVIEW | UX-004 | 2026-11-07 |
 | UX-006 | Redesign karet Moje předvolby a Moje místa | ANDROID | P2 | REVIEW | POI-001 | 2026-11-08 |
+| UX-007 | Ikony v hlavním menu aplikace | ANDROID | P3 | REVIEW | UX-006 | 2026-11-08 |
 | POI-001 | Vlastní místa na mapě, použitelná v Odkud a Kam (Pro později) | ANDROID | P2 | REVIEW | – | 2026-11-07 |
 | AND-007 | Promo kódy z Play Console pro přispěvatele Ko-fi | ANDROID | P3 | BACKLOG | AND-005 | 2026-11-07 |
 | MKT-001 | Reklamy pro neplatící uživatele aplikace | ANDROID | P3 | BACKLOG | AND-005, SEO-003 | 2026-11-07 |
@@ -100,6 +101,13 @@ Aktualizováno: 2026-11-07
   - [x] oprava po testu na telefonu (uživatel 2026-11-07: „Vybrat na mapě“ uložilo bod hned po klepnutí, bez značky a bez názvu): v režimu výběru klepnutí nebo podržení prstu na mapě či zastávce ukáže značku a popup s polem pro název a tlačítky Uložit / Zrušit, další klepnutí značku přesune; nápověda je v mapě (pod mapou na telefonu nebyla vidět). Ověřeno na emulátoru API 36 (světlý i tmavý režim, klávesnice, přesun, Zrušit, Odsud/Sem beze změny), web beze změny
   - [ ] reálný telefon (uživatel)
 - Poznámky: D-029. Zastávka se po novém feedu dohledá podle názvu, jinak podle souřadnic. Obsahuje i opravu UX-002 pro šířku ≤ 760 px (viz UX-002).
+
+### UX-007 Ikony v hlavním menu aplikace
+- Oblast: UI · ANDROID (menu ☰ existuje jen v aplikaci, `android/menu.js`; web má v hlavičce samostatná tlačítka s ikonami) · P3 · REVIEW
+- Popis: každá položka menu má vlevo obrysovou ikonu 20 px (čára 1,8 jako ve zbytku aplikace, barva `--muted`, ve tmavém režimu světlá): Jazyk `languages`, Jízdné lístek z hlavičky webu, Platnost dat `calendar-check`, Moje předvolby `bookmark`, Moje místa `map-pin`, O aplikaci `info` z hlavičky webu, Rozšířené vyhledávání `search` (Lucide 0.460.0). Ikona je uvnitř tlačítka/odkazu položky. Hodnota jazyka a přepínač zůstávají vpravo (`margin-left: auto`). Pořadí, názvy, odkazy a chování beze změny.
+- Kritéria:
+  - [x] emulátor API 36 (ladicí APK): světlý i tmavý režim, výška všech položek 46 px, podnabídka jazyka, přepínač rozšířeného vyhledávání
+  - [ ] reálný telefon (uživatel)
 
 ### UX-006 Redesign karet Moje předvolby a Moje místa
 - Oblast: předvolby, vlastní místa, UI · ANDROID (D-026, D-033, D-034) · P2 · REVIEW

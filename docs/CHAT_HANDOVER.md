@@ -61,3 +61,9 @@ Jen **aktuálně rozpracované** úkoly. Po dokončení úkolu jeho sekci smaž 
 - Hotovo: implementace, prohlížeč v režimu aplikace (telefon, desktop, světlý/tmavý), web beze změny, Node testy.
 - Rozdělení na dvě karty podle zadání z 2026-11-08 (D-034). Testovací APK: `android/out/TiranaBus-1.9-karty.apk` (`versionCode` 27, obsahuje i POI-001).
 - Zbývá: PR po sloučení POI-001 (nebo jen tento PR, obsahuje obojí); test na telefonu.
+
+## UX-007 Ikony v hlavním menu aplikace
+- Chat: 03 Android · Větev: `feat/UX-007-ikony-menu` (nad `feat/UX-006-moje-mista`) · Aktualizováno: 2026-11-08
+- Hotovo: implementace, emulátor (světlý i tmavý režim).
+- Testovací APK: `android/out/TiranaBus-1.9-menu.apk` (`versionCode` 28, obsahuje i POI-001 a UX-006).
+- Zbývá: PR (stačí jeden pro POI-001 + UX-006 + UX-007); test na telefonu.
