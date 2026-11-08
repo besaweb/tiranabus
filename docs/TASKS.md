@@ -30,7 +30,7 @@ Aktualizováno: 2026-11-07
 | UX-004 | Ikony předvoleb přímo v polích Odkud / Kam | ANDROID | P2 | REVIEW | UX-003 | 2026-11-07 |
 | UX-005 | Tlačítko X pro vymazání polí Odkud / Kam | SHARED | P2 | REVIEW | UX-004 | 2026-11-07 |
 | UX-006 | Redesign karet Moje předvolby a Moje místa | ANDROID | P2 | REVIEW | POI-001 | 2026-11-08 |
-| UX-008 | Přepínač světlého / tmavého režimu v menu aplikace | ANDROID | P3 | REVIEW | UX-007 | 2026-11-08 |
+| UX-008 | Přepínač světlého / tmavého režimu a pořadí položek v menu aplikace | ANDROID | P3 | REVIEW | UX-007 | 2026-11-08 |
 | UX-007 | Ikony v hlavním menu aplikace | ANDROID | P3 | REVIEW | UX-006 | 2026-11-08 |
 | POI-001 | Vlastní místa na mapě, použitelná v Odkud a Kam (Pro později) | ANDROID | P2 | REVIEW | – | 2026-11-07 |
 | AND-007 | Promo kódy z Play Console pro přispěvatele Ko-fi | ANDROID | P3 | BACKLOG | AND-005 | 2026-11-07 |
@@ -103,11 +103,11 @@ Aktualizováno: 2026-11-07
   - [ ] reálný telefon (uživatel)
 - Poznámky: D-029. Zastávka se po novém feedu dohledá podle názvu, jinak podle souřadnic. Obsahuje i opravu UX-002 pro šířku ≤ 760 px (viz UX-002).
 
-### UX-008 Přepínač světlého / tmavého režimu v menu aplikace
+### UX-008 Přepínač světlého / tmavého režimu a pořadí položek v menu aplikace
 - Oblast: UI · ANDROID (menu ☰ je jen v aplikaci; web má přepínač v hlavičce na desktopu a v menu na telefonu, beze změny) · P3 · REVIEW
-- Popis: v menu aplikace je nová položka mezi Jízdným a Platností dat (jako v menu webu na telefonu): měsíc + „Tmavý režim“, ve tmavém režimu slunce + „Světlý režim“ (texty z `I18N.D`, 12 jazyků). Klepnutí volá stávající `toggleTheme` (klik na skryté `#theme`), takže volba se ukládá do `tirana-mhd-theme` jako dřív. Tlačítko měsíce/slunce v hlavičce aplikace je skryté (`#theme { display: none }` v `android/menu.css`). Menu se po přepnutí zavře.
+- Popis: v menu aplikace je nová položka mezi Jízdným a Platností dat (jako v menu webu na telefonu): měsíc + „Tmavý režim“, ve tmavém režimu slunce + „Světlý režim“ (texty z `I18N.D`, 12 jazyků). Klepnutí volá stávající `toggleTheme` (klik na skryté `#theme`), takže volba se ukládá do `tirana-mhd-theme` jako dřív. Tlačítko měsíce/slunce v hlavičce aplikace je skryté (`#theme { display: none }` v `android/menu.css`). Menu se po přepnutí zavře. Pořadí položek (zadání uživatele 2026-11-08): Moje předvolby, Moje místa, Rozšířené vyhledávání, Jazyk, Tmavý režim, Jízdné, Platnost dat, O aplikaci. Podnabídky Jazyka a O aplikaci zůstávají pod svými položkami.
 - Kritéria:
-  - [x] emulátor API 36 (ladicí APK): položka se jménem i ikonou podle režimu (cs i en), přepnutí tam i zpět, uložení volby, tlačítko v hlavičce zmizelo, mapa i karty se přebarví
+  - [x] emulátor API 36 (ladicí APK): nové pořadí položek (emulátor), podnabídky jazyka i O aplikaci, přepínač rozšířeného vyhledávání, položka se jménem i ikonou podle režimu (cs i en), přepnutí tam i zpět, uložení volby, tlačítko v hlavičce zmizelo, mapa i karty se přebarví
   - [ ] reálný telefon (uživatel)
 
 ### UX-007 Ikony v hlavním menu aplikace

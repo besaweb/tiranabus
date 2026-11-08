@@ -70,6 +70,6 @@ Jen **aktuálně rozpracované** úkoly. Po dokončení úkolu jeho sekci smaž 
 
 ## UX-008 Přepínač režimu v menu aplikace
 - Chat: 03 Android · Větev: `feat/UX-008-tema-v-menu` (nad `feat/UX-007-ikony-menu`) · Aktualizováno: 2026-11-08
-- Hotovo: implementace, emulátor (světlý i tmavý režim, cs i en).
+- Hotovo: implementace, nové pořadí položek menu, emulátor (světlý i tmavý režim, cs i en).
 - Testovací APK: `android/out/TiranaBus-1.9-tema.apk` (`versionCode` 29, obsahuje i POI-001, UX-006, UX-007).
 - Zbývá: PR (stačí jeden pro POI-001 + UX-006 + UX-007 + UX-008); test na telefonu.

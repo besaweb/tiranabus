@@ -52,15 +52,15 @@
   const wrap = document.createElement('div');
   wrap.className = 'amwrap';
   wrap.innerHTML = '<button type="button" class="ambtn" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>' +
-    '<div class="ammenu" hidden><button type="button" class="mi" id="mi-lang" aria-expanded="false">' + ic('lang') + '<span data-k="lang"></span><span class="cur"></span></button>' +
-    '<div class="langslot" hidden></div>' +
-    '<a class="mi" id="mi-tickets" href="tickets.html">' + ic('tickets') + '<span data-k="tickets"></span></a>' +
-    '<button type="button" class="mi" id="mi-theme">' + ic('moon') + '<span class="thm"></span></button>' +
-    '<a class="mi" id="mi-data" href="validity.html">' + ic('data') + '<span data-k="data"></span></a>' +
-    '<button type="button" class="mi" id="mi-pre">' + ic('pre') + '<span class="pre"></span></button>' +
+    '<div class="ammenu" hidden><button type="button" class="mi" id="mi-pre">' + ic('pre') + '<span class="pre"></span></button>' +
     '<button type="button" class="mi" id="mi-poi">' + ic('poi') + '<span class="poi"></span></button>' +
-    '<button type="button" class="mi" id="mi-about" aria-expanded="false">' + ic('about') + '<span data-k="about"></span></button><div class="about" hidden></div>' +
-    '<button type="button" class="mi" id="mi-ext" role="switch" aria-checked="false">' + ic('ext') + '<span class="ext"></span><span class="sw" aria-hidden="true"></span></button></div>';
+    '<button type="button" class="mi" id="mi-ext" role="switch" aria-checked="false">' + ic('ext') + '<span class="ext"></span><span class="sw" aria-hidden="true"></span></button>' +
+    '<button type="button" class="mi" id="mi-lang" aria-expanded="false">' + ic('lang') + '<span data-k="lang"></span><span class="cur"></span></button>' +
+    '<div class="langslot" hidden></div>' +
+    '<button type="button" class="mi" id="mi-theme">' + ic('moon') + '<span class="thm"></span></button>' +
+    '<a class="mi" id="mi-tickets" href="tickets.html">' + ic('tickets') + '<span data-k="tickets"></span></a>' +
+    '<a class="mi" id="mi-data" href="validity.html">' + ic('data') + '<span data-k="data"></span></a>' +
+    '<button type="button" class="mi" id="mi-about" aria-expanded="false">' + ic('about') + '<span data-k="about"></span></button><div class="about" hidden></div></div>';
   langBox.parentNode.insertBefore(wrap, langBox);
   const q = s => wrap.querySelector(s);
   const btn = q('.ambtn'), menu = q('.ammenu'), slot = q('.langslot'), about = q('.about'), miLang = q('#mi-lang'), miAbout = q('#mi-about');
