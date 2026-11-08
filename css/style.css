@@ -7,6 +7,7 @@
   --line: #E1E6EF;
   --soft: #F5F7FB;
   --accent: #C8102E;
+  --c-home: #2563EB; --c-work: #D9650B; --c-school: #15803D;
   --accent-ink: #FFFFFF;
   --accent-fg: #C8102E;
   --accent-soft: #FDF0F2;
@@ -26,6 +27,7 @@
   --mono: var(--ui);
 }
 :root[data-theme="dark"] {
+  --c-home: #6EA8FF; --c-work: #F5A04A; --c-school: #4ADE80;
   --bg: #0D1322; --panel: #161E31; --fg: #E7EBF3; --muted: #97A2B8; --line: #29344F; --soft: #1D2740;
   --accent: #D8263F; --accent-ink: #FFFFFF; --accent-fg: #FF6B7E; --accent-soft: #2B1B29;
   --navy: #3B67D6; --navy-ink: #FFFFFF; --map-bg: #111827; --stop-fill: #4DA3FF; --stop-stroke: #E7EBF3; --sky-m1: #172138; --sky-m2: #1C2843; --sky-b: #283A60; --sky-w: #3A5083;
@@ -545,6 +547,48 @@ header {
 .picgrid svg { width: 22px; height: 22px; }
 .premk { display: grid; place-items: center; border: 2px solid var(--accent); border-radius: 50%; background: var(--panel); color: var(--accent); box-shadow: var(--shadow); }
 .premk svg { width: 18px; height: 18px; }
+.pl { padding: 12px 12px 10px; }
+.pltop { display: flex; align-items: center; gap: 8px; }
+.pltop .ghead { margin: 0; flex: 1; min-width: 0; font-size: inherit; }
+.plnum { min-width: 22px; height: 22px; padding: 0 7px; display: grid; place-items: center; border-radius: 11px; background: var(--soft); color: var(--muted); font-size: 12.5px; font-weight: 600; }
+.plsub { margin: 2px 0 6px; color: var(--muted); font-size: 13.5px; }
+.pl.col .plsub, .pl.col .plbody { display: none; }
+.pl.col [data-pl="col"] svg { transform: rotate(-90deg); }
+.plrow { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 6px; padding: 6px 0; border-top: 1px solid var(--line); }
+#pre .plrow:first-child { border-top: 0; }
+.plgo { display: grid; grid-template-columns: 56px minmax(0, 1fr); align-items: center; gap: 12px; min-width: 0; padding: 0; border: 0; background: none; color: var(--fg); text-align: left; cursor: pointer; border-radius: 14px; }
+.plgo:focus-visible, .plb:focus-visible, .pladd:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
+.plic { width: 56px; height: 56px; display: grid; place-items: center; border-radius: 14px; color: var(--c); background: color-mix(in srgb, var(--c) 14%, transparent); }
+.plic svg { width: 26px; height: 26px; }
+.c-home { --c: var(--c-home); } .c-work { --c: var(--c-work); } .c-school { --c: var(--c-school); } .c-poi { --c: var(--accent); }
+.pltx { display: grid; min-width: 0; }
+.pltx b, .pltx span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.pltx b { font-size: 15.5px; }
+.pltx span { color: var(--muted); font-size: 13.5px; }
+.plb { width: 48px; height: 48px; flex: none; display: grid; place-items: center; padding: 0; border: 1px solid var(--line); border-radius: 50%; background: var(--panel); color: var(--fg); font-size: 22px; line-height: 1; cursor: pointer; }
+.plb svg { width: 20px; height: 20px; }
+.plb:hover { background: var(--soft); }
+.plb.del:hover { color: var(--accent-fg); border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+.plb.ghost { visibility: hidden; }
+.plb.sm { width: 36px; height: 36px; border-color: transparent; color: var(--muted); }
+.plb.sm svg { transition: transform .15s; }
+.plconf { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 8px 68px; font-size: 14px; }
+.plconf span { flex: 1 0 100%; color: var(--accent-fg); font-weight: 600; }
+.btn.danger { color: var(--accent-fg); border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+.pl .pedit { margin: 0 0 8px; }
+.pl .picgrid { margin: 8px 0; grid-template-columns: repeat(auto-fill, 44px); }
+.pladd { width: 100%; min-height: 60px; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 10px; border: 1.5px dashed var(--line); border-radius: 14px; background: none; color: var(--fg); font: 600 15px var(--ui); cursor: pointer; }
+.pladd:hover { border-color: var(--muted); background: var(--soft); }
+.pladd:disabled { opacity: .5; cursor: default; }
+.plplus { width: 28px; height: 28px; display: grid; place-items: center; border: 1.5px solid currentColor; border-radius: 50%; }
+.plplus svg { width: 16px; height: 16px; }
+.plempty { margin: 6px 0 0; }
+@media (max-width: 380px) {
+  .plgo { grid-template-columns: 48px minmax(0, 1fr); gap: 10px; }
+  .plic { width: 48px; height: 48px; }
+  .plb { width: 44px; height: 44px; }
+  .plconf { margin-left: 58px; }
+}
 .poidot { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; background: var(--soft); }
 .poidot::before { content: ""; width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid var(--stop-stroke); background: var(--accent); }
 .pmain .pn { font-size: 15px; overflow-wrap: anywhere; }

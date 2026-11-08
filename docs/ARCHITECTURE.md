@@ -68,8 +68,8 @@ Pořadí skriptů v `index.html`: Leaflet → JSZip → PapaParse → `gtfs-core
 | Odznak Google Play | ano | skrytý (`.gplay` v `menu.css`) | CSS |
 | Knihovny | cdnjs | lokálně v `lib/` | Gradle `prepareSite` (stahuje z cdnjs, přepisuje `index.html`) |
 | Feed | `gtfs.zip` vedle webu | `MainActivity`: stáhne z Pages do `filesDir`, offline uložená, jinak vložená kopie | interceptor `gtfs.zip` |
-| Vlastní místa (POI-001) | není | karta `#poi` z menu ☰ (`tb-pois`), červené body na mapě, „Uložit místo“ v dlouhém stisku, místa v našeptávači | `GEO` v `app.js` |
-| Předvolby, Odsud/Sem z mapy (UX-001) | není | karta `#pre` z menu ☰ (`tb-presets`), předvolby v našeptávači, `contextmenu` na mapě; ikony předvoleb a jejich značky na mapě (UX-003); ikony předvoleb v polích Odkud / Kam (UX-004) | `GEO` v `app.js` (`window.APP_VERSION` && `navigator.geolocation`) |
+| Vlastní místa (POI-001) | není | společná karta `#places` (Moje místa, UX-006) z menu ☰ (`tb-pois`), červené body na mapě, „Uložit místo“ v dlouhém stisku, místa v našeptávači | `GEO` v `app.js` |
+| Předvolby, Odsud/Sem z mapy (UX-001) | není | předvolby ve společné kartě `#places` (UX-006), předvolby v našeptávači, `contextmenu` na mapě; ikony předvoleb a jejich značky na mapě (UX-003); ikony předvoleb v polích Odkud / Kam (UX-004) | `GEO` v `app.js` (`window.APP_VERSION` && `navigator.geolocation`) |
 | Moje poloha (MAP-001) | není | tlačítko na mapě, panel `#geo`, oprávnění k poloze v `MainActivity` | `window.APP_VERSION` && `navigator.geolocation` (`GEO` v `app.js`) |
 | Dlaždice a fonty | online | `DiskCache` v `cacheDir/ext`: klíč SHA-256 URL, limit 100 MB (při překročení se maže nejstarší na 80 %), platnost 30 dní (po vypršení se zkusí stáhnout znovu, offline se použije stará kopie), úklid při startu | `MainActivity.external`, `DiskCache.java` |
 | GA4 | ano | ano (z `index.html`) | – |

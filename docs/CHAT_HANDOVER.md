@@ -55,3 +55,9 @@ Jen **aktuálně rozpracované** úkoly. Po dokončení úkolu jeho sekci smaž 
 - Hotovo: implementace, Node testy, prohlížeč v režimu aplikace, emulátor (karta, body, popup), web beze změny, zásady soukromí.
 - Testovací APK: `android/out/TiranaBus-1.9-mista.apk` (`versionCode` 25, obsahuje vše z `main`).
 - Zbývá: PR; test na telefonu (uživatel); Data safety v Play.
+
+## UX-006 Redesign karty Moje místa
+- Chat: 03 Android · Větev: `feat/UX-006-moje-mista` (nad `feat/POI-001-vlastni-mista`) · Aktualizováno: 2026-11-08
+- Hotovo: implementace, prohlížeč v režimu aplikace (telefon, desktop, světlý/tmavý), web beze změny, Node testy.
+- Testovací APK: `android/out/TiranaBus-1.9-karta.apk` (`versionCode` 26, obsahuje i POI-001).
+- Zbývá: PR po sloučení POI-001 (nebo jen tento PR, obsahuje obojí); test na telefonu.
