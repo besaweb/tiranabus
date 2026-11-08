@@ -110,7 +110,7 @@ Aktualizováno: 2026-11-07
 
 ### UX-013 Poloha uživatele na mapě jako malý smajlík
 - Oblast: poloha, mapa · ANDROID ONLY (`GEO`) · P3 · REVIEW
-- Popis: nalezená poloha (`geoDraw`) je místo modrého bodu malý statický smajlík (Lucide `smile`, 22 px, modrý s bílým obrysem, `.gme`, bez kruhu pozadí a bez animace); kruh přesnosti a červená značka nejbližší zastávky beze změny.
+- Popis: nalezená poloha (`geoDraw`) je místo modrého bodu malý statický smajlík (Lucide `smile`, 22 px, žlutá výplň, modré linky, bílý obrys, `.gme`, bez kruhu pozadí a bez animace); kruh přesnosti a červená značka nejbližší zastávky beze změny.
 - Kritéria:
   - [ ] emulátor (poloha v Tiranně): postavička viditelná nad zastávkami
   - [ ] telefon (uživatel)
