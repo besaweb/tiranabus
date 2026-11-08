@@ -30,6 +30,7 @@ Aktualizováno: 2026-11-07
 | UX-004 | Ikony předvoleb přímo v polích Odkud / Kam | ANDROID | P2 | REVIEW | UX-003 | 2026-11-07 |
 | UX-005 | Tlačítko X pro vymazání polí Odkud / Kam | SHARED | P2 | REVIEW | UX-004 | 2026-11-07 |
 | UX-006 | Redesign karet Moje předvolby a Moje místa | ANDROID | P2 | REVIEW | POI-001 | 2026-11-08 |
+| UX-011 | Nabídka po podržení prstu na mapě jako menu s ikonami | ANDROID ONLY | P3 | REVIEW | POI-001 | 2026-11-08 |
 | UX-009 | Rozbalovací nápověda u Rozšířeného vyhledávání | SHARED | P3 | REVIEW | UX-008 | 2026-11-08 |
 | UX-008 | Přepínač světlého / tmavého režimu a pořadí položek v menu aplikace | ANDROID | P3 | REVIEW | UX-007 | 2026-11-08 |
 | UX-007 | Ikony v hlavním menu aplikace | ANDROID | P3 | REVIEW | UX-006 | 2026-11-08 |
@@ -103,6 +104,13 @@ Aktualizováno: 2026-11-07
   - [x] oprava po testu na telefonu (uživatel 2026-11-07: „Vybrat na mapě“ uložilo bod hned po klepnutí, bez značky a bez názvu): v režimu výběru klepnutí nebo podržení prstu na mapě či zastávce ukáže značku a popup s polem pro název a tlačítky Uložit / Zrušit, další klepnutí značku přesune; nápověda je v mapě (pod mapou na telefonu nebyla vidět). Ověřeno na emulátoru API 36 (světlý i tmavý režim, klávesnice, přesun, Zrušit, Odsud/Sem beze změny), web beze změny
   - [ ] reálný telefon (uživatel)
 - Poznámky: D-029. Při psaní do Odkud / Kam (2026-11-08, zadání uživatele) se předvolby v našeptávači vůbec nezobrazují (rozhodl uživatel: „úplně skrýt“), ani po klepnutí do prázdného pole (našeptávač se v prázdném poli neotevře); předvolby jsou jen jako ikony v polích Odkud / Kam a v kartě Moje předvolby. Značky předvoleb na mapě se po načtení nezobrazují; objeví se, až je uživatel vybere nebo napíše do Odkud / Kam (zmizí po smazání pole nebo změně výběru). Napsaný přesný název předvolby se při hledání stále rozpozná. Zastávka se po novém feedu dohledá podle názvu, jinak podle souřadnic. Obsahuje i opravu UX-002 pro šířku ≤ 760 px (viz UX-002).
+
+### UX-011 Nabídka po podržení prstu na mapě jako menu s ikonami
+- Oblast: mapa, UI · ANDROID ONLY (nabídka existuje jen při `GEO`, tj. v aplikaci; stejně jako POI-001) · P3 · REVIEW
+- Popis: popup „Bod na mapě“ má červenou ikonu špendlíku v záhlaví a pod ním řádky odděleného menu s modrými ikonami: Odsud (špendlík), Sem (vlajka), Uložit místo (hvězda). Ikony z Lucide (`PRE_ICO`, přidána `flag`), styly `.gmenu` v `style.css`, bez změny logiky.
+- Kritéria:
+  - [x] prohlížeč v režimu aplikace, 375 px: nabídka se zobrazí, Sem vyplní pole Kam
+  - [ ] emulátor / telefon (uživatel), světlý i tmavý režim
 
 ### UX-009 Rozbalovací nápověda u Rozšířeného vyhledávání
 - Oblast: UI, texty · SHARED (menu aplikace i menu webu; rozdíl jen ve výčtu zdrojů) · P3 · REVIEW

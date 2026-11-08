@@ -80,3 +80,9 @@ Jen **aktuálně rozpracované** úkoly. Po dokončení úkolu jeho sekci smaž 
 - Testovací APK: `android/out/TiranaBus-1.9-napoveda.apk` (`versionCode` 31, obsahuje i POI-001, UX-006 až UX-008).
 - Zbývá: PR (stačí jeden pro celý řetěz); test na telefonu; web se změní až po sloučení.
 - Přidáno do téže větve: předvolby se v našeptávači Odkud / Kam nezobrazují vůbec, ani po klepnutí do prázdného pole Značky předvoleb na mapě jen pro vybrané v Odkud / Kam (APK `TiranaBus-1.9-bez-predvoleb.apk`, `versionCode` 35). Položka menu a karta Moje předvolby přejmenovány na „Oblíbené zastávky“.
+
+## UX-011 Menu s ikonami po podržení prstu na mapě
+- Chat: 03 Android · Větev: `feat/UX-011-menu-bodu` · Aktualizováno: 2026-11-08
+- Hotovo: implementace, ověření v prohlížeči (režim aplikace, 375 px), Node testy.
+- Testovací APK: `android/out/TiranaBus-1.9-menu-bodu.apk` (`versionCode` 37).
+- Zbývá: PR; test na telefonu (světlý i tmavý režim).

@@ -537,6 +537,14 @@ header {
 .gpop { display: grid; gap: 4px; min-width: 160px; padding-right: 22px; }
 .pknote { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 1000; width: max-content; max-width: calc(100% - 150px); padding: 7px 12px; border-radius: 12px; background: var(--panel); color: var(--fg); box-shadow: var(--shadow); font-size: 13.5px; text-align: center; pointer-events: none; }
 .pknote[hidden] { display: none; }
+.gmenu { gap: 0; min-width: 190px; padding: 0; }
+.gmenu b { display: flex; align-items: center; gap: 10px; padding: 2px 22px 10px 0; font-size: 15px; }
+.gmenu button { display: flex; align-items: center; gap: 12px; width: 100%; padding: 11px 4px; border: 0; border-top: 1px solid var(--line); border-radius: 0; background: none; color: var(--fg); font: inherit; font-size: 14.5px; text-align: left; cursor: pointer; }
+.gmenu button:hover { background: var(--soft); }
+.gmenu i { display: grid; place-items: center; width: 22px; height: 22px; flex: none; }
+.gmenu svg { width: 22px; height: 22px; }
+.gm-red { color: var(--accent); }
+.gm-blue { color: #1A73E8; }
 .gpop .pname { margin-top: 4px; min-width: 190px; }
 .gpop > span { color: var(--muted); font-size: 12.5px; }
 .gpop .btn { justify-self: start; margin-top: 4px; }
