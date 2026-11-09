@@ -586,7 +586,7 @@ header {
 .plrow { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 6px; padding: 6px 0; border-top: 1px solid var(--line); }
 #pre .plrow:first-child, #poi .plrow:first-child { border-top: 0; }
 .plgo { display: grid; grid-template-columns: 28px minmax(0, 1fr); align-items: center; gap: 12px; min-height: 48px; min-width: 0; padding: 0; border: 0; background: none; color: var(--fg); text-align: left; cursor: pointer; border-radius: 14px; }
-.plgo:focus-visible, .plb:focus-visible, .pladd:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
+.plgo:focus-visible, .plb:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
 .plic { display: grid; place-items: center; color: var(--fg); }
 .plic svg { width: 24px; height: 24px; }
 .plgo.poi { grid-template-columns: 10px minmax(0, 1fr); padding-left: 4px; }
@@ -607,11 +607,6 @@ header {
 .btn.danger { color: var(--accent-fg); border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
 .pl .pedit { margin: 0 0 8px; }
 .pl .picgrid { margin: 8px 0; grid-template-columns: repeat(auto-fill, 44px); }
-.pladd { width: 100%; min-height: 60px; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 10px; border: 1.5px dashed var(--line); border-radius: 14px; background: none; color: var(--fg); font: 600 15px var(--ui); cursor: pointer; }
-.pladd:hover { border-color: var(--muted); background: var(--soft); }
-.pladd:disabled { opacity: .5; cursor: default; }
-.plplus { width: 28px; height: 28px; display: grid; place-items: center; border: 1.5px solid currentColor; border-radius: 50%; }
-.plplus svg { width: 16px; height: 16px; }
 .plempty { margin: 6px 0 0; }
 @media (max-width: 380px) {
   .plgo { gap: 10px; }
@@ -633,3 +628,4 @@ header {
 .plist { display: grid; }
 .plist:empty { display: none; }
 @media (max-width: 760px) { .sgpad .side { padding-bottom: 70vh; } }
+.pact + .gmsg { margin-top: 8px; }

@@ -783,7 +783,7 @@
     if (!b) return;
     if (b.dataset.pl === 'x') {
       x.open = false;
-      if (sec === 'pre') preEdit = prePick = preMsg = preDel = null; else poiEdit = poiPick = poiMsg = poiDel = null;
+      if (sec === 'pre') preEdit = prePick = preMsg = preDel = null; else poiEdit = poiPick = poiMsg = poiDel = poiGeo = null;
       map.closePopup();
     } else { x.col = !x.col; try { localStorage.setItem(x.key, x.col ? '1' : '0'); } catch (e) {} }
     secShow(sec);
@@ -881,7 +881,7 @@
     });
   }
   const POIK = 'tirana-pois';
-  let pois = [], poiEdit = null, poiPick = null, poiDel = null, poiMsg = null;
+  let pois = [], poiEdit = null, poiPick = null, poiDel = null, poiMsg = null, poiGeo = null;
   try { pois = Places.pois(localStorage.getItem(POIK)); } catch (e) {}
   const poiId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
   const poiEnd = (p, which) => ptEnd('@poi-' + p.id, p.n, [p.lat, p.lon], which);
@@ -970,7 +970,8 @@
       if (poiPick && poiPick.id === p.id) h += `<p class="gmsg">${esc(t('poiPickHint'))} <button type="button" class="btn sm" data-pa="cancel">${esc(t('preCancel'))}</button></p>`;
     }
     const full = pois.length >= Places.POI_MAX;
-    h += `<button type="button" class="pladd" data-pa="add" ${full ? 'disabled' : ''}><span class="plplus">${uiSvg('plus')}</span>${esc(t('plAdd'))}</button>`;
+    h += `<div class="pact"><button type="button" class="btn sm pgps" data-pa="gps" ${full ? 'disabled' : ''}>${uiSvg('locate')}${esc(t('preHere'))}</button><button type="button" class="btn sm pmap" data-pa="add" ${full ? 'disabled' : ''}>${uiSvg('map')}${esc(t('preOnMap'))}</button></div>`;
+    if (poiGeo) h += `<p class="gmsg">${esc(t(poiGeo.k, poiGeo.p))}</p>`;
     if (full) h += `<p class="gmsg">${esc(t('poiMax', { n: Places.POI_MAX }))}</p>`;
     if (poiPick && !poiPick.id) h += `<p class="gmsg">${esc(t('poiPickHint'))} <button type="button" class="btn sm" data-pa="cancel">${esc(t('preCancel'))}</button></p>`;
     box.innerHTML = h;
@@ -980,7 +981,13 @@
     if (!b) return;
     const a = b.dataset.pa, p = pois.find(x => x.id === b.dataset.id);
     if (a !== 'del') poiDel = null;
+    if (a !== 'gps') poiGeo = null;
     if (a === 'nodel') {}
+    else if (a === 'gps') {
+      poiPick = poiEdit = poiMsg = null; poiGeo = { k: 'geoBusy' }; map.closePopup(); poiShow();
+      geoOnce(pt => { poiGeo = null; poiShow(); map.setView(pt, Math.max(map.getZoom(), 16)); if (innerWidth <= 760) $('#map').scrollIntoView({ block: 'nearest' }); poiForm(pt[0], pt[1], { id: null }); }, (st, mk, mp) => { poiGeo = { k: mk, p: mp }; poiShow(); });
+      return;
+    }
     else if (a === 'add') { poiPick = { id: null }; poiEdit = poiMsg = null; if (prePick) { prePick = null; preShow(); } map.closePopup(); if (innerWidth <= 760) $('#map').scrollIntoView({ block: 'nearest' }); }
     else if (a === 'cancel') { poiPick = poiEdit = poiMsg = null; map.closePopup(); }
     else if (!p) return;
