@@ -111,7 +111,7 @@ Aktualizováno: 2026-11-07
 
 ### UX-014 Tlačítka v úpravě oblíbené zastávky
 - Oblast: UI, Moje předvolby · SHARED · P3 · REVIEW
-- Popis: v úpravě předvolby jsou „Moje aktuální poloha“ a „Vybrat na mapě“ vedle sebe ve stejné šířce (mřížka 2 sloupce, `.pact`), pod nimi vycentrované sekundární tlačítko „Zrušit“ (průhledné, tlumená barva, `.btn.sec`). Akce a texty beze změny; `.grow` ostatních karet nedotčen.
+- Popis: v úpravě předvolby jsou „Moje aktuální poloha“ a „Vybrat na mapě“ vedle sebe ve stejné šířce (mřížka 2 sloupce, `.pact`), pod nimi mřížka výběru ikon (přesunuta sem z horní části úpravy) a vycentrované sekundární tlačítko „Zrušit“ (průhledné, tlumená barva, `.btn.sec`). Hlavní tlačítka mají ikonu nad textem (`locate`, `map` v `UI_IC`) a barevné zvýraznění: poloha červeně (`--accent`), mapa modře (#1A73E8). Akce a texty beze změny; `.grow` ostatních karet nedotčen.
 - Kritéria:
   - [x] web, šířka 320 px: dvě buňky po 128 px, Zrušit uprostřed
   - [x] APK v emulátoru (1080 px): dvě stejná tlačítka, Zrušit uprostřed

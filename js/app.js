@@ -694,7 +694,9 @@
     edit: '<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>',
     del: '<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>',
     down: '<path d="m6 9 6 6 6-6"/>',
-    plus: '<path d="M5 12h14"/><path d="M12 5v14"/>'
+    plus: '<path d="M5 12h14"/><path d="M12 5v14"/>',
+    locate: '<line x1="2" x2="5" y1="12" y2="12"/><line x1="19" x2="22" y1="12" y2="12"/><line x1="12" x2="12" y1="2" y2="5"/><line x1="12" x2="12" y1="19" y2="22"/><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3"/>',
+    map: '<path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/>'
   };
   const uiSvg = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${UI_IC[k]}</svg>`;
   const plBtns = (sc, id, del) => `<button type="button" class="plb" data-pa="edit" ${sc}="${id}" aria-label="${esc(t('preChange'))}" title="${esc(t('preChange'))}">${uiSvg('edit')}</button>` +
@@ -722,9 +724,9 @@
       h += `<div class="plrow"><button type="button" class="plgo" data-pa="go" data-slot="${k}"><span class="plic">${icSvg(preIc(k))}</span><span class="pltx"><b>${esc(preName(k))}</b><span>${esc(p.k ? p.l : t('preUnset'))}</span></span></button>${plBtns('data-slot', k, p.k || p.n || p.i)}</div>`;
       if (preDel === k) h += plConf('data-slot', k);
       if (preEdit === k) {
-        h += `<div class="pedit"><input class="pname" data-slot="${k}" maxlength="24" value="${esc(preName(k))}" aria-label="${esc(t('preName'))}"><div class="picgrid" role="group" aria-label="${esc(t('preIcon'))}">${Places.ICONS.map(i => `<button type="button" class="${i === preIc(k) ? 'on' : ''}" data-pa="seticon" data-slot="${k}" data-ic="${i}" aria-pressed="${i === preIc(k)}" aria-label="${esc(t('ic')[i])}" title="${esc(t('ic')[i])}">${icSvg(i)}</button>`).join('')}</div>`;
+        h += `<div class="pedit"><input class="pname" data-slot="${k}" maxlength="24" value="${esc(preName(k))}" aria-label="${esc(t('preName'))}">`;
         h += `<input type="search" class="pq" placeholder="${esc(t('preSearch'))}" aria-label="${esc(t('preSearch'))}" autocomplete="off"><div class="plist"></div>`;
-        h += `<div class="pact"><button type="button" class="btn sm" data-pa="gps">${esc(t('preHere'))}</button><button type="button" class="btn sm" data-pa="map">${esc(t('preOnMap'))}</button><button type="button" class="btn sm sec" data-pa="cancel">${esc(t('preCancel'))}</button></div>`;
+        h += `<div class="pact"><button type="button" class="btn sm pgps" data-pa="gps">${uiSvg('locate')}${esc(t('preHere'))}</button><button type="button" class="btn sm pmap" data-pa="map">${uiSvg('map')}${esc(t('preOnMap'))}</button><div class="picgrid" role="group" aria-label="${esc(t('preIcon'))}">${Places.ICONS.map(i => `<button type="button" class="${i === preIc(k) ? 'on' : ''}" data-pa="seticon" data-slot="${k}" data-ic="${i}" aria-pressed="${i === preIc(k)}" aria-label="${esc(t('ic')[i])}" title="${esc(t('ic')[i])}">${icSvg(i)}</button>`).join('')}</div><button type="button" class="btn sm sec" data-pa="cancel">${esc(t('preCancel'))}</button></div>`;
         if (prePick === k) h += `<p class="gmsg">${esc(t('prePickHint'))}</p>`;
         if (preMsg) h += `<p class="gmsg">${esc(t(preMsg.k, preMsg.p))}</p>`;
         h += '</div>';
