@@ -117,7 +117,8 @@ Aktualizováno: 2026-11-07
 - Popis: v kartách Oblíbené zastávky, Oblíbené trasy a Moje místa je na konci tlačítko Zpět (centrované, sekundární, klíč `back` ve 12 jazycích). Je-li některá karta otevřená a nesbalená, je skrytá karta plánovače (`.searchcard`) i panel výsledků (`#sheet`) přes třídu `body.seclist` (nastavuje `plHead`). Plánovač se vrátí po Zpět, po × a po sbalení karty. Plánování zevnitř karty (otevření oblíbené trasy, Odsud/Sem z mapy, klepnutí na zastávku) karty zavře (`plCloseAll`), aby bylo výsledky vidět.
 - Kritéria:
   - [x] web (režim aplikace): všechny tři karty skryjí plánovač, Zpět i × ho vrátí, otevření trasy zavře kartu a ukáže spojení
-  - [ ] APK v emulátoru · [ ] tmavý režim a telefon (uživatel)
+  - [x] APK v emulátoru: Zpět v kartě, plánovač skrytý
+  - [ ] tmavý režim a telefon (uživatel)
 
 ### UX-016 Přidání místa tlačítky Moje aktuální poloha / Vybrat na mapě
 - Oblast: UI, Moje místa · ANDROID ONLY (karta Moje místa je jen v aplikaci) · P3 · REVIEW · závisí na UX-014 (třída `.pact`)
