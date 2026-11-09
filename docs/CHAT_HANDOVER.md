@@ -20,4 +20,4 @@ Jen **aktuálně rozpracované** úkoly. Po dokončení úkolu jeho sekci smaž 
 - Hotovo: podklady v `docs/play/` (grafika, 6 snímků, texty en/sq/cs, Data safety, IARC, postup).
 - Testy: délky textů v limitech Play ověřeny skriptem; snímky 1080 × 1920 (9:16).
 - Problémy: hlavní obrázek se starým logem; albánské texty strojové.
-- Další krok: uživatel čeká na ověření účtu Play (doklady odeslány 2026-11-07; keystore zálohován) → build AAB 1.8 (code 18) z `main` → nahrání na interní testování.
+- Další krok: účet ověřen (2026-11-09). Po sloučení PR s BUG-001/002 a WEB-001 postavit AAB z čistého `main` (`./gradlew aab`, nová verze – `versionCode` ≥ 19), uživatel nahraje na interní testování a zahájí uzavřený test (12 testerů / 14 dní).

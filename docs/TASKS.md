@@ -12,7 +12,6 @@ Aktualizováno: 2026-11-07
 | CORE-001 | Objekt `PLATFORM` místo `OFFLINE_MAP`/`APP_VERSION` | SHARED | P1 | BACKLOG | TEST-001 | 2026-11-07 |
 | CORE-002 | Explicitní vkládací body pro Android místo přepisování `index.html` v Gradle | ANDROID | P1 | BACKLOG | – | 2026-11-07 |
 | I18N-001 | Texty Android menu/platnosti/úvodu do `i18n.js` | SHARED | P2 | BACKLOG | TEST-002 | 2026-11-07 |
-| WEB-001 | `deploy-ftp.sh` jen z čistého `main` | WEB | P1 | READY | – | 2026-11-07 |
 | SEO-001 | Google Search Console + Bing, odeslat sitemap | WEB | P1 | READY | – | 2026-11-07 |
 | SEO-003 | Consent Mode v2 pro EU | SHARED | P1 | BACKLOG | – | 2026-11-07 |
 | CORE-004 | Jeden seznam souborů pro Pages / FTP / Android | SHARED | P2 | BACKLOG | – | 2026-11-07 |
@@ -34,17 +33,13 @@ Aktualizováno: 2026-11-07
 
 ## Detail
 
-### WEB-001 Bezpečný FTP deploy
-- WEB (FTP jen pro web) · P1 · READY
-- Kritéria: `deploy-ftp.sh` odmítne běžet mimo `main`, s necommitovanými změnami nebo za `origin/main`.
-
 ### AND-008 První vydání v Google Play
 - Oblast: Android / vydání · ANDROID (Google Play) · P0 · IN_PROGRESS
 - Popis: podklady pro Play Console a první nahrání AAB na testovací stopu. Podklady v `docs/play/`.
 - Kritéria:
   - [x] ikona 512 × 512, hlavní obrázek 1024 × 500, 6 snímků 1080 × 1920 (emulátor API 36, 2026-11-07)
   - [x] texty listingu en, sq (strojově, ke kontrole), cs; odpovědi pro Data safety, IARC a ostatní formuláře; postup vydání
-  - [x] typ účtu: osobní, veřejné jméno „BesaWeb“ (2026-11-07) · [ ] uživatel založí účet a ověří totožnost · [ ] uzavřený test 12 testerů / 14 dní · [x] záloha keystore provedena (uživatel, 2026-11-07)
+  - [x] typ účtu: osobní, veřejné jméno „BesaWeb“ (2026-11-07) · [x] uživatel založil účet a ověřil totožnost (2026-11-09) · [ ] uzavřený test 12 testerů / 14 dní · [x] záloha keystore provedena (uživatel, 2026-11-07)
   - [ ] AAB `1.8` / `versionCode 18` z čistého `main` nahrané na interní testování, Play App Signing zapnuté při prvním nahrání (D-022)
 - Poznámky: hlavní obrázek je z obálky se starším modrým logem, doporučeno nahradit. Při snímcích nalezeno: našeptávač u pole Kam je na telefonu schovaný pod klávesnicí (navrhnout úkol pro Chat 02).
 
@@ -120,3 +115,4 @@ Aktualizováno: 2026-11-07
 | UX-018 | Úvodní pohled mapy: střed Tirany, přiblížení 13 | 2026-11-09 | PR #19 |
 | BUG-001 | Cena RT na palubě sjednocena na 300 L / 3,50 € (data z luna.al, ověřeno 29. 10. 2026; `tkPriceB` ve 12 jazycích a `tickets.html`) | 2026-11-09 | – |
 | BUG-002 | Plánovač vracel spojení s chůzí začínající před zadaným časem (příčina: `tidy` nehlídal čas začátku první chůze; oprava parametrem `tOrg`; test bez `todo`, snapshot přegenerován, nejlepší příjezd ve 160 dotazech nikdy horší) | 2026-11-09 | – |
+| WEB-001 | `deploy-ftp.sh` odmítne běh mimo `main`, s necommitovanými změnami sledovaných souborů a při rozdílu proti `origin/main` (guardy ověřeny odděleně, skript samotný se nespouštěl) | 2026-11-09 | – |
