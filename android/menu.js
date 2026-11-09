@@ -54,8 +54,8 @@
   const wrap = document.createElement('div');
   wrap.className = 'amwrap';
   wrap.innerHTML = '<button type="button" class="ambtn" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>' +
-    '<div class="ammenu" hidden><button type="button" class="mi" id="mi-pre">' + ic('pre') + '<span class="pre"></span></button>' +
-    '<button type="button" class="mi" id="mi-rt">' + ic('rt') + '<span class="rt"></span></button>' +
+    '<div class="ammenu" hidden><button type="button" class="mi" id="mi-rt">' + ic('rt') + '<span class="rt"></span></button>' +
+    '<button type="button" class="mi" id="mi-pre">' + ic('pre') + '<span class="pre"></span></button>' +
     '<button type="button" class="mi" id="mi-poi">' + ic('poi') + '<span class="poi"></span></button>' +
     '<div class="miwrap"><button type="button" class="mi" id="mi-ext" role="switch" aria-checked="false">' + ic('ext') + '<span class="ext"></span><span class="sw" aria-hidden="true"></span></button><button type="button" class="mihelp" id="mi-exthelp" aria-expanded="false" aria-controls="mi-exthelptx">' + ic('help') + '</button></div><p class="mihelptx" id="mi-exthelptx" hidden></p>' +
     '<button type="button" class="mi" id="mi-lang" aria-expanded="false">' + ic('lang') + '<span data-k="lang"></span><span class="cur"></span></button>' +
