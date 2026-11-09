@@ -115,7 +115,8 @@ Aktualizováno: 2026-11-07
 - Popis: v kartě Moje místa nahradilo tlačítko „Přidat nové místo“ (klíč `plAdd` zrušen) dvojici tlačítek vedle sebe jako v Oblíbených zastávkách (`.pact`, ikony `locate` / `map`, červená / modrá). „Vybrat na mapě“ = dosavadní postup (klepnutí na mapu → formulář názvu). „Moje aktuální poloha“ zjistí polohu (`geoOnce`), vycentruje mapu a otevře stejný formulář názvu a popisu v bodě polohy; chyby (mimo Tiranu, bez oprávnění, nepřesné) se ukazují pod tlačítky.
 - Kritéria:
   - [x] web (režim aplikace, 390 px, falešná poloha): dvě stejná tlačítka, popup se uloží do seznamu, mimo oblast hlásí chybu
-  - [ ] APK v emulátoru (`adb emu geo fix`) · [ ] tmavý režim a telefon (uživatel)
+  - [x] APK v emulátoru (`adb emu geo fix`): tlačítka, po „Moje aktuální poloha“ formulář v bodě polohy
+  - [ ] tmavý režim a telefon (uživatel)
 
 ### UX-014 Tlačítka v úpravě oblíbené zastávky
 - Oblast: UI, Moje předvolby · SHARED · P3 · REVIEW
