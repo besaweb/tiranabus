@@ -25,7 +25,7 @@
       this._container.innerHTML = Object.keys(this._attributions).filter(k => this._attributions[k]).join(' · ');
     }
   });
-  const CENTER = [41.3275, 19.8187], START_ZOOM = 14;
+  const CENTER = [41.3275, 19.8187], START_ZOOM = 13;
   const map = L.map('map', { preferCanvas: true, zoomSnap: .5, attributionControl: true }).setView(CENTER, START_ZOOM);
   map.attributionControl.setPrefix(false);
   const renderer = L.canvas({ padding: .5, tolerance: 6 });

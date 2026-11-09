@@ -32,7 +32,7 @@ Aktualizováno: 2026-11-07
 | UX-006 | Redesign karet Moje předvolby a Moje místa | ANDROID | P2 | REVIEW | POI-001 | 2026-11-08 |
 | UX-015 | Oblíbené trasy (menu ☰, hvězdička u výsledku) | ANDROID ONLY | P2 | REVIEW | UX-006 | 2026-11-09 |
 | UX-013 | Poloha uživatele na mapě jako malý smajlík | ANDROID ONLY | P3 | REVIEW | – | 2026-11-08 |
-| UX-018 | Úvodní pohled mapy: střed Tirany, přiblížení 14 | SHARED | P3 | REVIEW | – | 2026-11-09 |
+| UX-018 | Úvodní pohled mapy: střed Tirany, přiblížení 13 | SHARED | P3 | REVIEW | – | 2026-11-09 |
 | UX-017 | Tlačítko Zpět v kartách a skrytí plánovače | ANDROID ONLY | P3 | REVIEW | UX-014, UX-015, UX-016 | 2026-11-09 |
 | UX-016 | Přidání místa: Moje aktuální poloha / Vybrat na mapě | ANDROID ONLY | P3 | REVIEW | UX-014 | 2026-11-09 |
 | UX-014 | Tlačítka v úpravě oblíbené zastávky | SHARED | P3 | REVIEW | – | 2026-11-09 |
@@ -115,9 +115,9 @@ Aktualizováno: 2026-11-07
 
 ### UX-018 Úvodní pohled mapy
 - Oblast: mapa · SHARED (`draw()` v `app.js`, web i APK) · P3 · REVIEW
-- Popis: po prvním načtení dat se mapa nezobrazí přizpůsobená celé síti (zoom ≈ 11), ale vycentrovaná na střed Tirany (náměstí Skanderbeg, 41.3275 / 19.8187) se zoomem 14 (o 3 úrovně blíž; konstanty `CENTER`, `START_ZOOM`). Zadání uživatele.
+- Popis: po prvním načtení dat se mapa nezobrazí přizpůsobená celé síti (zoom ≈ 11), ale vycentrovaná na střed Tirany (náměstí Skanderbeg, 41.3275 / 19.8187) se zoomem 13 (o 2 úrovně blíž; konstanty `CENTER`, `START_ZOOM`). Zadání uživatele.
 - Kritéria:
-  - [x] web: mapa na středu Tirany, zoom 14
+  - [x] web: mapa na středu Tirany, zoom 13
   - [x] APK v emulátoru: úvodní mapa na středu Tirany
   - [ ] telefon (uživatel)
 
