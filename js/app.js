@@ -724,7 +724,7 @@
       if (preEdit === k) {
         h += `<div class="pedit"><input class="pname" data-slot="${k}" maxlength="24" value="${esc(preName(k))}" aria-label="${esc(t('preName'))}"><div class="picgrid" role="group" aria-label="${esc(t('preIcon'))}">${Places.ICONS.map(i => `<button type="button" class="${i === preIc(k) ? 'on' : ''}" data-pa="seticon" data-slot="${k}" data-ic="${i}" aria-pressed="${i === preIc(k)}" aria-label="${esc(t('ic')[i])}" title="${esc(t('ic')[i])}">${icSvg(i)}</button>`).join('')}</div>`;
         h += `<input type="search" class="pq" placeholder="${esc(t('preSearch'))}" aria-label="${esc(t('preSearch'))}" autocomplete="off"><div class="plist"></div>`;
-        h += `<div class="grow"><button type="button" class="btn sm" data-pa="gps">${esc(t('preHere'))}</button><button type="button" class="btn sm" data-pa="map">${esc(t('preOnMap'))}</button><button type="button" class="btn sm" data-pa="cancel">${esc(t('preCancel'))}</button></div>`;
+        h += `<div class="pact"><button type="button" class="btn sm" data-pa="gps">${esc(t('preHere'))}</button><button type="button" class="btn sm" data-pa="map">${esc(t('preOnMap'))}</button><button type="button" class="btn sm sec" data-pa="cancel">${esc(t('preCancel'))}</button></div>`;
         if (prePick === k) h += `<p class="gmsg">${esc(t('prePickHint'))}</p>`;
         if (preMsg) h += `<p class="gmsg">${esc(t(preMsg.k, preMsg.p))}</p>`;
         h += '</div>';

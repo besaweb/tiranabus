@@ -31,6 +31,7 @@ Aktualizováno: 2026-11-07
 | UX-005 | Tlačítko X pro vymazání polí Odkud / Kam | SHARED | P2 | REVIEW | UX-004 | 2026-11-07 |
 | UX-006 | Redesign karet Moje předvolby a Moje místa | ANDROID | P2 | REVIEW | POI-001 | 2026-11-08 |
 | UX-013 | Poloha uživatele na mapě jako malý smajlík | ANDROID ONLY | P3 | REVIEW | – | 2026-11-08 |
+| UX-014 | Tlačítka v úpravě oblíbené zastávky | SHARED | P3 | REVIEW | – | 2026-11-09 |
 | UX-012 | Ikona upozornění u hlášky „Lokalizace je dostupná pouze v oblasti Tirany“ | ANDROID ONLY | P3 | REVIEW | – | 2026-11-08 |
 | UX-011 | Nabídka po podržení prstu na mapě jako menu s ikonami | ANDROID ONLY | P3 | REVIEW | POI-001 | 2026-11-08 |
 | UX-010 | Zkrácená atribuce pod mapou (jedna řádka) | SHARED | P3 | REVIEW | – | 2026-11-08 |
@@ -107,6 +108,13 @@ Aktualizováno: 2026-11-07
   - [x] oprava po testu na telefonu (uživatel 2026-11-07: „Vybrat na mapě“ uložilo bod hned po klepnutí, bez značky a bez názvu): v režimu výběru klepnutí nebo podržení prstu na mapě či zastávce ukáže značku a popup s polem pro název a tlačítky Uložit / Zrušit, další klepnutí značku přesune; nápověda je v mapě (pod mapou na telefonu nebyla vidět). Ověřeno na emulátoru API 36 (světlý i tmavý režim, klávesnice, přesun, Zrušit, Odsud/Sem beze změny), web beze změny
   - [ ] reálný telefon (uživatel)
 - Poznámky: D-029. Při psaní do Odkud / Kam (2026-11-08, zadání uživatele) se předvolby v našeptávači vůbec nezobrazují (rozhodl uživatel: „úplně skrýt“), ani po klepnutí do prázdného pole (našeptávač se v prázdném poli neotevře); předvolby jsou jen jako ikony v polích Odkud / Kam a v kartě Moje předvolby. Značky předvoleb na mapě se po načtení nezobrazují; objeví se, až je uživatel vybere nebo napíše do Odkud / Kam (zmizí po smazání pole nebo změně výběru). Napsaný přesný název předvolby se při hledání stále rozpozná. Zastávka se po novém feedu dohledá podle názvu, jinak podle souřadnic. Obsahuje i opravu UX-002 pro šířku ≤ 760 px (viz UX-002).
+
+### UX-014 Tlačítka v úpravě oblíbené zastávky
+- Oblast: UI, Moje předvolby · SHARED · P3 · REVIEW
+- Popis: v úpravě předvolby jsou „Moje aktuální poloha“ a „Vybrat na mapě“ vedle sebe ve stejné šířce (mřížka 2 sloupce, `.pact`), pod nimi vycentrované sekundární tlačítko „Zrušit“ (průhledné, tlumená barva, `.btn.sec`). Akce a texty beze změny; `.grow` ostatních karet nedotčen.
+- Kritéria:
+  - [x] web, šířka 320 px: dvě buňky po 128 px, Zrušit uprostřed
+  - [ ] tmavý režim a APK (uživatel)
 
 ### UX-013 Poloha uživatele na mapě jako malý smajlík
 - Oblast: poloha, mapa · ANDROID ONLY (`GEO`) · P3 · REVIEW
