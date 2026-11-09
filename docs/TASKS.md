@@ -8,7 +8,6 @@ Aktualizováno: 2026-11-07
 
 | ID | Název | Pl. | P | Stav | Závisí na | Akt. |
 |---|---|---|---|---|---|---|
-| BUG-002 | Plánovač vrací spojení začínající před zadaným časem | SHARED | P1 | READY | – | 2026-11-07 |
 | GTFS-001 | Feed 2027 (současný končí 31. 12. 2026) | SHARED | P0 | BLOCKED | DATA-001 | 2026-11-07 |
 | CORE-001 | Objekt `PLATFORM` místo `OFFLINE_MAP`/`APP_VERSION` | SHARED | P1 | BACKLOG | TEST-001 | 2026-11-07 |
 | CORE-002 | Explicitní vkládací body pro Android místo přepisování `index.html` v Gradle | ANDROID | P1 | BACKLOG | – | 2026-11-07 |
@@ -34,12 +33,6 @@ Aktualizováno: 2026-11-07
 | SEO-002 | Stránky zastávek (493 × 12), schema.org pro linky | WEB | P3 | BACKLOG | – | 2026-11-07 |
 
 ## Detail
-
-### BUG-002 Spojení začíná před zadaným časem
-- Oblast: plánovač · SHARED · P1 · READY
-- Popis: v režimu bez pěší sítě (vzdušná čára) plán vrátí spojení, jehož úvodní chůze začíná před zadaným časem – uživatel by spoj nestihl. Příklady (feed 2026-09-30, 1. 9. 2026): Pallati Brigadave → Haki Shehu 11:58 → start 11:57 (chůze 4 min na 8A v 12:01); Njësia 2 → Terminal D 12:00 → start 11:53. Pravděpodobně `tidy` (přesun nástupu na jinou zastávku téhož spoje) nebo dopočet úvodní chůze zpětně od odjezdu.
-- Kritéria: test „spojení nezačíná před zadaným časem“ bez `todo`; regresní snapshot – příjezd nikdy horší; ověřeno na webu i v APK.
-- Historie: 2026-11-07 nalezeno testem TEST-001.
 
 ### WEB-001 Bezpečný FTP deploy
 - WEB (FTP jen pro web) · P1 · READY
@@ -126,3 +119,4 @@ Aktualizováno: 2026-11-07
 | UX-017 | Tlačítko Zpět v kartách a skrytí plánovače | 2026-11-09 | PR #19 |
 | UX-018 | Úvodní pohled mapy: střed Tirany, přiblížení 13 | 2026-11-09 | PR #19 |
 | BUG-001 | Cena RT na palubě sjednocena na 300 L / 3,50 € (data z luna.al, ověřeno 29. 10. 2026; `tkPriceB` ve 12 jazycích a `tickets.html`) | 2026-11-09 | – |
+| BUG-002 | Plánovač vracel spojení s chůzí začínající před zadaným časem (příčina: `tidy` nehlídal čas začátku první chůze; oprava parametrem `tOrg`; test bez `todo`, snapshot přegenerován, nejlepší příjezd ve 160 dotazech nikdy horší) | 2026-11-09 | – |
