@@ -114,7 +114,8 @@ Aktualizováno: 2026-11-07
 - Popis: v úpravě předvolby jsou „Moje aktuální poloha“ a „Vybrat na mapě“ vedle sebe ve stejné šířce (mřížka 2 sloupce, `.pact`), pod nimi vycentrované sekundární tlačítko „Zrušit“ (průhledné, tlumená barva, `.btn.sec`). Akce a texty beze změny; `.grow` ostatních karet nedotčen.
 - Kritéria:
   - [x] web, šířka 320 px: dvě buňky po 128 px, Zrušit uprostřed
-  - [ ] tmavý režim a APK (uživatel)
+  - [x] APK v emulátoru (1080 px): dvě stejná tlačítka, Zrušit uprostřed
+  - [ ] tmavý režim a telefon (uživatel)
 
 ### UX-013 Poloha uživatele na mapě jako malý smajlík
 - Oblast: poloha, mapa · ANDROID ONLY (`GEO`) · P3 · REVIEW
