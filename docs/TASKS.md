@@ -18,7 +18,6 @@ Aktualizováno: 2026-11-07
 | SEO-003 | Consent Mode v2 pro EU | SHARED | P1 | BACKLOG | – | 2026-11-07 |
 | CORE-004 | Jeden seznam souborů pro Pages / FTP / Android | SHARED | P2 | BACKLOG | – | 2026-11-07 |
 | CORE-005 | Sjednocená konfigurace jízdného, kurzů, verze a platnosti | SHARED | P2 | BACKLOG | – | 2026-11-07 |
-| BUG-001 | Cena RT: 3 € (tickets) vs. 3,50 € (data) | SHARED | P2 | READY | – | 2026-11-07 |
 | AND-008 | První vydání v Google Play (podklady, testovací stopa) | ANDROID | P0 | IN_PROGRESS | ověření účtu Play | 2026-11-07 |
 | AND-005 | Pro: roční předplatné 4,99 € přes Google Play Billing | ANDROID | P2 | BACKLOG | CORE-007, první vydání v Play | 2026-11-07 |
 | CORE-007 | Oprávnění Pro (`PLATFORM.pro`) a zamykání funkcí | SHARED | P2 | BACKLOG | CORE-001 | 2026-11-07 |
@@ -76,10 +75,6 @@ Aktualizováno: 2026-11-07
 - ANDROID · P3 · BACKLOG (až po Pro funkcích, rozhodnutí 2026-11-07)
 - Popis: reklamy v aplikaci pro uživatele bez Pro; Pro je bez reklam. Způsob (např. AdMob) a souhlas (SEO-003) určit při zahájení. Reklamy na webu zatím nerozhodnuty.
 
-### BUG-001 Cena RT
-- SHARED · P2 · READY
-- Kritéria: ověřená cena na luna.al, sjednocená v `tickets` textech (`i18n.js`) i `extra-airport.js`, zdroj a datum v `PROJECT_OVERVIEW.md`.
-
 ## Známé chyby a omezení
 
 - Statické stránky linek: první/poslední odjezd a interval z kalendáře podle dnů v týdnu (bez `calendar_dates` a rozsahu platnosti); u frekvenčních spojů poslední odjezd z `end_time`. Směry a názvy linek albánsky. `/{jazyk}` bez lomítka spoléhá na přesměrování serveru.
@@ -130,3 +125,4 @@ Aktualizováno: 2026-11-07
 | UX-016 | Přidání místa: Moje aktuální poloha / Vybrat na mapě | 2026-11-09 | PR #19 |
 | UX-017 | Tlačítko Zpět v kartách a skrytí plánovače | 2026-11-09 | PR #19 |
 | UX-018 | Úvodní pohled mapy: střed Tirany, přiblížení 13 | 2026-11-09 | PR #19 |
+| BUG-001 | Cena RT na palubě sjednocena na 300 L / 3,50 € (data z luna.al, ověřeno 29. 10. 2026; `tkPriceB` ve 12 jazycích a `tickets.html`) | 2026-11-09 | – |
