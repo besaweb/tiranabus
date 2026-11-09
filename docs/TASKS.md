@@ -32,6 +32,7 @@ Aktualizováno: 2026-11-07
 | UX-006 | Redesign karet Moje předvolby a Moje místa | ANDROID | P2 | REVIEW | POI-001 | 2026-11-08 |
 | UX-015 | Oblíbené trasy (menu ☰, hvězdička u výsledku) | ANDROID ONLY | P2 | REVIEW | UX-006 | 2026-11-09 |
 | UX-013 | Poloha uživatele na mapě jako malý smajlík | ANDROID ONLY | P3 | REVIEW | – | 2026-11-08 |
+| UX-018 | Úvodní pohled mapy: střed Tirany, přiblížení 14 | SHARED | P3 | REVIEW | – | 2026-11-09 |
 | UX-017 | Tlačítko Zpět v kartách a skrytí plánovače | ANDROID ONLY | P3 | REVIEW | UX-014, UX-015, UX-016 | 2026-11-09 |
 | UX-016 | Přidání místa: Moje aktuální poloha / Vybrat na mapě | ANDROID ONLY | P3 | REVIEW | UX-014 | 2026-11-09 |
 | UX-014 | Tlačítka v úpravě oblíbené zastávky | SHARED | P3 | REVIEW | – | 2026-11-09 |
@@ -111,6 +112,13 @@ Aktualizováno: 2026-11-07
   - [x] oprava po testu na telefonu (uživatel 2026-11-07: „Vybrat na mapě“ uložilo bod hned po klepnutí, bez značky a bez názvu): v režimu výběru klepnutí nebo podržení prstu na mapě či zastávce ukáže značku a popup s polem pro název a tlačítky Uložit / Zrušit, další klepnutí značku přesune; nápověda je v mapě (pod mapou na telefonu nebyla vidět). Ověřeno na emulátoru API 36 (světlý i tmavý režim, klávesnice, přesun, Zrušit, Odsud/Sem beze změny), web beze změny
   - [ ] reálný telefon (uživatel)
 - Poznámky: D-029. Při psaní do Odkud / Kam (2026-11-08, zadání uživatele) se předvolby v našeptávači vůbec nezobrazují (rozhodl uživatel: „úplně skrýt“), ani po klepnutí do prázdného pole (našeptávač se v prázdném poli neotevře); předvolby jsou jen jako ikony v polích Odkud / Kam a v kartě Moje předvolby. Značky předvoleb na mapě se po načtení nezobrazují; objeví se, až je uživatel vybere nebo napíše do Odkud / Kam (zmizí po smazání pole nebo změně výběru). Napsaný přesný název předvolby se při hledání stále rozpozná. Zastávka se po novém feedu dohledá podle názvu, jinak podle souřadnic. Obsahuje i opravu UX-002 pro šířku ≤ 760 px (viz UX-002).
+
+### UX-018 Úvodní pohled mapy
+- Oblast: mapa · SHARED (`draw()` v `app.js`, web i APK) · P3 · REVIEW
+- Popis: po prvním načtení dat se mapa nezobrazí přizpůsobená celé síti (zoom ≈ 11), ale vycentrovaná na střed Tirany (náměstí Skanderbeg, 41.3275 / 19.8187) se zoomem 14 (o 3 úrovně blíž; konstanty `CENTER`, `START_ZOOM`). Zadání uživatele.
+- Kritéria:
+  - [x] web: mapa na středu Tirany, zoom 14
+  - [ ] APK v emulátoru · [ ] telefon (uživatel)
 
 ### UX-017 Tlačítko Zpět v kartách a skrytí plánovače
 - Oblast: UI · ANDROID ONLY (karty jsou jen v aplikaci) · P3 · REVIEW · větev obsahuje UX-014, UX-015 a UX-016 (sloučené, vzájemně se dotýkají `app.js` a CSS)

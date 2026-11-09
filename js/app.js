@@ -25,7 +25,8 @@
       this._container.innerHTML = Object.keys(this._attributions).filter(k => this._attributions[k]).join(' · ');
     }
   });
-  const map = L.map('map', { preferCanvas: true, zoomSnap: .5, attributionControl: true }).setView([41.3275, 19.8187], 13);
+  const CENTER = [41.3275, 19.8187], START_ZOOM = 14;
+  const map = L.map('map', { preferCanvas: true, zoomSnap: .5, attributionControl: true }).setView(CENTER, START_ZOOM);
   map.attributionControl.setPrefix(false);
   const renderer = L.canvas({ padding: .5, tolerance: 6 });
   const OSM = '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>';
@@ -135,8 +136,7 @@
     }
     restyle();
     poiDraw();
-    const b = L.latLngBounds([...feed.stops.values()].map(s => [s.lat, s.lon]));
-    fit(b, 24);
+    map.setView(CENTER, START_ZOOM);
   }
 
   const sr = () => { const z = map.getZoom(); return z >= 16 ? 4 : z >= 14.5 ? 3.5 : z >= 13.5 ? 3 : 2; };
