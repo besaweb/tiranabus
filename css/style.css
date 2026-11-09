@@ -584,7 +584,7 @@ header {
 .pl.col .plsub, .pl.col .plbody { display: none; }
 .pl.col [data-pl="col"] svg { transform: rotate(-90deg); }
 .plrow { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 6px; padding: 6px 0; border-top: 1px solid var(--line); }
-#pre .plrow:first-child, #poi .plrow:first-child { border-top: 0; }
+#pre .plrow:first-child, #poi .plrow:first-child, #rt .plrow:first-child { border-top: 0; }
 .plgo { display: grid; grid-template-columns: 28px minmax(0, 1fr); align-items: center; gap: 12px; min-height: 48px; min-width: 0; padding: 0; border: 0; background: none; color: var(--fg); text-align: left; cursor: pointer; border-radius: 14px; }
 .plgo:focus-visible, .plb:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
 .plic { display: grid; place-items: center; color: var(--fg); }
@@ -629,3 +629,11 @@ header {
 .plist:empty { display: none; }
 @media (max-width: 760px) { .sgpad .side { padding-bottom: 70vh; } }
 .pact + .gmsg { margin-top: 8px; }
+
+.jhead .rtstar { display: grid; place-items: center; width: 36px; height: 36px; padding: 0; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--muted); cursor: pointer; flex: none; }
+.jhead .rtstar svg { width: 20px; height: 20px; }
+.jhead .rtstar.on { color: #E8A317; border-color: color-mix(in srgb, #E8A317 50%, var(--line)); }
+.jhead .rtstar.on svg { fill: currentColor; }
+.jhead .rtstar:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
+.rtadd { display: grid; gap: 8px; margin: 4px 2px 8px; padding: 8px; border: 1px dashed var(--line); border-radius: 10px; }
+#rtcard .pedit { margin-left: 0; }

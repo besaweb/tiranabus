@@ -339,8 +339,38 @@ const Places = (() => {
     return out;
   }
 
-  const poiHit = (p, q) => presetHit(p.n, q) || (!!p.d && presetHit(p.d, q));
+  const ROUTE_MAX = 50;
 
-  return { norm, build, search, label, access, between, route, stopWalks, net, center, dist, locate, inArea, nearest, presets, presetHit, presetIcon, pois, poiHit, SLOTS, ICONS, AREA, MAX_ACC, POI_MAX, RANK, WALK_V };
+  function routeEnd(p) {
+    if (!p || typeof p !== 'object' || !['stop', 'place'].includes(p.k) || !valid([+p.lat, +p.lon])) return null;
+    const l = String(p.l || '').trim().slice(0, 80);
+    return l ? { k: p.k, l, lat: +p.lat, lon: +p.lon } : null;
+  }
+
+  function routeKey(r) {
+    return [r.f.l, r.t.l].map(norm).join('|');
+  }
+
+  function routes(raw) {
+    let o;
+    try { o = typeof raw === 'string' ? JSON.parse(raw) : raw; } catch (e) { o = null; }
+    const list = Array.isArray(o) ? o : o && Array.isArray(o.items) ? o.items : [];
+    const out = [], ids = new Set(), keys = new Set();
+    for (const p of list) {
+      if (!p || typeof p !== 'object' || typeof p.id !== 'string' || !/^[\w-]{1,20}$/.test(p.id) || ids.has(p.id)) continue;
+      const f = routeEnd(p.f), t = routeEnd(p.t);
+      if (!f || !t) continue;
+      const r = { id: p.id, n: typeof p.n === 'string' ? p.n.trim().slice(0, 60) : '', f, t }, k = routeKey(r);
+      if (keys.has(k)) continue;
+      ids.add(p.id); keys.add(k);
+      out.push(r);
+      if (out.length >= ROUTE_MAX) break;
+    }
+    return out;
+  }
+
+  const poiHit = (p, q) =>presetHit(p.n, q) || (!!p.d && presetHit(p.d, q));
+
+  return { norm, build, search, label, access, between, route, stopWalks, net, center, dist, locate, inArea, nearest, presets, presetHit, presetIcon, pois, poiHit, routes, routeKey, ROUTE_MAX, SLOTS, ICONS, AREA, MAX_ACC, POI_MAX, RANK, WALK_V };
 })();
 if (typeof module !== 'undefined') module.exports = Places;

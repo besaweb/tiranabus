@@ -30,6 +30,7 @@ Aktualizováno: 2026-11-07
 | UX-004 | Ikony předvoleb přímo v polích Odkud / Kam | ANDROID | P2 | REVIEW | UX-003 | 2026-11-07 |
 | UX-005 | Tlačítko X pro vymazání polí Odkud / Kam | SHARED | P2 | REVIEW | UX-004 | 2026-11-07 |
 | UX-006 | Redesign karet Moje předvolby a Moje místa | ANDROID | P2 | REVIEW | POI-001 | 2026-11-08 |
+| UX-015 | Oblíbené trasy (menu ☰, hvězdička u výsledku) | ANDROID ONLY | P2 | REVIEW | UX-006 | 2026-11-09 |
 | UX-013 | Poloha uživatele na mapě jako malý smajlík | ANDROID ONLY | P3 | REVIEW | – | 2026-11-08 |
 | UX-016 | Přidání místa: Moje aktuální poloha / Vybrat na mapě | ANDROID ONLY | P3 | REVIEW | UX-014 | 2026-11-09 |
 | UX-014 | Tlačítka v úpravě oblíbené zastávky | SHARED | P3 | REVIEW | – | 2026-11-09 |
@@ -125,6 +126,16 @@ Aktualizováno: 2026-11-07
   - [x] web, šířka 320 px: dvě buňky po 128 px, Zrušit uprostřed
   - [x] APK v emulátoru (1080 px): dvě stejná tlačítka, Zrušit uprostřed
   - [ ] tmavý režim a telefon (uživatel)
+### UX-015 Oblíbené trasy
+- Oblast: UI, plánovač, úložiště · ANDROID ONLY (menu ☰ existuje jen v aplikaci, `android/menu.js`; hvězdička se ukazuje jen při `window.APP_VERSION`) · P2 · REVIEW
+- Popis: položka menu ☰ „Oblíbené trasy“ (ikona route, událost `tb-routes`) otevře kartu `#rtcard` (stejný mechanismus `SEC` jako Oblíbené zastávky a Moje místa, sbalitelná). U výsledku vyhledávání je v `.jhead` hvězdička; klepnutí otevře řádek s názvem (prázdný = „Odkud → Kam“), Uložit / Zrušit. Uloží se jen odkud a kam (typ, název, souřadnice) a vlastní název, ne linky ani přestupy (rozhodl uživatel, D-036). Karta: název a Odkud → Kam; klepnutí na řádek trasu znovu vyhledá nad aktuálními daty (čas „teď“) a ukáže živý výsledek včetně přestupů; tužka = přejmenování (pole + Uložit / Zrušit), koš = smazání s potvrzením. Duplicita (stejné konce) se nepřidá, hvězdička je žlutá a hlásí „už je v oblíbených“. Prázdný stav s návodem.
+- Data: `localStorage['tirana-routes']` = `{ v: 1, items: [{ id, n, f, t, x }] }`, čistá validace `Places.routes()` (`js/places.js`, nejvýš 50, duplicity podle `Places.routeKey` = odkud + kam). Nikdy se neukládá datum, čas ani linky a přestupy. Chybějící zastávka (název ani zastávka do 150 m) → „Zastávka … už není v aktuálních datech“ (trasa se nespustí). Bez sítě funguje (jen `localStorage` a feed v aplikaci).
+- Kritéria:
+  - [x] web (režim aplikace, 390 px): přidání, duplicita, seznam, přejmenování, otevření, smazání, zrušená zastávka, uložení po reloadu, bez sítě (server vypnutý, 0 požadavků)
+  - [x] `tests/routes.test.js` (3 testy), `tests/i18n.test.js` (12 jazyků)
+  - [x] APK v emulátoru: položka menu, hvězdička, přidání s názvem, karta se seznamem
+  - [ ] tmavý režim a telefon (uživatel)
+- Poznámky: D-036. Strojový překlad nových textů (sq, it, de, pl, fr, es, mk, el, ru, tr) bez kontroly rodilým mluvčím.
 
 ### UX-013 Poloha uživatele na mapě jako malý smajlík
 - Oblast: poloha, mapa · ANDROID ONLY (`GEO`) · P3 · REVIEW

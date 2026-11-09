@@ -42,6 +42,7 @@
     tickets: '<path d="M3 8.5V7a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v1.5a2.5 2.5 0 0 0 0 5V17a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-3.5a2.5 2.5 0 0 0 0-5z"/><path d="M14 6.5v11" stroke-dasharray="2 2.2"/>',
     data: '<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/>',
     pre: '<path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/>',
+    rt: '<circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/>',
     poi: '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
     about: '<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5M12 8h.01"/>',
     moon: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
@@ -54,6 +55,7 @@
   wrap.className = 'amwrap';
   wrap.innerHTML = '<button type="button" class="ambtn" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>' +
     '<div class="ammenu" hidden><button type="button" class="mi" id="mi-pre">' + ic('pre') + '<span class="pre"></span></button>' +
+    '<button type="button" class="mi" id="mi-rt">' + ic('rt') + '<span class="rt"></span></button>' +
     '<button type="button" class="mi" id="mi-poi">' + ic('poi') + '<span class="poi"></span></button>' +
     '<div class="miwrap"><button type="button" class="mi" id="mi-ext" role="switch" aria-checked="false">' + ic('ext') + '<span class="ext"></span><span class="sw" aria-hidden="true"></span></button><button type="button" class="mihelp" id="mi-exthelp" aria-expanded="false" aria-controls="mi-exthelptx">' + ic('help') + '</button></div><p class="mihelptx" id="mi-exthelptx" hidden></p>' +
     '<button type="button" class="mi" id="mi-lang" aria-expanded="false">' + ic('lang') + '<span data-k="lang"></span><span class="cur"></span></button>' +
@@ -83,6 +85,7 @@
     p.hidden = !open; q('#mi-exthelp').setAttribute('aria-expanded', String(open));
   });
   q('#mi-pre').addEventListener('click', () => { closeMenu(); document.dispatchEvent(new CustomEvent('tb-presets')); });
+  q('#mi-rt').addEventListener('click', () => { closeMenu(); document.dispatchEvent(new CustomEvent('tb-routes')); });
   q('#mi-poi').addEventListener('click', () => { closeMenu(); document.dispatchEvent(new CustomEvent('tb-pois')); });
 
   const subs = [[miLang, slot], [miAbout, about]];
@@ -112,6 +115,7 @@
     q('#mi-exthelptx').textContent = A.extHelp;
     q('#mi-exthelp').setAttribute('aria-label', A.extHelpLbl); q('#mi-exthelp').title = A.extHelpLbl;
     q('#mi-pre .pre').textContent = A.preTitle;
+    q('#mi-rt .rt').textContent = A.rtTitle;
     q('#mi-poi .poi').textContent = A.poiTitle;
     about.textContent = '';
     const bold = s => { const e = document.createElement('b'); e.textContent = s; return e; };
