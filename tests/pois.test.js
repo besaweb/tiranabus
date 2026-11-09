@@ -42,3 +42,26 @@ test('poiHit: název i popis, bez diakritiky', () => {
   assert.ok(!Places.poiHit(p, 'xyz'));
   assert.ok(!Places.poiHit({ n: 'Fitko', d: '' }, 'durres'));
 });
+
+test('pois: id [\w-]{1,40}, souřadnice na okraji oblasti, ts jen číslo, cizí klíče pryč', () => {
+  const { s, w, n, e } = Places.AREA;
+  const p = Places.pois([
+    { id: 'a'.repeat(40), n: 'Dlouhé id', lat: s, lon: w, ts: 'x', cizi: 1 },
+    { id: 'a'.repeat(41), n: 'Příliš dlouhé id', lat: 41.33, lon: 19.82 },
+    { id: 'mimo', n: 'Mimo', lat: n + 0.01, lon: e },
+    { id: 'zaporne', n: 'Záporné ts', lat: 41.33, lon: 19.82, ts: -5 }
+  ]);
+  assert.deepEqual(p.map(x => x.id), ['a'.repeat(40), 'zaporne']);
+  assert.deepEqual(Object.keys(p[0]).sort(), ['d', 'id', 'lat', 'lon', 'n', 'ts']);
+  assert.equal(p[0].ts, 0);
+  assert.equal(p[0].d, '');
+});
+
+test('pois: nestringový název a popis, limit drží prvních POI_MAX, vstup se nemění', () => {
+  assert.deepEqual(Places.pois([{ id: 'a', n: 5, lat: 41.33, lon: 19.82 }]), []);
+  assert.equal(Places.pois([{ id: 'a', n: 'X', d: 5, lat: 41.33, lon: 19.82 }])[0].d, '');
+  const items = Array.from({ length: Places.POI_MAX + 5 }, (_, i) => ({ id: 'p' + i, n: 'M' + i, lat: 41.33, lon: 19.82 }));
+  const copy = JSON.stringify(items), out = Places.pois(items);
+  assert.equal(out[Places.POI_MAX - 1].id, 'p' + (Places.POI_MAX - 1));
+  assert.equal(JSON.stringify(items), copy);
+});

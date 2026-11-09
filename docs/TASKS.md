@@ -30,6 +30,8 @@ Aktualizováno: 2026-11-07
 | DATA-003 | Kontrola stránky Luna v hlídání feedu | SHARED | P3 | BACKLOG | DATA-001 | 2026-11-07 |
 | WEB-002 | Odznak Google Play jako odkaz na aplikaci | WEB | P3 | BLOCKED | publikace v Play | 2026-11-07 |
 | SEO-002 | Stránky zastávek (493 × 12), schema.org pro linky | WEB | P3 | BACKLOG | – | 2026-11-07 |
+| TEST-003 | Automatické testy nové logiky (`presets`, `pois`, `routes`, klíče i18n) | SHARED | P2 | REVIEW | – | 2026-11-09 |
+| TEST-004 | Android checklist: UX-010..018, oblíbené trasy, pasti emulátoru | SHARED | P2 | REVIEW | – | 2026-11-09 |
 
 ## Detail
 

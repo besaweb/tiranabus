@@ -57,3 +57,15 @@ for (const file of ['menu.js', 'validity.js']) {
     }
   });
 }
+
+test('i18n.js: klíče použité v app.js a index.html existují (včetně rt*, back, preHere, preOnMap)', () => {
+  const read = f => fs.readFileSync(path.join(ROOT, f), 'utf8');
+  const used = new Set();
+  for (const m of read('js/app.js').matchAll(/\bt\('([A-Za-z0-9_]+)'(?=[,)])/g)) used.add(m[1]);
+  for (const m of read('index.html').matchAll(/data-i18n(?:-[a-z]+)?="([A-Za-z0-9_]+)"/g)) used.add(m[1]);
+  for (const k of ['back', 'preHere', 'preOnMap', 'rtTitle', 'rtAdd', 'rtAdded', 'rtRemove', 'rtRemoved', 'rtEmpty', 'rtGone', 'rtName', 'rtOpen']) used.add(k);
+  for (const l of I18N.LANGS) for (const k of used) {
+    const v = I18N.D[l][k];
+    assert.ok(v !== undefined && (Array.isArray(v) ? v.every(s => s && s.trim()) : String(v).trim()), `${l}.${k}`);
+  }
+});

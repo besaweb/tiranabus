@@ -12,7 +12,8 @@ UPDATE_SNAPSHOT=1 node --test tests/planner.test.js      # nový snapshot pláno
 |---|---|
 | `tests/core.test.js` | čas, kalendář, platnost, `merge`, build reálného feedu, letiště, `groupStops`, odjezdy přes půlnoc |
 | `tests/planner.test.js` | 2 × 81 dotazů (vzdušná čára / pěší síť) – invarianty a snapshot `tests/fixtures/planner-snapshot.json` |
-| `tests/i18n.test.js` | 12 jazyků: shodné klíče, parametry, plurály; letištní texty; slovníky `android/menu.js`, `validity.js` |
+| `tests/i18n.test.js` | 12 jazyků: shodné klíče, parametry, plurály; klíče použité v `app.js`/`index.html` (+ `rt*`, `back`, `preHere`, `preOnMap`) existují a nejsou prázdné; letištní texty; slovníky `android/menu.js`, `validity.js` |
+| `tests/presets.test.js`, `pois.test.js`, `routes.test.js` | `Places.presets/pois/routes`: poškozený vstup, duplicity, limity (`POI_MAX`, `ROUTE_MAX`), ořez délek, jen povolené klíče (čas ani linky se neukládají) |
 
 - Bez `gtfs.zip` se testy nad reálným feedem přeskočí (skip), ostatní běží.
 - Snapshot plánovače platí pro konkrétní `feed_version`; při jiném feedu se test přeskočí s výzvou k přegenerování. Změna snapshotu v PR = změna chování plánovače → popsat v PR a ověřit, že je to zlepšení (příjezd nikdy horší).
@@ -42,6 +43,13 @@ V CI běží na každém Pull Requestu (`.github/workflows/tests.yml`, feed z re
 8. Na reálném telefonu i emulátoru (aktuální target API).
 9. Edge-to-edge: hlavička nepřekrývá status bar, obsah nezasahuje pod navigační lištu ani klávesnici; světlý i tmavý systémový režim.
 10. Zpět: z „Platnost dat“ na hlavní stránku, na hlavní stránce ukončí aplikaci (Android 13+ predictive back).
+11. Menu ☰: první položka Oblíbené trasy, pak ostatní; po výběru se menu zavře.
+12. Hvězdička u spojení je přepínač (přidat ↔ odebrat) a pokaždé zobrazí oznámení (rtAdded / rtRemoved); po restartu aplikace trasa zůstává.
+13. Karta Oblíbené trasy: prázdný stav; přejmenování (uloží se Odkud/Kam + název, žádný čas ani linky); smazání; otevření trasy spočítá spojení nad aktuálními daty a časem; trasa s neplatnou zastávkou se nerozbije (rtGone).
+14. Odkud/Kam: tlačítka Moje aktuální poloha (se zapnutou i vypnutou polohou) a Vybrat na mapě – pro zastávky i místa (předvolby Domů/Práce/Škola, vlastní místa); výběr vrátí do formuláře správný popisek.
+15. Zpět v kartách: z detailu linky/zastávky/spojení o krok zpět; skrytý plánovač se po zavření karet vrátí; Zpět při výběru na mapě výběr zruší.
+16. Úvodní pohled mapy: střed Tirany, zoom 13, bez skoku po načtení dat; po zapnutí polohy se mapa neposune bez vyžádání.
+17. Tmavý režim: karty, menu, tlačítka a oznámení čitelné; přepnutí za běhu bez restartu.
 
 Výsledek zapsat do úkolu (TASKS.md) a do `releases/` při vydání.
 
@@ -49,3 +57,10 @@ Výsledek zapsat do úkolu (TASKS.md) a do `releases/` při vydání.
 
 - Prohlížeč v aplikaci Claude (Browser pane) při načítání stránky z `python -m http.server` opakovaně přerušil přenos `js/i18n.js` (`ERR_CONNECTION_RESET`), i u nezměněné verze z `main`. Curl i `fetch` soubor stáhnou celý. Pro kontrolu webu v tomto prohlížeči použít jiný statický server (např. jednoduchý server v Node bez závislostí). Zjištěno 2026-11-07.
 - Poloha na emulátoru: `adb emu geo fix <lon> <lat>` (Tirana `19.8187 41.3275`, Praha `14.4378 50.0755`), polohové služby `adb shell cmd location set-location-enabled true|false`.
+
+### Pasti při testování v emulátoru
+
+- První klepnutí po zobrazení klávesnice se může minout (klávesnice posune rozložení) – po zavření klávesnice klepnout znovu, než se hlásí chyba.
+- Snímky z `adb exec-out screencap -p` zaostávají za skutečným stavem; před snímkem chvíli počkat a u sporného stavu pořídit druhý.
+- Čerstvá instalace (nebo smazaná data) se načítá asi 60 s (stažení a zpracování GTFS); netestovat dřív.
+- Poloha: `adb emu geo fix <lon> <lat>` (pořadí lon, lat!), po změně chvíli počkat na obnovení.

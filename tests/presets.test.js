@@ -58,3 +58,19 @@ test('presetIcon: ruční volba, odhad podle názvu, výchozí podle slotu', () 
   assert.equal(Places.presetIcon(undefined, 'home'), 'house');
   assert.equal(Places.presetIcon({}, 'jiny'), 'map-pin');
 });
+
+test('presets: druh map a stop projde, popisek bez názvu, souřadnice 0,0 a mimo rozsah ne', () => {
+  const p = Places.presets({
+    home: { k: 'place', l: 'Letiště', lat: 41.41, lon: 19.72 },
+    work: { k: 'stop', l: 'X', lat: 0, lon: 0 },
+    school: { k: 'stop', l: 'X', lat: 95, lon: 19.8 }
+  });
+  assert.equal(p.home.k, 'place');
+  assert.equal(p.work, undefined);
+  assert.equal(p.school, undefined);
+});
+
+test('presets: žádné další klíče (čas, linky) se neukládají', () => {
+  const p = Places.presets({ home: { n: 'D', k: 'stop', l: 'X', lat: 41.3, lon: 19.8, ts: 1, dep: '10:00', lines: ['11'] } });
+  assert.deepEqual(Object.keys(p.home).sort(), ['k', 'l', 'lat', 'lon', 'n']);
+});
