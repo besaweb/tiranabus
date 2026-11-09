@@ -116,7 +116,7 @@ Aktualizováno: 2026-11-07
 - Kritéria:
   - [x] web (režim aplikace, 390 px): přidání, duplicita, seznam, přejmenování, otevření, smazání, zrušená zastávka, uložení po reloadu, bez sítě (server vypnutý, 0 požadavků)
   - [x] `tests/routes.test.js` (3 testy), `tests/i18n.test.js` (12 jazyků)
-  - [ ] APK v emulátoru: položka menu, hvězdička, karta
+  - [x] APK v emulátoru: položka menu, hvězdička, přidání s názvem, karta se seznamem
   - [ ] tmavý režim a telefon (uživatel)
 - Poznámky: D-036. Strojový překlad nových textů (sq, it, de, pl, fr, es, mk, el, ru, tr) bez kontroly rodilým mluvčím.
 
