@@ -30,6 +30,7 @@ Aktualizováno: 2026-11-07
 | UX-004 | Ikony předvoleb přímo v polích Odkud / Kam | ANDROID | P2 | REVIEW | UX-003 | 2026-11-07 |
 | UX-005 | Tlačítko X pro vymazání polí Odkud / Kam | SHARED | P2 | REVIEW | UX-004 | 2026-11-07 |
 | UX-006 | Redesign karet Moje předvolby a Moje místa | ANDROID | P2 | REVIEW | POI-001 | 2026-11-08 |
+| UX-015 | Oblíbené trasy (menu ☰, hvězdička u výsledku) | ANDROID ONLY | P2 | REVIEW | UX-006 | 2026-11-09 |
 | UX-013 | Poloha uživatele na mapě jako malý smajlík | ANDROID ONLY | P3 | REVIEW | – | 2026-11-08 |
 | UX-012 | Ikona upozornění u hlášky „Lokalizace je dostupná pouze v oblasti Tirany“ | ANDROID ONLY | P3 | REVIEW | – | 2026-11-08 |
 | UX-011 | Nabídka po podržení prstu na mapě jako menu s ikonami | ANDROID ONLY | P3 | REVIEW | POI-001 | 2026-11-08 |
@@ -107,6 +108,17 @@ Aktualizováno: 2026-11-07
   - [x] oprava po testu na telefonu (uživatel 2026-11-07: „Vybrat na mapě“ uložilo bod hned po klepnutí, bez značky a bez názvu): v režimu výběru klepnutí nebo podržení prstu na mapě či zastávce ukáže značku a popup s polem pro název a tlačítky Uložit / Zrušit, další klepnutí značku přesune; nápověda je v mapě (pod mapou na telefonu nebyla vidět). Ověřeno na emulátoru API 36 (světlý i tmavý režim, klávesnice, přesun, Zrušit, Odsud/Sem beze změny), web beze změny
   - [ ] reálný telefon (uživatel)
 - Poznámky: D-029. Při psaní do Odkud / Kam (2026-11-08, zadání uživatele) se předvolby v našeptávači vůbec nezobrazují (rozhodl uživatel: „úplně skrýt“), ani po klepnutí do prázdného pole (našeptávač se v prázdném poli neotevře); předvolby jsou jen jako ikony v polích Odkud / Kam a v kartě Moje předvolby. Značky předvoleb na mapě se po načtení nezobrazují; objeví se, až je uživatel vybere nebo napíše do Odkud / Kam (zmizí po smazání pole nebo změně výběru). Napsaný přesný název předvolby se při hledání stále rozpozná. Zastávka se po novém feedu dohledá podle názvu, jinak podle souřadnic. Obsahuje i opravu UX-002 pro šířku ≤ 760 px (viz UX-002).
+
+### UX-015 Oblíbené trasy
+- Oblast: UI, plánovač, úložiště · ANDROID ONLY (menu ☰ existuje jen v aplikaci, `android/menu.js`; hvězdička se ukazuje jen při `window.APP_VERSION`) · P2 · REVIEW
+- Popis: položka menu ☰ „Oblíbené trasy“ (ikona route, událost `tb-routes`) otevře kartu `#rtcard` (stejný mechanismus `SEC` jako Oblíbené zastávky a Moje místa, sbalitelná). U výsledku vyhledávání je v `.jhead` hvězdička; klepnutí otevře řádek s názvem (prázdný = „Odkud → Kam“), Uložit / Zrušit. Uloží se právě otevřené spojení: odkud, kam (typ, název, souřadnice) a přehled linek `x` (linka, nástup, výstup). Karta: název, Odkud → Kam, čipy linek, počet přestupů a přestupní zastávky; klepnutí na řádek trasu znovu vyhledá nad aktuálními daty (čas „teď“) a otevře spojení se stejnou posloupností linek; tužka = přejmenování (pole + Uložit / Zrušit), koš = smazání s potvrzením. Duplicita (stejné konce a linky) se nepřidá, hvězdička je žlutá a hlásí „už je v oblíbených“. Prázdný stav s návodem.
+- Data: `localStorage['tirana-routes']` = `{ v: 1, items: [{ id, n, f, t, x }] }`, čistá validace `Places.routes()` (`js/places.js`, nejvýš 50, duplicity podle `Places.routeKey`). Nikdy se neukládá datum ani čas hledání, odjezdu nebo příjezdu. Chybějící zastávka (název ani zastávka do 150 m) → „Zastávka … už není v aktuálních datech“ (trasa se nespustí); spojení s uloženými linkami v aktuálním řádu není → upozornění a zobrazí se aktuální spojení. Bez sítě funguje (jen `localStorage` a feed v aplikaci).
+- Kritéria:
+  - [x] web (režim aplikace, 390 px): přidání, duplicita, seznam, přejmenování, otevření, smazání, zrušená zastávka, uložení po reloadu, bez sítě (server vypnutý, 0 požadavků)
+  - [x] `tests/routes.test.js` (3 testy), `tests/i18n.test.js` (12 jazyků)
+  - [ ] APK v emulátoru: položka menu, hvězdička, karta
+  - [ ] tmavý režim a telefon (uživatel)
+- Poznámky: D-036. Strojový překlad nových textů (sq, it, de, pl, fr, es, mk, el, ru, tr) bez kontroly rodilým mluvčím.
 
 ### UX-013 Poloha uživatele na mapě jako malý smajlík
 - Oblast: poloha, mapa · ANDROID ONLY (`GEO`) · P3 · REVIEW

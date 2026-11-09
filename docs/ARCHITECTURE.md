@@ -70,6 +70,7 @@ Pořadí skriptů v `index.html`: Leaflet → JSZip → PapaParse → `gtfs-core
 | Feed | `gtfs.zip` vedle webu | `MainActivity`: stáhne z Pages do `filesDir`, offline uložená, jinak vložená kopie | interceptor `gtfs.zip` |
 | Vlastní místa (POI-001) | není | karta `#places` (Moje místa) z menu ☰ (`tb-pois`), červené body na mapě, „Uložit místo“ v dlouhém stisku, místa v našeptávači | `GEO` v `app.js` |
 | Předvolby, Odsud/Sem z mapy (UX-001) | není | karta `#precard` (Moje předvolby) z menu ☰ (`tb-presets`), předvolby v našeptávači, `contextmenu` na mapě; ikony předvoleb a jejich značky na mapě (UX-003); ikony předvoleb v polích Odkud / Kam (UX-004) | `GEO` v `app.js` (`window.APP_VERSION` && `navigator.geolocation`) |
+| Oblíbené trasy (UX-015) | není | položka menu ☰ (`tb-routes`), karta `#rtcard`, hvězdička a formulář názvu v hlavičce výsledku (`.rtstar`, `.rtadd`), úložiště `tirana-routes` (`Places.routes`) | `window.APP_VERSION` (hvězdička), menu jen v aplikaci |
 | Moje poloha (MAP-001) | není | tlačítko na mapě, panel `#geo`, oprávnění k poloze v `MainActivity` | `window.APP_VERSION` && `navigator.geolocation` (`GEO` v `app.js`) |
 | Dlaždice a fonty | online | `DiskCache` v `cacheDir/ext`: klíč SHA-256 URL, limit 100 MB (při překročení se maže nejstarší na 80 %), platnost 30 dní (po vypršení se zkusí stáhnout znovu, offline se použije stará kopie), úklid při startu | `MainActivity.external`, `DiskCache.java` |
 | GA4 | ano | ano (z `index.html`) | – |

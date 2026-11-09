@@ -104,3 +104,11 @@ Jen **aktuálně rozpracované** úkoly. Po dokončení úkolu jeho sekci smaž 
 - Chat: 03 Android · Větev: `feat/UX-013-ikona-polohy` (nad `feat/UX-012-varovani-lokalizace`) · Aktualizováno: 2026-11-08
 - Testovací APK: `android/out/TiranaBus-1.9-postavicka.apk` (`versionCode` 40).
 - Zbývá: ověření v emulátoru, PR, test na telefonu.
+
+## UX-015 Oblíbené trasy
+- Chat: 03 Android · Větev: `feat/UX-015-oblibene-trasy` · Aktualizováno: 2026-11-09
+- Hotovo: menu ☰ + karta `#rtcard`, hvězdička u výsledku, přidání s názvem, přejmenování, smazání, otevření nad aktuálními daty, upozornění, 12 jazyků, `Places.routes` + testy.
+- Změněné soubory: `js/app.js`, `js/places.js`, `js/i18n.js`, `android/menu.js`, `index.html`, `css/style.css`, `tests/routes.test.js`, docs.
+- Testy: `node --test` 35 pass, 0 fail, 1 todo (BUG-002).
+- Platformy: web (jen náhled v režimu aplikace) · android ANDROID ONLY.
+- Další krok: telefon + tmavý režim (uživatel), poté DONE a smazat tuto sekci.

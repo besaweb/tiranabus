@@ -445,6 +445,7 @@
   function showPlan(msg) {
     const r = plan.res;
     let html = '';
+    if (!(r && r.list && r.list.length)) rtAdd = false;
     if (msg) html += `<div class="empty">${esc(msg)}</div>`;
     if (!r) {
       html += `<p class="hint lg">${t('hintPlan')}</p>`;
@@ -455,7 +456,9 @@
       html += `<div class="empty">${t('noRes', { t: GTFS.hhmm(r.t0) })}</div>`;
     } else {
       const now = GTFS.clock(feed.tz).sec;
-      html += `<div class="jhead"><span class="ji"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="18" r="2.3"/><circle cx="18" cy="6" r="2.3"/><path d="M8.3 18H14a3.5 3.5 0 0 0 0-7h-4a3.5 3.5 0 0 1 0-7h5.7"/></svg></span><b>${esc(plan.from.label)} → ${esc(plan.to.label)}</b><span class="n">${r.list.length}</span></div>`;
+      html += `<div class="jhead"><span class="ji"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="18" r="2.3"/><circle cx="18" cy="6" r="2.3"/><path d="M8.3 18H14a3.5 3.5 0 0 0 0-7h-4a3.5 3.5 0 0 1 0-7h5.7"/></svg></span><b>${esc(plan.from.label)} → ${esc(plan.to.label)}</b><span class="n">${r.list.length}</span>${rtBtn()}</div>${rtForm()}`;
+      if (rtAddMsg) html += `<p class="gmsg">${esc(t(rtAddMsg))}</p>`;
+      rtAddMsg = null;
       html += r.list.map((j, i) => {
         const wait = r.today ? Math.floor((j.dep - now) / 60) : null;
         const sum = `<button class="jsum" data-j="${i}" aria-expanded="${i === plan.open}">
@@ -694,20 +697,21 @@
     edit: '<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>',
     del: '<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>',
     down: '<path d="m6 9 6 6 6-6"/>',
-    plus: '<path d="M5 12h14"/><path d="M12 5v14"/>'
+    plus: '<path d="M5 12h14"/><path d="M12 5v14"/>',
+    route: '<circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/>'
   };
   const uiSvg = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${UI_IC[k]}</svg>`;
   const plBtns = (sc, id, del) => `<button type="button" class="plb" data-pa="edit" ${sc}="${id}" aria-label="${esc(t('preChange'))}" title="${esc(t('preChange'))}">${uiSvg('edit')}</button>` +
     (del ? `<button type="button" class="plb del" data-pa="del" ${sc}="${id}" aria-label="${esc(t('preDel'))}" title="${esc(t('preDel'))}">${uiSvg('del')}</button>` : '<span class="plb ghost"></span>');
   const plConf = (sc, id) => `<div class="plconf" role="alert"><span>${esc(t('poiDelSure'))}</span><button type="button" class="btn sm danger" data-pa="del2" ${sc}="${id}">${esc(t('preDel'))}</button><button type="button" class="btn sm" data-pa="nodel">${esc(t('preCancel'))}</button></div>`;
-  const SEC = { pre: { card: '#precard', open: false, col: false, key: 'tirana-pre-col', title: 'preTitle' }, poi: { card: '#places', open: false, col: false, key: 'tirana-pl-col', title: 'poiTitle', sub: 'plSub' } };
+  const SEC = { pre: { card: '#precard', open: false, col: false, key: 'tirana-pre-col', title: 'preTitle' }, poi: { card: '#places', open: false, col: false, key: 'tirana-pl-col', title: 'poiTitle', sub: 'plSub' }, rt: { card: '#rtcard', open: false, col: false, key: 'tirana-rt-col', title: 'rtTitle' } };
   let preDel = null;
   for (const x of Object.values(SEC)) try { x.col = localStorage.getItem(x.key) === '1'; } catch (e) {}
   function plHead(sec) {
     const x = SEC[sec], box = $(x.card);
     box.hidden = !x.open;
     box.classList.toggle('col', x.col);
-    const n = sec === 'pre' ? Places.SLOTS.filter(k => pre[k] && pre[k].k).length : pois.length;
+    const n = sec === 'pre' ? Places.SLOTS.filter(k => pre[k] && pre[k].k).length : sec === 'rt' ? rts.length : pois.length;
     box.querySelector('.plhead').innerHTML = `<div class="pltop"><h2 class="ghead">${esc(t(x.title))}</h2>${n ? `<span class="plnum" title="${esc(t('plSaved', { n }))}" aria-label="${esc(t('plSaved', { n }))}">${n}</span>` : ''}<button type="button" class="plb sm" data-pl="col" aria-expanded="${!x.col}" aria-controls="${sec}body" aria-label="${esc(t(x.col ? 'plOpen' : 'plClose'))}" title="${esc(t(x.col ? 'plOpen' : 'plClose'))}">${uiSvg('down')}</button><button type="button" class="plb sm" data-pl="x" aria-label="${esc(t('close'))}" title="${esc(t('close'))}">×</button></div>${x.sub ? `<p class="plsub">${esc(t(x.sub))}</p>` : ''}`;
   }
   function preShow() {
@@ -773,15 +777,125 @@
     if (r) { r.querySelector('b').textContent = preName(k); r.querySelector('.plic').innerHTML = icSvg(preIc(k)); }
     for (const x of document.querySelectorAll(`#pre .picgrid [data-slot="${k}"]`)) { const on = x.dataset.ic === preIc(k); x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); }
   });
-  const secShow = sec => sec === 'pre' ? preShow() : poiShow();
+  const secShow = sec => sec === 'pre' ? preShow() : sec === 'rt' ? rtShow() : poiShow();
   function plShow(sec) { Object.assign(SEC[sec], { open: true, col: false }); secShow(sec); $(SEC[sec].card).scrollIntoView({ block: 'nearest' }); }
   document.addEventListener('tb-presets', () => plShow('pre'));
-  for (const sec of ['pre', 'poi']) $(SEC[sec].card + ' .plhead').addEventListener('click', e => {
+  document.addEventListener('tb-routes', () => plShow('rt'));
+  const RTK = 'tirana-routes';
+  let rts = [], rtEdit = null, rtDel = null, rtNote = null, rtAdd = false, rtAddMsg = null;
+  try { rts = Places.routes(localStorage.getItem(RTK)); } catch (e) {}
+  const rtSave = () => { try { localStorage.setItem(RTK, JSON.stringify({ v: 1, items: rts })); } catch (e) {} };
+  const rtAuto = r => `${r.f.l} → ${r.t.l}`.slice(0, 60);
+  const rtName = r => r.n || rtAuto(r);
+  function rtCur() {
+    const j = plan.res && plan.res.list[plan.open];
+    if (!j || !plan.from || !plan.to) return null;
+    const e = g => g.place ? { k: 'place', l: g.label, lat: g.pt.lat, lon: g.pt.lon } : { k: 'stop', l: g.label, lat: g.stops[0].lat, lon: g.stops[0].lon };
+    return { f: e(plan.from), t: e(plan.to), x: j.legs.filter(l => l.kind === 'ride').map(l => ({ r: l.route.short, a: l.from.name, b: l.to.name })) };
+  }
+  const rtFav = () => { const c = rtCur(); return !!c && rts.some(r => Places.routeKey(r) === Places.routeKey(c)); };
+  const rtBtn = () => window.APP_VERSION && rtCur() ? `<button type="button" class="rtstar${rtFav() ? ' on' : ''}" data-rt="star" aria-pressed="${rtFav()}" aria-label="${esc(t('rtAdd'))}" title="${esc(t('rtAdd'))}">${icSvg('star')}</button>` : '';
+  const rtForm = () => rtAdd && rtCur() ? `<div class="rtadd"><input class="pname" maxlength="60" placeholder="${esc(rtAuto(rtCur()))}" aria-label="${esc(t('rtName'))}"><div class="grow"><button type="button" class="btn sm primary" data-rt="save">${esc(t('preSave'))}</button><button type="button" class="btn sm" data-rt="cancel">${esc(t('preCancel'))}</button></div></div>` : '';
+  const rtLine = s => { const r = [...feed.routes.values()].find(x => x.short === s); return r ? chip(r) : `<span class="chip">${esc(s)}</span>`; };
+  const rtSum = r => {
+    if (!r.x.length) return '';
+    const tr = r.x.slice(1).map(x => x.a), n = tr.length;
+    return `<div class="rtl">${r.x.map(x => rtLine(x.r)).join('<i>›</i>')}<small>${n ? `${n} ${pl('uTransfer', n)} · ${esc(tr.join(', '))}` : esc(t('direct'))}</small></div>`;
+  };
+  function rtShow() {
+    const box = $('#rt');
+    plHead('rt');
+    if (!SEC.rt.open) { box.innerHTML = ''; return; }
+    let h = rts.length ? '' : `<p class="gmsg plempty">${esc(t('rtEmpty'))}</p>`;
+    for (const r of rts) {
+      h += `<div class="plrow"><button type="button" class="plgo" data-pa="go" data-rt="${esc(r.id)}"><span class="plic">${uiSvg('route')}</span><span class="pltx"><b>${esc(rtName(r))}</b><span>${esc(r.f.l)} → ${esc(r.t.l)}</span>${rtSum(r)}</span></button>${plBtns('data-rt', esc(r.id), true)}</div>`;
+      if (rtDel === r.id) h += plConf('data-rt', esc(r.id));
+      if (rtEdit === r.id) h += `<div class="pedit"><input class="pname" maxlength="60" value="${esc(r.n)}" placeholder="${esc(rtAuto(r))}" aria-label="${esc(t('rtName'))}"><div class="grow"><button type="button" class="btn sm primary" data-pa="rsave" data-rt="${esc(r.id)}">${esc(t('preSave'))}</button><button type="button" class="btn sm" data-pa="rcancel">${esc(t('preCancel'))}</button></div></div>`;
+      if (rtNote && rtNote.id === r.id) h += `<p class="gmsg gwarn"><i>${icSvg('triangle-alert')}</i>${esc(t(rtNote.k, rtNote.p))}</p>`;
+    }
+    box.innerHTML = h;
+  }
+  function rtStop(p) {
+    if (!names.length) return null;
+    const hit = names.find(x => x.label === p.l);
+    if (hit) return hit;
+    const near = Places.nearest(allStops(), [p.lat, p.lon], 1)[0];
+    return near && near.d <= 150 ? stopGroup.get(near.s.id) || null : null;
+  }
+  function rtOpen(r) {
+    rtNote = null;
+    const ends = [['from', r.f], ['to', r.t]].map(([w, p]) => [w, p.k === 'stop' ? rtStop(p) : ptEnd('@fav-' + w, p.l, [p.lat, p.lon], w), p]);
+    const gone = ends.find(e => !e[1]);
+    if (gone) { rtNote = { id: r.id, k: 'rtGone', p: { s: gone[2].l } }; rtShow(); return; }
+    if (mode !== 'plan') setMode('plan', true);
+    for (const [w, g] of ends) setEnd(w, g);
+    plan.timeTouched = false;
+    setNow();
+    runPlan();
+    let note = null;
+    const want = r.x.map(x => x.r).join('>'), list = plan.res && plan.res.list || [];
+    if (list.length) {
+      const i = list.findIndex(j => j.legs.filter(l => l.kind === 'ride').map(l => l.route.short).join('>') === want);
+      if (i >= 0) plan.open = i; else note = t('rtChanged', { l: r.x.map(x => x.r).join(' › ') || '–' });
+    }
+    showPlan(note);
+    drawJourney(true); restyle();
+    $('#planform').scrollIntoView({ block: 'start' });
+  }
+  $('#rt').addEventListener('click', e => {
+    const b = e.target.closest('[data-pa]');
+    if (!b) return;
+    const a = b.dataset.pa, r = rts.find(x => x.id === b.dataset.rt);
+    if (a !== 'del') rtDel = null;
+    if (a === 'go' && r) rtOpen(r);
+    else if (a === 'edit' && r) { rtEdit = rtEdit === r.id ? null : r.id; rtNote = null; rtShow(); const i = $('#rt .pedit .pname'); if (i) i.focus({ preventScroll: true }); }
+    else if (a === 'del' && r) { rtDel = rtDel === r.id ? null : r.id; rtShow(); }
+    else if (a === 'nodel') rtShow();
+    else if (a === 'del2' && r) { rts = rts.filter(x => x !== r); rtSave(); rtEdit = rtDel = null; rtShow(); showPlan(); }
+    else if (a === 'rsave' || a === 'rcancel') rtRename(a === 'rsave');
+  });
+  function rtRename(save) {
+    const r = rts.find(x => x.id === rtEdit), i = $('#rt .pedit .pname');
+    if (save && r && i) { r.n = i.value.trim().slice(0, 60); rtSave(); }
+    rtEdit = null;
+    rtShow();
+  }
+  $('#rt').addEventListener('keydown', e => {
+    if (!e.target.classList.contains('pname')) return;
+    if (e.key === 'Enter') rtRename(true); else if (e.key === 'Escape') rtRename(false);
+  });
+  function rtAddNew(name) {
+    const c = rtCur();
+    if (!c) return;
+    const r = { id: Math.random().toString(36).slice(2, 9), n: name.trim().slice(0, 60), ...c };
+    rts.unshift(r);
+    rts = rts.slice(0, Places.ROUTE_MAX);
+    rtSave();
+    rtAdd = false;
+    showPlan();
+    if (SEC.rt.open) rtShow();
+  }
+  $('#panel').addEventListener('click', e => {
+    const b = e.target.closest('[data-rt]');
+    if (!b) return;
+    const a = b.dataset.rt;
+    if (a === 'star') {
+      if (rtFav()) { rtAdd = false; rtAddMsg = 'rtDupe'; } else rtAdd = !rtAdd;
+      showPlan();
+      const i = $('#panel .rtadd .pname'); if (i) i.focus({ preventScroll: true });
+    } else if (a === 'save') { const i = $('#panel .rtadd .pname'); rtAddNew(i ? i.value : ''); }
+    else if (a === 'cancel') { rtAdd = false; showPlan(); }
+  });
+  $('#panel').addEventListener('keydown', e => {
+    if (!e.target.closest('.rtadd')) return;
+    if (e.key === 'Enter') rtAddNew(e.target.value); else if (e.key === 'Escape') { rtAdd = false; showPlan(); }
+  });
+  for (const sec of ['pre', 'poi', 'rt']) $(SEC[sec].card + ' .plhead').addEventListener('click', e => {
     const b = e.target.closest('[data-pl]'), x = SEC[sec];
     if (!b) return;
     if (b.dataset.pl === 'x') {
       x.open = false;
-      if (sec === 'pre') preEdit = prePick = preMsg = preDel = null; else poiEdit = poiPick = poiMsg = poiDel = null;
+      if (sec === 'pre') preEdit = prePick = preMsg = preDel = null; else if (sec === 'rt') rtEdit = rtDel = rtNote = null; else poiEdit = poiPick = poiMsg = poiDel = null;
       map.closePopup();
     } else { x.col = !x.col; try { localStorage.setItem(x.key, x.col ? '1' : '0'); } catch (e) {} }
     secShow(sec);
