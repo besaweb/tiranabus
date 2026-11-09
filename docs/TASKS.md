@@ -118,7 +118,8 @@ Aktualizováno: 2026-11-07
 - Popis: po prvním načtení dat se mapa nezobrazí přizpůsobená celé síti (zoom ≈ 11), ale vycentrovaná na střed Tirany (náměstí Skanderbeg, 41.3275 / 19.8187) se zoomem 14 (o 3 úrovně blíž; konstanty `CENTER`, `START_ZOOM`). Zadání uživatele.
 - Kritéria:
   - [x] web: mapa na středu Tirany, zoom 14
-  - [ ] APK v emulátoru · [ ] telefon (uživatel)
+  - [x] APK v emulátoru: úvodní mapa na středu Tirany
+  - [ ] telefon (uživatel)
 
 ### UX-017 Tlačítko Zpět v kartách a skrytí plánovače
 - Oblast: UI · ANDROID ONLY (karty jsou jen v aplikaci) · P3 · REVIEW · větev obsahuje UX-014, UX-015 a UX-016 (sloučené, vzájemně se dotýkají `app.js` a CSS)
