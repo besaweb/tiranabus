@@ -417,6 +417,7 @@
   }
 
   function pickStop(s) {
+    if (!prePick && !poiPick) plCloseAll();
     const g = stopGroup.get(s.id);
     if (!plan.from || (plan.from && plan.to && plan.from === g)) setEnd('from', g);
     else setEnd('to', g);
@@ -700,6 +701,7 @@
     plus: '<path d="M5 12h14"/><path d="M12 5v14"/>',
     locate: '<line x1="2" x2="5" y1="12" y2="12"/><line x1="19" x2="22" y1="12" y2="12"/><line x1="12" x2="12" y1="2" y2="5"/><line x1="12" x2="12" y1="19" y2="22"/><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3"/>',
     map: '<path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/>',
+    back: '<path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>',
     route: '<circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/>'
   };
   const uiSvg = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${UI_IC[k]}</svg>`;
@@ -709,9 +711,11 @@
   const SEC = { pre: { card: '#precard', open: false, col: false, key: 'tirana-pre-col', title: 'preTitle' }, poi: { card: '#places', open: false, col: false, key: 'tirana-pl-col', title: 'poiTitle', sub: 'plSub' }, rt: { card: '#rtcard', open: false, col: false, key: 'tirana-rt-col', title: 'rtTitle' } };
   let preDel = null;
   for (const x of Object.values(SEC)) try { x.col = localStorage.getItem(x.key) === '1'; } catch (e) {}
+  const plBack = sec => `<button type="button" class="btn sm plback" data-pl-back="${sec}">${uiSvg('back')}${esc(t('back'))}</button>`;
   function plHead(sec) {
     const x = SEC[sec], box = $(x.card);
     box.hidden = !x.open;
+    document.body.classList.toggle('seclist', Object.values(SEC).some(s => s.open && !s.col));
     box.classList.toggle('col', x.col);
     const n = sec === 'pre' ? Places.SLOTS.filter(k => pre[k] && pre[k].k).length : sec === 'rt' ? rts.length : pois.length;
     box.querySelector('.plhead').innerHTML = `<div class="pltop"><h2 class="ghead">${esc(t(x.title))}</h2>${n ? `<span class="plnum" title="${esc(t('plSaved', { n }))}" aria-label="${esc(t('plSaved', { n }))}">${n}</span>` : ''}<button type="button" class="plb sm" data-pl="col" aria-expanded="${!x.col}" aria-controls="${sec}body" aria-label="${esc(t(x.col ? 'plOpen' : 'plClose'))}" title="${esc(t(x.col ? 'plOpen' : 'plClose'))}">${uiSvg('down')}</button><button type="button" class="plb sm" data-pl="x" aria-label="${esc(t('close'))}" title="${esc(t('close'))}">×</button></div>${x.sub ? `<p class="plsub">${esc(t(x.sub))}</p>` : ''}`;
@@ -736,6 +740,7 @@
         h += '</div>';
       }
     }
+    h += plBack('pre');
     box.innerHTML = h;
   }
   function preFind(v) {
@@ -808,6 +813,7 @@
       if (rtEdit === r.id) h += `<div class="pedit"><input class="pname" maxlength="60" value="${esc(r.n)}" placeholder="${esc(rtAuto(r))}" aria-label="${esc(t('rtName'))}"><div class="grow"><button type="button" class="btn sm primary" data-pa="rsave" data-rt="${esc(r.id)}">${esc(t('preSave'))}</button><button type="button" class="btn sm" data-pa="rcancel">${esc(t('preCancel'))}</button></div></div>`;
       if (rtNote && rtNote.id === r.id) h += `<p class="gmsg gwarn"><i>${icSvg('triangle-alert')}</i>${esc(t(rtNote.k, rtNote.p))}</p>`;
     }
+    h += plBack('rt');
     box.innerHTML = h;
   }
   function rtStop(p) {
@@ -822,6 +828,7 @@
     const ends = [['from', r.f], ['to', r.t]].map(([w, p]) => [w, p.k === 'stop' ? rtStop(p) : ptEnd('@fav-' + w, p.l, [p.lat, p.lon], w), p]);
     const gone = ends.find(e => !e[1]);
     if (gone) { rtNote = { id: r.id, k: 'rtGone', p: { s: gone[2].l } }; rtShow(); return; }
+    plCloseAll();
     if (mode !== 'plan') setMode('plan', true);
     for (const [w, g] of ends) setEnd(w, g);
     plan.timeTouched = false;
@@ -881,13 +888,17 @@
   for (const sec of ['pre', 'poi', 'rt']) $(SEC[sec].card + ' .plhead').addEventListener('click', e => {
     const b = e.target.closest('[data-pl]'), x = SEC[sec];
     if (!b) return;
-    if (b.dataset.pl === 'x') {
-      x.open = false;
-      if (sec === 'pre') preEdit = prePick = preMsg = preDel = null; else if (sec === 'rt') rtEdit = rtDel = rtNote = null; else poiEdit = poiPick = poiMsg = poiDel = poiGeo = null;
-      map.closePopup();
-    } else { x.col = !x.col; try { localStorage.setItem(x.key, x.col ? '1' : '0'); } catch (e) {} }
-    secShow(sec);
+    if (b.dataset.pl === 'x') plClose(sec);
+    else { x.col = !x.col; try { localStorage.setItem(x.key, x.col ? '1' : '0'); } catch (e) {} secShow(sec); }
   });
+  function plClose(sec) {
+    SEC[sec].open = false;
+    if (sec === 'pre') preEdit = prePick = preMsg = preDel = null; else if (sec === 'rt') rtEdit = rtDel = rtNote = null; else poiEdit = poiPick = poiMsg = poiDel = poiGeo = null;
+    map.closePopup();
+    secShow(sec);
+  }
+  const plCloseAll = () => { for (const sec of Object.keys(SEC)) if (SEC[sec].open) plClose(sec); };
+  document.addEventListener('click', e => { const b = e.target.closest('[data-pl-back]'); if (b) plClose(b.dataset.plBack); });
   const ptLayer = L.layerGroup().addTo(map);
   function ptPop(ll, el) {
     map.closePopup();
@@ -1074,6 +1085,7 @@
     if (poiGeo) h += `<p class="gmsg">${esc(t(poiGeo.k, poiGeo.p))}</p>`;
     if (full) h += `<p class="gmsg">${esc(t('poiMax', { n: Places.POI_MAX }))}</p>`;
     if (poiPick && !poiPick.id) h += `<p class="gmsg">${esc(t('poiPickHint'))} <button type="button" class="btn sm" data-pa="cancel">${esc(t('preCancel'))}</button></p>`;
+    h += plBack('poi');
     box.innerHTML = h;
   }
   $('#poi').addEventListener('click', e => {
@@ -1219,6 +1231,7 @@
     chooseEnd(which, it ? placeEnd(it, which) : groups.get(name));
   }
   function chooseEnd(which, e, quiet) {
+    if (!prePick && !poiPick) plCloseAll();
     setEnd(which, e);
     $('#' + which + '-sugg').hidden = true;
     restyle();
