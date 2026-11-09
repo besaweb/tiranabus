@@ -446,7 +446,6 @@
   function showPlan(msg) {
     const r = plan.res;
     let html = '';
-    if (!(r && r.list && r.list.length)) rtAdd = false;
     if (msg) html += `<div class="empty">${esc(msg)}</div>`;
     if (!r) {
       html += `<p class="hint lg">${t('hintPlan')}</p>`;
@@ -457,9 +456,7 @@
       html += `<div class="empty">${t('noRes', { t: GTFS.hhmm(r.t0) })}</div>`;
     } else {
       const now = GTFS.clock(feed.tz).sec;
-      html += `<div class="jhead"><span class="ji"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="18" r="2.3"/><circle cx="18" cy="6" r="2.3"/><path d="M8.3 18H14a3.5 3.5 0 0 0 0-7h-4a3.5 3.5 0 0 1 0-7h5.7"/></svg></span><b>${esc(plan.from.label)} → ${esc(plan.to.label)}</b><span class="n">${r.list.length}</span>${rtBtn()}</div>${rtForm()}`;
-      if (rtAddMsg) html += `<p class="gmsg">${esc(t(rtAddMsg))}</p>`;
-      rtAddMsg = null;
+      html += `<div class="jhead"><span class="ji"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="18" r="2.3"/><circle cx="18" cy="6" r="2.3"/><path d="M8.3 18H14a3.5 3.5 0 0 0 0-7h-4a3.5 3.5 0 0 1 0-7h5.7"/></svg></span><b>${esc(plan.from.label)} → ${esc(plan.to.label)}</b><span class="n">${r.list.length}</span>${rtBtn()}</div>`;
       html += r.list.map((j, i) => {
         const wait = r.today ? Math.floor((j.dep - now) / 60) : null;
         const sum = `<button class="jsum" data-j="${i}" aria-expanded="${i === plan.open}">
@@ -789,7 +786,7 @@
   document.addEventListener('tb-presets', () => plShow('pre'));
   document.addEventListener('tb-routes', () => plShow('rt'));
   const RTK = 'tirana-routes';
-  let rts = [], rtEdit = null, rtDel = null, rtNote = null, rtAdd = false, rtAddMsg = null;
+  let rts = [], rtEdit = null, rtDel = null, rtNote = null, rtToastT = 0;
   try { rts = Places.routes(localStorage.getItem(RTK)); } catch (e) {}
   const rtSave = () => { try { localStorage.setItem(RTK, JSON.stringify({ v: 1, items: rts })); } catch (e) {} };
   const rtAuto = r => `${r.f.l} → ${r.t.l}`.slice(0, 60);
@@ -800,8 +797,7 @@
     return { f: e(plan.from), t: e(plan.to) };
   }
   const rtFav = () => { const c = rtCur(); return !!c && rts.some(r => Places.routeKey(r) === Places.routeKey(c)); };
-  const rtBtn = () => window.APP_VERSION && rtCur() ? `<button type="button" class="rtstar${rtFav() ? ' on' : ''}" data-rt="star" aria-pressed="${rtFav()}" aria-label="${esc(t('rtAdd'))}" title="${esc(t('rtAdd'))}">${icSvg('star')}</button>` : '';
-  const rtForm = () => rtAdd && rtCur() ? `<div class="rtadd"><input class="pname" maxlength="60" placeholder="${esc(rtAuto(rtCur()))}" aria-label="${esc(t('rtName'))}"><div class="grow"><button type="button" class="btn sm primary" data-rt="save">${esc(t('preSave'))}</button><button type="button" class="btn sm" data-rt="cancel">${esc(t('preCancel'))}</button></div></div>` : '';
+  const rtBtn = () => { const on = rtFav(), k = on ? 'rtRemove' : 'rtAdd'; return window.APP_VERSION && rtCur() ? `<button type="button" class="rtstar${on ? ' on' : ''}" data-rt="star" aria-pressed="${on}" aria-label="${esc(t(k))}" title="${esc(t(k))}">${icSvg('star')}</button>` : ''; };
   function rtShow() {
     const box = $('#rt');
     plHead('rt');
@@ -859,32 +855,26 @@
     if (!e.target.classList.contains('pname')) return;
     if (e.key === 'Enter') rtRename(true); else if (e.key === 'Escape') rtRename(false);
   });
-  function rtAddNew(name) {
+  function rtToast(k) {
+    let el = $('#rttoast');
+    if (!el) { el = document.createElement('div'); el.id = 'rttoast'; el.className = 'rttoast'; el.setAttribute('role', 'status'); document.body.appendChild(el); }
+    el.textContent = t(k);
+    el.classList.add('on');
+    clearTimeout(rtToastT);
+    rtToastT = setTimeout(() => el.classList.remove('on'), 2600);
+  }
+  function rtToggle() {
     const c = rtCur();
     if (!c) return;
-    const r = { id: Math.random().toString(36).slice(2, 9), n: name.trim().slice(0, 60), ...c };
-    rts.unshift(r);
-    rts = rts.slice(0, Places.ROUTE_MAX);
+    const key = Places.routeKey(c), had = rts.some(r => Places.routeKey(r) === key);
+    if (had) rts = rts.filter(r => Places.routeKey(r) !== key);
+    else rts = [{ id: Math.random().toString(36).slice(2, 9), n: '', ...c }, ...rts].slice(0, Places.ROUTE_MAX);
     rtSave();
-    rtAdd = false;
     showPlan();
     if (SEC.rt.open) rtShow();
+    rtToast(had ? 'rtRemoved' : 'rtAdded');
   }
-  $('#panel').addEventListener('click', e => {
-    const b = e.target.closest('[data-rt]');
-    if (!b) return;
-    const a = b.dataset.rt;
-    if (a === 'star') {
-      if (rtFav()) { rtAdd = false; rtAddMsg = 'rtDupe'; } else rtAdd = !rtAdd;
-      showPlan();
-      const i = $('#panel .rtadd .pname'); if (i) i.focus({ preventScroll: true });
-    } else if (a === 'save') { const i = $('#panel .rtadd .pname'); rtAddNew(i ? i.value : ''); }
-    else if (a === 'cancel') { rtAdd = false; showPlan(); }
-  });
-  $('#panel').addEventListener('keydown', e => {
-    if (!e.target.closest('.rtadd')) return;
-    if (e.key === 'Enter') rtAddNew(e.target.value); else if (e.key === 'Escape') { rtAdd = false; showPlan(); }
-  });
+  $('#panel').addEventListener('click', e => { if (e.target.closest('[data-rt="star"]')) rtToggle(); });
   for (const sec of ['pre', 'poi', 'rt']) $(SEC[sec].card + ' .plhead').addEventListener('click', e => {
     const b = e.target.closest('[data-pl]'), x = SEC[sec];
     if (!b) return;
