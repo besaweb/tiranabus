@@ -788,27 +788,20 @@
   const rtAuto = r => `${r.f.l} → ${r.t.l}`.slice(0, 60);
   const rtName = r => r.n || rtAuto(r);
   function rtCur() {
-    const j = plan.res && plan.res.list[plan.open];
-    if (!j || !plan.from || !plan.to) return null;
+    if (!(plan.res && plan.res.list.length) || !plan.from || !plan.to) return null;
     const e = g => g.place ? { k: 'place', l: g.label, lat: g.pt.lat, lon: g.pt.lon } : { k: 'stop', l: g.label, lat: g.stops[0].lat, lon: g.stops[0].lon };
-    return { f: e(plan.from), t: e(plan.to), x: j.legs.filter(l => l.kind === 'ride').map(l => ({ r: l.route.short, a: l.from.name, b: l.to.name })) };
+    return { f: e(plan.from), t: e(plan.to) };
   }
   const rtFav = () => { const c = rtCur(); return !!c && rts.some(r => Places.routeKey(r) === Places.routeKey(c)); };
   const rtBtn = () => window.APP_VERSION && rtCur() ? `<button type="button" class="rtstar${rtFav() ? ' on' : ''}" data-rt="star" aria-pressed="${rtFav()}" aria-label="${esc(t('rtAdd'))}" title="${esc(t('rtAdd'))}">${icSvg('star')}</button>` : '';
   const rtForm = () => rtAdd && rtCur() ? `<div class="rtadd"><input class="pname" maxlength="60" placeholder="${esc(rtAuto(rtCur()))}" aria-label="${esc(t('rtName'))}"><div class="grow"><button type="button" class="btn sm primary" data-rt="save">${esc(t('preSave'))}</button><button type="button" class="btn sm" data-rt="cancel">${esc(t('preCancel'))}</button></div></div>` : '';
-  const rtLine = s => { const r = [...feed.routes.values()].find(x => x.short === s); return r ? chip(r) : `<span class="chip">${esc(s)}</span>`; };
-  const rtSum = r => {
-    if (!r.x.length) return '';
-    const tr = r.x.slice(1).map(x => x.a), n = tr.length;
-    return `<div class="rtl">${r.x.map(x => rtLine(x.r)).join('<i>›</i>')}<small>${n ? `${n} ${pl('uTransfer', n)} · ${esc(tr.join(', '))}` : esc(t('direct'))}</small></div>`;
-  };
   function rtShow() {
     const box = $('#rt');
     plHead('rt');
     if (!SEC.rt.open) { box.innerHTML = ''; return; }
     let h = rts.length ? '' : `<p class="gmsg plempty">${esc(t('rtEmpty'))}</p>`;
     for (const r of rts) {
-      h += `<div class="plrow"><button type="button" class="plgo" data-pa="go" data-rt="${esc(r.id)}"><span class="plic">${uiSvg('route')}</span><span class="pltx"><b>${esc(rtName(r))}</b><span>${esc(r.f.l)} → ${esc(r.t.l)}</span>${rtSum(r)}</span></button>${plBtns('data-rt', esc(r.id), true)}</div>`;
+      h += `<div class="plrow"><button type="button" class="plgo" data-pa="go" data-rt="${esc(r.id)}"><span class="plic">${uiSvg('route')}</span><span class="pltx"><b>${esc(rtName(r))}</b><span>${esc(r.f.l)} → ${esc(r.t.l)}</span></span></button>${plBtns('data-rt', esc(r.id), true)}</div>`;
       if (rtDel === r.id) h += plConf('data-rt', esc(r.id));
       if (rtEdit === r.id) h += `<div class="pedit"><input class="pname" maxlength="60" value="${esc(r.n)}" placeholder="${esc(rtAuto(r))}" aria-label="${esc(t('rtName'))}"><div class="grow"><button type="button" class="btn sm primary" data-pa="rsave" data-rt="${esc(r.id)}">${esc(t('preSave'))}</button><button type="button" class="btn sm" data-pa="rcancel">${esc(t('preCancel'))}</button></div></div>`;
       if (rtNote && rtNote.id === r.id) h += `<p class="gmsg gwarn"><i>${icSvg('triangle-alert')}</i>${esc(t(rtNote.k, rtNote.p))}</p>`;
@@ -832,13 +825,6 @@
     plan.timeTouched = false;
     setNow();
     runPlan();
-    let note = null;
-    const want = r.x.map(x => x.r).join('>'), list = plan.res && plan.res.list || [];
-    if (list.length) {
-      const i = list.findIndex(j => j.legs.filter(l => l.kind === 'ride').map(l => l.route.short).join('>') === want);
-      if (i >= 0) plan.open = i; else note = t('rtChanged', { l: r.x.map(x => x.r).join(' › ') || '–' });
-    }
-    showPlan(note);
     drawJourney(true); restyle();
     $('#planform').scrollIntoView({ block: 'start' });
   }

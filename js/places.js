@@ -348,7 +348,7 @@ const Places = (() => {
   }
 
   function routeKey(r) {
-    return [r.f.l, r.t.l, ...r.x.map(x => x.r)].map(norm).join('|');
+    return [r.f.l, r.t.l].map(norm).join('|');
   }
 
   function routes(raw) {
@@ -360,8 +360,7 @@ const Places = (() => {
       if (!p || typeof p !== 'object' || typeof p.id !== 'string' || !/^[\w-]{1,20}$/.test(p.id) || ids.has(p.id)) continue;
       const f = routeEnd(p.f), t = routeEnd(p.t);
       if (!f || !t) continue;
-      const x = (Array.isArray(p.x) ? p.x : []).slice(0, 6).map(v => v && typeof v === 'object' ? { r: String(v.r || '').trim().slice(0, 12), a: String(v.a || '').trim().slice(0, 80), b: String(v.b || '').trim().slice(0, 80) } : null).filter(v => v && v.r);
-      const r = { id: p.id, n: typeof p.n === 'string' ? p.n.trim().slice(0, 60) : '', f, t, x }, k = routeKey(r);
+      const r = { id: p.id, n: typeof p.n === 'string' ? p.n.trim().slice(0, 60) : '', f, t }, k = routeKey(r);
       if (keys.has(k)) continue;
       ids.add(p.id); keys.add(k);
       out.push(r);

@@ -107,7 +107,7 @@ Jen **aktuálně rozpracované** úkoly. Po dokončení úkolu jeho sekci smaž 
 
 ## UX-015 Oblíbené trasy
 - Chat: 03 Android · Větev: `feat/UX-015-oblibene-trasy` · Aktualizováno: 2026-11-09
-- Hotovo: menu ☰ + karta `#rtcard`, hvězdička u výsledku, přidání s názvem, přejmenování, smazání, otevření nad aktuálními daty, upozornění, 12 jazyků, `Places.routes` + testy.
+- Hotovo: menu ☰ + karta `#rtcard`, hvězdička u výsledku, přidání s názvem, přejmenování, smazání, otevření nad aktuálními daty (ukládá se jen Odkud / Kam a název), upozornění na zrušenou zastávku, 12 jazyků, `Places.routes` + testy.
 - Změněné soubory: `js/app.js`, `js/places.js`, `js/i18n.js`, `android/menu.js`, `index.html`, `css/style.css`, `tests/routes.test.js`, docs.
 - Testy: `node --test` 35 pass, 0 fail, 1 todo (BUG-002).
 - Platformy: web (jen náhled v režimu aplikace) · android ANDROID ONLY.
