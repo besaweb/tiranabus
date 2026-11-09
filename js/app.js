@@ -25,7 +25,8 @@
       this._container.innerHTML = Object.keys(this._attributions).filter(k => this._attributions[k]).join(' · ');
     }
   });
-  const map = L.map('map', { preferCanvas: true, zoomSnap: .5, attributionControl: true }).setView([41.3275, 19.8187], 13);
+  const CENTER = [41.3275, 19.8187], START_ZOOM = 13;
+  const map = L.map('map', { preferCanvas: true, zoomSnap: .5, attributionControl: true }).setView(CENTER, START_ZOOM);
   map.attributionControl.setPrefix(false);
   const renderer = L.canvas({ padding: .5, tolerance: 6 });
   const OSM = '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>';
@@ -135,8 +136,7 @@
     }
     restyle();
     poiDraw();
-    const b = L.latLngBounds([...feed.stops.values()].map(s => [s.lat, s.lon]));
-    fit(b, 24);
+    map.setView(CENTER, START_ZOOM);
   }
 
   const sr = () => { const z = map.getZoom(); return z >= 16 ? 4 : z >= 14.5 ? 3.5 : z >= 13.5 ? 3 : 2; };
@@ -417,6 +417,7 @@
   }
 
   function pickStop(s) {
+    if (!prePick && !poiPick) plCloseAll();
     const g = stopGroup.get(s.id);
     if (!plan.from || (plan.from && plan.to && plan.from === g)) setEnd('from', g);
     else setEnd('to', g);
@@ -455,7 +456,7 @@
       html += `<div class="empty">${t('noRes', { t: GTFS.hhmm(r.t0) })}</div>`;
     } else {
       const now = GTFS.clock(feed.tz).sec;
-      html += `<div class="jhead"><span class="ji"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="18" r="2.3"/><circle cx="18" cy="6" r="2.3"/><path d="M8.3 18H14a3.5 3.5 0 0 0 0-7h-4a3.5 3.5 0 0 1 0-7h5.7"/></svg></span><b>${esc(plan.from.label)} → ${esc(plan.to.label)}</b><span class="n">${r.list.length}</span></div>`;
+      html += `<div class="jhead"><span class="ji"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="18" r="2.3"/><circle cx="18" cy="6" r="2.3"/><path d="M8.3 18H14a3.5 3.5 0 0 0 0-7h-4a3.5 3.5 0 0 1 0-7h5.7"/></svg></span><b>${esc(plan.from.label)} → ${esc(plan.to.label)}</b><span class="n">${r.list.length}</span>${rtBtn()}</div>`;
       html += r.list.map((j, i) => {
         const wait = r.today ? Math.floor((j.dep - now) / 60) : null;
         const sum = `<button class="jsum" data-j="${i}" aria-expanded="${i === plan.open}">
@@ -694,20 +695,26 @@
     edit: '<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>',
     del: '<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>',
     down: '<path d="m6 9 6 6 6-6"/>',
-    plus: '<path d="M5 12h14"/><path d="M12 5v14"/>'
+    plus: '<path d="M5 12h14"/><path d="M12 5v14"/>',
+    locate: '<line x1="2" x2="5" y1="12" y2="12"/><line x1="19" x2="22" y1="12" y2="12"/><line x1="12" x2="12" y1="2" y2="5"/><line x1="12" x2="12" y1="19" y2="22"/><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3"/>',
+    map: '<path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/>',
+    back: '<path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>',
+    route: '<circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/>'
   };
   const uiSvg = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${UI_IC[k]}</svg>`;
   const plBtns = (sc, id, del) => `<button type="button" class="plb" data-pa="edit" ${sc}="${id}" aria-label="${esc(t('preChange'))}" title="${esc(t('preChange'))}">${uiSvg('edit')}</button>` +
     (del ? `<button type="button" class="plb del" data-pa="del" ${sc}="${id}" aria-label="${esc(t('preDel'))}" title="${esc(t('preDel'))}">${uiSvg('del')}</button>` : '<span class="plb ghost"></span>');
   const plConf = (sc, id) => `<div class="plconf" role="alert"><span>${esc(t('poiDelSure'))}</span><button type="button" class="btn sm danger" data-pa="del2" ${sc}="${id}">${esc(t('preDel'))}</button><button type="button" class="btn sm" data-pa="nodel">${esc(t('preCancel'))}</button></div>`;
-  const SEC = { pre: { card: '#precard', open: false, col: false, key: 'tirana-pre-col', title: 'preTitle' }, poi: { card: '#places', open: false, col: false, key: 'tirana-pl-col', title: 'poiTitle', sub: 'plSub' } };
+  const SEC = { pre: { card: '#precard', open: false, col: false, key: 'tirana-pre-col', title: 'preTitle' }, poi: { card: '#places', open: false, col: false, key: 'tirana-pl-col', title: 'poiTitle', sub: 'plSub' }, rt: { card: '#rtcard', open: false, col: false, key: 'tirana-rt-col', title: 'rtTitle' } };
   let preDel = null;
   for (const x of Object.values(SEC)) try { x.col = localStorage.getItem(x.key) === '1'; } catch (e) {}
+  const plBack = sec => `<button type="button" class="btn sm plback" data-pl-back="${sec}">${uiSvg('back')}${esc(t('back'))}</button>`;
   function plHead(sec) {
     const x = SEC[sec], box = $(x.card);
     box.hidden = !x.open;
+    document.body.classList.toggle('seclist', Object.values(SEC).some(s => s.open && !s.col));
     box.classList.toggle('col', x.col);
-    const n = sec === 'pre' ? Places.SLOTS.filter(k => pre[k] && pre[k].k).length : pois.length;
+    const n = sec === 'pre' ? Places.SLOTS.filter(k => pre[k] && pre[k].k).length : sec === 'rt' ? rts.length : pois.length;
     box.querySelector('.plhead').innerHTML = `<div class="pltop"><h2 class="ghead">${esc(t(x.title))}</h2>${n ? `<span class="plnum" title="${esc(t('plSaved', { n }))}" aria-label="${esc(t('plSaved', { n }))}">${n}</span>` : ''}<button type="button" class="plb sm" data-pl="col" aria-expanded="${!x.col}" aria-controls="${sec}body" aria-label="${esc(t(x.col ? 'plOpen' : 'plClose'))}" title="${esc(t(x.col ? 'plOpen' : 'plClose'))}">${uiSvg('down')}</button><button type="button" class="plb sm" data-pl="x" aria-label="${esc(t('close'))}" title="${esc(t('close'))}">×</button></div>${x.sub ? `<p class="plsub">${esc(t(x.sub))}</p>` : ''}`;
   }
   function preShow() {
@@ -722,14 +729,15 @@
       h += `<div class="plrow"><button type="button" class="plgo" data-pa="go" data-slot="${k}"><span class="plic">${icSvg(preIc(k))}</span><span class="pltx"><b>${esc(preName(k))}</b><span>${esc(p.k ? p.l : t('preUnset'))}</span></span></button>${plBtns('data-slot', k, p.k || p.n || p.i)}</div>`;
       if (preDel === k) h += plConf('data-slot', k);
       if (preEdit === k) {
-        h += `<div class="pedit"><input class="pname" data-slot="${k}" maxlength="24" value="${esc(preName(k))}" aria-label="${esc(t('preName'))}"><div class="picgrid" role="group" aria-label="${esc(t('preIcon'))}">${Places.ICONS.map(i => `<button type="button" class="${i === preIc(k) ? 'on' : ''}" data-pa="seticon" data-slot="${k}" data-ic="${i}" aria-pressed="${i === preIc(k)}" aria-label="${esc(t('ic')[i])}" title="${esc(t('ic')[i])}">${icSvg(i)}</button>`).join('')}</div>`;
+        h += `<div class="pedit"><input class="pname" data-slot="${k}" maxlength="24" value="${esc(preName(k))}" aria-label="${esc(t('preName'))}">`;
         h += `<input type="search" class="pq" placeholder="${esc(t('preSearch'))}" aria-label="${esc(t('preSearch'))}" autocomplete="off"><div class="plist"></div>`;
-        h += `<div class="grow"><button type="button" class="btn sm" data-pa="gps">${esc(t('preHere'))}</button><button type="button" class="btn sm" data-pa="map">${esc(t('preOnMap'))}</button><button type="button" class="btn sm" data-pa="cancel">${esc(t('preCancel'))}</button></div>`;
+        h += `<div class="pact"><button type="button" class="btn sm pgps" data-pa="gps">${uiSvg('locate')}${esc(t('preHere'))}</button><button type="button" class="btn sm pmap" data-pa="map">${uiSvg('map')}${esc(t('preOnMap'))}</button><div class="picgrid" role="group" aria-label="${esc(t('preIcon'))}">${Places.ICONS.map(i => `<button type="button" class="${i === preIc(k) ? 'on' : ''}" data-pa="seticon" data-slot="${k}" data-ic="${i}" aria-pressed="${i === preIc(k)}" aria-label="${esc(t('ic')[i])}" title="${esc(t('ic')[i])}">${icSvg(i)}</button>`).join('')}</div><button type="button" class="btn sm sec" data-pa="cancel">${esc(t('preCancel'))}</button></div>`;
         if (prePick === k) h += `<p class="gmsg">${esc(t('prePickHint'))}</p>`;
         if (preMsg) h += `<p class="gmsg">${esc(t(preMsg.k, preMsg.p))}</p>`;
         h += '</div>';
       }
     }
+    h += plBack('pre');
     box.innerHTML = h;
   }
   function preFind(v) {
@@ -773,19 +781,114 @@
     if (r) { r.querySelector('b').textContent = preName(k); r.querySelector('.plic').innerHTML = icSvg(preIc(k)); }
     for (const x of document.querySelectorAll(`#pre .picgrid [data-slot="${k}"]`)) { const on = x.dataset.ic === preIc(k); x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); }
   });
-  const secShow = sec => sec === 'pre' ? preShow() : poiShow();
+  const secShow = sec => sec === 'pre' ? preShow() : sec === 'rt' ? rtShow() : poiShow();
   function plShow(sec) { Object.assign(SEC[sec], { open: true, col: false }); secShow(sec); $(SEC[sec].card).scrollIntoView({ block: 'nearest' }); }
   document.addEventListener('tb-presets', () => plShow('pre'));
-  for (const sec of ['pre', 'poi']) $(SEC[sec].card + ' .plhead').addEventListener('click', e => {
+  document.addEventListener('tb-routes', () => plShow('rt'));
+  const RTK = 'tirana-routes';
+  let rts = [], rtEdit = null, rtDel = null, rtNote = null, rtToastT = 0;
+  try { rts = Places.routes(localStorage.getItem(RTK)); } catch (e) {}
+  const rtSave = () => { try { localStorage.setItem(RTK, JSON.stringify({ v: 1, items: rts })); } catch (e) {} };
+  const rtAuto = r => `${r.f.l} → ${r.t.l}`.slice(0, 60);
+  const rtName = r => r.n || rtAuto(r);
+  function rtCur() {
+    if (!(plan.res && plan.res.list.length) || !plan.from || !plan.to) return null;
+    const e = g => g.place ? { k: 'place', l: g.label, lat: g.pt.lat, lon: g.pt.lon } : { k: 'stop', l: g.label, lat: g.stops[0].lat, lon: g.stops[0].lon };
+    return { f: e(plan.from), t: e(plan.to) };
+  }
+  const rtFav = () => { const c = rtCur(); return !!c && rts.some(r => Places.routeKey(r) === Places.routeKey(c)); };
+  const rtBtn = () => { const on = rtFav(), k = on ? 'rtRemove' : 'rtAdd'; return window.APP_VERSION && rtCur() ? `<button type="button" class="rtstar${on ? ' on' : ''}" data-rt="star" aria-pressed="${on}" aria-label="${esc(t(k))}" title="${esc(t(k))}">${icSvg('star')}</button>` : ''; };
+  function rtShow() {
+    const box = $('#rt');
+    plHead('rt');
+    if (!SEC.rt.open) { box.innerHTML = ''; return; }
+    let h = rts.length ? '' : `<p class="gmsg plempty">${esc(t('rtEmpty'))}</p>`;
+    for (const r of rts) {
+      h += `<div class="plrow"><button type="button" class="plgo" data-pa="go" data-rt="${esc(r.id)}"><span class="plic">${uiSvg('route')}</span><span class="pltx"><b>${esc(rtName(r))}</b><span>${esc(r.f.l)} → ${esc(r.t.l)}</span></span></button>${plBtns('data-rt', esc(r.id), true)}</div>`;
+      if (rtDel === r.id) h += plConf('data-rt', esc(r.id));
+      if (rtEdit === r.id) h += `<div class="pedit"><input class="pname" maxlength="60" value="${esc(r.n)}" placeholder="${esc(rtAuto(r))}" aria-label="${esc(t('rtName'))}"><div class="grow"><button type="button" class="btn sm primary" data-pa="rsave" data-rt="${esc(r.id)}">${esc(t('preSave'))}</button><button type="button" class="btn sm" data-pa="rcancel">${esc(t('preCancel'))}</button></div></div>`;
+      if (rtNote && rtNote.id === r.id) h += `<p class="gmsg gwarn"><i>${icSvg('triangle-alert')}</i>${esc(t(rtNote.k, rtNote.p))}</p>`;
+    }
+    h += plBack('rt');
+    box.innerHTML = h;
+  }
+  function rtStop(p) {
+    if (!names.length) return null;
+    const hit = names.find(x => x.label === p.l);
+    if (hit) return hit;
+    const near = Places.nearest(allStops(), [p.lat, p.lon], 1)[0];
+    return near && near.d <= 150 ? stopGroup.get(near.s.id) || null : null;
+  }
+  function rtOpen(r) {
+    rtNote = null;
+    const ends = [['from', r.f], ['to', r.t]].map(([w, p]) => [w, p.k === 'stop' ? rtStop(p) : ptEnd('@fav-' + w, p.l, [p.lat, p.lon], w), p]);
+    const gone = ends.find(e => !e[1]);
+    if (gone) { rtNote = { id: r.id, k: 'rtGone', p: { s: gone[2].l } }; rtShow(); return; }
+    plCloseAll();
+    if (mode !== 'plan') setMode('plan', true);
+    for (const [w, g] of ends) setEnd(w, g);
+    plan.timeTouched = false;
+    setNow();
+    runPlan();
+    drawJourney(true); restyle();
+    $('#planform').scrollIntoView({ block: 'start' });
+  }
+  $('#rt').addEventListener('click', e => {
+    const b = e.target.closest('[data-pa]');
+    if (!b) return;
+    const a = b.dataset.pa, r = rts.find(x => x.id === b.dataset.rt);
+    if (a !== 'del') rtDel = null;
+    if (a === 'go' && r) rtOpen(r);
+    else if (a === 'edit' && r) { rtEdit = rtEdit === r.id ? null : r.id; rtNote = null; rtShow(); const i = $('#rt .pedit .pname'); if (i) i.focus({ preventScroll: true }); }
+    else if (a === 'del' && r) { rtDel = rtDel === r.id ? null : r.id; rtShow(); }
+    else if (a === 'nodel') rtShow();
+    else if (a === 'del2' && r) { rts = rts.filter(x => x !== r); rtSave(); rtEdit = rtDel = null; rtShow(); showPlan(); }
+    else if (a === 'rsave' || a === 'rcancel') rtRename(a === 'rsave');
+  });
+  function rtRename(save) {
+    const r = rts.find(x => x.id === rtEdit), i = $('#rt .pedit .pname');
+    if (save && r && i) { r.n = i.value.trim().slice(0, 60); rtSave(); }
+    rtEdit = null;
+    rtShow();
+  }
+  $('#rt').addEventListener('keydown', e => {
+    if (!e.target.classList.contains('pname')) return;
+    if (e.key === 'Enter') rtRename(true); else if (e.key === 'Escape') rtRename(false);
+  });
+  function rtToast(k) {
+    let el = $('#rttoast');
+    if (!el) { el = document.createElement('div'); el.id = 'rttoast'; el.className = 'rttoast'; el.setAttribute('role', 'status'); document.body.appendChild(el); }
+    el.textContent = t(k);
+    el.classList.add('on');
+    clearTimeout(rtToastT);
+    rtToastT = setTimeout(() => el.classList.remove('on'), 2600);
+  }
+  function rtToggle() {
+    const c = rtCur();
+    if (!c) return;
+    const key = Places.routeKey(c), had = rts.some(r => Places.routeKey(r) === key);
+    if (had) rts = rts.filter(r => Places.routeKey(r) !== key);
+    else rts = [{ id: Math.random().toString(36).slice(2, 9), n: '', ...c }, ...rts].slice(0, Places.ROUTE_MAX);
+    rtSave();
+    showPlan();
+    if (SEC.rt.open) rtShow();
+    rtToast(had ? 'rtRemoved' : 'rtAdded');
+  }
+  $('#panel').addEventListener('click', e => { if (e.target.closest('[data-rt="star"]')) rtToggle(); });
+  for (const sec of ['pre', 'poi', 'rt']) $(SEC[sec].card + ' .plhead').addEventListener('click', e => {
     const b = e.target.closest('[data-pl]'), x = SEC[sec];
     if (!b) return;
-    if (b.dataset.pl === 'x') {
-      x.open = false;
-      if (sec === 'pre') preEdit = prePick = preMsg = preDel = null; else poiEdit = poiPick = poiMsg = poiDel = null;
-      map.closePopup();
-    } else { x.col = !x.col; try { localStorage.setItem(x.key, x.col ? '1' : '0'); } catch (e) {} }
-    secShow(sec);
+    if (b.dataset.pl === 'x') plClose(sec);
+    else { x.col = !x.col; try { localStorage.setItem(x.key, x.col ? '1' : '0'); } catch (e) {} secShow(sec); }
   });
+  function plClose(sec) {
+    SEC[sec].open = false;
+    if (sec === 'pre') preEdit = prePick = preMsg = preDel = null; else if (sec === 'rt') rtEdit = rtDel = rtNote = null; else poiEdit = poiPick = poiMsg = poiDel = poiGeo = null;
+    map.closePopup();
+    secShow(sec);
+  }
+  const plCloseAll = () => { for (const sec of Object.keys(SEC)) if (SEC[sec].open) plClose(sec); };
+  document.addEventListener('click', e => { const b = e.target.closest('[data-pl-back]'); if (b) plClose(b.dataset.plBack); });
   const ptLayer = L.layerGroup().addTo(map);
   function ptPop(ll, el) {
     map.closePopup();
@@ -879,7 +982,7 @@
     });
   }
   const POIK = 'tirana-pois';
-  let pois = [], poiEdit = null, poiPick = null, poiDel = null, poiMsg = null;
+  let pois = [], poiEdit = null, poiPick = null, poiDel = null, poiMsg = null, poiGeo = null;
   try { pois = Places.pois(localStorage.getItem(POIK)); } catch (e) {}
   const poiId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
   const poiEnd = (p, which) => ptEnd('@poi-' + p.id, p.n, [p.lat, p.lon], which);
@@ -968,9 +1071,11 @@
       if (poiPick && poiPick.id === p.id) h += `<p class="gmsg">${esc(t('poiPickHint'))} <button type="button" class="btn sm" data-pa="cancel">${esc(t('preCancel'))}</button></p>`;
     }
     const full = pois.length >= Places.POI_MAX;
-    h += `<button type="button" class="pladd" data-pa="add" ${full ? 'disabled' : ''}><span class="plplus">${uiSvg('plus')}</span>${esc(t('plAdd'))}</button>`;
+    h += `<div class="pact"><button type="button" class="btn sm pgps" data-pa="gps" ${full ? 'disabled' : ''}>${uiSvg('locate')}${esc(t('preHere'))}</button><button type="button" class="btn sm pmap" data-pa="add" ${full ? 'disabled' : ''}>${uiSvg('map')}${esc(t('preOnMap'))}</button></div>`;
+    if (poiGeo) h += `<p class="gmsg">${esc(t(poiGeo.k, poiGeo.p))}</p>`;
     if (full) h += `<p class="gmsg">${esc(t('poiMax', { n: Places.POI_MAX }))}</p>`;
     if (poiPick && !poiPick.id) h += `<p class="gmsg">${esc(t('poiPickHint'))} <button type="button" class="btn sm" data-pa="cancel">${esc(t('preCancel'))}</button></p>`;
+    h += plBack('poi');
     box.innerHTML = h;
   }
   $('#poi').addEventListener('click', e => {
@@ -978,7 +1083,13 @@
     if (!b) return;
     const a = b.dataset.pa, p = pois.find(x => x.id === b.dataset.id);
     if (a !== 'del') poiDel = null;
+    if (a !== 'gps') poiGeo = null;
     if (a === 'nodel') {}
+    else if (a === 'gps') {
+      poiPick = poiEdit = poiMsg = null; poiGeo = { k: 'geoBusy' }; map.closePopup(); poiShow();
+      geoOnce(pt => { poiGeo = null; poiShow(); map.setView(pt, Math.max(map.getZoom(), 16)); if (innerWidth <= 760) $('#map').scrollIntoView({ block: 'nearest' }); poiForm(pt[0], pt[1], { id: null }); }, (st, mk, mp) => { poiGeo = { k: mk, p: mp }; poiShow(); });
+      return;
+    }
     else if (a === 'add') { poiPick = { id: null }; poiEdit = poiMsg = null; if (prePick) { prePick = null; preShow(); } map.closePopup(); if (innerWidth <= 760) $('#map').scrollIntoView({ block: 'nearest' }); }
     else if (a === 'cancel') { poiPick = poiEdit = poiMsg = null; map.closePopup(); }
     else if (!p) return;
@@ -1110,6 +1221,7 @@
     chooseEnd(which, it ? placeEnd(it, which) : groups.get(name));
   }
   function chooseEnd(which, e, quiet) {
+    if (!prePick && !poiPick) plCloseAll();
     setEnd(which, e);
     $('#' + which + '-sugg').hidden = true;
     restyle();

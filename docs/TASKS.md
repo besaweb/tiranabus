@@ -30,7 +30,12 @@ Aktualizováno: 2026-11-07
 | UX-004 | Ikony předvoleb přímo v polích Odkud / Kam | ANDROID | P2 | REVIEW | UX-003 | 2026-11-07 |
 | UX-005 | Tlačítko X pro vymazání polí Odkud / Kam | SHARED | P2 | REVIEW | UX-004 | 2026-11-07 |
 | UX-006 | Redesign karet Moje předvolby a Moje místa | ANDROID | P2 | REVIEW | POI-001 | 2026-11-08 |
+| UX-015 | Oblíbené trasy (menu ☰, hvězdička u výsledku) | ANDROID ONLY | P2 | REVIEW | UX-006 | 2026-11-09 |
 | UX-013 | Poloha uživatele na mapě jako malý smajlík | ANDROID ONLY | P3 | REVIEW | – | 2026-11-08 |
+| UX-018 | Úvodní pohled mapy: střed Tirany, přiblížení 13 | SHARED | P3 | REVIEW | – | 2026-11-09 |
+| UX-017 | Tlačítko Zpět v kartách a skrytí plánovače | ANDROID ONLY | P3 | REVIEW | UX-014, UX-015, UX-016 | 2026-11-09 |
+| UX-016 | Přidání místa: Moje aktuální poloha / Vybrat na mapě | ANDROID ONLY | P3 | REVIEW | UX-014 | 2026-11-09 |
+| UX-014 | Tlačítka v úpravě oblíbené zastávky | SHARED | P3 | REVIEW | – | 2026-11-09 |
 | UX-012 | Ikona upozornění u hlášky „Lokalizace je dostupná pouze v oblasti Tirany“ | ANDROID ONLY | P3 | REVIEW | – | 2026-11-08 |
 | UX-011 | Nabídka po podržení prstu na mapě jako menu s ikonami | ANDROID ONLY | P3 | REVIEW | POI-001 | 2026-11-08 |
 | UX-010 | Zkrácená atribuce pod mapou (jedna řádka) | SHARED | P3 | REVIEW | – | 2026-11-08 |
@@ -107,6 +112,48 @@ Aktualizováno: 2026-11-07
   - [x] oprava po testu na telefonu (uživatel 2026-11-07: „Vybrat na mapě“ uložilo bod hned po klepnutí, bez značky a bez názvu): v režimu výběru klepnutí nebo podržení prstu na mapě či zastávce ukáže značku a popup s polem pro název a tlačítky Uložit / Zrušit, další klepnutí značku přesune; nápověda je v mapě (pod mapou na telefonu nebyla vidět). Ověřeno na emulátoru API 36 (světlý i tmavý režim, klávesnice, přesun, Zrušit, Odsud/Sem beze změny), web beze změny
   - [ ] reálný telefon (uživatel)
 - Poznámky: D-029. Při psaní do Odkud / Kam (2026-11-08, zadání uživatele) se předvolby v našeptávači vůbec nezobrazují (rozhodl uživatel: „úplně skrýt“), ani po klepnutí do prázdného pole (našeptávač se v prázdném poli neotevře); předvolby jsou jen jako ikony v polích Odkud / Kam a v kartě Moje předvolby. Značky předvoleb na mapě se po načtení nezobrazují; objeví se, až je uživatel vybere nebo napíše do Odkud / Kam (zmizí po smazání pole nebo změně výběru). Napsaný přesný název předvolby se při hledání stále rozpozná. Zastávka se po novém feedu dohledá podle názvu, jinak podle souřadnic. Obsahuje i opravu UX-002 pro šířku ≤ 760 px (viz UX-002).
+
+### UX-018 Úvodní pohled mapy
+- Oblast: mapa · SHARED (`draw()` v `app.js`, web i APK) · P3 · REVIEW
+- Popis: po prvním načtení dat se mapa nezobrazí přizpůsobená celé síti (zoom ≈ 11), ale vycentrovaná na střed Tirany (náměstí Skanderbeg, 41.3275 / 19.8187) se zoomem 13 (o 2 úrovně blíž; konstanty `CENTER`, `START_ZOOM`). Zadání uživatele.
+- Kritéria:
+  - [x] web: mapa na středu Tirany, zoom 13
+  - [x] APK v emulátoru: úvodní mapa na středu Tirany
+  - [ ] telefon (uživatel)
+
+### UX-017 Tlačítko Zpět v kartách a skrytí plánovače
+- Oblast: UI · ANDROID ONLY (karty jsou jen v aplikaci) · P3 · REVIEW · větev obsahuje UX-014, UX-015 a UX-016 (sloučené, vzájemně se dotýkají `app.js` a CSS)
+- Popis: v kartách Oblíbené zastávky, Oblíbené trasy a Moje místa je na konci tlačítko Zpět (centrované, sekundární, klíč `back` ve 12 jazycích). Je-li některá karta otevřená a nesbalená, je skrytá karta plánovače (`.searchcard`) i panel výsledků (`#sheet`) přes třídu `body.seclist` (nastavuje `plHead`). Plánovač se vrátí po Zpět, po × a po sbalení karty. Plánování zevnitř karty (otevření oblíbené trasy, Odsud/Sem z mapy, klepnutí na zastávku) karty zavře (`plCloseAll`), aby bylo výsledky vidět.
+- Kritéria:
+  - [x] web (režim aplikace): všechny tři karty skryjí plánovač, Zpět i × ho vrátí, otevření trasy zavře kartu a ukáže spojení
+  - [x] APK v emulátoru: Zpět v kartě, plánovač skrytý
+  - [ ] tmavý režim a telefon (uživatel)
+
+### UX-016 Přidání místa tlačítky Moje aktuální poloha / Vybrat na mapě
+- Oblast: UI, Moje místa · ANDROID ONLY (karta Moje místa je jen v aplikaci) · P3 · REVIEW · závisí na UX-014 (třída `.pact`)
+- Popis: v kartě Moje místa nahradilo tlačítko „Přidat nové místo“ (klíč `plAdd` zrušen) dvojici tlačítek vedle sebe jako v Oblíbených zastávkách (`.pact`, ikony `locate` / `map`, červená / modrá). „Vybrat na mapě“ = dosavadní postup (klepnutí na mapu → formulář názvu). „Moje aktuální poloha“ zjistí polohu (`geoOnce`), vycentruje mapu a otevře stejný formulář názvu a popisu v bodě polohy; chyby (mimo Tiranu, bez oprávnění, nepřesné) se ukazují pod tlačítky.
+- Kritéria:
+  - [x] web (režim aplikace, 390 px, falešná poloha): dvě stejná tlačítka, popup se uloží do seznamu, mimo oblast hlásí chybu
+  - [x] APK v emulátoru (`adb emu geo fix`): tlačítka, po „Moje aktuální poloha“ formulář v bodě polohy
+  - [ ] tmavý režim a telefon (uživatel)
+
+### UX-014 Tlačítka v úpravě oblíbené zastávky
+- Oblast: UI, Moje předvolby · SHARED · P3 · REVIEW
+- Popis: v úpravě předvolby jsou „Moje aktuální poloha“ a „Vybrat na mapě“ vedle sebe ve stejné šířce (mřížka 2 sloupce, `.pact`), pod nimi mřížka výběru ikon (přesunuta sem z horní části úpravy) a vycentrované sekundární tlačítko „Zrušit“ (průhledné, tlumená barva, `.btn.sec`). Hlavní tlačítka mají ikonu nad textem (`locate`, `map` v `UI_IC`) a barevné zvýraznění: poloha červeně (`--accent`), mapa modře (#1A73E8). Akce a texty beze změny; `.grow` ostatních karet nedotčen.
+- Kritéria:
+  - [x] web, šířka 320 px: dvě buňky po 128 px, Zrušit uprostřed
+  - [x] APK v emulátoru (1080 px): dvě stejná tlačítka, Zrušit uprostřed
+  - [ ] tmavý režim a telefon (uživatel)
+### UX-015 Oblíbené trasy
+- Oblast: UI, plánovač, úložiště · ANDROID ONLY (menu ☰ existuje jen v aplikaci, `android/menu.js`; hvězdička se ukazuje jen při `window.APP_VERSION`) · P2 · REVIEW
+- Popis: položka menu ☰ „Oblíbené trasy“ (ikona route, událost `tb-routes`) otevře kartu `#rtcard` (stejný mechanismus `SEC` jako Oblíbené zastávky a Moje místa, sbalitelná). U výsledku vyhledávání je v `.jhead` hvězdička jako přepínač (od 2026-11-09, zadání uživatele): klepnutí trasu hned uloží (název „Odkud → Kam“, přejmenovat lze v kartě) a ukáže oznámení (`.rttoast`, 2,6 s); hvězdička svítí žlutě vždy, když Odkud / Kam odpovídá uložené trase; klepnutí na žlutou trasu odstraní a ukáže oznámení. Uloží se jen odkud a kam (typ, název, souřadnice) a vlastní název, ne linky ani přestupy (rozhodl uživatel, D-036). Karta: název a Odkud → Kam; klepnutí na řádek trasu znovu vyhledá nad aktuálními daty (čas „teď“) a ukáže živý výsledek včetně přestupů; tužka = přejmenování (pole + Uložit / Zrušit), koš = smazání s potvrzením. Duplicita je vyloučená přepínačem. Prázdný stav s návodem.
+- Data: `localStorage['tirana-routes']` = `{ v: 1, items: [{ id, n, f, t, x }] }`, čistá validace `Places.routes()` (`js/places.js`, nejvýš 50, duplicity podle `Places.routeKey` = odkud + kam). Nikdy se neukládá datum, čas ani linky a přestupy. Chybějící zastávka (název ani zastávka do 150 m) → „Zastávka … už není v aktuálních datech“ (trasa se nespustí). Bez sítě funguje (jen `localStorage` a feed v aplikaci).
+- Kritéria:
+  - [x] web (režim aplikace, 390 px): přidání, duplicita, seznam, přejmenování, otevření, smazání, zrušená zastávka, uložení po reloadu, bez sítě (server vypnutý, 0 požadavků)
+  - [x] `tests/routes.test.js` (3 testy), `tests/i18n.test.js` (12 jazyků)
+  - [x] APK v emulátoru: položka menu, hvězdička, přidání s názvem, karta se seznamem
+  - [ ] tmavý režim a telefon (uživatel)
+- Poznámky: D-036. Strojový překlad nových textů (sq, it, de, pl, fr, es, mk, el, ru, tr) bez kontroly rodilým mluvčím.
 
 ### UX-013 Poloha uživatele na mapě jako malý smajlík
 - Oblast: poloha, mapa · ANDROID ONLY (`GEO`) · P3 · REVIEW
