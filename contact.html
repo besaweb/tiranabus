@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Contact – Tirana Bus</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="canonical" href="https://tiranabus.al/contact.html">
+<link rel="icon" href="favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" href="img/logo.png" sizes="192x192">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="css/tickets.css">
+</head>
+<body>
+<header>
+  <a class="back" id="back" href="index.html">← Back</a>
+  <h1><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.5 7 8.5 6 8.5-6"/></svg><span id="title">Contact</span></h1>
+</header>
+<main>
+  <section class="card">
+    <p class="intro" data-k="ctIntro">Found a mistake, missing data or have an idea? Write to us. A photo of a stop or a timetable helps.</p>
+    <form id="cf" class="form" action="contact.php" method="post" enctype="multipart/form-data" novalidate>
+      <div class="row2">
+        <label class="fld"><span data-k="ctName">Your name</span><input name="name" type="text" maxlength="100" autocomplete="name" required></label>
+        <label class="fld"><span data-k="ctEmail">Your email</span><input name="email" type="email" maxlength="150" autocomplete="email" required></label>
+      </div>
+      <label class="fld"><span data-k="ctSubject">Subject</span><input name="subject" type="text" maxlength="150" required></label>
+      <label class="fld"><span data-k="ctMessage">Message</span><textarea name="message" rows="7" maxlength="5000" required></textarea></label>
+      <div class="fld">
+        <input id="cfiles" type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple hidden>
+        <button type="button" class="pick" id="pick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 12-8.6 8.6a5.5 5.5 0 0 1-7.8-7.8l9-9a3.7 3.7 0 0 1 5.2 5.2l-9 9a1.8 1.8 0 0 1-2.6-2.6l8.3-8.3"/></svg><span data-k="ctAttach">Attachments (photos)</span></button>
+        <small class="hint" data-k="ctAttachHint">Up to 3 images (JPG, PNG, WebP, GIF), 4 MB each.</small>
+        <ul class="files" id="flist"></ul>
+      </div>
+      <input class="hp" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <p class="status" id="st" role="status" aria-live="polite"></p>
+      <button type="submit" class="cta send" id="send" data-k="ctSend">Send</button>
+      <p class="meta" data-k="ctPriv">Your name and email are used only to reply to your message.</p>
+    </form>
+  </section>
+</main>
+<script src="js/i18n.js"></script>
+<script src="js/contact.js"></script>
+</body>
+</html>
