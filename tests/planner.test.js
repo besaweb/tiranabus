@@ -56,7 +56,7 @@ for (const walk of [false, true]) {
   });
 }
 
-test('plánovač: spojení nezačíná před zadaným časem', { skip, todo: 'BUG-002' }, () => {
+test('plánovač: spojení nezačíná před zadaným časem', { skip }, () => {
   const bad = Object.values(results).flatMap(r => r.bad);
   assert.deepEqual(bad, []);
 });

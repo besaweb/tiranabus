@@ -2,6 +2,10 @@
 # Nahraje web na FTP (tiranabus.al). Údaje v .ftp.env (není v gitu). Spouštět z Git Bash v kořeni projektu.
 set -euo pipefail
 cd "$(dirname "$0")"
+[ "$(git rev-parse --abbrev-ref HEAD)" = main ] || { echo "Odmítnuto: nasazuje se jen z větve main (jsi na $(git rev-parse --abbrev-ref HEAD))."; exit 1; }
+[ -z "$(git status --porcelain --untracked-files=no)" ] || { echo "Odmítnuto: jsou necommitované změny sledovaných souborů."; exit 1; }
+git fetch -q origin main || { echo "Odmítnuto: nelze zjistit stav origin/main (fetch selhal)."; exit 1; }
+[ "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" ] || { echo "Odmítnuto: lokální main se liší od origin/main (git pull, případně git push)."; exit 1; }
 set -a; . ./.ftp.env; set +a
 : "${FTP_HOST:?}" "${FTP_USER:?}" "${FTP_PASS:?}" "${FTP_DIR:?}"
 URL=https://tiranabus.al/
