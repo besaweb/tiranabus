@@ -68,3 +68,28 @@ h1 .badge { font-size: .8em; }
 .langs [aria-current] { font-weight: 700; color: var(--fg); }
 .card h3 { margin-top: 16px; }
 .card h3:first-child { margin-top: 0; }
+.form { display: grid; gap: 14px; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.fld { display: grid; gap: 5px; font-weight: 600; font-size: 13px; color: var(--muted); }
+.fld input, .fld textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--soft); color: var(--fg); font: 400 15px/1.4 var(--ui); }
+.fld textarea { resize: vertical; min-height: 120px; }
+.fld input:focus, .fld textarea:focus { outline: 2px solid var(--accent); outline-offset: 0; background: var(--panel); }
+.fld input.err, .fld textarea.err { border-color: var(--accent); }
+.pick { display: inline-flex; align-items: center; gap: 8px; justify-self: start; padding: 8px 14px; border: 1px dashed var(--line); border-radius: 12px; background: var(--soft); color: var(--fg); font: 600 14px var(--ui); cursor: pointer; }
+.pick:hover { background: var(--panel); border-color: var(--accent); }
+.pick svg { width: 18px; height: 18px; color: var(--accent); }
+.hint { font-weight: 400; font-size: 12px; }
+.files { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.files:empty { display: none; }
+.files li { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 6px 6px 6px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--soft); color: var(--fg); font-weight: 400; font-size: 14px; }
+.files span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.files button { flex: none; width: 28px; height: 28px; border: 0; border-radius: 8px; background: transparent; color: var(--muted); font-size: 20px; line-height: 1; cursor: pointer; }
+.files button:hover { background: var(--line); color: var(--fg); }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.status { margin: 0; min-height: 1.4em; font-weight: 600; font-size: 14px; }
+.status.ok { color: #1E8E4E; }
+.status.bad { color: var(--accent); }
+:root[data-theme="dark"] .status.ok { color: #4FD58A; }
+.send { justify-self: start; border: 0; margin: 0; cursor: pointer; font: 700 15px var(--ui); }
+.send:disabled { opacity: .6; cursor: default; }
+@media (max-width: 480px) { .row2 { grid-template-columns: 1fr; } }

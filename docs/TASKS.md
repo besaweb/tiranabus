@@ -1,6 +1,6 @@
 # Tasks – Tirana Bus
 
-Aktualizováno: 2026-11-07
+Aktualizováno: 2026-11-10
 
 **Pravidla:** ID `PREFIX-NNN` se nikdy nepoužije znovu (prefixy CORE, WEB, AND, GTFS, POI, MAP, DATA, I18N, UX, SEO, MKT, BUG, TEST, DOC). Priority P0 kritická – P3 nízká. Stavy BACKLOG → READY → IN_PROGRESS → REVIEW → DONE; BLOCKED vždy s důvodem. Platforma SHARED / WEB / ANDROID (WEB/ANDROID se zdůvodněním). SHARED je DONE až s ☑ u obou platforem. DONE = splněná kritéria + testy + dokumentace; pak přesun do Archivu. Před založením hledat podobný úkol.
 
@@ -30,8 +30,18 @@ Aktualizováno: 2026-11-07
 | DATA-003 | Kontrola stránky Luna v hlídání feedu | SHARED | P3 | BACKLOG | DATA-001 | 2026-11-07 |
 | WEB-002 | Odznak Google Play jako odkaz na aplikaci | WEB | P3 | BLOCKED | publikace v Play | 2026-11-07 |
 | SEO-002 | Stránky zastávek (493 × 12), schema.org pro linky | WEB | P3 | BACKLOG | – | 2026-11-07 |
+| WEB-003 | Kontaktní formulář (`contact.html` + `contact.php`, zatím mimo menu) | WEB | P2 | IN_PROGRESS | PHP na hostingu | 2026-11-10 |
 
 ## Detail
+
+### WEB-003 Kontaktní formulář
+- Oblast: web / kontakt · WEB (odeslání přes PHP na FTP hostingu tiranabus.al, v APK ani na GitHub Pages neexistuje; D-037) · P2 · IN_PROGRESS
+- Popis: stránka `contact.html` (jméno, e-mail odesílatele, předmět, text, až 3 přílohy – fotky JPG/PNG/WebP/GIF do 4 MB) a `contact.php`, který zprávu odešle na tiranabus@besaweb.al. Ochrana: honeypot, limit 5 zpráv/hod z jedné IP, kontrola typu a velikosti příloh na serveru. Do menu a sitemap zatím nepřidáno, stránka je `noindex`.
+- Kritéria:
+  - [x] formulář ve 12 jazycích, světlý i tmavý režim, telefon
+  - [ ] `contact.php` ověřen na produkčním hostingu (PHP, `mail()`, limity `upload_max_filesize` / `post_max_size`)
+  - [ ] skutečné odeslání s přílohou doručeno na tiranabus@besaweb.al
+- Poznámky: lokálně není PHP, serverová část je ověřena až po nasazení (`deploy-ftp.sh` nahrává `contact.html` a `contact.php`; `pages.yml` ne).
 
 ### AND-008 První vydání v Google Play
 - Oblast: Android / vydání · ANDROID (Google Play) · P0 · IN_PROGRESS

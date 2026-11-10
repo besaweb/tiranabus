@@ -13,8 +13,8 @@ V=$(git rev-parse --short=8 HEAD)
 S=$(mktemp -d)
 trap 'rm -rf "$S"' EXIT
 
-cp -r index.html tickets.html privacy.html 404.html robots.txt sitemap.xml .htaccess favicon.ico css js data img "$S/"
-sed -i -E "s#((src|href)=\"(css|js)/[^\"?]+\.(js|css))\"#\1?v=$V\"#g" "$S/index.html" "$S/tickets.html" "$S/privacy.html"
+cp -r index.html tickets.html privacy.html contact.html contact.php 404.html robots.txt sitemap.xml .htaccess favicon.ico css js data img "$S/"
+sed -i -E "s#((src|href)=\"(css|js)/[^\"?]+\.(js|css))\"#\1?v=$V\"#g" "$S/index.html" "$S/tickets.html" "$S/privacy.html" "$S/contact.html"
 if ! curl -fsSL --retry 3 -o "$S/gtfs.zip" https://github.com/besaweb/tiranabus/releases/download/tirana-latest/gtfs.zip; then
   cp gtfs.zip "$S/gtfs.zip"
 fi

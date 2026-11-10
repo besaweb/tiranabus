@@ -33,6 +33,7 @@ a pak http://localhost:8000/
 | `js/places.js`, `data/poi.json` | volitelné rozšířené vyhledávání míst a ulic (data © OpenStreetMap contributors, ODbL; přegenerovat `node tools/poi-build.js`) |
 | `data/walk.json` | pěší síť ulic pro docházku k místům (© OpenStreetMap contributors, ODbL; přegenerovat `node tools/walk-build.js`) |
 | `robots.txt`, `sitemap.xml`, `favicon.ico`, `img/og.jpg` | pro vyhledávače (hlavní doména tiranabus.al) |
+| `contact.html`, `contact.php`, `js/contact.js` | kontaktní formulář (jméno, e-mail, předmět, zpráva, až 3 fotky); `contact.php` odešle zprávu na tiranabus@besaweb.al přes `mail()`; jen web na FTP hostingu, zatím bez odkazu v menu |
 | `tools/build-pages.js` | generátor statických stránek linek, letiště a přehledů ve 12 jazycích (`/{jazyk}/line/{linka}/`) a `sitemap.xml` s hreflang; spouští se při nasazení: `node tools/build-pages.js site` |
 | `.htaccess`, `404.html` | přesměrování www a chybová stránka, jen na FTP |
 
