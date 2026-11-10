@@ -782,7 +782,7 @@
     for (const x of document.querySelectorAll(`#pre .picgrid [data-slot="${k}"]`)) { const on = x.dataset.ic === preIc(k); x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); }
   });
   const secShow = sec => sec === 'pre' ? preShow() : sec === 'rt' ? rtShow() : poiShow();
-  function plShow(sec) { Object.assign(SEC[sec], { open: true, col: false }); secShow(sec); $(SEC[sec].card).scrollIntoView({ block: 'nearest' }); }
+  function plShow(sec) { for (const o of Object.keys(SEC)) if (o !== sec && SEC[o].open) plClose(o); Object.assign(SEC[sec], { open: true, col: false }); secShow(sec); $(SEC[sec].card).scrollIntoView({ block: 'nearest' }); }
   document.addEventListener('tb-presets', () => plShow('pre'));
   document.addEventListener('tb-routes', () => plShow('rt'));
   const RTK = 'tirana-routes';

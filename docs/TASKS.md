@@ -54,6 +54,7 @@ Aktualizováno: 2026-11-07
 | DATA-003 | Kontrola stránky Luna v hlídání feedu | SHARED | P3 | BACKLOG | DATA-001 | 2026-11-07 |
 | WEB-002 | Odznak Google Play jako odkaz na aplikaci | WEB | P3 | BLOCKED | publikace v Play | 2026-11-07 |
 | SEO-002 | Stránky zastávek (493 × 12), schema.org pro linky | WEB | P3 | BACKLOG | – | 2026-11-07 |
+| UX-019 | Jen jedna karta (Oblíbené zastávky / trasy / Moje místa) naráz | ANDROID ONLY | P3 | REVIEW | – | 2026-11-10 |
 
 ## Detail
 
@@ -272,6 +273,13 @@ Aktualizováno: 2026-11-07
 ### BUG-001 Cena RT
 - SHARED · P2 · READY
 - Kritéria: ověřená cena na luna.al, sjednocená v `tickets` textech (`i18n.js`) i `extra-airport.js`, zdroj a datum v `PROJECT_OVERVIEW.md`.
+
+### UX-019 Jen jedna karta naráz
+- Oblast: UI · ANDROID ONLY (karty jsou jen v aplikaci) · P3 · REVIEW
+- Popis: otevření karty z menu ☰ (Oblíbené zastávky, Oblíbené trasy, Moje místa) zavře ostatní otevřené karty (`plShow` volá `plClose` pro ostatní sekce); stav editace zavřené karty se zruší. Zadání uživatele.
+- Kritéria:
+  - [x] web (režim aplikace): střídání všech tří karet, vždy otevřená jediná, plánovač skrytý, Zpět ho vrátí
+  - [ ] APK v emulátoru · [ ] telefon (uživatel)
 
 ## Známé chyby a omezení
 
