@@ -964,7 +964,13 @@
     });
   }
   if (GEO) {
-    map.on('click', e => { if (prePick) prePickAt(e.latlng.lat, e.latlng.lng); else if (poiPick) poiForm(e.latlng.lat, e.latlng.lng, poiPick); });
+    map.on('click', e => {
+      if (prePick) return prePickAt(e.latlng.lat, e.latlng.lng);
+      if (poiPick) return poiForm(e.latlng.lat, e.latlng.lng, poiPick);
+      let best = null, bd = 24;
+      for (const p of pois) { const d = map.latLngToContainerPoint([p.lat, p.lon]).distanceTo(e.containerPoint); if (d <= bd) { best = p; bd = d; } }
+      if (best) poiPop(best);
+    });
     map.on('contextmenu', e => {
       if (prePick) return prePickAt(e.latlng.lat, e.latlng.lng);
       if (poiPick) return poiForm(e.latlng.lat, e.latlng.lng, poiPick);

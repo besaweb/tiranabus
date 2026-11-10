@@ -284,10 +284,11 @@ Aktualizováno: 2026-11-07
 
 ### BUG-003 Nabídka existujícího bodu
 - Oblast: mapa, UI · ANDROID ONLY (vlastní body a předvolby jsou jen v aplikaci) · P2 · REVIEW
-- Popis: značka vlastního bodu je malá (poloměr 2–4 px), klepnutí prstem ji často netrefilo a nabídka (`poiPop`) se neotevřela. Oprava: viditelná značka je neinteraktivní a nad ní leží průhledný zásah o poloměru 16 px (`_hit` v `poiLayer`, tooltip i klik jsou na něm). Nabídka existujícího bodu (`poiPop`) a předvolby (`prePop`) mají nově stejný vzhled jako nabídka po podržení prstu na mapě: široké řádky s ikonami (`.gmenu`, `gmRow`; Odsud, Sem, Upravit), hlavička s ikonou a popisem.
+- Popis: značka vlastního bodu je malá (poloměr 2–4 px), klepnutí prstem ji často netrefilo a nabídka (`poiPop`) se neotevřela. Oprava: viditelná značka je neinteraktivní a nad ní leží průhledný zásah o poloměru 16 px (`_hit` v `poiLayer`, tooltip i klik jsou na něm). V APK (emulátor, klepnutí `adb input tap`) ale klepnutí na značky v canvasu vůbec nevyvolalo `click` vrstvy (platí i pro zastávky), zatímco klepnutí na mapu ano; proto `map.on('click')` navíc hledá nejbližší vlastní bod do 24 px a otevře jeho nabídku (`poiPop`). Na webu klik na značku zastaví šíření, takže se nevolá dvakrát. Nabídka existujícího bodu (`poiPop`) a předvolby (`prePop`) mají nově stejný vzhled jako nabídka po podržení prstu na mapě: široké řádky s ikonami (`.gmenu`, `gmRow`; Odsud, Sem, Upravit), hlavička s ikonou a popisem.
 - Kritéria:
   - [x] web (režim aplikace): klepnutí do 12 px od značky otevře nabídku, 40 px ne; nový vzhled
-  - [ ] APK v emulátoru · [ ] telefon (uživatel)
+  - [x] APK v emulátoru: klepnutí na uložený bod otevře nabídku v novém vzhledu
+  - [ ] telefon (uživatel)
 
 ## Známé chyby a omezení
 
