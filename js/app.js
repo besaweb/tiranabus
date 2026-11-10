@@ -662,6 +662,7 @@
     'triangle-alert': '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
     'smile': '<circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" x2="9.01" y1="9" y2="9"/><line x1="15" x2="15.01" y1="9" y2="9"/>',
     'flag': '<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/>',
+    'pencil': '<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>',
     'star': '<path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/>'
   };
   const icSvg = i => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${PRE_ICO[i]}</svg>`;
@@ -929,10 +930,11 @@
       m.on('click', e => { L.DomEvent.stop(e); if (prePick) prePickAt(p.lat, p.lon); else prePop(k); });
     }
   }
+  const gmRow = (w, i, txt) => `<button type="button" data-w="${w}"><i class="gm-blue">${icSvg(i)}</i>${esc(txt)}</button>`;
   function prePop(k) {
     const p = pre[k], el = document.createElement('div');
-    el.className = 'gpop';
-    el.innerHTML = `<b>${esc(preName(k))}</b><span>${esc(p.l)}</span><div class="grow"><button type="button" class="btn sm" data-w="from">${esc(t('mapFrom'))}</button><button type="button" class="btn sm" data-w="to">${esc(t('mapTo'))}</button></div>`;
+    el.className = 'gpop gmenu';
+    el.innerHTML = `<b><i class="gm-red">${icSvg(preIc(k))}</i>${esc(preName(k))}</b><span>${esc(p.l)}</span>${gmRow('from', 'map-pin', t('mapFrom'))}${gmRow('to', 'flag', t('mapTo'))}`;
     const pop = L.popup({ offset: [0, -10], autoPanPaddingTopLeft: [72, 16], autoPanPaddingBottomRight: [72, 56] }).setLatLng([p.lat, p.lon]).setContent(el).openOn(map);
     el.addEventListener('click', ev => {
       const b = ev.target.closest('[data-w]');
@@ -968,7 +970,7 @@
       if (poiPick) return poiForm(e.latlng.lat, e.latlng.lng, poiPick);
       const el = document.createElement('div');
       el.className = 'gpop gmenu';
-      const mi = (w, i, c) => `<button type="button" data-w="${w}"><i class="${c}">${icSvg(i)}</i>${esc(t(w === 'poi' ? 'poiAddMap' : w === 'from' ? 'mapFrom' : 'mapTo'))}</button>`;
+      const mi = (w, i) => gmRow(w, i, t(w === 'poi' ? 'poiAddMap' : w === 'from' ? 'mapFrom' : 'mapTo'));
       el.innerHTML = `<b><i class="gm-red">${icSvg('map-pin')}</i>${esc(t('preMapPt'))}</b>${mi('from', 'map-pin', 'gm-blue')}${mi('to', 'flag', 'gm-blue')}${mi('poi', 'star', 'gm-blue')}`;
       const pop = ptPop(e.latlng, el);
       el.addEventListener('click', ev => {
@@ -1000,7 +1002,9 @@
     poiLayer.clearLayers();
     if (!GEO) return;
     for (const p of pois) {
-      const m = L.circleMarker([p.lat, p.lon], { renderer, radius: sr(), weight: 1.5, fillOpacity: 1 }).addTo(poiLayer);
+      L.circleMarker([p.lat, p.lon], { renderer, radius: sr(), weight: 1.5, fillOpacity: 1, interactive: false }).addTo(poiLayer);
+      const m = L.circleMarker([p.lat, p.lon], { renderer, radius: 16, stroke: false, fill: true, fillOpacity: 0 }).addTo(poiLayer);
+      m._hit = true;
       m.bindTooltip(esc(p.n), { direction: 'top', offset: [0, -4] });
       m.on('click', e => { L.DomEvent.stop(e); if (prePick) prePickAt(p.lat, p.lon); else if (poiPick) poiForm(p.lat, p.lon, poiPick); else poiPop(p); });
     }
@@ -1008,12 +1012,13 @@
   }
   function poiStyle() {
     const ac = tok('--accent'), st = { radius: sr() + .5, color: ac, fillColor: ac };
-    poiLayer.eachLayer(m => { m.setStyle(st); m.bringToFront(); });
+    poiLayer.eachLayer(m => { if (!m._hit) m.setStyle(st); });
+    poiLayer.eachLayer(m => { if (m._hit) m.bringToFront(); });
   }
   function poiPop(p) {
     const el = document.createElement('div');
-    el.className = 'gpop';
-    el.innerHTML = `<b>${esc(p.n)}</b><span>${esc(p.d || t('poiLbl'))}</span><div class="grow"><button type="button" class="btn sm" data-w="from">${esc(t('mapFrom'))}</button><button type="button" class="btn sm" data-w="to">${esc(t('mapTo'))}</button><button type="button" class="btn sm" data-w="edit">${esc(t('poiEdit'))}</button></div>`;
+    el.className = 'gpop gmenu';
+    el.innerHTML = `<b><i class="gm-red">${icSvg('map-pin')}</i>${esc(p.n)}</b><span>${esc(p.d || t('poiLbl'))}</span>${gmRow('from', 'map-pin', t('mapFrom'))}${gmRow('to', 'flag', t('mapTo'))}${gmRow('edit', 'pencil', t('poiEdit'))}`;
     const pop = L.popup({ offset: [0, -4], autoPanPaddingTopLeft: [72, 16], autoPanPaddingBottomRight: [72, 56] }).setLatLng([p.lat, p.lon]).setContent(el).openOn(map);
     el.addEventListener('click', ev => {
       const b = ev.target.closest('[data-w]');
