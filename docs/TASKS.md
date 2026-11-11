@@ -30,6 +30,8 @@ Aktualizováno: 2026-11-10
 | DATA-003 | Kontrola stránky Luna v hlídání feedu | SHARED | P3 | BACKLOG | DATA-001 | 2026-11-07 |
 | WEB-002 | Odznak Google Play jako odkaz na aplikaci | WEB | P3 | BLOCKED | publikace v Play | 2026-11-07 |
 | SEO-002 | Stránky zastávek (493 × 12), schema.org pro linky | WEB | P3 | BACKLOG | – | 2026-11-07 |
+| UX-019 | Jen jedna karta (Oblíbené zastávky / trasy / Moje místa) naráz | ANDROID ONLY | P3 | REVIEW | – | 2026-11-10 |
+| BUG-003 | Klepnutí na existující vlastní bod nevyvolá nabídku; sjednocení vzhledu nabídek bodů | ANDROID ONLY | P2 | REVIEW | POI-001 | 2026-11-10 |
 | WEB-003 | Kontaktní formulář (`contact.html` + `contact.php`, zatím mimo menu) | WEB | P2 | IN_PROGRESS | PHP na hostingu | 2026-11-10 |
 
 ## Detail
@@ -72,6 +74,21 @@ Aktualizováno: 2026-11-10
 ### MKT-001 Reklamy pro neplatící uživatele aplikace
 - ANDROID · P3 · BACKLOG (až po Pro funkcích, rozhodnutí 2026-11-07)
 - Popis: reklamy v aplikaci pro uživatele bez Pro; Pro je bez reklam. Způsob (např. AdMob) a souhlas (SEO-003) určit při zahájení. Reklamy na webu zatím nerozhodnuty.
+
+### UX-019 Jen jedna karta naráz
+- Oblast: UI · ANDROID ONLY (karty jsou jen v aplikaci) · P3 · REVIEW
+- Popis: otevření karty z menu ☰ (Oblíbené zastávky, Oblíbené trasy, Moje místa) zavře ostatní otevřené karty (`plShow` volá `plClose` pro ostatní sekce); stav editace zavřené karty se zruší. Zadání uživatele.
+- Kritéria:
+  - [x] web (režim aplikace): střídání všech tří karet, vždy otevřená jediná, plánovač skrytý, Zpět ho vrátí
+  - [ ] APK v emulátoru · [ ] telefon (uživatel)
+
+### BUG-003 Nabídka existujícího bodu
+- Oblast: mapa, UI · ANDROID ONLY (vlastní body a předvolby jsou jen v aplikaci) · P2 · REVIEW
+- Popis: značka vlastního bodu je malá (poloměr 2–4 px), klepnutí prstem ji často netrefilo a nabídka (`poiPop`) se neotevřela. Oprava: viditelná značka je neinteraktivní a nad ní leží průhledný zásah o poloměru 16 px (`_hit` v `poiLayer`, tooltip i klik jsou na něm). V APK (emulátor, klepnutí `adb input tap`) ale klepnutí na značky v canvasu vůbec nevyvolalo `click` vrstvy (platí i pro zastávky), zatímco klepnutí na mapu ano; proto `map.on('click')` navíc hledá nejbližší vlastní bod do 24 px a otevře jeho nabídku (`poiPop`). Na webu klik na značku zastaví šíření, takže se nevolá dvakrát. Nabídka existujícího bodu (`poiPop`) a předvolby (`prePop`) mají nově stejný vzhled jako nabídka po podržení prstu na mapě: široké řádky s ikonami (`.gmenu`, `gmRow`; Odsud, Sem, Upravit), hlavička s ikonou a popisem.
+- Kritéria:
+  - [x] web (režim aplikace): klepnutí do 12 px od značky otevře nabídku, 40 px ne; nový vzhled
+  - [x] APK v emulátoru: klepnutí na uložený bod otevře nabídku v novém vzhledu
+  - [ ] telefon (uživatel)
 
 ## Známé chyby a omezení
 
