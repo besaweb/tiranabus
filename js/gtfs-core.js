@@ -311,7 +311,7 @@ const GTFS = (() => {
 
   const MAXR = 5;
 
-  function tidy(f, W, legs, tEnd, org, dst) {
+  function tidy(f, W, legs, tEnd, org, dst, tOrg) {
     for (let i = 0; i < legs.length; i++) {
       const w = legs[i];
       if (w.kind !== 'walk') continue;
@@ -322,7 +322,7 @@ const GTFS = (() => {
       let best = null, orig = null;
       const worse = (p, q) => (p.sl < SAFE) - (q.sl < SAFE) || p.m - q.m;
       for (const e of xs) {
-        const X = A ? sa[e].stop : e, tX = A ? sa[e].arr + A.inst.base : -Infinity;
+        const X = A ? sa[e].stop : e, tX = A ? sa[e].arr + A.inst.base : tOrg;
         const near = new Map((W.get(X) || []).map(([o, s2, m]) => [o.id, [s2, m]]));
         for (const b of ys) {
           const Y = B ? sb[b].stop : b, tY = B ? sb[b].dep + B.inst.base : Infinity;
@@ -422,7 +422,7 @@ const GTFS = (() => {
           p = j.from; lvl = j.k; nx = j.prev || null;
         }
       }
-      tidy(f, W, legs, bk - eg(bs), acc ? [p] : fromStops.map(s => s.id), acc ? [bs] : [...toSet]);
+      tidy(f, W, legs, bk - eg(bs), acc ? [p] : fromStops.map(s => s.id), acc ? [bs] : [...toSet], acc ? t0 + (acc.o.has(p) ? acc.o.get(p).w : 0) : t0);
       if (acc) {
         const a = acc.o.get(p), e = acc.d.get(bs), last = legs[legs.length - 1];
         if (a && a.m >= 25) legs.unshift({ kind: 'walk', from: acc.op, to: legs[0].from, dep: legs[0].dep - a.w, arr: legs[0].dep, m: a.m, acc: 1 });
