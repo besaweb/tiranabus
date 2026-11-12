@@ -697,6 +697,12 @@
     del: '<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>',
     down: '<path d="m6 9 6 6 6-6"/>',
     plus: '<path d="M5 12h14"/><path d="M12 5v14"/>',
+    bug: '<path d="m8 2 1.88 1.88"/><path d="M14.12 3.88 16 2"/><path d="M9 7.13v-1a3.003 3.003 0 1 1 6 0v1"/><path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6"/><path d="M12 20v-9"/><path d="M6.53 9C4.6 8.8 3 7.1 3 5"/><path d="M6 13H2"/><path d="M3 21c0-2.1 1.7-3.9 3.8-4"/><path d="M20.97 5c0 2.1-1.6 3.8-3.5 4"/><path d="M22 13h-4"/><path d="M17.2 17c2.1.1 3.8 1.9 3.8 4"/>',
+    bulb: '<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>',
+    msg: '<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>',
+    img: '<rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>',
+    ok: '<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+    send: '<path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/>',
     locate: '<line x1="2" x2="5" y1="12" y2="12"/><line x1="19" x2="22" y1="12" y2="12"/><line x1="12" x2="12" y1="2" y2="5"/><line x1="12" x2="12" y1="19" y2="22"/><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3"/>',
     map: '<path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/>',
     back: '<path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>',
@@ -706,7 +712,7 @@
   const plBtns = (sc, id, del) => `<button type="button" class="plb" data-pa="edit" ${sc}="${id}" aria-label="${esc(t('preChange'))}" title="${esc(t('preChange'))}">${uiSvg('edit')}</button>` +
     (del ? `<button type="button" class="plb del" data-pa="del" ${sc}="${id}" aria-label="${esc(t('preDel'))}" title="${esc(t('preDel'))}">${uiSvg('del')}</button>` : '<span class="plb ghost"></span>');
   const plConf = (sc, id) => `<div class="plconf" role="alert"><span>${esc(t('poiDelSure'))}</span><button type="button" class="btn sm danger" data-pa="del2" ${sc}="${id}">${esc(t('preDel'))}</button><button type="button" class="btn sm" data-pa="nodel">${esc(t('preCancel'))}</button></div>`;
-  const SEC = { pre: { card: '#precard', open: false, col: false, key: 'tirana-pre-col', title: 'preTitle' }, poi: { card: '#places', open: false, col: false, key: 'tirana-pl-col', title: 'poiTitle', sub: 'plSub' }, rt: { card: '#rtcard', open: false, col: false, key: 'tirana-rt-col', title: 'rtTitle' } };
+  const SEC = { pre: { card: '#precard', open: false, col: false, key: 'tirana-pre-col', title: 'preTitle' }, poi: { card: '#places', open: false, col: false, key: 'tirana-pl-col', title: 'poiTitle', sub: 'plSub' }, rt: { card: '#rtcard', open: false, col: false, key: 'tirana-rt-col', title: 'rtTitle' }, fb: { card: '#fbcard', open: false, col: false, key: 'tirana-fb-col', title: 'fbTitle', sub: 'fbSub' } };
   let preDel = null;
   for (const x of Object.values(SEC)) try { x.col = localStorage.getItem(x.key) === '1'; } catch (e) {}
   const plBack = sec => `<button type="button" class="btn sm plback" data-pl-back="${sec}">${uiSvg('back')}${esc(t('back'))}</button>`;
@@ -715,7 +721,7 @@
     box.hidden = !x.open;
     document.body.classList.toggle('seclist', Object.values(SEC).some(s => s.open && !s.col));
     box.classList.toggle('col', x.col);
-    const n = sec === 'pre' ? Places.SLOTS.filter(k => pre[k] && pre[k].k).length : sec === 'rt' ? rts.length : pois.length;
+    const n = sec === 'pre' ? Places.SLOTS.filter(k => pre[k] && pre[k].k).length : sec === 'rt' ? rts.length : sec === 'fb' ? 0 : pois.length;
     box.querySelector('.plhead').innerHTML = `<div class="pltop"><h2 class="ghead">${esc(t(x.title))}</h2>${n ? `<span class="plnum" title="${esc(t('plSaved', { n }))}" aria-label="${esc(t('plSaved', { n }))}">${n}</span>` : ''}<button type="button" class="plb sm" data-pl="col" aria-expanded="${!x.col}" aria-controls="${sec}body" aria-label="${esc(t(x.col ? 'plOpen' : 'plClose'))}" title="${esc(t(x.col ? 'plOpen' : 'plClose'))}">${uiSvg('down')}</button><button type="button" class="plb sm" data-pl="x" aria-label="${esc(t('close'))}" title="${esc(t('close'))}">×</button></div>${x.sub ? `<p class="plsub">${esc(t(x.sub))}</p>` : ''}`;
   }
   function preShow() {
@@ -782,7 +788,7 @@
     if (r) { r.querySelector('b').textContent = preName(k); r.querySelector('.plic').innerHTML = icSvg(preIc(k)); }
     for (const x of document.querySelectorAll(`#pre .picgrid [data-slot="${k}"]`)) { const on = x.dataset.ic === preIc(k); x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); }
   });
-  const secShow = sec => sec === 'pre' ? preShow() : sec === 'rt' ? rtShow() : poiShow();
+  const secShow = sec => sec === 'pre' ? preShow() : sec === 'rt' ? rtShow() : sec === 'fb' ? fbShow() : poiShow();
   function plShow(sec) { for (const o of Object.keys(SEC)) if (o !== sec && SEC[o].open) plClose(o); Object.assign(SEC[sec], { open: true, col: false }); secShow(sec); $(SEC[sec].card).scrollIntoView({ block: 'nearest' }); }
   document.addEventListener('tb-presets', () => plShow('pre'));
   document.addEventListener('tb-routes', () => plShow('rt'));
@@ -876,7 +882,7 @@
     rtToast(had ? 'rtRemoved' : 'rtAdded');
   }
   $('#panel').addEventListener('click', e => { if (e.target.closest('[data-rt="star"]')) rtToggle(); });
-  for (const sec of ['pre', 'poi', 'rt']) $(SEC[sec].card + ' .plhead').addEventListener('click', e => {
+  for (const sec of ['pre', 'poi', 'rt', 'fb']) $(SEC[sec].card + ' .plhead').addEventListener('click', e => {
     const b = e.target.closest('[data-pl]'), x = SEC[sec];
     if (!b) return;
     if (b.dataset.pl === 'x') plClose(sec);
@@ -884,7 +890,7 @@
   });
   function plClose(sec) {
     SEC[sec].open = false;
-    if (sec === 'pre') preEdit = prePick = preMsg = preDel = null; else if (sec === 'rt') rtEdit = rtDel = rtNote = null; else poiEdit = poiPick = poiMsg = poiDel = poiGeo = null;
+    if (sec === 'pre') preEdit = prePick = preMsg = preDel = null; else if (sec === 'rt') rtEdit = rtDel = rtNote = null; else if (sec === 'fb') { fbDone = fbFail = false; fbErr = null; } else poiEdit = poiPick = poiMsg = poiDel = poiGeo = null;
     map.closePopup();
     secShow(sec);
   }
@@ -1119,6 +1125,86 @@
     poiShow();
   });
   document.addEventListener('tb-pois', () => plShow('poi'));
+  const FBK = 'tirana-fb-draft', FB_URL = 'https://tiranabus.al/feedback.php';
+  const FB_IC = { bug: 'bug', idea: 'bulb', other: 'msg' };
+  let fb = { cat: null, text: '', email: '' }, fbFile = null, fbBusy = false, fbErr = null, fbFail = false, fbDone = false;
+  try {
+    const d = JSON.parse(localStorage.getItem(FBK));
+    if (d) fb = { cat: Feedback.CATS.includes(d.cat) ? d.cat : null, text: String(d.text || '').slice(0, Feedback.MAX_TEXT), email: String(d.email || '').slice(0, Feedback.MAX_MAIL) };
+  } catch (e) {}
+  const fbKeep = () => { try { if (fb.cat || fb.text || fb.email) localStorage.setItem(FBK, JSON.stringify(fb)); else localStorage.removeItem(FBK); } catch (e) {} };
+  const fbCap = c => 'fb' + c[0].toUpperCase() + c.slice(1);
+  const fbKb = n => n >= 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(n / 1024)) + ' kB';
+  function fbShow() {
+    const box = $('#fb');
+    plHead('fb');
+    if (!SEC.fb.open) { box.innerHTML = ''; return; }
+    const dis = fbBusy ? 'disabled' : '';
+    let h;
+    if (fbDone) h = `<div class="fbok" role="status">${uiSvg('ok')}<b>${esc(t('fbOkTitle'))}</b><p>${esc(t('fbOkText'))}</p></div>`;
+    else if (!fb.cat) h = `<p class="fblbl" id="fbpick">${esc(t('fbPick'))}</p><div class="fbcats" role="group" aria-labelledby="fbpick">${Feedback.CATS.map(c => `<button type="button" class="fbcat ${c}" data-fb="cat" data-cat="${c}"><i>${uiSvg(FB_IC[c])}</i><span>${esc(t(fbCap(c)))}</span></button>`).join('')}</div>`;
+    else h = `<form class="fbform" novalidate aria-busy="${fbBusy}"><div class="fbsel ${fb.cat}"><i>${uiSvg(FB_IC[fb.cat])}</i><b>${esc(t(fbCap(fb.cat)))}</b><button type="button" class="btn sm" data-fb="cats" ${dis}>${esc(t('fbChange'))}</button></div>` +
+      `<label class="fblbl" for="fbtext">${esc(t('fbDesc'))}</label><textarea id="fbtext" rows="5" maxlength="${Feedback.MAX_TEXT}" required ${dis}${fbErr === 'text' ? ' aria-invalid="true"' : ''}>${esc(fb.text)}</textarea>` +
+      `<input type="file" id="fbfile" accept="${Feedback.TYPES.join(',')}" hidden>` +
+      (fbFile ? `<div class="fbshot">${uiSvg('img')}<span>${esc(fbFile.name || t('fbShot'))} (${fbKb(fbFile.size)})</span><button type="button" class="plb sm del" data-fb="rm" ${dis} aria-label="${esc(t('fbShotRm'))}" title="${esc(t('fbShotRm'))}">${uiSvg('del')}</button></div>`
+        : `<button type="button" class="btn sm fbadd" data-fb="pick" ${dis}>${uiSvg('img')}${esc(t('fbShot'))}</button>`) +
+      `<label class="fblbl" for="fbmail">${esc(t('fbMail'))}</label><input id="fbmail" type="email" inputmode="email" autocomplete="email" maxlength="${Feedback.MAX_MAIL}" value="${esc(fb.email)}" ${dis}${fbErr === 'mail' ? ' aria-invalid="true"' : ''}>` +
+      `<p class="fbinfo">${esc(t('fbInfo'))}</p>` +
+      (fbErr ? `<p class="fberr" role="alert">${esc(t(Feedback.errKey(fbErr)))}</p>` : '') +
+      `<button type="submit" class="btn primary fbsend" ${dis}>${fbBusy ? '<span class="fbspin" aria-hidden="true"></span>' : uiSvg('send')}<span aria-live="polite">${esc(t(fbBusy ? 'fbSending' : fbFail ? 'fbRetry' : 'fbSend'))}</span></button></form>`;
+    box.innerHTML = h + plBack('fb');
+  }
+  async function fbSend() {
+    if (fbBusy) return;
+    const d = Object.assign({}, fb, { file: fbFile }), bad = Feedback.validate(d);
+    if (bad) {
+      fbErr = bad; fbFail = false; fbShow();
+      $(bad === 'mail' ? '#fbmail' : '#fbtext').focus();
+      return;
+    }
+    fbBusy = true; fbErr = null; fbShow();
+    const fd = new FormData(), p = Feedback.payload(d, { ver: window.APP_VERSION || VERSION, lang: I18N.lang, ua: navigator.userAgent });
+    for (const k of Object.keys(p)) fd.append(k, p[k]);
+    if (fbFile) fd.append('shot', fbFile, 'screenshot');
+    const ac = new AbortController(), tm = setTimeout(() => ac.abort(), 45000);
+    let code = 'net';
+    try {
+      const r = await fetch(FB_URL, { method: 'POST', body: fd, signal: ac.signal });
+      let j = null;
+      try { j = await r.json(); } catch (e) {}
+      code = j && j.ok ? null : j && j.error || 'send';
+    } catch (e) {}
+    clearTimeout(tm);
+    fbBusy = false;
+    if (code) { fbErr = code; fbFail = true; }
+    else { fb = { cat: null, text: '', email: '' }; fbFile = null; fbErr = null; fbFail = false; fbDone = true; fbKeep(); }
+    fbShow();
+  }
+  $('#fb').addEventListener('input', e => {
+    if (e.target.id === 'fbtext') fb.text = e.target.value; else if (e.target.id === 'fbmail') fb.email = e.target.value; else return;
+    e.target.removeAttribute('aria-invalid');
+    fbKeep();
+  });
+  $('#fb').addEventListener('change', e => {
+    if (e.target.id !== 'fbfile') return;
+    const f = e.target.files[0];
+    if (!f) return;
+    if (Feedback.fileErr(f)) { fbErr = 'file'; fbFail = false; } else { fbFile = f; fbErr = null; }
+    fbShow();
+  });
+  $('#fb').addEventListener('submit', e => { e.preventDefault(); fbSend(); });
+  $('#fb').addEventListener('click', e => {
+    const b = e.target.closest('[data-fb]');
+    if (!b || fbBusy) return;
+    const a = b.dataset.fb;
+    if (a === 'pick') { $('#fbfile').click(); return; }
+    if (a === 'cat') fb.cat = b.dataset.cat; else if (a === 'cats') fb.cat = null; else if (a === 'rm') fbFile = null;
+    fbErr = null; fbFail = false;
+    fbKeep();
+    fbShow();
+    if (a === 'cat') $('#fbtext').focus({ preventScroll: true });
+  });
+  document.addEventListener('tb-feedback', () => plShow('fb'));
   poiDraw();
   if (GEO) {
     const Loc = L.Control.extend({
@@ -1376,7 +1462,7 @@
     syncTheme();
     if (!feed) return;
     if (baseTables && builtLang !== l) { setFeed(buildFeed(), source, false); return; }
-    setAttr(); renderMeta(); renderExpiry(); geoShow(); preShow(); poiShow();
+    setAttr(); renderMeta(); renderExpiry(); geoShow(); preShow(); poiShow(); if (SEC.fb.open) fbShow();
     if (mode === 'plan') showPlan(); else { const el = scr(), st = el.scrollTop; render(); el.scrollTop = st; }
   }
   const langBox = $('.lang');
