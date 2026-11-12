@@ -48,7 +48,8 @@
     moon: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
     sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>',
     help: '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',
-    ext: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>'
+    ext: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+    fb: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'
   };
   const ic = k => '<svg class="mico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + IC[k] + '</svg>';
   const wrap = document.createElement('div');
@@ -63,6 +64,7 @@
     '<button type="button" class="mi" id="mi-theme">' + ic('moon') + '<span class="thm"></span></button>' +
     '<a class="mi" id="mi-tickets" href="tickets.html">' + ic('tickets') + '<span data-k="tickets"></span></a>' +
     '<a class="mi" id="mi-data" href="validity.html">' + ic('data') + '<span data-k="data"></span></a>' +
+    '<button type="button" class="mi" id="mi-fb">' + ic('fb') + '<span class="fb"></span></button>' +
     '<button type="button" class="mi" id="mi-about" aria-expanded="false">' + ic('about') + '<span data-k="about"></span></button><div class="about" hidden></div></div>';
   langBox.parentNode.insertBefore(wrap, langBox);
   const q = s => wrap.querySelector(s);
@@ -87,6 +89,7 @@
   q('#mi-pre').addEventListener('click', () => { closeMenu(); document.dispatchEvent(new CustomEvent('tb-presets')); });
   q('#mi-rt').addEventListener('click', () => { closeMenu(); document.dispatchEvent(new CustomEvent('tb-routes')); });
   q('#mi-poi').addEventListener('click', () => { closeMenu(); document.dispatchEvent(new CustomEvent('tb-pois')); });
+  q('#mi-fb').addEventListener('click', () => { closeMenu(); document.dispatchEvent(new CustomEvent('tb-feedback')); });
 
   const subs = [[miLang, slot], [miAbout, about]];
   const closeSubs = () => { for (const [b, box] of subs) { box.hidden = true; b.setAttribute('aria-expanded', 'false'); } q('#mi-exthelptx').hidden = true; q('#mi-exthelp').setAttribute('aria-expanded', 'false'); };
@@ -117,6 +120,7 @@
     q('#mi-pre .pre').textContent = A.preTitle;
     q('#mi-rt .rt').textContent = A.rtTitle;
     q('#mi-poi .poi').textContent = A.poiTitle;
+    q('#mi-fb .fb').textContent = A.fbMenu;
     about.textContent = '';
     const bold = s => { const e = document.createElement('b'); e.textContent = s; return e; };
     const link = (h, s) => { const e = document.createElement('a'); e.href = h; e.textContent = s; return e; };
