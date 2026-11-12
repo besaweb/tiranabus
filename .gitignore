@@ -10,3 +10,4 @@ android/*.keystore
 android/keystore.properties
 android/local.properties
 android/.gradle/
+android/ads.properties

@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.LocationManager;
@@ -24,6 +25,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.window.OnBackInvokedCallback;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.window.OnBackInvokedDispatcher;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -59,6 +61,7 @@ public class MainActivity extends Activity {
   String geoOrigin;
   ValueCallback<Uri[]> fileCb;
   DiskCache ext;
+  Ads ads;
 
   @Override
   protected void onCreate(Bundle b) {
@@ -71,18 +74,25 @@ public class MainActivity extends Activity {
       }
     }).start();
     web = new WebView(this);
-    FrameLayout root = new FrameLayout(this);
-    root.addView(web, new FrameLayout.LayoutParams(-1, -1));
+    LinearLayout root = new LinearLayout(this);
+    root.setOrientation(LinearLayout.VERTICAL);
+    root.addView(web, new LinearLayout.LayoutParams(-1, 0, 1));
+    FrameLayout adBox = new FrameLayout(this);
+    adBox.setVisibility(View.GONE);
+    root.addView(adBox, new LinearLayout.LayoutParams(-1, -2));
     setContentView(root);
+    ads = new Ads(this, web, adBox);
     root.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
       @Override
       public WindowInsets onApplyWindowInsets(View v, WindowInsets in) {
         if (Build.VERSION.SDK_INT >= 30) {
           android.graphics.Insets i = in.getInsets(WindowInsets.Type.systemBars() | WindowInsets.Type.displayCutout() | WindowInsets.Type.ime());
           v.setPadding(i.left, i.top, i.right, i.bottom);
+          ads.keyboard(in.isVisible(WindowInsets.Type.ime()));
           return WindowInsets.CONSUMED;
         }
         v.setPadding(in.getSystemWindowInsetLeft(), in.getSystemWindowInsetTop(), in.getSystemWindowInsetRight(), in.getSystemWindowInsetBottom());
+        ads.keyboard(in.getSystemWindowInsetBottom() > v.getHeight() / 4);
         return in.consumeSystemWindowInsets();
       }
     });
@@ -160,7 +170,32 @@ public class MainActivity extends Activity {
         return true;
       }
     });
+    web.addJavascriptInterface(ads, "TBAds");
     web.loadUrl("https://" + HOST + "/index.html");
+  }
+
+  @Override
+  protected void onPause() {
+    ads.pause();
+    super.onPause();
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    ads.resume();
+  }
+
+  @Override
+  protected void onDestroy() {
+    ads.drop();
+    super.onDestroy();
+  }
+
+  @Override
+  public void onConfigurationChanged(Configuration c) {
+    super.onConfigurationChanged(c);
+    ads.resize();
   }
 
   @Override

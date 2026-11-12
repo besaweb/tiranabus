@@ -7,6 +7,9 @@
   <uses-feature android:name="android.hardware.location.gps" android:required="false" />
   <uses-feature android:name="android.hardware.location.network" android:required="false" />
   <application android:label="Tirana Bus" android:icon="@mipmap/ic_launcher" android:allowBackup="true" android:enableOnBackInvokedCallback="true" android:usesCleartextTraffic="false" android:theme="@style/AppTheme">
+    <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="${admobApp}" />
+    <meta-data android:name="com.google.android.gms.ads.flag.OPTIMIZE_INITIALIZATION" android:value="true" />
+    <meta-data android:name="com.google.android.gms.ads.flag.OPTIMIZE_AD_LOADING" android:value="true" />
     <activity android:name=".MainActivity" android:exported="true" android:configChanges="orientation|screenSize|keyboardHidden|screenLayout|smallestScreenSize|uiMode" android:windowSoftInputMode="adjustResize">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
