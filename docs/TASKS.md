@@ -22,6 +22,7 @@ Aktualizováno: 2026-11-12
 | AND-007 | Promo kódy z Play Console pro přispěvatele Ko-fi | ANDROID | P3 | BACKLOG | AND-005 | 2026-11-07 |
 | MKT-001 | Reklamy pro neplatící uživatele aplikace (AdMob, nativní most `TBAds`) | ANDROID | P3 | REVIEW | účet AdMob | 2026-11-12 |
 | AND-009 | Dočasný testovací přepínač PRO v menu (`PRO_TEST=1`) | ANDROID | P3 | REVIEW | CORE-007, MKT-001 | 2026-11-12 |
+| AND-010 | `ADS_TEST=1`: podepsaný release s testovacími ID Google (build pro testery) | ANDROID | P3 | REVIEW | MKT-001 | 2026-11-12 |
 | AND-006 | Barvy systémových lišt podle motivu stránky (přepínač v aplikaci vs. systém) | ANDROID | P3 | BACKLOG | – | 2026-11-07 |
 | I18N-002 | Korektury překladů rodilými mluvčími (sq, en prioritně) | SHARED | P2 | BACKLOG | – | 2026-11-07 |
 | GTFS-002 | Varianty tras linek (větve) | SHARED | P2 | BACKLOG | – | 2026-11-07 |

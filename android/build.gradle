@@ -31,6 +31,7 @@ def adTestBanner = 'ca-app-pub-3940256099942544/9214589741'
 def adApp = adCfg('ADMOB_APP_ID')
 def adBanner = adCfg('ADMOB_BANNER_ID')
 def adLive = adApp && adBanner
+def adTest = System.getenv('ADS_TEST') == '1'
 if ([adApp, adBanner].any { it && it.contains('3940256099942544') }) throw new GradleException('ADMOB_APP_ID / ADMOB_BANNER_ID nesmí být testovací ID Google.')
 def adOff = System.getenv('ADS') == '0'
 def adEea = System.getenv('ADS_TEST_EEA') == '1'
@@ -146,10 +147,10 @@ android {
     release {
       signingConfig = signingConfigs.release
       vcsInfo.include = false
-      manifestPlaceholders.admobApp = adLive ? adApp : adTestApp
-      buildConfigField 'boolean', 'ADS', "${adLive && !adOff}"
+      manifestPlaceholders.admobApp = adLive && !adTest ? adApp : adTestApp
+      buildConfigField 'boolean', 'ADS', "${(adLive || adTest) && !adOff}"
       buildConfigField 'boolean', 'ADS_EEA', 'false'
-      buildConfigField 'String', 'ADS_BANNER', "\"${adLive ? adBanner : ''}\""
+      buildConfigField 'String', 'ADS_BANNER', "\"${adTest ? adTestBanner : adLive ? adBanner : ''}\""
     }
   }
 }
