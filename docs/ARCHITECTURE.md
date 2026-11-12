@@ -10,6 +10,7 @@ Statická aplikace bez backendu a bez buildu (vanilla JS). Jediný zdroj kódu; 
 index.html, tickets.html, privacy.html, css/, js/, data/, img/   ← SHARED zdroj
         ├── web:     pages.yml (GitHub Pages) / deploy-ftp.sh (tiranabus.al)
         │            + tools/build-pages.js (SEO stránky, sitemap)       ← WEB ONLY
+        │            + contact.html, contact.php, js/contact.js (formulář; jen FTP) ← WEB ONLY
         └── android: android/ (Gradle) → APK / AAB                              ← ANDROID ONLY doplňky
                      menu.js/css, validity.*, boot-extra.html, splash, MapLibre + mbtiles, MainActivity.java
 ```
@@ -61,6 +62,7 @@ Pořadí skriptů v `index.html`: Leaflet → JSZip → PapaParse → `gtfs-core
 | Verze v O aplikaci | `VERSION` v `app.js` | `window.APP_VERSION` z Gradle (`prepareSite`) | `window.APP_VERSION \|\| VERSION` |
 | Offline vektorová mapa | – | ano | `window.OFFLINE_MAP` + `window.maplibregl` |
 | Odkazy Linky/Letiště (SEO stránky) | ano | skryté | `window.APP_VERSION` |
+| Kontaktní formulář (WEB-003) | `contact.html` + `contact.php` (`mail()`), mimo menu, `noindex` | není (bez backendu, `contact.html` není v Gradle `include`) | jen `deploy-ftp.sh`, `pages.yml` ho nenasazuje; D-037 |
 | Menu | hlavička (desktop), hamburger (≤ 760 px) | `android/menu.js` (☰, třídy `am*`), přesouvá přepínač jazyka | vloženo Gradle taskem `prepareSite` |
 | Platnost dat | blok v menu (`renderExpiry`, `GTFS.validity`) | stránka `android/validity.html` + `validity.js` (vlastní parsování `feed_info`, vlastní slovník 12 jazyků) | duplicita → I18N-001, CORE-005 |
 | Pole času | nativní | cs/sq: textové pole HH:MM (proxy na `#time`), en nativní | `menu.js` |
