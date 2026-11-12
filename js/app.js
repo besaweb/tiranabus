@@ -621,6 +621,7 @@
     geoOnce((p, acc) => {
       const list = Places.nearest(allStops(), p, 5, s => stopGroup.get(s.id) || s.id);
       if (!list.length) return done('err', 'geoNone');
+      try { localStorage.removeItem('tirana-geo-no'); } catch (e) {}
       done('ok', '', null, { p, acc, list });
       geoDraw();
     }, done);
@@ -1133,6 +1134,16 @@
       }
     });
     locBtn = new Loc({ position: 'bottomright' }).addTo(map).getContainer();
+    const GNO = 'tirana-geo-no';
+    let gno = false;
+    try { gno = localStorage.getItem(GNO) === '1'; } catch (e) {}
+    if (!gno) geoOnce((p, acc) => {
+      try { localStorage.removeItem(GNO); } catch (e) {}
+      if (geo) return;
+      const blue = '#1A73E8';
+      L.circle(p, { radius: acc, color: blue, weight: 1, opacity: .5, fillColor: blue, fillOpacity: .12, interactive: false }).addTo(geoLayer);
+      L.marker(p, { icon: L.divIcon({ className: 'gme', html: icSvg('smile'), iconSize: [22, 22] }), interactive: false, keyboard: false, zIndexOffset: 1000 }).addTo(geoLayer);
+    }, (st, k) => { if (st === 'blocked' || k === 'geoDenied') try { localStorage.setItem(GNO, '1'); } catch (e) {} });
   }
 
   function loadPlaces() {

@@ -56,6 +56,7 @@ Aktualizováno: 2026-11-07
 | SEO-002 | Stránky zastávek (493 × 12), schema.org pro linky | WEB | P3 | BACKLOG | – | 2026-11-07 |
 | UX-019 | Jen jedna karta (Oblíbené zastávky / trasy / Moje místa) naráz | ANDROID ONLY | P3 | REVIEW | – | 2026-11-10 |
 | BUG-003 | Klepnutí na existující vlastní bod nevyvolá nabídku; sjednocení vzhledu nabídek bodů | ANDROID ONLY | P2 | REVIEW | POI-001 | 2026-11-10 |
+| UX-023 | Poloha uživatele na mapě hned po spuštění | ANDROID ONLY | P3 | REVIEW | MAP-001, UX-013 | 2026-11-12 |
 
 ## Detail
 
@@ -289,6 +290,13 @@ Aktualizováno: 2026-11-07
   - [x] web (režim aplikace): klepnutí do 12 px od značky otevře nabídku, 40 px ne; nový vzhled
   - [x] APK v emulátoru: klepnutí na uložený bod otevře nabídku v novém vzhledu
   - [ ] telefon (uživatel)
+
+### UX-023 Poloha při startu
+- Oblast: mapa · ANDROID ONLY (`GEO` je jen v APK; na webu by to znamenalo dotaz prohlížeče při každé první návštěvě) · P3 · REVIEW
+- Popis: po spuštění se jednou tiše zjistí poloha (`geoOnce`). V Tiraně se zobrazí smajlík s kruhem přesnosti (bez panelu zastávek, mapa zůstává na Tiraně, zoom 13); mimo Tiranu, při vypnuté poloze nebo chybě se nic nestane. Oprávnění uděleno → bez dotazu; neuděleno → systémový dotaz při startu. Po odmítnutí se `localStorage` `tirana-geo-no` nastaví a při dalších startech se už neptá; smaže se úspěšným zjištěním přes tlačítko „Moje poloha“ (změna oprávnění v nastavení systému se tedy projeví až po něm). Zadání uživatele.
+- Kritéria:
+  - [x] APK v emulátoru: první start → dotaz → povolit → smajlík v Tiraně; další start bez dotazu se smajlíkem; poloha v Praze → nic
+  - [ ] odmítnutí a další start bez dotazu · [ ] telefon (uživatel)
 
 ## Známé chyby a omezení
 
