@@ -57,6 +57,7 @@
   wrap.className = 'amwrap';
   wrap.innerHTML = '<button type="button" class="ambtn" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>' +
     '<div class="ammenu" hidden><button type="button" class="mi mipro" id="mi-pro">' + ic('pro') + '<span>Tirana BUS PRO</span></button>' +
+    (window.PRO_TEST ? '<button type="button" class="mi" id="mi-protest" role="switch" aria-checked="false">' + ic('pro') + '<span>PRO test</span><span class="sw" aria-hidden="true"></span></button>' : '') +
     '<button type="button" class="mi" id="mi-rt">' + ic('rt') + '<span class="rt"></span><span class="probadge">PRO</span></button>' +
     '<button type="button" class="mi" id="mi-pre">' + ic('pre') + '<span class="pre"></span><span class="probadge">PRO</span></button>' +
     '<button type="button" class="mi" id="mi-poi">' + ic('poi') + '<span class="poi"></span><span class="probadge">PRO</span></button>' +
@@ -93,6 +94,17 @@
   window.tbAdsPrivacy = () => { let v = false; try { v = !!(window.TBAds && window.TBAds.privacy()); } catch (e) {} q('#mi-adp').hidden = !v; };
   window.tbAdsPrivacy();
   q('#mi-adp').addEventListener('click', () => { closeMenu(); try { window.TBAds.options(); } catch (e) {} });
+  const miTest = q('#mi-protest');
+  if (miTest) {
+    try { miTest.setAttribute('aria-checked', String(localStorage.getItem('tirana-pro-test') === '1')); } catch (e) {}
+    miTest.addEventListener('click', () => {
+      const v = miTest.getAttribute('aria-checked') !== 'true';
+      miTest.setAttribute('aria-checked', String(v));
+      try { localStorage.setItem('tirana-pro-test', v ? '1' : '0'); } catch (e) {}
+      if (window.tbProUpdate) window.tbProUpdate();
+      miExt.setAttribute('aria-checked', String(!locked() && localStorage.getItem('tirana-mhd-ext') === '1'));
+    });
+  }
   q('#mi-pro').addEventListener('click', () => { closeMenu(); document.dispatchEvent(new CustomEvent('tb-pro')); });
   q('#mi-pre').addEventListener('click', () => { closeMenu(); document.dispatchEvent(new CustomEvent('tb-presets')); });
   q('#mi-rt').addEventListener('click', () => { closeMenu(); document.dispatchEvent(new CustomEvent('tb-routes')); });

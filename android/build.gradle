@@ -20,7 +20,8 @@ def keyPass = secret('TB_KEY_PASS', 'keyPassword', storePass)
 def ksAlias = secret('TB_KEY_ALIAS', 'keyAlias', 'tiranabus')
 def appVersion = System.getenv('VERSION') ?: '1.0'
 def appCode = (System.getenv('VERSION_CODE') ?: '1') as int
-def proEnforce = System.getenv('PRO_ENFORCE') == '1'
+def proTest = System.getenv('PRO_TEST') == '1'
+def proEnforce = proTest || System.getenv('PRO_ENFORCE') == '1'
 def adProps = new Properties()
 def adFile = file('ads.properties')
 if (adFile.exists()) adFile.withInputStream { adProps.load(it) }
@@ -37,6 +38,7 @@ def adEea = System.getenv('ADS_TEST_EEA') == '1'
 abstract class PrepareSite extends DefaultTask {
   @Input abstract Property<String> getVer()
   @Input abstract Property<Boolean> getPro()
+  @Input abstract Property<Boolean> getTest()
   @Input abstract MapProperty<String, String> getLibs()
   @InputFiles @PathSensitive(PathSensitivity.RELATIVE) abstract ConfigurableFileCollection getSources()
   @Internal abstract DirectoryProperty getRepo()
@@ -80,7 +82,7 @@ abstract class PrepareSite extends DefaultTask {
     String cdn = 'https://cdnjs.cloudflare.com/ajax/libs'
     s = s.split('\n', -1).collect { String l ->
       l = first(l, '<link rel="stylesheet" href="css/style.css">', '<link rel="stylesheet" href="lib/maplibre-gl.css"><link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="menu.css">')
-      l = first(l, '<script src="js/gtfs-core.js">', '<script>window.OFFLINE_MAP=1;window.APP_VERSION="' + ver.get() + '"' + (pro.get() ? ';window.PRO_ENFORCE=1' : '') + '</script><script src="lib/maplibre-gl.js"></script><script src="js/gtfs-core.js">')
+      l = first(l, '<script src="js/gtfs-core.js">', '<script>window.OFFLINE_MAP=1;window.APP_VERSION="' + ver.get() + '"' + (pro.get() ? ';window.PRO_ENFORCE=1' : '') + (test.get() ? ';window.PRO_TEST=1' : '') + '</script><script src="lib/maplibre-gl.js"></script><script src="js/gtfs-core.js">')
       l = first(l, '<script src="js/app.js"></script>', '<script src="js/app.js"></script><script src="menu.js"></script>')
       l = first(l, cdn + '/leaflet/1.9.4/', 'lib/')
       l = first(l, cdn + '/jszip/3.10.1/', 'lib/')
@@ -160,6 +162,7 @@ dependencies {
 def prepareSite = tasks.register('prepareSite', PrepareSite) {
   ver = appVersion
   pro = proEnforce
+  test = proTest
   it.libs = libs
   repo = layout.projectDirectory.dir('..')
   androidDir = layout.projectDirectory

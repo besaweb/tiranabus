@@ -103,7 +103,7 @@
   let ext = false, pidx = null, pload = null;
   const PRO_APP = !!window.APP_VERSION;
   let proSt = Pro.state(null, Date.now()), proMsg = null;
-  const proRead = () => { let raw = null; try { raw = window.TBPro ? window.TBPro.state() : null; } catch (e) {} proSt = Pro.state(raw, Date.now()); };
+  const proRead = () => { let raw = null; try { raw = window.PRO_TEST && localStorage.getItem('tirana-pro-test') === '1' ? { purchases: [{ sku: 'pro_lifetime', state: 'purchased', time: Date.now() - 1000 }] } : window.TBPro ? window.TBPro.state() : null; } catch (e) {} proSt = Pro.state(raw, Date.now()); };
   const proOk = () => !PRO_APP || Pro.can(proSt, !!window.PRO_ENFORCE);
   const proMark = () => { if (PRO_APP) document.documentElement.dataset.pro = !proOk() ? 'free' : proSt.active ? 'pro' : 'open'; };
   const extPref = () => { try { return localStorage.getItem('tirana-mhd-ext') === '1'; } catch (e) { return false; } };

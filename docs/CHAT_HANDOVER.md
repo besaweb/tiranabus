@@ -38,3 +38,7 @@ Jen **aktuálně rozpracované** úkoly. Po dokončení úkolu jeho sekci smaž 
 - Zbývá: vidět testovací banner na telefonu nebo jiném emulátoru; dialog souhlasu s `ADS_TEST_EEA=1`; otočení displeje; po AND-005 ověřit zmizení banneru po nákupu a návrat po vypršení.
 - Čeká na uživatele: účet AdMob, `ADMOB_APP_ID`, `ADMOB_BANNER_ID`, zpráva souhlasu v AdMob, `app-ads.txt`, Data safety a reklamní ID v Play Console, zásady soukromí.
 - Lokální build: `JAVA_HOME` = `C:\Program Files\Android\Android Studio\jbr`, `ANDROID_HOME` = `%LOCALAPPDATA%\Android\Sdk`.
+## AND-009 Testovací přepínač PRO
+- Chat: 08 PRO funkce · Větev: `and/AND-009-pro-test` (navazuje na `and/MKT-001-admob`) · Aktualizováno: 2026-11-12
+- Hotovo: Gradle `PRO_TEST=1`, přepínač „PRO test“ v `android/menu.js`, simulovaný nákup v `proRead()` (`js/app.js`).
+- Zbývá: na telefonu ověřit zmizení a návrat banneru; po AND-005 přepínač odstranit.
