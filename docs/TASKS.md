@@ -21,6 +21,7 @@ Aktualizováno: 2026-11-12
 | CORE-007 | Oprávnění Pro (`js/pro.js`), obrazovka Tirana BUS PRO, tři plány, zámky funkcí | SHARED | P2 | REVIEW | – | 2026-11-12 |
 | AND-007 | Promo kódy z Play Console pro přispěvatele Ko-fi | ANDROID | P3 | BACKLOG | AND-005 | 2026-11-07 |
 | MKT-001 | Reklamy pro neplatící uživatele aplikace (AdMob, nativní most `TBAds`) | ANDROID | P3 | REVIEW | účet AdMob | 2026-11-12 |
+| AND-009 | Dočasný testovací přepínač PRO v menu (`PRO_TEST=1`) | ANDROID | P3 | REVIEW | CORE-007, MKT-001 | 2026-11-12 |
 | AND-006 | Barvy systémových lišt podle motivu stránky (přepínač v aplikaci vs. systém) | ANDROID | P3 | BACKLOG | – | 2026-11-07 |
 | I18N-002 | Korektury překladů rodilými mluvčími (sq, en prioritně) | SHARED | P2 | BACKLOG | – | 2026-11-07 |
 | GTFS-002 | Varianty tras linek (větve) | SHARED | P2 | BACKLOG | – | 2026-11-07 |
@@ -90,6 +91,11 @@ Aktualizováno: 2026-11-12
   - [ ] účet AdMob, ID aplikace a jednotky, zpráva souhlasu v AdMob (Privacy & messaging), `app-ads.txt` na tiranabus.al, Data safety a prohlášení o reklamním ID v Play Console, zásady soukromí (uživatel)
   - [ ] telefon (uživatel)
 - Poznámky: debug APK narostlo z 9,6 na 16,6 MB (SDK a Kotlin runtime, který SDK potřebuje). Release se nezmenšuje (R8 vypnuto), případné zapnutí je samostatný úkol.
+
+### AND-009 Dočasný testovací přepínač PRO v menu
+- ANDROID ONLY (menu ☰ je jen v aplikaci) · P3 · REVIEW (návrh uživatele 2026-11-12)
+- Popis: jen pro testování, než bude Play Billing (AND-005). Build s `PRO_TEST=1` (zapne i `PRO_ENFORCE`) vloží `window.PRO_TEST=1` a v menu pod „Tirana BUS PRO“ ukáže přepínač „PRO test“. Zapnuto: `proRead()` v `app.js` místo mostu `TBPro` použije simulovaný nákup LIFETIME, funkce PRO jsou odemčené a reklamy vypnuté. Vypnuto: stav FREE, zámky a reklamy. Volba se pamatuje v `localStorage['tirana-pro-test']`. Bez `PRO_TEST` přepínač neexistuje a klíč se nečte. Build pro veřejné vydání se s `PRO_TEST=1` stavět nesmí. Po AND-005 odstranit.
+- Kritéria: [x] testy 44/44 · [x] emulátor: přepínač v menu, po zapnutí obrazovka PRO ukazuje LIFETIME PREMIUM · [ ] po zapnutí zmizí banner, po vypnutí se vrátí (v emulátoru se reklamy nenačítají) · [ ] telefon (uživatel)
 
 ### UX-019 Jen jedna karta naráz
 - Oblast: UI · ANDROID ONLY (karty jsou jen v aplikaci) · P3 · REVIEW
