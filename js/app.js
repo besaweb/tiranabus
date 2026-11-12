@@ -107,10 +107,10 @@
   const proOk = () => !PRO_APP || Pro.can(proSt, !!window.PRO_ENFORCE);
   const proMark = () => { if (PRO_APP) document.documentElement.dataset.pro = !proOk() ? 'free' : proSt.active ? 'pro' : 'open'; };
   const extPref = () => { try { return localStorage.getItem('tirana-mhd-ext') === '1'; } catch (e) { return false; } };
-  const adsSync = () => { try { if (window.TBAds) window.TBAds.set(PRO_APP && Pro.ads(proSt)); } catch (e) {} };
+  let adsOn = null;
+  const adsSync = force => { try { if (!window.TBAds) return; const v = PRO_APP && Pro.ads(proSt) && !SEC.pro.open && !plan.res; if (force || v !== adsOn) window.TBAds.set(adsOn = v); } catch (e) {} };
   proRead();
   proMark();
-  adsSync();
   ext = extPref() && proOk();
   let wnet = null, wload = null;
   const loadNet = () => {
@@ -153,6 +153,7 @@
   map.on('zoomend', () => restyle());
 
   function restyle() {
+    adsSync();
     if (!feed) return;
     poiStyle();
     const sf = tok('--stop-fill'), ss = tok('--stop-stroke'), ac = tok('--accent');
@@ -454,6 +455,7 @@
     : chip(l.route);
 
   function showPlan(msg) {
+    adsSync();
     const r = plan.res;
     let html = '';
     if (msg) html += `<div class="empty">${esc(msg)}</div>`;
@@ -803,10 +805,11 @@
     for (const x of document.querySelectorAll(`#pre .picgrid [data-slot="${k}"]`)) { const on = x.dataset.ic === preIc(k); x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); }
   });
   const secShow = sec => sec === 'pre' ? preShow() : sec === 'rt' ? rtShow() : sec === 'pro' ? proShow() : poiShow();
-  function plShow(sec) { for (const o of Object.keys(SEC)) if (o !== sec && SEC[o].open) plClose(o); Object.assign(SEC[sec], { open: true, col: false }); secShow(sec); $(SEC[sec].card).scrollIntoView({ block: 'nearest' }); }
+  function plShow(sec) { for (const o of Object.keys(SEC)) if (o !== sec && SEC[o].open) plClose(o); Object.assign(SEC[sec], { open: true, col: false }); adsSync(); secShow(sec); $(SEC[sec].card).scrollIntoView({ block: 'nearest' }); }
   document.addEventListener('tb-presets', () => plShow('pre'));
   document.addEventListener('tb-routes', () => plShow('rt'));
   document.addEventListener('tb-pro', () => plShow('pro'));
+  adsSync(true);
   document.addEventListener('click', e => { if (e.target.closest('[data-pro="open"]')) plShow('pro'); });
   function proShow() {
     const box = $('#pro');
@@ -839,7 +842,7 @@
   function proApply() {
     const was = proOk(), plan = proSt.plan;
     proRead();
-    adsSync();
+    adsSync(true);
     if (was === proOk() && plan === proSt.plan) return;
     proMark();
     if (!proOk()) { preEdit = prePick = preMsg = preDel = rtEdit = rtDel = poiEdit = poiPick = poiMsg = poiDel = null; map.closePopup(); }
@@ -954,6 +957,7 @@
   });
   function plClose(sec) {
     SEC[sec].open = false;
+    adsSync();
     if (sec === 'pre') preEdit = prePick = preMsg = preDel = null; else if (sec === 'rt') rtEdit = rtDel = rtNote = null; else if (sec === 'pro') proMsg = null; else poiEdit = poiPick = poiMsg = poiDel = poiGeo = null;
     map.closePopup();
     secShow(sec);

@@ -21,6 +21,18 @@ def ksAlias = secret('TB_KEY_ALIAS', 'keyAlias', 'tiranabus')
 def appVersion = System.getenv('VERSION') ?: '1.0'
 def appCode = (System.getenv('VERSION_CODE') ?: '1') as int
 def proEnforce = System.getenv('PRO_ENFORCE') == '1'
+def adProps = new Properties()
+def adFile = file('ads.properties')
+if (adFile.exists()) adFile.withInputStream { adProps.load(it) }
+def adCfg = { String k -> System.getenv(k) ?: adProps.getProperty(k) }
+def adTestApp = 'ca-app-pub-3940256099942544~3347511713'
+def adTestBanner = 'ca-app-pub-3940256099942544/9214589741'
+def adApp = adCfg('ADMOB_APP_ID')
+def adBanner = adCfg('ADMOB_BANNER_ID')
+def adLive = adApp && adBanner
+if ([adApp, adBanner].any { it && it.contains('3940256099942544') }) throw new GradleException('ADMOB_APP_ID / ADMOB_BANNER_ID nesmí být testovací ID Google.')
+def adOff = System.getenv('ADS') == '0'
+def adEea = System.getenv('ADS_TEST_EEA') == '1'
 
 abstract class PrepareSite extends DefaultTask {
   @Input abstract Property<String> getVer()
@@ -90,6 +102,10 @@ android {
     versionName = appVersion
   }
 
+  buildFeatures {
+    buildConfig = true
+  }
+
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
@@ -119,16 +135,26 @@ android {
   }
 
   buildTypes {
+    debug {
+      manifestPlaceholders.admobApp = adTestApp
+      buildConfigField 'boolean', 'ADS', "${!adOff}"
+      buildConfigField 'boolean', 'ADS_EEA', "${adEea}"
+      buildConfigField 'String', 'ADS_BANNER', "\"${adTestBanner}\""
+    }
     release {
       signingConfig = signingConfigs.release
       vcsInfo.include = false
+      manifestPlaceholders.admobApp = adLive ? adApp : adTestApp
+      buildConfigField 'boolean', 'ADS', "${adLive && !adOff}"
+      buildConfigField 'boolean', 'ADS_EEA', 'false'
+      buildConfigField 'String', 'ADS_BANNER', "\"${adLive ? adBanner : ''}\""
     }
   }
 }
 
-configurations.configureEach {
-  exclude group: 'org.jetbrains.kotlin'
-  exclude group: 'org.jetbrains', module: 'annotations'
+dependencies {
+  implementation 'com.google.android.gms:play-services-ads:25.5.0'
+  implementation 'com.google.android.ump:user-messaging-platform:4.0.0'
 }
 
 def prepareSite = tasks.register('prepareSite', PrepareSite) {

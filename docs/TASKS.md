@@ -20,7 +20,7 @@ Aktualizováno: 2026-11-12
 | AND-005 | Pro: nákup tří plánů přes Google Play Billing (nativní most `TBPro`) | ANDROID | P2 | BACKLOG | CORE-007, první vydání v Play | 2026-11-12 |
 | CORE-007 | Oprávnění Pro (`js/pro.js`), obrazovka Tirana BUS PRO, tři plány, zámky funkcí | SHARED | P2 | REVIEW | – | 2026-11-12 |
 | AND-007 | Promo kódy z Play Console pro přispěvatele Ko-fi | ANDROID | P3 | BACKLOG | AND-005 | 2026-11-07 |
-| MKT-001 | Reklamy pro neplatící uživatele aplikace (AdMob, nativní most `TBAds`) | ANDROID | P3 | BACKLOG | SEO-003, účet AdMob | 2026-11-12 |
+| MKT-001 | Reklamy pro neplatící uživatele aplikace (AdMob, nativní most `TBAds`) | ANDROID | P3 | REVIEW | účet AdMob | 2026-11-12 |
 | AND-006 | Barvy systémových lišt podle motivu stránky (přepínač v aplikaci vs. systém) | ANDROID | P3 | BACKLOG | – | 2026-11-07 |
 | I18N-002 | Korektury překladů rodilými mluvčími (sq, en prioritně) | SHARED | P2 | BACKLOG | – | 2026-11-07 |
 | GTFS-002 | Varianty tras linek (větve) | SHARED | P2 | BACKLOG | – | 2026-11-07 |
@@ -68,8 +68,9 @@ Aktualizováno: 2026-11-12
   - [x] jeden zdroj pravdy (`js/pro.js`, `proOk()`), testy `tests/pro.test.js` (platnost 7 / 365 dní, trvalý plán, vypršení, nepotvrzený nákup)
   - [x] web beze změny chování (bez `APP_VERSION` žádné zámky, položka PRO ani most)
   - [x] web v režimu aplikace (telefon 375 px, světlý i tmavý režim, 12 jazyků bez přetečení): FREE zamčeno, Tourist / Annual / Lifetime odemčeno, vypršení Tourist Pass za běhu zamkne a data zůstanou, nevynucený režim odemčen
-  - [ ] build APK v CI (`android.yml`) s úpravou `prepareSite` · [ ] APK v emulátoru bez a s `PRO_ENFORCE=1` · [ ] telefon (uživatel)
-- Poznámky: lokálně je jen Java 8, Gradle build nešel spustit. Akcent zůstal `var(--accent)` (#C8102E), zadaná #DC2626 by znamenala změnu barev celé aplikace.
+  - [x] lokální build APK s `PRO_ENFORCE=1` (JDK 21 z Android Studia), v `index.html` v APK je `window.PRO_ENFORCE=1` · [ ] build v CI (`android.yml`)
+  - [x] APK v emulátoru s `PRO_ENFORCE=1`, stav FREE: menu s odznaky PRO, obrazovka PRO, hláška u nákupu, zamčené Oblíbené trasy a Moje místa (2026-11-12) · [ ] bez `PRO_ENFORCE` · [ ] Oblíbené zastávky, Rozšířené vyhledávání, tmavý režim · [ ] telefon (uživatel)
+- Poznámky: lokální build jde přes `JAVA_HOME` = JBR z Android Studia (systémová Java je 8). Akcent zůstal `var(--accent)` (#C8102E), zadaná #DC2626 by znamenala změnu barev celé aplikace.
 
 ### AND-007 Promo kódy pro přispěvatele Ko-fi
 - ANDROID · P3 · BACKLOG
@@ -77,9 +78,17 @@ Aktualizováno: 2026-11-12
 - Kritéria: [ ] ověřit, že Play promo kódy fungují pro roční předplatné a jaké mají limity · [ ] postup vydání kódů a evidence (bez osobních údajů v gitu)
 
 ### MKT-001 Reklamy pro neplatící uživatele aplikace
-- ANDROID · P3 · BACKLOG (zadání doplněno 2026-11-12)
-- Popis: reklamy v aplikaci pro uživatele bez aktivního Pro (Tourist, Annual i Lifetime jsou bez reklam). V kódu dosud žádné reklamy nejsou (ověřeno 2026-11-12). Připraveno v CORE-007: `Pro.ads(stav)` a volání `window.TBAds.set(true|false)` při startu a při každé změně stavu Pro (nákup, vypršení). Zbývá nativní část: Google Mobile Ads SDK (nová závislost), banner v nativním rozvržení pod WebView (nikdy přes mapu, jízdní řády a ovládání), ID aplikace a reklamních jednotek z konfigurace buildu (ne v gitu natvrdo), souhlas UMP / Consent Mode (SEO-003), aktualizace Data safety a zásad soukromí. Reklamy na webu zatím nerozhodnuty.
-- Kritéria: [ ] účet AdMob a ID jednotek (uživatel) · [ ] most `TBAds` jen pro `appassets.androidplatform.net` · [ ] bez Pro banner, po nákupu ihned zmizí, po vypršení se vrátí · [ ] souhlas v EU před načtením reklam · [ ] testovací jednotky v debug buildu
+- ANDROID ONLY (nativní SDK, web reklamy nemá; D-039) · P3 · REVIEW (zadání uživatele 2026-11-12)
+- Popis: adaptivní banner Google AdMob pro uživatele bez aktivního Pro (Tourist, Annual i Lifetime jsou bez reklam). Jediná reklamní plocha: nativní pruh pod WebView (`Ads.java`), takže nikdy nepřekrývá mapu, jízdní řády ani ovládání; systémové okraje řeší kořenové rozvržení. O zobrazení rozhoduje jen web přes `TBAds.set(bool)`: `Pro.ads(stav)` a zároveň není otevřená obrazovka PRO ani zobrazené výsledky hledání spojení. Banner se nezobrazí ani při otevřené klávesnici. Souhlas: Google UMP před první reklamou (jen když jsou reklamy potřeba, tedy ne u Pro), bez souhlasu se nenačítá nic; položka menu „Soukromí reklam“ se ukáže, když UMP vyžaduje možnost změny. SDK se inicializuje jednou na pozadí, při chybě načtení se banner zruší a další pokus je nejdřív za 60 s. Konfigurace: `ADMOB_APP_ID` a `ADMOB_BANNER_ID` z prostředí nebo `android/ads.properties` (mimo git, šablona `ads.properties.example`); debug vždy testovací ID Google, release bez ID má reklamy vypnuté, testovací ID v release build odmítne. `ADS=0` reklamy v buildu vypne, `ADS_TEST_EEA=1` v debug buildu vynutí chování EHP. Interstitial ani rewarded nejsou.
+- Kritéria:
+  - [x] lokální build debug APK (play-services-ads 25.5.0, UMP 4.0.0), testy 44/44
+  - [x] emulátor: souhlas UMP proběhl, požadavek na testovací reklamu odeslán, při chybě načtení aplikace běží dál a pokus se opakuje po 60 s
+  - [x] web v režimu aplikace: `TBAds.set(true)` při startu FREE, `false` po otevření obrazovky PRO, `true` po zavření
+  - [ ] viditelný testovací banner (v emulátoru nešlo: jeho WebView nedůvěřuje certifikátům, `Trust anchor for certification path not found`) · [ ] dialog souhlasu v EHP (`ADS_TEST_EEA=1`) · [ ] otočení displeje, tmavý režim
+  - [ ] po nákupu banner ihned zmizí, po vypršení se vrátí (čeká na AND-005)
+  - [ ] účet AdMob, ID aplikace a jednotky, zpráva souhlasu v AdMob (Privacy & messaging), `app-ads.txt` na tiranabus.al, Data safety a prohlášení o reklamním ID v Play Console, zásady soukromí (uživatel)
+  - [ ] telefon (uživatel)
+- Poznámky: debug APK narostlo z 9,6 na 16,6 MB (SDK a Kotlin runtime, který SDK potřebuje). Release se nezmenšuje (R8 vypnuto), případné zapnutí je samostatný úkol.
 
 ### UX-019 Jen jedna karta naráz
 - Oblast: UI · ANDROID ONLY (karty jsou jen v aplikaci) · P3 · REVIEW
