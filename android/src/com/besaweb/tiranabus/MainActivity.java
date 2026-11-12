@@ -16,6 +16,7 @@ import android.provider.Settings;
 import android.view.View;
 import android.view.WindowInsets;
 import android.webkit.GeolocationPermissions;
+import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -58,6 +59,7 @@ public class MainActivity extends Activity {
   long tilesFailed;
   GeolocationPermissions.Callback geoCb;
   String geoOrigin;
+  ValueCallback<Uri[]> fileCb;
   DiskCache ext;
   Ads ads;
 
@@ -115,6 +117,22 @@ public class MainActivity extends Activity {
         geoOrigin = origin;
         geoCb = cb;
         requestPermissions(new String[] { Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION }, 7);
+      }
+
+      @Override
+      public boolean onShowFileChooser(WebView v, ValueCallback<Uri[]> cb, FileChooserParams p) {
+        if (fileCb != null) fileCb.onReceiveValue(null);
+        fileCb = cb;
+        Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+        i.addCategory(Intent.CATEGORY_OPENABLE);
+        i.setType("image/*");
+        try {
+          startActivityForResult(i, 8);
+        } catch (Exception e) {
+          fileCb = null;
+          cb.onReceiveValue(null);
+        }
+        return true;
       }
     });
     web.setWebViewClient(new WebViewClient() {
@@ -178,6 +196,14 @@ public class MainActivity extends Activity {
   public void onConfigurationChanged(Configuration c) {
     super.onConfigurationChanged(c);
     ads.resize();
+  }
+
+  @Override
+  protected void onActivityResult(int code, int result, Intent data) {
+    super.onActivityResult(code, result, data);
+    if (code != 8 || fileCb == null) return;
+    fileCb.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(result, data));
+    fileCb = null;
   }
 
   boolean hasGeo() {
