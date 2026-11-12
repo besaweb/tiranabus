@@ -73,11 +73,20 @@ Pořadí skriptů v `index.html`: Leaflet → JSZip → PapaParse → `gtfs-core
 | Vlastní místa (POI-001) | není | karta `#places` (Moje místa) z menu ☰ (`tb-pois`), červené body na mapě, „Uložit místo“ v dlouhém stisku, místa v našeptávači | `GEO` v `app.js` |
 | Předvolby, Odsud/Sem z mapy (UX-001) | není | karta `#precard` (Moje předvolby) z menu ☰ (`tb-presets`), předvolby v našeptávači, `contextmenu` na mapě; ikony předvoleb a jejich značky na mapě (UX-003); ikony předvoleb v polích Odkud / Kam (UX-004) | `GEO` v `app.js` (`window.APP_VERSION` && `navigator.geolocation`) |
 | Oblíbené trasy (UX-015) | není | položka menu ☰ (`tb-routes`), karta `#rtcard`, hvězdička a formulář názvu v hlavičce výsledku (`.rtstar`, `.rtadd`), úložiště `tirana-routes` (`Places.routes`) | `window.APP_VERSION` (hvězdička), menu jen v aplikaci |
+| Tirana BUS PRO (CORE-007, D-038) | není (bez zámků, rozšířené vyhledávání zdarma) | položka menu ☰ (`tb-pro`), karta `#procard`, odznaky PRO v menu, zámky karet Oblíbené trasy / Oblíbené zastávky / Moje místa a Rozšířeného vyhledávání | `window.APP_VERSION` zapíná vrstvu Pro, `window.PRO_ENFORCE` (Gradle, `PRO_ENFORCE=1`) vynucení zámků, nativní mosty `window.TBPro` a `window.TBAds` (zatím neexistují); stav v `<html data-pro="free|open|pro">` |
 | Moje poloha (MAP-001) | není | tlačítko na mapě, panel `#geo`, oprávnění k poloze v `MainActivity` | `window.APP_VERSION` && `navigator.geolocation` (`GEO` v `app.js`) |
 | Dlaždice a fonty | online | `DiskCache` v `cacheDir/ext`: klíč SHA-256 URL, limit 100 MB (při překročení se maže nejstarší na 80 %), platnost 30 dní (po vypršení se zkusí stáhnout znovu, offline se použije stará kopie), úklid při startu | `MainActivity.external`, `DiskCache.java` |
 | GA4 | ano | ano (z `index.html`) | – |
 
 Vkládání do `index.html` v APK je přes `sed`/`python` na konkrétní řetězce – po změně hlavičky nebo pořadí skriptů ověřit build (CORE-002).
+
+## Pro (CORE-007)
+
+- `js/pro.js` (čistý modul, testy `tests/pro.test.js`): `Pro.PLANS` (id, název, SKU, typ `inapp` / `subs`, dny, cena), `Pro.state(raw, now)` → `{ plan, until, auto, active, billing }`, `Pro.can(stav, vynucení)`, `Pro.ads(stav)`.
+- `app.js`: `proOk()` je jediná kontrola zámku (na webu vždy `true`). `proApply()` znovu načte stav (každých 30 s, při návratu do aplikace a z `window.tbProUpdate()`), překreslí karty, značky a našeptávač a zavolá `TBAds.set`.
+- Smlouva nativního mostu (AND-005): `TBPro.state()` vrací JSON `{ "ready": true, "purchases": [{ "sku": "pro_annual", "time": 1794480000000, "auto": true, "state": "purchased" }] }` – `time` je čas nákupu z Play v ms, `auto` u předplatného značí zapnuté obnovování, jiný `state` než `purchased` se nepočítá; `TBPro.buy(sku)` spustí nákup; po každé změně nativní kód zavolá `window.tbProUpdate()`. Předplatné, které Play už nevrací, se do seznamu nedává.
+- Platnost počítá JS: Tourist `time` + 7 dní, Annual `time` + 365 dní (s `auto` nejbližší další výročí), Lifetime bez konce. Nákup s časem víc než den v budoucnosti se ignoruje.
+- Reklamy (MKT-001): `TBAds.set(true|false)`; `true` jen bez aktivního plánu. Reklamní plocha patří do nativního rozvržení mimo WebView.
 
 ## Android
 

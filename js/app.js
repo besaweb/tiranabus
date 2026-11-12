@@ -101,7 +101,17 @@
   let baseTables = null, builtLang = null, mode = 'plan', demoMode = true, groups = new Map(), stopGroup = new Map(), names = [];
   let plan = { from: null, to: null, res: null, open: 0, timeTouched: false };
   let ext = false, pidx = null, pload = null;
-  try { ext = localStorage.getItem('tirana-mhd-ext') === '1'; } catch (e) {}
+  const PRO_APP = !!window.APP_VERSION;
+  let proSt = Pro.state(null, Date.now()), proMsg = null;
+  const proRead = () => { let raw = null; try { raw = window.TBPro ? window.TBPro.state() : null; } catch (e) {} proSt = Pro.state(raw, Date.now()); };
+  const proOk = () => !PRO_APP || Pro.can(proSt, !!window.PRO_ENFORCE);
+  const proMark = () => { if (PRO_APP) document.documentElement.dataset.pro = !proOk() ? 'free' : proSt.active ? 'pro' : 'open'; };
+  const extPref = () => { try { return localStorage.getItem('tirana-mhd-ext') === '1'; } catch (e) { return false; } };
+  const adsSync = () => { try { if (window.TBAds) window.TBAds.set(PRO_APP && Pro.ads(proSt)); } catch (e) {} };
+  proRead();
+  proMark();
+  adsSync();
+  ext = extPref() && proOk();
   let wnet = null, wload = null;
   const loadNet = () => {
     if (!wload) wload = fetch('data/walk.json').then(r => r.ok ? r.json() : Promise.reject()).then(d => { wnet = Places.net(d); useNet(); }).catch(() => { wload = null; });
@@ -669,7 +679,7 @@
   const preIc = k => Places.presetIcon(pre[k], k);
   const preIcon = k => `<i class="si">${icSvg(preIc(k))}</i>`;
   const preName = k => (pre[k] && pre[k].n) || t('pre_' + k);
-  const preList = q => GEO ? Places.SLOTS.filter(k => pre[k] && pre[k].k && (!q || Places.presetHit(preName(k), q))) : [];
+  const preList = q => GEO && proOk() ? Places.SLOTS.filter(k => pre[k] && pre[k].k && (!q || Places.presetHit(preName(k), q))) : [];
   const ptEnd = (id, n, p, which) => placeEnd({ id, n, c: 'pin', pts: [p], t: {} }, which);
   function preGroup(p) {
     if (p.k !== 'stop') return null;
@@ -700,14 +710,22 @@
     locate: '<line x1="2" x2="5" y1="12" y2="12"/><line x1="19" x2="22" y1="12" y2="12"/><line x1="12" x2="12" y1="2" y2="5"/><line x1="12" x2="12" y1="19" y2="22"/><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3"/>',
     map: '<path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/>',
     back: '<path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>',
+    lock: '<rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+    check: '<path d="M20 6 9 17l-5-5"/>',
     route: '<circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/>'
   };
   const uiSvg = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${UI_IC[k]}</svg>`;
   const plBtns = (sc, id, del) => `<button type="button" class="plb" data-pa="edit" ${sc}="${id}" aria-label="${esc(t('preChange'))}" title="${esc(t('preChange'))}">${uiSvg('edit')}</button>` +
     (del ? `<button type="button" class="plb del" data-pa="del" ${sc}="${id}" aria-label="${esc(t('preDel'))}" title="${esc(t('preDel'))}">${uiSvg('del')}</button>` : '<span class="plb ghost"></span>');
   const plConf = (sc, id) => `<div class="plconf" role="alert"><span>${esc(t('poiDelSure'))}</span><button type="button" class="btn sm danger" data-pa="del2" ${sc}="${id}">${esc(t('preDel'))}</button><button type="button" class="btn sm" data-pa="nodel">${esc(t('preCancel'))}</button></div>`;
-  const SEC = { pre: { card: '#precard', open: false, col: false, key: 'tirana-pre-col', title: 'preTitle' }, poi: { card: '#places', open: false, col: false, key: 'tirana-pl-col', title: 'poiTitle', sub: 'plSub' }, rt: { card: '#rtcard', open: false, col: false, key: 'tirana-rt-col', title: 'rtTitle' } };
+  const SEC = { pre: { card: '#precard', open: false, col: false, key: 'tirana-pre-col', title: 'preTitle' }, poi: { card: '#places', open: false, col: false, key: 'tirana-pl-col', title: 'poiTitle', sub: 'plSub' }, rt: { card: '#rtcard', open: false, col: false, key: 'tirana-rt-col', title: 'rtTitle' }, pro: { card: '#procard', open: false, col: false, key: 'tirana-pro-col', title: 'proTitle' } };
   let preDel = null;
+  const proLockUi = box => {
+    if (proOk()) return;
+    for (const el of box.querySelectorAll('button:not([data-pl-back]), input')) el.disabled = true;
+    box.insertAdjacentHTML('afterbegin', `<div class="prolock" role="note"><i>${uiSvg('lock')}</i><span>${esc(t('proLock'))}</span><button type="button" class="btn sm primary" data-pro="open">${esc(t('proUnlock'))}</button></div>`);
+    box.classList.add('locked');
+  };
   for (const x of Object.values(SEC)) try { x.col = localStorage.getItem(x.key) === '1'; } catch (e) {}
   const plBack = sec => `<button type="button" class="btn sm plback" data-pl-back="${sec}">${uiSvg('back')}${esc(t('back'))}</button>`;
   function plHead(sec) {
@@ -715,7 +733,7 @@
     box.hidden = !x.open;
     document.body.classList.toggle('seclist', Object.values(SEC).some(s => s.open && !s.col));
     box.classList.toggle('col', x.col);
-    const n = sec === 'pre' ? Places.SLOTS.filter(k => pre[k] && pre[k].k).length : sec === 'rt' ? rts.length : pois.length;
+    const n = sec === 'pro' ? 0 : sec === 'pre' ? Places.SLOTS.filter(k => pre[k] && pre[k].k).length : sec === 'rt' ? rts.length : pois.length;
     box.querySelector('.plhead').innerHTML = `<div class="pltop"><h2 class="ghead">${esc(t(x.title))}</h2>${n ? `<span class="plnum" title="${esc(t('plSaved', { n }))}" aria-label="${esc(t('plSaved', { n }))}">${n}</span>` : ''}<button type="button" class="plb sm" data-pl="col" aria-expanded="${!x.col}" aria-controls="${sec}body" aria-label="${esc(t(x.col ? 'plOpen' : 'plClose'))}" title="${esc(t(x.col ? 'plOpen' : 'plClose'))}">${uiSvg('down')}</button><button type="button" class="plb sm" data-pl="x" aria-label="${esc(t('close'))}" title="${esc(t('close'))}">×</button></div>${x.sub ? `<p class="plsub">${esc(t(x.sub))}</p>` : ''}`;
   }
   function preShow() {
@@ -740,6 +758,7 @@
     }
     h += plBack('pre');
     box.innerHTML = h;
+    proLockUi(box);
   }
   function preFind(v) {
     const q = norm(v.trim()), box = $('#pre .plist');
@@ -755,6 +774,7 @@
     const b = e.target.closest('[data-pa]');
     if (!b) return;
     const a = b.dataset.pa, k = b.dataset.slot || preEdit;
+    if (!proOk()) return;
     if (a !== 'del') preDel = null;
     if (a === 'go') { if (!pre[k] || !pre[k].k) { a2edit(k); return; } map.setView([pre[k].lat, pre[k].lon], Math.max(map.getZoom(), 15)); prePop(k); if (innerWidth <= 760) $('#map').scrollIntoView({ block: 'nearest' }); preShow(); }
     else if (a === 'seticon') { pre[k] = Object.assign(pre[k] || { n: '' }, { i: b.dataset.ic }); preSave(); preShow(); const f = $(`#pre .picgrid [data-ic="${b.dataset.ic}"]`); if (f) f.focus(); }
@@ -782,10 +802,57 @@
     if (r) { r.querySelector('b').textContent = preName(k); r.querySelector('.plic').innerHTML = icSvg(preIc(k)); }
     for (const x of document.querySelectorAll(`#pre .picgrid [data-slot="${k}"]`)) { const on = x.dataset.ic === preIc(k); x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); }
   });
-  const secShow = sec => sec === 'pre' ? preShow() : sec === 'rt' ? rtShow() : poiShow();
+  const secShow = sec => sec === 'pre' ? preShow() : sec === 'rt' ? rtShow() : sec === 'pro' ? proShow() : poiShow();
   function plShow(sec) { for (const o of Object.keys(SEC)) if (o !== sec && SEC[o].open) plClose(o); Object.assign(SEC[sec], { open: true, col: false }); secShow(sec); $(SEC[sec].card).scrollIntoView({ block: 'nearest' }); }
   document.addEventListener('tb-presets', () => plShow('pre'));
   document.addEventListener('tb-routes', () => plShow('rt'));
+  document.addEventListener('tb-pro', () => plShow('pro'));
+  document.addEventListener('click', e => { if (e.target.closest('[data-pro="open"]')) plShow('pro'); });
+  function proShow() {
+    const box = $('#pro');
+    plHead('pro');
+    if (!SEC.pro.open) { box.innerHTML = ''; return; }
+    const cur = Pro.PLANS.find(p => p.id === proSt.plan);
+    const when = proSt.until ? new Date(proSt.until).toLocaleString(I18N.loc(), { dateStyle: 'medium', timeStyle: 'short' }) : '';
+    const det = !cur ? '' : !cur.days ? t('proStLife') : t(proSt.auto ? 'proStRenew' : 'proStUntil', { d: when });
+    const mk = on => on ? `<i class="pyes">${uiSvg('check')}</i>` : `<i class="pno">${uiSvg('lock')}</i>`;
+    const row = (k, free) => `<div class="pcrow" role="row"><span role="cell">${esc(t(k))}</span><span role="cell" aria-label="${free ? '✓' : '✕'}">${mk(free)}</span><span role="cell" aria-label="✓">${mk(true)}</span></div>`;
+    let h = `<div class="prohero"><span class="probadge">PRO</span><p>${esc(t('proSub'))}</p><b>${esc(t('proNoAds'))}</b></div>`;
+    h += `<div class="prost${cur ? ' on' : ''}" role="status"><span>${esc(t('proStatus'))}</span><b>${esc(cur ? cur.name : t('proStFree'))}</b>${det ? `<span>${esc(det)}</span>` : ''}${!cur && proOk() ? `<span>${esc(t('proEarly'))}</span>` : ''}</div>`;
+    h += `<div class="procmp" role="table"><div class="pcrow pchead" role="row"><span role="columnheader">${esc(t('proFeat'))}</span><span role="columnheader">FREE</span><span role="columnheader">PRO</span></div>${Pro.FREE.map(k => row(k, true)).join('')}${['rtTitle', 'preTitle', 'poiTitle', 'extSearch'].map(k => row(k, false)).join('')}<div class="pcrow pcads" role="row"><span role="cell">${esc(t('cmpAds'))}</span><span role="cell">${esc(t('cmpAdsFree'))}</span><span role="cell">${esc(t('cmpAdsPro'))}</span></div></div>`;
+    h += `<h3 class="proh">${esc(t('proPlans'))}</h3>`;
+    for (const p of Pro.PLANS) {
+      const act = p.id === proSt.plan;
+      h += `<div class="proplan${p.best ? ' best' : ''}${act ? ' act' : ''}">${p.best ? '<span class="probest">BEST VALUE</span>' : ''}<div class="pptop"><b>${p.name}</b><span class="ppprice">${p.price}</span></div><span class="ppdur">${esc(p.days ? t('proDays', { n: p.days }) : t('proForever'))} · ${esc(t(p.type === 'subs' ? 'proYearly' : 'proOnce'))}</span><p>${esc(t('proD_' + p.id))}</p><button type="button" class="btn sm${p.best ? ' primary' : ''}" data-pro="buy" data-plan="${p.id}" ${act ? 'disabled' : ''}>${esc(t(act ? 'proActive' : 'proChoose'))}</button>${proMsg === p.id ? `<p class="gmsg gwarn" role="status"><i>${icSvg('triangle-alert')}</i>${esc(t('proSoon'))}</p>` : ''}</div>`;
+    }
+    h += plBack('pro');
+    box.innerHTML = h;
+  }
+  $('#pro').addEventListener('click', e => {
+    const b = e.target.closest('[data-pro="buy"]'), p = b && Pro.PLANS.find(x => x.id === b.dataset.plan);
+    if (!p) return;
+    proMsg = null;
+    if (proSt.billing && window.TBPro && window.TBPro.buy) { try { window.TBPro.buy(p.sku); } catch (er) { proMsg = p.id; } }
+    else proMsg = p.id;
+    proShow();
+  });
+  function proApply() {
+    const was = proOk(), plan = proSt.plan;
+    proRead();
+    adsSync();
+    if (was === proOk() && plan === proSt.plan) return;
+    proMark();
+    if (!proOk()) { preEdit = prePick = preMsg = preDel = rtEdit = rtDel = poiEdit = poiPick = poiMsg = poiDel = null; map.closePopup(); }
+    if (extPref() && proOk() !== ext) setExt(!ext, true);
+    preDraw(); poiDraw(); pkSync();
+    for (const sec of Object.keys(SEC)) if (SEC[sec].open) secShow(sec);
+    if (mode === 'plan') showPlan();
+  }
+  window.tbProUpdate = proApply;
+  if (PRO_APP) {
+    setInterval(proApply, 30000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) proApply(); });
+  }
   const RTK = 'tirana-routes';
   let rts = [], rtEdit = null, rtDel = null, rtNote = null, rtToastT = 0;
   try { rts = Places.routes(localStorage.getItem(RTK)); } catch (e) {}
@@ -812,6 +879,7 @@
     }
     h += plBack('rt');
     box.innerHTML = h;
+    proLockUi(box);
   }
   function rtStop(p) {
     if (!names.length) return null;
@@ -838,6 +906,7 @@
     const b = e.target.closest('[data-pa]');
     if (!b) return;
     const a = b.dataset.pa, r = rts.find(x => x.id === b.dataset.rt);
+    if (!proOk()) return;
     if (a !== 'del') rtDel = null;
     if (a === 'go' && r) rtOpen(r);
     else if (a === 'edit' && r) { rtEdit = rtEdit === r.id ? null : r.id; rtNote = null; rtShow(); const i = $('#rt .pedit .pname'); if (i) i.focus({ preventScroll: true }); }
@@ -867,6 +936,7 @@
   function rtToggle() {
     const c = rtCur();
     if (!c) return;
+    if (!proOk()) return plShow('pro');
     const key = Places.routeKey(c), had = rts.some(r => Places.routeKey(r) === key);
     if (had) rts = rts.filter(r => Places.routeKey(r) !== key);
     else rts = [{ id: Math.random().toString(36).slice(2, 9), n: '', ...c }, ...rts].slice(0, Places.ROUTE_MAX);
@@ -876,7 +946,7 @@
     rtToast(had ? 'rtRemoved' : 'rtAdded');
   }
   $('#panel').addEventListener('click', e => { if (e.target.closest('[data-rt="star"]')) rtToggle(); });
-  for (const sec of ['pre', 'poi', 'rt']) $(SEC[sec].card + ' .plhead').addEventListener('click', e => {
+  for (const sec of Object.keys(SEC)) $(SEC[sec].card + ' .plhead').addEventListener('click', e => {
     const b = e.target.closest('[data-pl]'), x = SEC[sec];
     if (!b) return;
     if (b.dataset.pl === 'x') plClose(sec);
@@ -884,7 +954,7 @@
   });
   function plClose(sec) {
     SEC[sec].open = false;
-    if (sec === 'pre') preEdit = prePick = preMsg = preDel = null; else if (sec === 'rt') rtEdit = rtDel = rtNote = null; else poiEdit = poiPick = poiMsg = poiDel = poiGeo = null;
+    if (sec === 'pre') preEdit = prePick = preMsg = preDel = null; else if (sec === 'rt') rtEdit = rtDel = rtNote = null; else if (sec === 'pro') proMsg = null; else poiEdit = poiPick = poiMsg = poiDel = poiGeo = null;
     map.closePopup();
     secShow(sec);
   }
@@ -922,7 +992,7 @@
   }
   function preMarkers() {
     preLayer.clearLayers();
-    if (!GEO) return;
+    if (!GEO || !proOk()) return;
     for (const k of Places.SLOTS) {
       const p = pre[k];
       if (!p || !p.k || !preActive(k)) continue;
@@ -968,7 +1038,7 @@
       if (prePick) return prePickAt(e.latlng.lat, e.latlng.lng);
       if (poiPick) return poiForm(e.latlng.lat, e.latlng.lng, poiPick);
       let best = null, bd = 24;
-      for (const p of pois) { const d = map.latLngToContainerPoint([p.lat, p.lon]).distanceTo(e.containerPoint); if (d <= bd) { best = p; bd = d; } }
+      if (proOk()) for (const p of pois) { const d = map.latLngToContainerPoint([p.lat, p.lon]).distanceTo(e.containerPoint); if (d <= bd) { best = p; bd = d; } }
       if (best) poiPop(best);
     });
     map.on('contextmenu', e => {
@@ -983,7 +1053,7 @@
         const b = ev.target.closest('[data-w]');
         if (!b) return;
         map.closePopup(pop);
-        if (b.dataset.w === 'poi') return poiForm(e.latlng.lat, e.latlng.lng, { id: null });
+        if (b.dataset.w === 'poi') return !proOk() ? plShow('pro') : poiForm(e.latlng.lat, e.latlng.lng, { id: null });
         if (mode !== 'plan') setMode('plan', true);
         chooseEnd(b.dataset.w, ptEnd('@map-' + b.dataset.w, t('preMapPt'), [e.latlng.lat, e.latlng.lng], b.dataset.w));
       });
@@ -994,7 +1064,7 @@
   try { pois = Places.pois(localStorage.getItem(POIK)); } catch (e) {}
   const poiId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
   const poiEnd = (p, which) => ptEnd('@poi-' + p.id, p.n, [p.lat, p.lon], which);
-  const poiList = v => GEO && v ? pois.filter(p => Places.poiHit(p, v)).slice(0, 5) : [];
+  const poiList = v => GEO && proOk() && v ? pois.filter(p => Places.poiHit(p, v)).slice(0, 5) : [];
   const poiRow = (p, act) => `<button type="button" class="sg pl poi ${act ? 'act' : ''}" data-poi="${esc(p.id)}"><i class="si"><span class="pldot"></span></i><b>${esc(p.n)}</b><span>${esc(p.d || t('poiLbl'))}</span></button>`;
   const pkSync = () => { pkNote.hidden = !prePick && !poiPick; pkNote.textContent = t(poiPick ? 'poiPickHint' : 'prePickHint'); };
   const poiLayer = L.layerGroup().addTo(map);
@@ -1006,7 +1076,7 @@
   }
   function poiDraw() {
     poiLayer.clearLayers();
-    if (!GEO) return;
+    if (!GEO || !proOk()) return;
     for (const p of pois) {
       L.circleMarker([p.lat, p.lon], { renderer, radius: sr(), weight: 1.5, fillOpacity: 1, interactive: false }).addTo(poiLayer);
       const m = L.circleMarker([p.lat, p.lon], { renderer, radius: 16, stroke: false, fill: true, fillOpacity: 0 }).addTo(poiLayer);
@@ -1088,11 +1158,13 @@
     if (poiPick && !poiPick.id) h += `<p class="gmsg">${esc(t('poiPickHint'))} <button type="button" class="btn sm" data-pa="cancel">${esc(t('preCancel'))}</button></p>`;
     h += plBack('poi');
     box.innerHTML = h;
+    proLockUi(box);
   }
   $('#poi').addEventListener('click', e => {
     const b = e.target.closest('[data-pa]');
     if (!b) return;
     const a = b.dataset.pa, p = pois.find(x => x.id === b.dataset.id);
+    if (!proOk()) return;
     if (a !== 'del') poiDel = null;
     if (a !== 'gps') poiGeo = null;
     if (a === 'nodel') {}
@@ -1139,10 +1211,11 @@
     if (!pload) pload = fetch('data/poi.json').then(r => r.ok ? r.json() : Promise.reject()).then(d => { pidx = Places.build(d); }).catch(() => { pload = null; });
     return pload;
   }
-  function setExt(v) {
+  function setExt(v, keep) {
+    if (v && !proOk()) { v = false; keep = true; plShow('pro'); }
     ext = v;
-    try { localStorage.setItem('tirana-mhd-ext', v ? '1' : '0'); } catch (e) {}
-    for (const b of document.querySelectorAll('.mext')) b.setAttribute('aria-checked', v);
+    if (!keep) try { localStorage.setItem('tirana-mhd-ext', v ? '1' : '0'); } catch (e) {}
+    for (const b of document.querySelectorAll('.mext, #mi-ext')) b.setAttribute('aria-checked', v);
     if (v) loadPlaces();
     else for (const w of ['from', 'to']) if (plan[w] && plan[w].place) setEnd(w, null);
     if (mode === 'plan') { showPlan(); restyle(); }
@@ -1376,7 +1449,7 @@
     syncTheme();
     if (!feed) return;
     if (baseTables && builtLang !== l) { setFeed(buildFeed(), source, false); return; }
-    setAttr(); renderMeta(); renderExpiry(); geoShow(); preShow(); poiShow();
+    setAttr(); renderMeta(); renderExpiry(); geoShow(); preShow(); poiShow(); rtShow(); proShow();
     if (mode === 'plan') showPlan(); else { const el = scr(), st = el.scrollTop; render(); el.scrollTop = st; }
   }
   const langBox = $('.lang');

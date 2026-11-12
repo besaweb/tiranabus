@@ -1,6 +1,6 @@
 # Tasks – Tirana Bus
 
-Aktualizováno: 2026-11-10
+Aktualizováno: 2026-11-12
 
 **Pravidla:** ID `PREFIX-NNN` se nikdy nepoužije znovu (prefixy CORE, WEB, AND, GTFS, POI, MAP, DATA, I18N, UX, SEO, MKT, BUG, TEST, DOC). Priority P0 kritická – P3 nízká. Stavy BACKLOG → READY → IN_PROGRESS → REVIEW → DONE; BLOCKED vždy s důvodem. Platforma SHARED / WEB / ANDROID (WEB/ANDROID se zdůvodněním). SHARED je DONE až s ☑ u obou platforem. DONE = splněná kritéria + testy + dokumentace; pak přesun do Archivu. Před založením hledat podobný úkol.
 
@@ -17,10 +17,10 @@ Aktualizováno: 2026-11-10
 | CORE-004 | Jeden seznam souborů pro Pages / FTP / Android | SHARED | P2 | BACKLOG | – | 2026-11-07 |
 | CORE-005 | Sjednocená konfigurace jízdného, kurzů, verze a platnosti | SHARED | P2 | BACKLOG | – | 2026-11-07 |
 | AND-008 | První vydání v Google Play (podklady, testovací stopa) | ANDROID | P0 | IN_PROGRESS | ověření účtu Play | 2026-11-07 |
-| AND-005 | Pro: roční předplatné 4,99 € přes Google Play Billing | ANDROID | P2 | BACKLOG | CORE-007, první vydání v Play | 2026-11-07 |
-| CORE-007 | Oprávnění Pro (`PLATFORM.pro`) a zamykání funkcí | SHARED | P2 | BACKLOG | CORE-001 | 2026-11-07 |
+| AND-005 | Pro: nákup tří plánů přes Google Play Billing (nativní most `TBPro`) | ANDROID | P2 | BACKLOG | CORE-007, první vydání v Play | 2026-11-12 |
+| CORE-007 | Oprávnění Pro (`js/pro.js`), obrazovka Tirana BUS PRO, tři plány, zámky funkcí | SHARED | P2 | REVIEW | – | 2026-11-12 |
 | AND-007 | Promo kódy z Play Console pro přispěvatele Ko-fi | ANDROID | P3 | BACKLOG | AND-005 | 2026-11-07 |
-| MKT-001 | Reklamy pro neplatící uživatele aplikace | ANDROID | P3 | BACKLOG | AND-005, SEO-003 | 2026-11-07 |
+| MKT-001 | Reklamy pro neplatící uživatele aplikace (AdMob, nativní most `TBAds`) | ANDROID | P3 | BACKLOG | SEO-003, účet AdMob | 2026-11-12 |
 | AND-006 | Barvy systémových lišt podle motivu stránky (přepínač v aplikaci vs. systém) | ANDROID | P3 | BACKLOG | – | 2026-11-07 |
 | I18N-002 | Korektury překladů rodilými mluvčími (sq, en prioritně) | SHARED | P2 | BACKLOG | – | 2026-11-07 |
 | GTFS-002 | Varianty tras linek (větve) | SHARED | P2 | BACKLOG | – | 2026-11-07 |
@@ -57,14 +57,19 @@ Aktualizováno: 2026-11-10
 
 ### AND-005 Pro: roční předplatné přes Google Play Billing
 - Oblast: Android / platby · ANDROID (Google Play Billing existuje jen v aplikaci z Play; D-026) · P2 · BACKLOG
-- Popis: předplatné „Tirana Bus Pro“ 4,99 € / rok, bez zkušební doby. Play Billing Library (nová nativní závislost v Gradle, schváleno volbou modelu 2026-11-07), most WebView ↔ nativní kód (stav, nákup, obnovení), potvrzení nákupu (acknowledge), stav uložený v zařízení pro offline.
-- Kritéria: [ ] produkt předplatného v Play Console · [ ] nákup, zrušení a obnovení na testovací stopě s testery licencí · [ ] stav Pro platí offline do konce zaplaceného období, po vypršení se zamkne · [ ] most vystavený jen stránce z `appassets.androidplatform.net` · [ ] texty ve 12 jazycích (`i18n.js`) · [ ] zásady soukromí a Data safety aktualizované
+- Popis: tři produkty podle D-038: `pro_tourist_7d` (jednorázový, 1,99 €, 7 dní; po vypršení spotřebovat `consume`, aby šel koupit znovu), `pro_annual` (předplatné, 4,99 € / rok), `pro_lifetime` (jednorázový, 19,99 €). Play Billing Library (nová nativní závislost v Gradle, schváleno volbou modelu 2026-11-07), nativní most `window.TBPro` podle smlouvy v `ARCHITECTURE.md` › Pro (stav, nákup), potvrzení nákupu (acknowledge), stav uložený v zařízení pro offline. Webová část (obrazovka, zámky, výpočet platnosti) je hotová v CORE-007; build pro Play se staví s `PRO_ENFORCE=1`.
+- Kritéria: [ ] tři produkty v Play Console s cenami z D-038 · [ ] nákup, zrušení a obnovení na testovací stopě s testery licencí · [ ] stav Pro platí offline do konce zaplaceného období, po vypršení se zamkne · [ ] most vystavený jen stránce z `appassets.androidplatform.net` · [ ] po nákupu most zavolá `window.tbProUpdate()` · [ ] zásady soukromí a Data safety aktualizované
 - Poznámky: předplatné se dá testovat až s aplikací nahranou na testovací stopu v Play (první vydání). Ověření nákupu jen v zařízení (bez backendu, D-002). Kód je veřejný, proto žádná tajemství v aplikaci.
 
 ### CORE-007 Oprávnění Pro a zamykání funkcí
-- Oblast: sdílený kód, platformní vrstva · SHARED (přepínač ve sdíleném kódu, chování se liší podle platformy) · P2 · BACKLOG
-- Popis: `PLATFORM.pro` (součást CORE-001) určuje dostupnost Pro funkcí. Web: rozšířené vyhledávání zdarma jako dnes, ostatní Pro funkce se nezobrazují. Android: rozšířené vyhledávání, poloha, předvolby a vlastní body jen s Pro; bez Pro výzva k předplatnému.
-- Kritéria: [ ] jeden zdroj pravdy (`PLATFORM.pro`), žádné kontroly roztroušené v kódu · [ ] web beze změny chování · [ ] APK bez Pro: rozšířené vyhledávání zamčené až od verze vydané v Play · [ ] ověřeno na webu i v APK (s Pro i bez)
+- Oblast: sdílený kód, platformní vrstva · SHARED (logika ve sdíleném kódu, zámky a obrazovka jen v aplikaci; D-038) · P2 · REVIEW
+- Popis: čistý modul `js/pro.js` (plány, ceny, výpočet stavu z nákupů, `can`, `ads`) je jediný zdroj pravdy; `app.js` se ptá jen přes `proOk()`. Obrazovka „Tirana BUS PRO“ (karta `#procard`, položka v menu ☰): stav plánu, srovnání FREE / PRO včetně reklam, tři plány (TOURIST PASS 1,99 € / 7 dní, ANNUAL PREMIUM 4,99 € / 365 dní s označením BEST VALUE, LIFETIME PREMIUM 19,99 €). Zamčené funkce (Oblíbené trasy, Oblíbené zastávky, Moje místa, Rozšířené vyhledávání) jdou bez Pro otevřít a prohlédnout, ovládací prvky jsou neaktivní, nahoře výzva s tlačítkem „Odemknout PRO“; uložená data se nemažou, jen se nepoužívají (našeptávač, značky na mapě, ikony v polích). Poloha z GPS zůstává zdarma. Zámky se vynucují jen s `window.PRO_ENFORCE` (Gradle `PRO_ENFORCE=1`), do té doby je vše odemčené. Bez nativního mostu `TBPro` tlačítka plánů hlásí, že nákup bude dostupný po aktivaci platebního systému. Reklamy: `TBAds.set(bool)` podle stavu Pro (most zatím neexistuje, MKT-001). Odchylka od původního zadání: místo `PLATFORM.pro` samostatný modul `Pro`, CORE-001 ho může jen zabalit.
+- Kritéria:
+  - [x] jeden zdroj pravdy (`js/pro.js`, `proOk()`), testy `tests/pro.test.js` (platnost 7 / 365 dní, trvalý plán, vypršení, nepotvrzený nákup)
+  - [x] web beze změny chování (bez `APP_VERSION` žádné zámky, položka PRO ani most)
+  - [x] web v režimu aplikace (telefon 375 px, světlý i tmavý režim, 12 jazyků bez přetečení): FREE zamčeno, Tourist / Annual / Lifetime odemčeno, vypršení Tourist Pass za běhu zamkne a data zůstanou, nevynucený režim odemčen
+  - [ ] build APK v CI (`android.yml`) s úpravou `prepareSite` · [ ] APK v emulátoru bez a s `PRO_ENFORCE=1` · [ ] telefon (uživatel)
+- Poznámky: lokálně je jen Java 8, Gradle build nešel spustit. Akcent zůstal `var(--accent)` (#C8102E), zadaná #DC2626 by znamenala změnu barev celé aplikace.
 
 ### AND-007 Promo kódy pro přispěvatele Ko-fi
 - ANDROID · P3 · BACKLOG
@@ -72,8 +77,9 @@ Aktualizováno: 2026-11-10
 - Kritéria: [ ] ověřit, že Play promo kódy fungují pro roční předplatné a jaké mají limity · [ ] postup vydání kódů a evidence (bez osobních údajů v gitu)
 
 ### MKT-001 Reklamy pro neplatící uživatele aplikace
-- ANDROID · P3 · BACKLOG (až po Pro funkcích, rozhodnutí 2026-11-07)
-- Popis: reklamy v aplikaci pro uživatele bez Pro; Pro je bez reklam. Způsob (např. AdMob) a souhlas (SEO-003) určit při zahájení. Reklamy na webu zatím nerozhodnuty.
+- ANDROID · P3 · BACKLOG (zadání doplněno 2026-11-12)
+- Popis: reklamy v aplikaci pro uživatele bez aktivního Pro (Tourist, Annual i Lifetime jsou bez reklam). V kódu dosud žádné reklamy nejsou (ověřeno 2026-11-12). Připraveno v CORE-007: `Pro.ads(stav)` a volání `window.TBAds.set(true|false)` při startu a při každé změně stavu Pro (nákup, vypršení). Zbývá nativní část: Google Mobile Ads SDK (nová závislost), banner v nativním rozvržení pod WebView (nikdy přes mapu, jízdní řády a ovládání), ID aplikace a reklamních jednotek z konfigurace buildu (ne v gitu natvrdo), souhlas UMP / Consent Mode (SEO-003), aktualizace Data safety a zásad soukromí. Reklamy na webu zatím nerozhodnuty.
+- Kritéria: [ ] účet AdMob a ID jednotek (uživatel) · [ ] most `TBAds` jen pro `appassets.androidplatform.net` · [ ] bez Pro banner, po nákupu ihned zmizí, po vypršení se vrátí · [ ] souhlas v EU před načtením reklam · [ ] testovací jednotky v debug buildu
 
 ### UX-019 Jen jedna karta naráz
 - Oblast: UI · ANDROID ONLY (karty jsou jen v aplikaci) · P3 · REVIEW
