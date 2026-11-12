@@ -15,6 +15,15 @@ Jen **aktuálně rozpracované** úkoly. Po dokončení úkolu jeho sekci smaž 
 - Další krok: …
 ```
 
+## CORE-007 Tirana BUS PRO
+- Chat: 08 PRO funkce · Větev: `feat/CORE-007-pro-plany` · Aktualizováno: 2026-11-12
+- Hotovo: `js/pro.js`, obrazovka PRO, zámky čtyř funkcí, texty ve 12 jazycích, příznak `PRO_ENFORCE` v Gradle, háček pro reklamy.
+- Změněné soubory: `js/pro.js`, `js/app.js`, `js/i18n.js`, `css/style.css`, `index.html`, `android/menu.js`, `android/build.gradle`, `tests/pro.test.js`, dokumentace.
+- Testy: `node --test "tests/*.test.js"` 44/44; prohlížeč v režimu aplikace (stavy FREE, Tourist, Annual, Lifetime, vypršení, 12 jazyků, tmavý režim).
+- Platformy: web ☑ · android ☐ (Gradle build lokálně nešel, jen Java 8)
+- Problémy: `pro.js` není v seznamech souborů mimo glob `js/**` (ověřit `deploy-ftp.sh` a `pages.yml` při nasazení).
+- Další krok: PR, zelené CI včetně `android.yml`, APK v emulátoru a na telefonu; potom AND-005 (Play Billing) a MKT-001 (AdMob).
+
 ## AND-008 První vydání v Google Play
 - Chat: 03 Android · Větev: `doc/CORE-006-uzavreni` · Aktualizováno: 2026-11-07
 - Hotovo: podklady v `docs/play/` (grafika, 6 snímků, texty en/sq/cs, Data safety, IARC, postup).

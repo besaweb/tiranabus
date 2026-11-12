@@ -49,16 +49,18 @@
     sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>',
     help: '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',
     ext: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+    pro: '<path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/>',
     fb: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'
   };
   const ic = k => '<svg class="mico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + IC[k] + '</svg>';
   const wrap = document.createElement('div');
   wrap.className = 'amwrap';
   wrap.innerHTML = '<button type="button" class="ambtn" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>' +
-    '<div class="ammenu" hidden><button type="button" class="mi" id="mi-rt">' + ic('rt') + '<span class="rt"></span></button>' +
-    '<button type="button" class="mi" id="mi-pre">' + ic('pre') + '<span class="pre"></span></button>' +
-    '<button type="button" class="mi" id="mi-poi">' + ic('poi') + '<span class="poi"></span></button>' +
-    '<div class="miwrap"><button type="button" class="mi" id="mi-ext" role="switch" aria-checked="false">' + ic('ext') + '<span class="ext"></span><span class="sw" aria-hidden="true"></span></button><button type="button" class="mihelp" id="mi-exthelp" aria-expanded="false" aria-controls="mi-exthelptx">' + ic('help') + '</button></div><p class="mihelptx" id="mi-exthelptx" hidden></p>' +
+    '<div class="ammenu" hidden><button type="button" class="mi mipro" id="mi-pro">' + ic('pro') + '<span>Tirana BUS PRO</span></button>' +
+    '<button type="button" class="mi" id="mi-rt">' + ic('rt') + '<span class="rt"></span><span class="probadge">PRO</span></button>' +
+    '<button type="button" class="mi" id="mi-pre">' + ic('pre') + '<span class="pre"></span><span class="probadge">PRO</span></button>' +
+    '<button type="button" class="mi" id="mi-poi">' + ic('poi') + '<span class="poi"></span><span class="probadge">PRO</span></button>' +
+    '<div class="miwrap"><button type="button" class="mi" id="mi-ext" role="switch" aria-checked="false">' + ic('ext') + '<span class="ext"></span><span class="probadge">PRO</span><span class="sw" aria-hidden="true"></span></button><button type="button" class="mihelp" id="mi-exthelp" aria-expanded="false" aria-controls="mi-exthelptx">' + ic('help') + '</button></div><p class="mihelptx" id="mi-exthelptx" hidden></p>' +
     '<button type="button" class="mi" id="mi-lang" aria-expanded="false">' + ic('lang') + '<span data-k="lang"></span><span class="cur"></span></button>' +
     '<div class="langslot" hidden></div>' +
     '<button type="button" class="mi" id="mi-theme">' + ic('moon') + '<span class="thm"></span></button>' +
@@ -74,8 +76,10 @@
   langBox.addEventListener('click', () => langBox.classList.add('open'), true);
 
   const miExt = q('#mi-ext');
-  try { miExt.setAttribute('aria-checked', String(localStorage.getItem('tirana-mhd-ext') === '1')); } catch (e) {}
+  const locked = () => document.documentElement.dataset.pro === 'free';
+  try { miExt.setAttribute('aria-checked', String(!locked() && localStorage.getItem('tirana-mhd-ext') === '1')); } catch (e) {}
   miExt.addEventListener('click', () => {
+    if (locked()) { closeMenu(); document.dispatchEvent(new CustomEvent('tb-pro')); return; }
     const v = miExt.getAttribute('aria-checked') !== 'true';
     miExt.setAttribute('aria-checked', String(v));
     document.dispatchEvent(new CustomEvent('tb-ext', { detail: v }));
@@ -86,6 +90,7 @@
     closeSubs();
     p.hidden = !open; q('#mi-exthelp').setAttribute('aria-expanded', String(open));
   });
+  q('#mi-pro').addEventListener('click', () => { closeMenu(); document.dispatchEvent(new CustomEvent('tb-pro')); });
   q('#mi-pre').addEventListener('click', () => { closeMenu(); document.dispatchEvent(new CustomEvent('tb-presets')); });
   q('#mi-rt').addEventListener('click', () => { closeMenu(); document.dispatchEvent(new CustomEvent('tb-routes')); });
   q('#mi-poi').addEventListener('click', () => { closeMenu(); document.dispatchEvent(new CustomEvent('tb-pois')); });

@@ -10,6 +10,7 @@
   --accent-ink: #FFFFFF;
   --accent-fg: #C8102E;
   --accent-soft: #FDF0F2;
+  --ok: #15803D;
   --navy: #0B2463;
   --navy-ink: #FFFFFF;
   --map-bg: #E4E9F0;
@@ -27,7 +28,7 @@
 }
 :root[data-theme="dark"] {
   --bg: #0D1322; --panel: #161E31; --fg: #E7EBF3; --muted: #97A2B8; --line: #29344F; --soft: #1D2740;
-  --accent: #D8263F; --accent-ink: #FFFFFF; --accent-fg: #FF6B7E; --accent-soft: #2B1B29;
+  --accent: #D8263F; --accent-ink: #FFFFFF; --accent-fg: #FF6B7E; --accent-soft: #2B1B29; --ok: #4ADE80;
   --navy: #3B67D6; --navy-ink: #FFFFFF; --map-bg: #111827; --stop-fill: #4DA3FF; --stop-stroke: #E7EBF3; --sky-m1: #172138; --sky-m2: #1C2843; --sky-b: #283A60; --sky-w: #3A5083;
   --shadow: 0 1px 2px rgb(0 0 0 / .3), 0 4px 14px rgb(0 0 0 / .22); --shadow-lg: 0 10px 30px rgb(0 0 0 / .55);
   --tiles: invert(1) hue-rotate(180deg) brightness(.82) contrast(.92) saturate(.6);
@@ -609,6 +610,45 @@ header {
 .pl .pedit { margin: 0 0 8px; }
 .pl .picgrid { margin: 8px 0; grid-template-columns: repeat(auto-fill, 44px); }
 .plempty { margin: 6px 0 0; }
+.probadge { flex: none; padding: 2px 6px; border-radius: 6px; background: var(--accent); color: var(--accent-ink); font: 700 10.5px/1.3 var(--ui); letter-spacing: .06em; }
+.mipro, .mipro .mico { color: var(--accent-fg); }
+.prolock { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 8px 10px; margin: 4px 0 8px; padding: 10px 12px; border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--line)); border-radius: 14px; background: var(--accent-soft); font-size: 14px; font-weight: 600; }
+.prolock i { display: grid; place-items: center; color: var(--accent-fg); }
+.prolock svg { width: 20px; height: 20px; }
+.prolock .btn { grid-column: 1 / -1; justify-self: start; }
+.locked .plrow, .locked .pact, .locked .pedit, .locked .plempty { opacity: .5; }
+.locked :disabled { cursor: not-allowed; }
+.prohero { display: grid; justify-items: start; gap: 6px; margin: 4px 0 10px; padding: 14px; border-radius: 16px; background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 70%, #000)); color: #fff; }
+.prohero .probadge { background: #fff; color: var(--accent); font-size: 12px; }
+.prohero p { margin: 0; font-size: 14.5px; line-height: 1.4; }
+.prohero b { font-size: 15.5px; }
+.prost { display: grid; gap: 2px; margin: 0 0 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 14px; background: var(--soft); font-size: 13.5px; color: var(--muted); }
+.prost b { color: var(--fg); font-size: 15px; }
+.prost.on { border-color: color-mix(in srgb, var(--ok) 45%, var(--line)); }
+.procmp { display: grid; margin: 0 0 12px; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.pcrow { display: grid; grid-template-columns: minmax(0, 1fr) 64px 64px; align-items: center; gap: 6px; min-height: 40px; padding: 6px 10px; border-top: 1px solid var(--line); font-size: 14px; }
+.pcrow > :not(:first-child) { display: grid; place-items: center; text-align: center; }
+.pchead { border-top: 0; background: var(--soft); color: var(--muted); font-size: 12.5px; font-weight: 700; letter-spacing: .04em; }
+.pchead > :last-child { color: var(--accent-fg); }
+.pcads > :not(:first-child) { font-size: 12px; line-height: 1.2; color: var(--muted); overflow-wrap: anywhere; }
+.pcads > :last-child { color: var(--ok); font-weight: 600; }
+.pyes, .pno { display: grid; place-items: center; }
+.pyes { color: var(--ok); }
+.pno { color: var(--muted); opacity: .7; }
+.pyes svg { width: 20px; height: 20px; stroke-width: 2.6; }
+.pno svg { width: 16px; height: 16px; }
+.proh { margin: 0 0 12px; font-size: 15px; }
+.proplan { position: relative; display: grid; gap: 4px; margin: 0 0 12px; padding: 12px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); }
+.proplan.best { border: 2px solid var(--accent); padding-top: 18px; }
+.proplan.act { border-color: var(--ok); }
+.probest { position: absolute; top: -10px; left: 12px; padding: 2px 8px; border-radius: 8px; background: var(--accent); color: var(--accent-ink); font: 700 11px/1.5 var(--ui); letter-spacing: .06em; }
+.pptop { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.pptop b { font-size: 14.5px; letter-spacing: .03em; }
+.ppprice { flex: none; font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.ppdur { color: var(--muted); font-size: 12.5px; line-height: 1.35; }
+.proplan p { margin: 0; font-size: 14px; line-height: 1.4; }
+.proplan .btn { justify-self: stretch; justify-content: center; margin-top: 6px; height: 40px; }
+.proplan .gmsg { padding-right: 0; margin-top: 6px; }
 @media (max-width: 380px) {
   .plgo { gap: 10px; }
   .plb { width: 44px; height: 44px; }
