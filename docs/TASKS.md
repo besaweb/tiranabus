@@ -36,6 +36,7 @@ Aktualizováno: 2026-11-12
 | BUG-003 | Klepnutí na existující vlastní bod nevyvolá nabídku; sjednocení vzhledu nabídek bodů | ANDROID ONLY | P2 | REVIEW | POI-001 | 2026-11-10 |
 | UX-024 | Obrazovka PRO na celou obrazovku bez mapy | SHARED | P3 | REVIEW | CORE-007 | 2026-11-13 |
 | UX-023 | Poloha uživatele na mapě hned po spuštění | ANDROID ONLY | P3 | REVIEW | MAP-001, UX-013 | 2026-11-12 |
+| UX-025 | Posuvný panel mapa / vyhledávání (bottom sheet, 3 stavy) | ANDROID ONLY | P3 | REVIEW | – | 2026-11-13 |
 | WEB-003 | Kontaktní formulář (`contact.html` + `contact.php`, zatím mimo menu) | WEB | P2 | IN_PROGRESS | PHP na hostingu | 2026-11-10 |
 
 ## Detail
@@ -125,6 +126,13 @@ Aktualizováno: 2026-11-12
 - Kritéria:
   - [x] APK v emulátoru: první start → dotaz → povolit → smajlík v Tiraně; další start bez dotazu se smajlíkem; poloha v Praze → nic
   - [ ] odmítnutí a další start bez dotazu · [ ] telefon (uživatel)
+
+### UX-025 Posuvný panel mapa / vyhledávání
+- Oblast: UI, mapa · ANDROID ONLY (zadání uživatele; kód je v `js/app.js` pod `window.APP_VERSION`, na webu by šel zapnout stejně) · P3 · REVIEW
+- Popis: na telefonu (šířka ≤ 760 px) lze tažením úchytu `#grab` nahoře v `.side` měnit výšku mapy plynule (řádek mřížky `--maph`) a po uvolnění se panel přichytí (animace 240 ms) na nejbližší ze tří stavů: panel ~30 % (mapa 70 %), výchozí (beze změny, mapa 44 % výšky aplikace) a panel ~78 %. Úchyt je `position: sticky`, takže zůstává vidět při rolování panelu; tažení začíná jen na něm, gesta mapy a rolování panelu se nemíchají (`touch-action: none` jen na úchytu). Přístupnost: `role=separator`, šipky nahoru/dolů přepínají stavy, `aria-label` z i18n (`sheetGrab`, 12 jazyků). Stav se drží za běhu a po otočení / změně velikosti se znovu spočítá. Karty, plánovač ani mapa se jinak nemění.
+- Kritéria:
+  - [x] APK v emulátoru: výchozí vzhled beze změny; tažení nahoru → panel velký, dolů → mapa velká, přichycení; tažení mapy ve spodní části mapy panel nemění
+  - [ ] telefon (uživatel) · [ ] tmavý režim, otočení, rolování dlouhého panelu
 
 ## Známé chyby a omezení
 
