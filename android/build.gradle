@@ -83,7 +83,7 @@ abstract class PrepareSite extends DefaultTask {
     String cdn = 'https://cdnjs.cloudflare.com/ajax/libs'
     s = s.split('\n', -1).collect { String l ->
       l = first(l, '<link rel="stylesheet" href="css/style.css">', '<link rel="stylesheet" href="lib/maplibre-gl.css"><link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="menu.css">')
-      l = first(l, '<script src="js/gtfs-core.js">', '<script>window.OFFLINE_MAP=1;window.APP_VERSION="' + ver.get() + '"' + (pro.get() ? ';window.PRO_ENFORCE=1' : '') + (test.get() ? ';window.PRO_TEST=1' : '') + '</script><script src="lib/maplibre-gl.js"></script><script src="js/gtfs-core.js">')
+      l = first(l, '<script src="js/gtfs-core.js">', '<script>window.OFFLINE_MAP=1;window.APP_VERSION="' + ver.get() + '"' + (pro.get() ? ';window.PRO_ENFORCE=1' : '') + (test.get() ? ';window.PRO_TEST=1;try{if(localStorage.getItem("tirana-pro-test")===null)localStorage.setItem("tirana-pro-test","1")}catch(e){}' : '') + '</script><script src="lib/maplibre-gl.js"></script><script src="js/gtfs-core.js">')
       l = first(l, '<script src="js/app.js"></script>', '<script src="js/app.js"></script><script src="menu.js"></script>')
       l = first(l, cdn + '/leaflet/1.9.4/', 'lib/')
       l = first(l, cdn + '/jszip/3.10.1/', 'lib/')

@@ -57,7 +57,7 @@
   const wrap = document.createElement('div');
   wrap.className = 'amwrap';
   wrap.innerHTML = '<button type="button" class="ambtn" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>' +
-    '<div class="ammenu" hidden><button type="button" class="mi mipro" id="mi-pro">' + ic('pro') + '<span>Tirana BUS PRO</span></button>' +
+    '<div class="ammenu" hidden>' + (window.PRO_TEST ? '' : '<button type="button" class="mi mipro" id="mi-pro">' + ic('pro') + '<span>Tirana BUS PRO</span></button>') +
     (window.PRO_TEST ? '<button type="button" class="mi" id="mi-protest" role="switch" aria-checked="false">' + ic('pro') + '<span>PRO test</span><span class="sw" aria-hidden="true"></span></button>' : '') +
     '<button type="button" class="mi" id="mi-rt">' + ic('rt') + '<span class="rt"></span><span class="probadge">PRO</span></button>' +
     '<button type="button" class="mi" id="mi-pre">' + ic('pre') + '<span class="pre"></span><span class="probadge">PRO</span></button>' +
@@ -107,7 +107,8 @@
       miExt.setAttribute('aria-checked', String(!locked() && localStorage.getItem('tirana-mhd-ext') === '1'));
     });
   }
-  q('#mi-pro').addEventListener('click', () => { closeMenu(); document.dispatchEvent(new CustomEvent('tb-pro')); });
+  const miPro = q('#mi-pro');
+  if (miPro) miPro.addEventListener('click', () => { closeMenu(); document.dispatchEvent(new CustomEvent('tb-pro')); });
   q('#mi-pre').addEventListener('click', () => { closeMenu(); document.dispatchEvent(new CustomEvent('tb-presets')); });
   q('#mi-rt').addEventListener('click', () => { closeMenu(); document.dispatchEvent(new CustomEvent('tb-routes')); });
   q('#mi-poi').addEventListener('click', () => { closeMenu(); document.dispatchEvent(new CustomEvent('tb-pois')); });
