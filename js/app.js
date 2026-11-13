@@ -126,6 +126,48 @@
   const scr = () => getComputedStyle($('#panel')).overflowY === 'visible' ? $('.side') : $('#panel');
   const fit = (b, p, maxZoom) => { if (b.isValid()) map.fitBounds(b, { padding: [p, p], maxZoom }); };
   if (window.ResizeObserver) new ResizeObserver(() => map.invalidateSize({ pan: false })).observe($('#map'));
+  if (window.APP_VERSION) {
+    const app = $('#app'), grab = $('#grab'), wrap = $('.mapwrap'), mq = matchMedia('(max-width: 760px)');
+    let st = 1, drag = null;
+    document.body.classList.add('sheetdrag');
+    grab.hidden = false;
+    const snaps = () => { const a = app.clientHeight, v = a - $('header').offsetHeight; return [Math.round(v * .7), Math.round(a * .44), Math.round(v * .22)]; };
+    const setH = (h, anim) => { app.classList.toggle('snap', !!anim); app.style.setProperty('--maph', h + 'px'); };
+    const goto = (i, anim) => { st = i; if (i === 1) { app.style.removeProperty('--maph'); app.classList.toggle('snap', !!anim); } else setH(snaps()[i], anim); };
+    grab.addEventListener('pointerdown', e => {
+      if (!mq.matches) return;
+      grab.setPointerCapture(e.pointerId);
+      drag = { y: e.clientY, h: wrap.offsetHeight, py: e.clientY, pt: e.timeStamp, v: 0 };
+      grab.classList.add('on');
+      app.classList.remove('snap');
+    });
+    grab.addEventListener('pointermove', e => {
+      if (!drag) return;
+      const s = snaps(), h = Math.min(s[0], Math.max(s[2], drag.h + e.clientY - drag.y));
+      drag.v = (e.clientY - drag.py) / Math.max(1, e.timeStamp - drag.pt) || 0;
+      drag.py = e.clientY; drag.pt = e.timeStamp; drag.cur = h;
+      setH(h);
+    });
+    const end = () => {
+      if (!drag) return;
+      const s = snaps(), p = (drag.cur || drag.h) + (drag.v || 0) * 120;
+      let b = 0;
+      s.forEach((x, i) => { if (Math.abs(x - p) < Math.abs(s[b] - p)) b = i; });
+      drag = null;
+      grab.classList.remove('on');
+      goto(b, true);
+    };
+    grab.addEventListener('pointerup', end);
+    grab.addEventListener('pointercancel', end);
+    grab.addEventListener('keydown', e => {
+      const d = e.key === 'ArrowUp' ? 1 : e.key === 'ArrowDown' ? -1 : 0;
+      if (!d) return;
+      e.preventDefault();
+      goto(Math.min(2, Math.max(0, st + d)), true);
+    });
+    addEventListener('resize', () => { if (st !== 1 && mq.matches) goto(st); });
+    mq.addEventListener('change', () => { if (!mq.matches) app.style.removeProperty('--maph'); else if (st !== 1) goto(st); });
+  }
 
   function draw() {
     lineLayer.clearLayers(); stopLayer.clearLayers(); lines = []; markers.clear();
