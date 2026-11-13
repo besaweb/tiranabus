@@ -718,3 +718,8 @@ body.seclist .searchcard, body.seclist .sheet { display: none; }
 .fbok p { margin: 0; font-size: 14px; color: var(--muted); }
 .rttoast { position: fixed; left: 50%; bottom: 24px; z-index: 2000; max-width: calc(100vw - 32px); padding: 10px 16px; border-radius: 12px; background: var(--fg); color: var(--panel); font: 600 14px/1.3 var(--ui); box-shadow: 0 6px 20px rgba(0,0,0,.25); opacity: 0; transform: translate(-50%, 12px); pointer-events: none; transition: opacity .2s, transform .2s; }
 .rttoast.on { opacity: 1; transform: translate(-50%, 0); }
+#procard:not([hidden]) { position: fixed; inset: 0; z-index: 1500; width: auto; max-width: none; margin: 0; border: 0; border-radius: 0; box-shadow: none; overflow-y: auto; overscroll-behavior: contain; padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); }
+#procard [data-pl="col"] { display: none; }
+#procard.col .plbody { display: block; }
+#procard.col .plsub { display: block; }
+@media (min-width: 720px) { #procard:not([hidden]) .plhead, #procard:not([hidden]) .plbody { width: min(640px, 100%); margin-inline: auto; } }
