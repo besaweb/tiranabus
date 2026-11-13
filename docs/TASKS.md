@@ -37,6 +37,7 @@ Aktualizováno: 2026-11-12
 | UX-024 | Obrazovka PRO na celou obrazovku bez mapy | SHARED | P3 | REVIEW | CORE-007 | 2026-11-13 |
 | UX-023 | Poloha uživatele na mapě hned po spuštění | ANDROID ONLY | P3 | REVIEW | MAP-001, UX-013 | 2026-11-12 |
 | UX-025 | Posuvný panel mapa / vyhledávání (bottom sheet, 3 stavy) | ANDROID ONLY | P3 | REVIEW | – | 2026-11-13 |
+| UX-026 | Testerský build: bez položky „Tirana BUS PRO“ v menu, přepínač PRO test ve výchozím stavu zapnutý | ANDROID ONLY | P3 | REVIEW | CORE-007 | 2026-11-13 |
 | WEB-003 | Kontaktní formulář (`contact.html` + `contact.php`, zatím mimo menu) | WEB | P2 | IN_PROGRESS | PHP na hostingu | 2026-11-10 |
 
 ## Detail
@@ -133,6 +134,13 @@ Aktualizováno: 2026-11-12
 - Kritéria:
   - [x] APK v emulátoru: výchozí vzhled beze změny; tažení nahoru → panel velký, dolů → mapa velká, přichycení; tažení mapy ve spodní části mapy panel nemění
   - [ ] telefon (uživatel) · [ ] tmavý režim, otočení, rolování dlouhého panelu
+
+### UX-026 Testerský build: PRO test výchozí zapnutý
+- Oblast: menu, Pro · ANDROID ONLY (jen build s `PRO_TEST=1`) · P3 · REVIEW
+- Popis: v buildu `PRO_TEST=1` se v menu ☰ nezobrazuje položka „Tirana BUS PRO“ (duplicitní s přepínačem „PRO test“; obrazovka PRO zůstává dostupná z Unlock PRO a zamčených funkcí) a přepínač „PRO test“ je při prvním spuštění zapnutý (`build.gradle` vloží do injektovaného skriptu `localStorage.tirana-pro-test = 1`, jen pokud není nastaven; ruční vypnutí se zachová). Běžné buildy beze změny.
+- Kritéria:
+  - [x] APK `PRO_TEST=1` v emulátoru (čistá instalace): v menu není „Tirana BUS PRO“, „PRO test“ zapnutý
+  - [ ] telefon (uživatel) · [ ] vypnutý přepínač přežije restart
 
 ## Známé chyby a omezení
 
