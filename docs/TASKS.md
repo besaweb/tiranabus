@@ -34,6 +34,7 @@ Aktualizováno: 2026-11-12
 | SEO-002 | Stránky zastávek (493 × 12), schema.org pro linky | WEB | P3 | BACKLOG | – | 2026-11-07 |
 | UX-019 | Jen jedna karta (Oblíbené zastávky / trasy / Moje místa) naráz | ANDROID ONLY | P3 | REVIEW | – | 2026-11-10 |
 | BUG-003 | Klepnutí na existující vlastní bod nevyvolá nabídku; sjednocení vzhledu nabídek bodů | ANDROID ONLY | P2 | REVIEW | POI-001 | 2026-11-10 |
+| UX-024 | Obrazovka PRO na celou obrazovku bez mapy | SHARED | P3 | REVIEW | CORE-007 | 2026-11-13 |
 | UX-023 | Poloha uživatele na mapě hned po spuštění | ANDROID ONLY | P3 | REVIEW | MAP-001, UX-013 | 2026-11-12 |
 | WEB-003 | Kontaktní formulář (`contact.html` + `contact.php`, zatím mimo menu) | WEB | P2 | IN_PROGRESS | PHP na hostingu | 2026-11-10 |
 
@@ -112,6 +113,11 @@ Aktualizováno: 2026-11-12
   - [x] web (režim aplikace): klepnutí do 12 px od značky otevře nabídku, 40 px ne; nový vzhled
   - [x] APK v emulátoru: klepnutí na uložený bod otevře nabídku v novém vzhledu
   - [ ] telefon (uživatel)
+
+### UX-024 Obrazovka PRO na celou obrazovku
+- Oblast: PRO · SHARED (jen CSS; na webu se karta PRO neotevírá, protože PRO je jen v aplikaci) · P3 · REVIEW (zadání uživatele 2026-11-13)
+- Popis: karta „Tirana BUS PRO“ se po otevření (tlačítko „Odemknout PRO“ u zamčené funkce, položka PRO v menu, klepnutí na zamčené „Rozšířené vyhledávání“) zobrazí přes celou obrazovku bez mapy (`position: fixed; inset: 0` na `#procard`, `css/style.css`); zavírá se křížkem nebo tlačítkem Zpět dole. Sbalení karty je v tomto režimu skryté. Respektuje okraje displeje (`safe-area`), na širokých displejích je obsah vystředěný (max. 640 px). Ostatní karty beze změny.
+- Kritéria: [x] web 375×812: karta pokrývá celé okno, křížek i Zpět ji zavřou a mapa se vrátí · [x] APK v emulátoru: Odemknout PRO i Rozšířené vyhledávání (2026-11-13) · [ ] tmavý režim · [ ] telefon (uživatel)
 
 ### UX-023 Poloha při startu
 - Oblast: mapa · ANDROID ONLY (`GEO` je jen v APK; na webu by to znamenalo dotaz prohlížeče při každé první návštěvě) · P3 · REVIEW
