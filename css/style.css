@@ -228,20 +228,20 @@ header {
 .lh span { min-width: 0; overflow-wrap: anywhere; }
 .ls, .lm { position: relative; }
 .ls { display: flex; gap: 12px; align-items: baseline; min-width: 0; padding: 2px 0; }
-.ls time { font: 700 15px var(--ui); font-variant-numeric: tabular-nums; width: 44px; flex: none; }
+.ls time { font: 700 15px var(--ui); font-variant-numeric: tabular-nums; min-width: 3.3em; flex: none; white-space: nowrap; }
 .ls span { font-weight: 600; min-width: 0; overflow-wrap: anywhere; }
 .ls::before { content: ""; position: absolute; z-index: 1; left: -26px; top: 6px; width: 14px; height: 14px; border-radius: 50%; border: 3px solid var(--c); background: var(--panel); }
 .ls::after, .lm::after { content: ""; position: absolute; left: -21px; width: 4px; background: var(--c); }
 .ls.a::after { top: 12px; bottom: -4px; }
 .ls.b::after { top: -4px; height: 16px; }
 .lm::after { top: -4px; bottom: -4px; }
-.lm { font-size: 13px; color: var(--muted); padding: 4px 0 4px 56px; }
+.lm { font-size: 13px; color: var(--muted); padding: 4px 0 4px 4.72em; }
 .lm summary { cursor: pointer; width: fit-content; }
 .lm summary::marker { color: var(--muted); }
-.lm ul { margin: 6px 0 2px -56px; padding: 0; list-style: none; display: grid; gap: 3px; }
+.lm ul { margin: 6px 0 2px -4.72em; padding: 0; list-style: none; display: grid; gap: 3px; }
 .lm li { position: relative; display: flex; gap: 12px; align-items: baseline; min-width: 0; }
 .lm li::before { content: ""; position: absolute; z-index: 1; left: -23px; top: 50%; width: 8px; height: 8px; margin-top: -4px; border-radius: 50%; border: 2px solid var(--c); background: var(--panel); }
-.lm li time { font: 500 13px var(--ui); font-variant-numeric: tabular-nums; width: 44px; flex: none; }
+.lm li time { font: 500 13px var(--ui); font-variant-numeric: tabular-nums; min-width: 3.8em; flex: none; white-space: nowrap; }
 .leg.walk { display: flex; gap: 12px; align-items: center; margin: 4px 0; padding: 10px 12px; border-radius: 12px; background: var(--soft); border: 1px dashed color-mix(in srgb, var(--muted) 45%, var(--line)); font-size: 14px; font-weight: 500; }
 .leg.walk .wk { width: 34px; height: 34px; border-radius: 50%; background: var(--panel); }
 .leg.walk small { color: var(--muted); font-size: 13px; font-weight: 400; }

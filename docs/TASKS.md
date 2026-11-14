@@ -38,6 +38,7 @@ Aktualizováno: 2026-11-12
 | UX-023 | Poloha uživatele na mapě hned po spuštění | ANDROID ONLY | P3 | REVIEW | MAP-001, UX-013 | 2026-11-12 |
 | UX-025 | Posuvný panel mapa / vyhledávání (bottom sheet, 3 stavy) | ANDROID ONLY | P3 | REVIEW | – | 2026-11-13 |
 | UX-026 | Testerský build: bez položky „Tirana BUS PRO“ v menu, přepínač PRO test ve výchozím stavu zapnutý | ANDROID ONLY | P3 | REVIEW | CORE-007 | 2026-11-13 |
+| BUG-004 | Časy v trase spojení zasahují do názvů zastávek (tablet, zvětšené písmo) | SHARED | P2 | REVIEW | – | 2026-11-14 |
 | WEB-003 | Kontaktní formulář (`contact.html` + `contact.php`, zatím mimo menu) | WEB | P2 | IN_PROGRESS | PHP na hostingu | 2026-11-10 |
 
 ## Detail
@@ -141,6 +142,13 @@ Aktualizováno: 2026-11-12
 - Kritéria:
   - [x] APK `PRO_TEST=1` v emulátoru (čistá instalace): v menu není „Tirana BUS PRO“, „PRO test“ zapnutý
   - [ ] telefon (uživatel) · [ ] vypnutý přepínač přežije restart
+
+### BUG-004 Časy zasahují do názvů zastávek
+- Oblast: UI, výsledky spojení · SHARED · P2 · REVIEW
+- Popis: sloupec s časem u zastávek v rozbalené trase (`.ls time`, `.lm li time`) měl pevnou šířku 44 px, takže při větším písmu (nastavení velikosti písma v Androidu / tablet) text přetekl do názvu zastávky. Šířka je nově v `em` (minimum, `nowrap`) a odsazení seznamu mezilehlých zastávek (`.lm`) také, takže mezera a zarovnání názvů zůstávají při každé velikosti písma. Nahlášeno uživatelem na tabletu (foto 2026-11-14).
+- Kritéria:
+  - [x] web (820 px): časy 49–50 px široké, mezera k názvu 12 px; při zvětšeném písmu (19 px) 63 px a mezera 12 px
+  - [ ] tablet / telefon s velkým písmem (uživatel) · [ ] APK · [ ] tmavý režim
 
 ## Známé chyby a omezení
 
