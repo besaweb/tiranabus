@@ -642,6 +642,10 @@ body.seclist .searchcard, body.seclist .sheet { display: none; }
 .plback:hover { background: var(--soft); color: var(--fg); }
 #fbcard .ghead { font-size: 17px; line-height: 1.25; letter-spacing: 0; text-transform: none; color: var(--fg); padding-right: 0; }
 #fbcard [data-pl="col"] { display: none; }
+body.fbopen .mapwrap, body.fbopen .demo, body.fbopen #geo { display: none; }
+body.fbopen .app { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; grid-template-areas: "head" "side" "foot"; column-gap: 0; }
+body.fbopen .side { overflow-y: auto; }
+body.fbopen #fbcard { width: 100%; max-width: 640px; margin-inline: auto; box-sizing: border-box; }
 .fblbl { display: block; margin: 10px 0 6px; font-size: 13.5px; font-weight: 600; color: var(--fg); }
 .fbcats { display: grid; gap: 8px; }
 .fbcat { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); color: var(--fg); font: 600 15px var(--ui); text-align: left; cursor: pointer; }

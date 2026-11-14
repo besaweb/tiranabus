@@ -720,6 +720,10 @@
     const x = SEC[sec], box = $(x.card);
     box.hidden = !x.open;
     document.body.classList.toggle('seclist', Object.values(SEC).some(s => s.open && !s.col));
+    if (document.body.classList.contains('fbopen') !== SEC.fb.open) {
+      document.body.classList.toggle('fbopen', SEC.fb.open);
+      setTimeout(() => window.dispatchEvent(new Event('resize')), 0);
+    }
     box.classList.toggle('col', x.col);
     const n = sec === 'pre' ? Places.SLOTS.filter(k => pre[k] && pre[k].k).length : sec === 'rt' ? rts.length : sec === 'fb' ? 0 : pois.length;
     box.querySelector('.plhead').innerHTML = `<div class="pltop"><h2 class="ghead">${esc(t(x.title))}</h2>${n ? `<span class="plnum" title="${esc(t('plSaved', { n }))}" aria-label="${esc(t('plSaved', { n }))}">${n}</span>` : ''}<button type="button" class="plb sm" data-pl="col" aria-expanded="${!x.col}" aria-controls="${sec}body" aria-label="${esc(t(x.col ? 'plOpen' : 'plClose'))}" title="${esc(t(x.col ? 'plOpen' : 'plClose'))}">${uiSvg('down')}</button><button type="button" class="plb sm" data-pl="x" aria-label="${esc(t('close'))}" title="${esc(t('close'))}">×</button></div>${x.sub ? `<p class="plsub">${esc(t(x.sub))}</p>` : ''}`;
