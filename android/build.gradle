@@ -147,6 +147,9 @@ android {
     release {
       signingConfig = signingConfigs.release
       vcsInfo.include = false
+      minifyEnabled = true
+      shrinkResources = true
+      proguardFiles(getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro')
       manifestPlaceholders.admobApp = adLive && !adTest ? adApp : adTestApp
       buildConfigField 'boolean', 'ADS', "${(adLive || adTest) && !adOff}"
       buildConfigField 'boolean', 'ADS_EEA', 'false'
