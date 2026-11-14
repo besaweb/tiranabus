@@ -22,7 +22,7 @@
   --gut: max(16px, env(safe-area-inset-left, 0px));
   --gutr: max(16px, env(safe-area-inset-right, 0px));
   --tiles: none;
-  --ui: "Inter", "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+  --ui: "Roboto", "Segoe UI", system-ui, -apple-system, sans-serif;
   --display: var(--ui);
   --mono: var(--ui);
 }
