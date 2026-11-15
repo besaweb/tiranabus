@@ -1,6 +1,6 @@
 # Tasks – Tirana Bus
 
-Aktualizováno: 2026-11-12
+Aktualizováno: 2026-11-15
 
 **Pravidla:** ID `PREFIX-NNN` se nikdy nepoužije znovu (prefixy CORE, WEB, AND, GTFS, POI, MAP, DATA, I18N, UX, SEO, MKT, BUG, TEST, DOC). Priority P0 kritická – P3 nízká. Stavy BACKLOG → READY → IN_PROGRESS → REVIEW → DONE; BLOCKED vždy s důvodem. Platforma SHARED / WEB / ANDROID (WEB/ANDROID se zdůvodněním). SHARED je DONE až s ☑ u obou platforem. DONE = splněná kritéria + testy + dokumentace; pak přesun do Archivu. Před založením hledat podobný úkol.
 
@@ -42,8 +42,18 @@ Aktualizováno: 2026-11-12
 | BUG-004 | Časy v trase spojení zasahují do názvů zastávek (tablet, zvětšené písmo) | SHARED | P2 | REVIEW | – | 2026-11-14 |
 | UX-027 | Písmo Roboto místo Inter | SHARED | P3 | REVIEW | BUG-004 | 2026-11-14 |
 | WEB-003 | Kontaktní formulář (`contact.html` + `contact.php`, zatím mimo menu) | WEB | P2 | IN_PROGRESS | PHP na hostingu | 2026-11-10 |
+| WEB-004 | Nová patička webu (obsahové a SEO stránky, lišta na hlavní stránce) | WEB | P3 | REVIEW | – | 2026-11-15 |
 
 ## Detail
+
+### WEB-004 Nová patička webu
+- Oblast: web / UI · WEB (patička je jen na webových stránkách: v APK je `.foot` skrytá a `tickets.html` patičku nevykreslí, odkazy na `/{jazyk}/lines/` v APK neexistují) · P3 · REVIEW (zadání uživatele 2026-11-15; rozhodnutí D-041)
+- Popis: plná tmavá patička (`js/footer.js`, styly `.sf*` v `css/tickets.css`) na `tickets.html`, `privacy.html`, `contact.html`, `404.html` a 372 statických stránkách linek a letiště (`tools/build-pages.js`): značka s logem, sloganem a popisem, odznak „Tirana, Albánie“, Navigace (Mapa a plánovač, Linky, Autobus na letiště, Jízdenky a jízdné), Užitečné odkazy (pt.tirana.al GTFS, Rinas Express, eTransport), výběr jazyka (`<details>`; na SEO stránkách odkazy s `hreflang` na jazykové verze, na ostatních tlačítka, která zapíší `tirana-mhd-lang` a stránku znovu načtou), spodní lišta s copyrightem, atribucí dat CC BY-SA, Zásadami ochrany osobních údajů a BesaWeb. Na hlavní stránce (aplikace s mapou na celou výšku) zůstala tenká lišta jen na desktopu, nově přeložená (copyright, Linky, Letiště, Jízdné, Soukromí, BesaWeb). Odkazy na neexistující stránky (zastávky, Explore Tirana, Podmínky užití, Google Play) vynechány; Kontakt až po WEB-003. Barva akcentu zůstala #C8102E.
+- Kritéria:
+  - [x] desktop 1366, tablet 820, telefon 375 px; světlý i tmavý režim; bez vodorovného přetečení
+  - [x] 12 jazyků (`tickets.html` 375 px) bez přetečení; přepnutí jazyka v patičce; klávesnice (Esc zavře výběr, fokus zpět), klik mimo zavře
+  - [x] odkazy: v 372 vygenerovaných stránkách žádný rozbitý, externí 200; lišta na hlavní stránce mění jazyk i odkazy s aplikací
+  - [ ] po nasazení: tiranabus.al a zrcadlo Pages (`404.html` jen FTP) · [ ] APK: `tickets.html` bez patičky (podmínka na `appassets.androidplatform.net` v emulátoru neověřena)
 
 ### WEB-003 Kontaktní formulář
 - Oblast: web / kontakt · WEB (odeslání přes PHP na FTP hostingu tiranabus.al, v APK ani na GitHub Pages neexistuje; D-037) · P2 · IN_PROGRESS
@@ -172,7 +182,7 @@ Aktualizováno: 2026-11-12
 - Jen plánovaný jízdní řád, žádná zpoždění (realtime neexistuje).
 - Linka RT: jízdní doba 30 min je odhad; trasy letištních linek z OSRM. Kalendář letištních linek natvrdo 2026–2027.
 - Našeptávač na desktopu se ořízne spodním okrajem levého sloupce při velmi nízkém okně.
-- Inter z Google Fonts; offline (APK bez cache) systémové písmo.
+- Roboto z Google Fonts; offline (APK bez cache) systémové písmo.
 - Z `file://` nefunguje OSM podklad; v náhledu artefaktu se podklad nemusí načíst.
 - Ukázková síť se s letištním doplňkem neslučuje.
 - APK: ověřeno na emulátoru API 36 a Samsung Galaxy S21 (7. 11. 2026, výsledek od uživatele bez podrobností o verzi Androidu); build na Linuxu hlídá `android.yml`.
