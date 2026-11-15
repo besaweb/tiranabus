@@ -293,10 +293,11 @@ header {
 .hint { margin: 12px 4px 0; font-size: 12.5px; color: var(--muted); }
 .hint.lg { font-size: 13.5px; line-height: 1.35; }
 
-.foot { grid-area: foot; padding: 0 var(--gutr) 8px var(--gut); text-align: center; font-size: 11.5px; line-height: 1.5; color: var(--muted); }
-.foot p { margin: 0; }
-.foot a { color: var(--accent-fg); font-weight: 600; text-decoration: none; }
-.foot a:hover { text-decoration: underline; }
+.foot { grid-area: foot; padding: 0 var(--gutr) 8px var(--gut); font-size: 12px; line-height: 1.5; color: var(--muted); }
+.foot p { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 2px 20px; margin: 0; padding-top: 7px; border-top: 1px solid var(--line); }
+.foot .fl { display: flex; flex-wrap: wrap; gap: 2px 18px; }
+.foot a { color: var(--fg); font-weight: 500; text-decoration: none; transition: color .18s; }
+.foot a:hover, .foot a:focus-visible { color: var(--accent-fg); text-decoration: underline; text-underline-offset: 3px; }
 
 /* Map */
 .mapwrap { grid-area: map; position: relative; min-height: 0; margin: 18px var(--gutr) 12px 0; border-radius: 18px; overflow: hidden; border: 1px solid var(--line); box-shadow: var(--shadow); }

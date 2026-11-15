@@ -6,6 +6,7 @@ const path = require('path');
 const GTFS = require('../js/gtfs-core.js');
 const EXTRA = require('../js/extra-airport.js');
 const I18N = require('../js/i18n.js');
+const FOOT = require('../js/footer.js');
 const { readTables } = require('./gtfs-node.js');
 
 const ROOT = path.resolve(__dirname, '..');
@@ -13,7 +14,6 @@ const OUT = path.resolve(process.argv[2] || 'site');
 const SITE = (process.env.SITE || 'https://tiranabus.al').replace(/\/$/, '');
 const VQ = process.env.V ? '?v=' + process.env.V : '';
 const LANGS = I18N.LANGS;
-const NAMES = { cs: 'Čeština', en: 'English', sq: 'Shqip', it: 'Italiano', de: 'Deutsch', pl: 'Polski', fr: 'Français', es: 'Español', mk: 'Македонски', el: 'Ελληνικά', ru: 'Русский', tr: 'Türkçe' };
 const OGLOC = { cs: 'cs_CZ', en: 'en_US', sq: 'sq_AL', it: 'it_IT', de: 'de_DE', pl: 'pl_PL', fr: 'fr_FR', es: 'es_ES', mk: 'mk_MK', el: 'el_GR', ru: 'ru_RU', tr: 'tr_TR' };
 const TODAY = new Date().toISOString().slice(0, 10);
 
@@ -147,7 +147,6 @@ function contentPage(o) {
     '@context': 'https://schema.org', '@type': 'BreadcrumbList',
     itemListElement: crumbs.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c[0], item: SITE + c[1] }))
   };
-  const sw = LANGS.map(x => x === l ? `<span aria-current="true">${NAMES[x]}</span>` : `<a href="${pre}${x}/${p}/" hreflang="${x}" lang="${x}">${NAMES[x]}</a>`).join(' ');
   return `<!doctype html>
 <html lang="${l}">
 <head>
@@ -183,12 +182,10 @@ ${alternates(x => `/${x}/${p}/`)}
 </header>
 <main>
 ${body(pre)}
-  <p class="note">${esc(t('aboutCredits'))}</p>
-  <nav class="langs" aria-label="Language">${sw}</nav>
-  <nav class="foot">
-    <a href="${pre}${l}/">${esc(t('seoHome'))}</a> · <a href="${pre}${l}/lines/">${esc(t('lines'))}</a> · <a href="${pre}${l}/airport/">${esc(t('seoAirNav'))}</a> · <a href="${pre}tickets.html">${esc(t('tickets'))}</a> · <a href="${pre}privacy.html">${esc(t('privacy'))}</a>
-  </nav>
 </main>
+<footer class="sf">
+${FOOT.html({ t, lang: l, pre, langHref: x => `${pre}${x}/${p}/` })}
+</footer>
 </body>
 </html>
 `;
