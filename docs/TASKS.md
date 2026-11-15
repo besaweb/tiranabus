@@ -42,18 +42,18 @@ Aktualizováno: 2026-11-15
 | BUG-004 | Časy v trase spojení zasahují do názvů zastávek (tablet, zvětšené písmo) | SHARED | P2 | REVIEW | – | 2026-11-14 |
 | UX-027 | Písmo Roboto místo Inter | SHARED | P3 | REVIEW | BUG-004 | 2026-11-14 |
 | WEB-003 | Kontaktní formulář (`contact.html` + `contact.php`, zatím mimo menu) | WEB | P2 | IN_PROGRESS | PHP na hostingu | 2026-11-10 |
-| WEB-004 | Nová patička webu (obsahové a SEO stránky, lišta na hlavní stránce) | WEB | P3 | REVIEW | – | 2026-11-15 |
+| WEB-004 | Nová patička webu (všechny stránky, na telefonu minimum) | WEB | P3 | REVIEW | – | 2026-11-15 |
 
 ## Detail
 
 ### WEB-004 Nová patička webu
-- Oblast: web / UI · WEB (patička je jen na webových stránkách: v APK je `.foot` skrytá a `tickets.html` patičku nevykreslí, odkazy na `/{jazyk}/lines/` v APK neexistují) · P3 · REVIEW (zadání uživatele 2026-11-15; rozhodnutí D-041)
-- Popis: plná tmavá patička (`js/footer.js`, styly `.sf*` v `css/tickets.css`) na `tickets.html`, `privacy.html`, `contact.html`, `404.html` a 372 statických stránkách linek a letiště (`tools/build-pages.js`): značka s logem, sloganem a popisem, odznak „Tirana, Albánie“, Navigace (Mapa a plánovač, Linky, Autobus na letiště, Jízdenky a jízdné), Užitečné odkazy (pt.tirana.al GTFS, Rinas Express, eTransport), výběr jazyka (`<details>`; na SEO stránkách odkazy s `hreflang` na jazykové verze, na ostatních tlačítka, která zapíší `tirana-mhd-lang` a stránku znovu načtou), spodní lišta s copyrightem, atribucí dat CC BY-SA, Zásadami ochrany osobních údajů a BesaWeb. Na hlavní stránce (aplikace s mapou na celou výšku) zůstala tenká lišta jen na desktopu, nově přeložená (copyright, Linky, Letiště, Jízdné, Soukromí, BesaWeb). Odkazy na neexistující stránky (zastávky, Explore Tirana, Podmínky užití, Google Play) vynechány; Kontakt až po WEB-003. Barva akcentu zůstala #C8102E.
+- Oblast: web / UI · WEB (v APK se patička nevykreslí: `footer.js` na `appassets.androidplatform.net` prvek odstraní, odkazy na `/{jazyk}/lines/` tam neexistují) · P3 · REVIEW (zadání uživatele 2026-11-15; D-041)
+- Popis: plná tmavá patička (`js/footer.js`, `css/footer.css`) na hlavní stránce, `tickets.html`, `privacy.html`, `contact.html`, `404.html` a 372 statických stránkách linek a letiště: značka s logem, sloganem a popisem, odznak „Tirana, Albánie“, Navigace (Mapa a plánovač, Linky, Autobus na letiště, Jízdenky a jízdné), Užitečné odkazy (pt.tirana.al GTFS, Rinas Express, eTransport), výběr jazyka (`<details>`, 12 jazyků), spodní lišta s copyrightem, atribucí dat CC BY-SA, Zásadami ochrany osobních údajů a BesaWeb. Hlavní stránka: aplikace zůstává na celou výšku okna, patička je pod ní (dorolovat; panel vlevo na desktopu po dojetí na konec roluje stránkou), jazyk se přepíná bez načtení stránky stejně jako v hlavičce (`setLang` v `app.js`), `/{jazyk}/` stránky ji mají předvykreslenou. Telefon (≤ 600 px) jen výběr jazyka a spodní lišta; na hlavní stránce na telefonu (≤ 760 px, celoobrazovková mapa) patička není. Dřívější lišta `.foot` zrušena. Odkazy na neexistující stránky (zastávky, Explore Tirana, Podmínky užití, Google Play) vynechány; Kontakt až po WEB-003. Akcent #C8102E.
 - Kritéria:
-  - [x] desktop 1366, tablet 820, telefon 375 px; světlý i tmavý režim; bez vodorovného přetečení
-  - [x] 12 jazyků (`tickets.html` 375 px) bez přetečení; přepnutí jazyka v patičce; klávesnice (Esc zavře výběr, fokus zpět), klik mimo zavře
-  - [x] odkazy: v 372 vygenerovaných stránkách žádný rozbitý, externí 200; lišta na hlavní stránce mění jazyk i odkazy s aplikací
-  - [ ] po nasazení: tiranabus.al a zrcadlo Pages (`404.html` jen FTP) · [ ] APK: `tickets.html` bez patičky (podmínka na `appassets.androidplatform.net` v emulátoru neověřena)
+  - [x] hlavní stránka: desktop 1366×800 a 1280×600, tablet 900 px, telefon 375 px (bez patičky, bez rolování); světlý i tmavý režim; přepnutí jazyka z patičky mění aplikaci i URL `/{jazyk}/`
+  - [x] obsahové a SEO stránky: desktop, tablet 820 px, telefon 375 px (minimální varianta), světlý i tmavý režim, bez vodorovného přetečení; 12 jazyků bez přetečení
+  - [x] klávesnice (Esc zavře výběr jazyka, fokus zpět), klik mimo zavře; v 372 vygenerovaných stránkách žádný rozbitý odkaz, externí 200
+  - [ ] po nasazení: tiranabus.al a zrcadlo Pages (`404.html` jen FTP) · [ ] APK: hlavní stránka a `tickets.html` bez patičky (podmínka na hostiteli v emulátoru neověřena)
 
 ### WEB-003 Kontaktní formulář
 - Oblast: web / kontakt · WEB (odeslání přes PHP na FTP hostingu tiranabus.al, v APK ani na GitHub Pages neexistuje; D-037) · P2 · IN_PROGRESS

@@ -134,6 +134,7 @@ function homePage(l) {
   rep('"@id": "https://tiranabus.al/#website", "url": "https://tiranabus.al/"', `"@id": "https://tiranabus.al/#website", "url": "${url}"`);
   rep('"inLanguage": "en"', `"inLanguage": "${l}"`);
   rep(/<noscript>[\s\S]*?<\/noscript>/, `<noscript><div class="nojs"><h2>Tirana Bus</h2><p>${desc}</p><p><a href="${l}/lines/">${esc(t('lines'))}</a> · <a href="${l}/airport/">${esc(t('seoAirNav'))}</a> · <a href="tickets.html">${esc(t('tickets'))}</a> · <a href="privacy.html">${esc(t('privacy'))}</a></p></div></noscript>`);
+  rep('<footer class="sf" id="sf" data-app></footer>', `<footer class="sf" id="sf" data-app>${FOOT.html({ t, lang: l, langHref: x => `${x}/` })}</footer>`);
   h = h.replace(/<use href="#/g, `<use href="${l}/#`);
   h = h.replace(/(data-seo="(?:lines|airport)" [^>]*href=")en\//g, `$1${l}/`);
   return h;
@@ -173,6 +174,7 @@ ${alternates(x => `/${x}/${p}/`)}
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="${pre}css/tickets.css${VQ}">
+<link rel="stylesheet" href="${pre}css/footer.css${VQ}">
 <script>try { if (localStorage.getItem('tirana-mhd-theme') === 'dark') document.documentElement.dataset.theme = 'dark'; } catch (e) {}</script>
 </head>
 <body>
