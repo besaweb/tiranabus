@@ -15,6 +15,13 @@ const Footer = (() => {
     ext: '<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
     chev: '<path d="m6 9 6 6 6-6"/>'
   };
+  const fico = d => `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">${d}</svg>`;
+  const SOC = [
+    ['Instagram', 'https://www.instagram.com/tiranabus.al', '<path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9a5.5 5.5 0 0 1-5.5 5.5h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2zm0 1.8A3.7 3.7 0 0 0 3.8 7.5v9a3.7 3.7 0 0 0 3.7 3.7h9a3.7 3.7 0 0 0 3.7-3.7v-9a3.7 3.7 0 0 0-3.7-3.7zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 1.8a3.2 3.2 0 1 0 0 6.4 3.2 3.2 0 0 0 0-6.4zM17.3 5.6a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4z"/>'],
+    ['Facebook', 'https://www.facebook.com/tiranabus', '<path d="M13.5 22v-8.2h2.8l.5-3.3h-3.3V8.4c0-1 .4-1.7 1.8-1.7H17V3.8c-.3 0-1.3-.2-2.5-.2-2.6 0-4.3 1.6-4.3 4.4v2.5H7.4v3.3h2.8V22z"/>'],
+    ['X', 'https://x.com/TiranaBus', '<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>'],
+    ['TikTok', 'https://www.tiktok.com/@tirana_bus', '<path d="M16.6 2h-3.2v13.2a2.9 2.9 0 1 1-2.9-2.9c.3 0 .6 0 .8.1V9.1a6.1 6.1 0 1 0 5.3 6V8.6a7.3 7.3 0 0 0 4.2 1.3V6.7a4.3 4.3 0 0 1-4.2-4.7z"/>']
+  ];
 
   // o: { t, lang, pre (cesta ke kořeni webu), langHref(x) → URL jazykové verze, nebo nic (tlačítka data-flang), year }
   function html(o) {
@@ -32,6 +39,7 @@ const Footer = (() => {
     <p class="sftag">${esc(t('footTag'))}</p>
     <p class="sfdesc">${esc(t('footDesc'))}</p>
     <p class="sfloc">${ico(I.pin)}<span>${esc(t('footLoc'))}</span></p>
+    <ul class="sfsoc" aria-label="${esc(t('footFollow'))}">${SOC.map(([n, u, d]) => `<li><a href="${u}" target="_blank" rel="noopener" aria-label="${n}" title="${n}">${fico(d)}</a></li>`).join('')}</ul>
   </div>
   <nav class="sfcol" aria-labelledby="sfh-nav">
     <h2 id="sfh-nav">${esc(t('footNav'))}</h2>

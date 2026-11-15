@@ -21,6 +21,10 @@
 .sf .sfdesc { margin: 0 0 16px; }
 .sfloc { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px 5px 9px; border: 1px solid var(--sf-line); border-radius: 999px; background: var(--sf-chip); color: var(--sf-fg); font-size: 13px; }
 .sfloc svg { width: 15px; height: 15px; color: var(--sf-hi); }
+.sfsoc { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.sfsoc a { transition: color .18s, background-color .18s, border-color .18s, transform .18s; display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: 1px solid var(--sf-line); border-radius: 50%; background: var(--sf-chip); color: var(--sf-fg); }
+.sfsoc a:hover, .sfsoc a:focus-visible { background: #C8102E; border-color: #C8102E; color: #fff; transform: translateY(-2px); }
+.sfsoc svg { width: 18px; height: 18px; }
 .sfcol h2 { display: block; margin: 4px 0 16px; color: var(--sf-fg); font: 700 12px/1.3 var(--ui); text-transform: uppercase; letter-spacing: .12em; }
 .sfcol li + li { margin-top: 4px; }
 .sfcol li a { display: inline-flex; align-items: center; gap: 10px; min-height: 32px; }
@@ -56,7 +60,8 @@
 @media (max-width: 600px) {
   .sf { font-size: 13px; }
   .sfin { display: block; padding: 20px 0 14px; }
-  .sfbrand, .sfin > nav, .sflangcol h2 { display: none; }
+  .sfbrand > :not(.sfsoc), .sfin > nav, .sflangcol h2 { display: none; }
+  .sfsoc { justify-content: center; margin: 0 0 14px; }
   .sflang summary { min-height: 40px; }
   .sfbar { flex-direction: column; align-items: center; gap: 6px; padding-top: 12px; text-align: center; font-size: 12px; }
   .sfbar .sfcred { flex: none; font-size: 11px; }
