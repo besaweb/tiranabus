@@ -23,6 +23,7 @@ Aktualizováno: 2026-11-12
 | MKT-001 | Reklamy pro neplatící uživatele aplikace (AdMob, nativní most `TBAds`) | ANDROID | P3 | REVIEW | účet AdMob | 2026-11-12 |
 | AND-009 | Dočasný testovací přepínač PRO v menu (`PRO_TEST=1`) | ANDROID | P3 | REVIEW | CORE-007, MKT-001 | 2026-11-12 |
 | AND-010 | `ADS_TEST=1`: podepsaný release s testovacími ID Google (build pro testery) | ANDROID | P3 | REVIEW | MKT-001 | 2026-11-12 |
+| AND-011 | Play Console: optimalizace kódu DEX (obfuskace 0 %) → R8 v release | ANDROID | P1 | REVIEW | – | 2026-11-14 |
 | AND-006 | Barvy systémových lišt podle motivu stránky (přepínač v aplikaci vs. systém) | ANDROID | P3 | BACKLOG | – | 2026-11-07 |
 | I18N-002 | Korektury překladů rodilými mluvčími (sq, en prioritně) | SHARED | P2 | BACKLOG | – | 2026-11-07 |
 | GTFS-002 | Varianty tras linek (větve) | SHARED | P2 | BACKLOG | – | 2026-11-07 |
@@ -144,6 +145,12 @@ Aktualizováno: 2026-11-12
   - [x] APK `PRO_TEST=1` v emulátoru (čistá instalace): v menu není „Tirana BUS PRO“, „PRO test“ zapnutý
   - [ ] telefon (uživatel) · [ ] vypnutý přepínač přežije restart
 
+### AND-011 R8 / obfuskace (Play Console)
+- Oblast: Android build · ANDROID · P1 · REVIEW
+- Popis: Play Console hlásí „Optimalizace kódu DEX je pod naším limitem“, obfuskace 0 % (pod 25 % může snížit viditelnost a omezit publikování). V `release` je zapnuté `minifyEnabled` a `shrinkResources` s `android/proguard-rules.pro`: ponechány metody `@JavascriptInterface` (most `TBAds`) a Room databáze WorkManageru (`WorkDatabase_Impl`; bez ní spadla aplikace při startu přes `androidx.startup`, závislost z `play-services-ads`). Mapping soubor je v AAB, Play ho použije pro dešifrování pádů (`build/outputs/mapping/release/mapping.txt`, pro jistotu ho uchovat k vydání). APK menší (15,2 → 11,8 MB). Play Console dále hlásil zastaralý `androidx.fragment:fragment` 1.1.0 (tahá ho `play-services-basement` z reklam): v `build.gradle` je explicitně `androidx.fragment:fragment:1.8.5` (zvedne i `activity` na 1.8.1 a `lifecycle` na 2.6.1).
+- Kritéria:
+  - [x] APK `1.109` (`PRO_TEST`, `ADS_TEST`) v emulátoru: start, mapa, menu, Pro přepínač, bez pádu a výjimek v logcatu; `seeds.txt` obsahuje `Ads.set/privacy/options`
+  - [ ] telefon: zpětná vazba (výběr souboru), poloha, banner s testovací reklamou, Pro po nákupu · [ ] po nahrání do Play: skóre obfuskace v Play Console, Pre-launch report
 ### BUG-004 Časy zasahují do názvů zastávek
 - Oblast: UI, výsledky spojení · SHARED · P2 · REVIEW
 - Popis: sloupec s časem u zastávek v rozbalené trase (`.ls time`, `.lm li time`) měl pevnou šířku 44 px, takže při větším písmu (nastavení velikosti písma v Androidu / tablet) text přetekl do názvu zastávky. Šířka je nově v `em` (minimum, `nowrap`) a odsazení seznamu mezilehlých zastávek (`.lm`) také, takže mezera a zarovnání názvů zůstávají při každé velikosti písma. Nahlášeno uživatelem na tabletu (foto 2026-11-14).
