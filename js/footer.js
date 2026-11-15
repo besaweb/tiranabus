@@ -51,7 +51,8 @@ const Footer = (() => {
       <summary aria-describedby="sfh-lang">${ico(I.globe)}<span>${NAMES[lang]}</span><span class="sfchev">${ico(I.chev)}</span></summary>
       <ul>${langs}</ul>
     </details>
-    <ul class="sfsoc" aria-label="${esc(t('footFollow'))}">${SOC.map(([n, u, d]) => `<li><a href="${u}" target="_blank" rel="noopener" aria-label="${n}" title="${n}">${fico(d)}</a></li>`).join('')}</ul>
+    <p class="sffollow">${esc(t('footFollow'))}</p>
+    <ul class="sfsoc">${SOC.map(([n, u, d]) => `<li><a href="${u}" target="_blank" rel="noopener" aria-label="${n}" title="${n}">${fico(d)}</a></li>`).join('')}</ul>
   </div>
 </div>
 <div class="sfbar">
