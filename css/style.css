@@ -488,7 +488,7 @@ header {
   .leaflet-left .leaflet-control { margin-left: 10px; }
   .leaflet-top.leaflet-right .leaflet-control { margin-right: 10px; }
   .jt { font-size: 21px; }
-  .sf[data-app] { display: none; }
+  .side .sf { flex: none; margin: 8px 0 0; border-radius: 16px; overflow: hidden; }
 }
 @media (max-width: 380px) {
   .brand small { font-size: 11px; }
