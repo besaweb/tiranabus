@@ -1,0 +1,67 @@
+/* Patička webu (WEB-004, js/footer.js): obsahové a SEO stránky, hlavní stránka pod aplikací */
+.sf {
+  --sf-bg: #0E1830; --sf-fg: #EEF2F9; --sf-mut: #A9B4CB; --sf-line: rgb(255 255 255 / .1); --sf-hi: #FF6B7E; --sf-chip: rgb(255 255 255 / .06);
+  --sf-gl: max(16px, env(safe-area-inset-left, 0px)); --sf-gr: max(16px, env(safe-area-inset-right, 0px));
+  position: relative; margin-top: 8px; color: var(--sf-mut); font: 400 14px/1.55 var(--ui);
+  background: radial-gradient(60% 120% at 0% 0%, rgb(200 16 46 / .2), transparent 60%), radial-gradient(50% 90% at 100% 100%, rgb(59 103 214 / .16), transparent 65%), var(--sf-bg);
+  padding: 0 var(--sf-gr) max(18px, env(safe-area-inset-bottom, 0px)) var(--sf-gl);
+}
+:root[data-theme="dark"] .sf { --sf-bg: #090E1B; border-top: 1px solid var(--line); }
+.sf::before { content: ""; position: absolute; inset: 0 0 auto; height: 3px; background: linear-gradient(90deg, #C8102E, #E8475E 45%, rgb(200 16 46 / 0)); }
+.sf a, .sf button { color: inherit; text-decoration: none; transition: color .18s, background-color .18s, border-color .18s; }
+.sf a:focus-visible, .sf summary:focus-visible, .sf button:focus-visible { outline: 2px solid var(--sf-hi); outline-offset: 3px; border-radius: 6px; }
+.sf svg { width: 17px; height: 17px; flex: none; }
+.sf ul { list-style: none; margin: 0; padding: 0; }
+.sf p { margin: 0; }
+.sfin { max-width: 1120px; margin: 0 auto; padding: 48px 0 36px; display: grid; grid-template-columns: minmax(0, 1.5fr) repeat(3, minmax(0, 1fr)); gap: 32px 40px; }
+.sfbrand { max-width: 380px; }
+.sflogo { display: inline-flex; align-items: center; gap: 12px; color: var(--sf-fg) !important; font: 800 22px/1 var(--ui); letter-spacing: -.02em; }
+.sflogo img { width: 44px; height: 44px; border-radius: 12px; box-shadow: 0 0 0 1px var(--sf-line), 0 6px 18px rgb(0 0 0 / .35); }
+.sf .sftag { margin: 16px 0 8px; color: var(--sf-fg); font-weight: 500; font-size: 16px; line-height: 1.4; }
+.sf .sfdesc { margin: 0 0 16px; }
+.sfloc { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px 5px 9px; border: 1px solid var(--sf-line); border-radius: 999px; background: var(--sf-chip); color: var(--sf-fg); font-size: 13px; }
+.sfloc svg { width: 15px; height: 15px; color: var(--sf-hi); }
+.sfcol h2 { display: block; margin: 4px 0 16px; color: var(--sf-fg); font: 700 12px/1.3 var(--ui); text-transform: uppercase; letter-spacing: .12em; }
+.sfcol li + li { margin-top: 4px; }
+.sfcol li a { display: inline-flex; align-items: center; gap: 10px; min-height: 32px; }
+.sfcol li a svg { color: var(--sf-mut); opacity: .75; transition: color .18s, opacity .18s, transform .18s; }
+.sfcol li a span:not(.sfx) { background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size .25s; }
+.sfcol li a:hover, .sfcol li a:focus-visible { color: var(--sf-fg); }
+.sfcol li a:hover svg, .sfcol li a:focus-visible svg { color: var(--sf-hi); opacity: 1; transform: translateX(1px); }
+.sfcol li a:hover span:not(.sfx), .sfcol li a:focus-visible span:not(.sfx) { background-size: 100% 1px; }
+.sfx svg { width: 12px; height: 12px; }
+.sflang { position: relative; }
+.sflang summary { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border: 1px solid var(--sf-line); border-radius: 12px; background: var(--sf-chip); color: var(--sf-fg); font-weight: 500; cursor: pointer; list-style: none; transition: border-color .18s, background-color .18s; }
+.sflang summary::-webkit-details-marker { display: none; }
+.sflang summary:hover { border-color: rgb(255 255 255 / .22); background: rgb(255 255 255 / .09); }
+.sflang summary > span:not(.sfchev) { flex: 1; }
+.sfchev { display: flex; transition: transform .2s; }
+.sflang[open] .sfchev { transform: rotate(180deg); }
+.sflang ul { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-top: 8px; padding: 6px; border: 1px solid var(--sf-line); border-radius: 12px; background: rgb(255 255 255 / .04); animation: sfin .18s ease-out; }
+.sflang li + li { margin-top: 0; }
+.sflang li a, .sflang li button { display: block; width: 100%; min-height: 0; padding: 7px 10px; border: 0; border-radius: 8px; background: none; font: inherit; font-size: 13.5px; text-align: left; cursor: pointer; }
+.sflang li a:hover, .sflang li button:hover { background: rgb(255 255 255 / .08); color: var(--sf-fg); }
+.sflang [aria-current] { background: rgb(200 16 46 / .22) !important; color: var(--sf-fg); font-weight: 700; }
+@keyframes sfin { from { opacity: 0; transform: translateY(-4px); } }
+.sfbar { max-width: 1120px; margin: 0 auto; padding: 18px 0 0; border-top: 1px solid var(--sf-line); display: flex; flex-wrap: wrap; align-items: center; gap: 6px 24px; font-size: 13px; }
+.sfbar .sfcred { flex: 1 1 320px; font-size: 12px; opacity: .8; }
+.sfbar ul { display: flex; flex-wrap: wrap; gap: 4px 20px; }
+.sfbar a { color: var(--sf-fg); font-weight: 500; }
+.sfbar a:hover { color: var(--sf-hi); }
+@media (max-width: 960px) {
+  .sfin { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .sfbrand { grid-column: 1 / -1; max-width: 560px; }
+}
+/* Telefon: jen výběr jazyka a spodní lišta */
+@media (max-width: 600px) {
+  .sf { font-size: 13px; }
+  .sfin { display: block; padding: 20px 0 14px; }
+  .sfbrand, .sfin > nav, .sflangcol h2 { display: none; }
+  .sflang summary { min-height: 40px; }
+  .sfbar { flex-direction: column; align-items: center; gap: 6px; padding-top: 12px; text-align: center; font-size: 12px; }
+  .sfbar .sfcred { flex: none; font-size: 11px; }
+  .sfbar ul { justify-content: center; gap: 2px 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sf *, .sf *::before { transition: none !important; animation: none !important; }
+}

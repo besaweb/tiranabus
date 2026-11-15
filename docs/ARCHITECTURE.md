@@ -63,7 +63,7 @@ Pořadí skriptů v `index.html`: Leaflet → JSZip → PapaParse → `gtfs-core
 | Offline vektorová mapa | – | ano | `window.OFFLINE_MAP` + `window.maplibregl` |
 | Odkazy Linky/Letiště (SEO stránky) | ano | skryté | `window.APP_VERSION` |
 | Kontaktní formulář (WEB-003) | `contact.html` + `contact.php` (`mail()`), mimo menu, `noindex` | není (bez backendu, `contact.html` není v Gradle `include`) | jen `deploy-ftp.sh`, `pages.yml` ho nenasazuje; D-037 |
-| Patička (WEB-004) | plná na obsahových a SEO stránkách (`js/footer.js`), tenká lišta `.foot` na hlavní stránce (desktop) | `.foot` skrytá (`menu.css`), `tickets.html` bez patičky | `footer.js` nevykreslí nic na `appassets.androidplatform.net` (do CORE-001) |
+| Patička (WEB-004) | plná na všech stránkách (`js/footer.js`, `css/footer.css`), na hlavní stránce pod aplikací, na telefonu minimum | není (hlavní stránka ani `tickets.html`) | `footer.js` na `appassets.androidplatform.net` prvek `#sf` odstraní (do CORE-001) |
 | Menu | hlavička (desktop), hamburger (≤ 760 px) | `android/menu.js` (☰, třídy `am*`), přesouvá přepínač jazyka | vloženo Gradle taskem `prepareSite` |
 | Platnost dat | blok v menu (`renderExpiry`, `GTFS.validity`) | stránka `android/validity.html` + `validity.js` (vlastní parsování `feed_info`, vlastní slovník 12 jazyků) | duplicita → I18N-001, CORE-005 |
 | Pole času | nativní | cs/sq: textové pole HH:MM (proxy na `#time`), en nativní | `menu.js` |
@@ -106,7 +106,7 @@ Vkládání do `index.html` v APK je přes `sed`/`python` na konkrétní řetěz
 - `deploy-ftp.sh`: totéž, nahrání na tiranabus.al přes FTP (šifrovaný jen řídicí kanál – Pure-FTPd vrací 451 při TLS na datovém). Starší soubory nemaže. Nahrává pracovní adresář (WEB-001).
 - `tools/build-pages.js` (+ `tools/gtfs-node.js`, čtečka zipu bez závislostí): 12 × (`/{jazyk}/`, `/lines/`, `/airport/`, `/line/{linka}/`) = 384 stránek + `sitemap.xml` (387 URL, hreflang, x-default). Jazykové kopie `index.html` mají `<base href="../">`. Výstup se necommituje.
 - Kanonická doména `https://tiranabus.al/` (Pages = zrcadlo). `.htaccess` (www → bez www, 404) a `404.html` jen na FTP.
-- Patička (WEB-004): `js/footer.js` (`Footer.html({ t, lang, pre, langHref })`) vrací HTML; `build-pages.js` ji vkládá staticky (výběr jazyka = odkazy s `hreflang`), ostatní stránky mají `<footer class="sf" id="sf">` a skript ji vykreslí po načtení `i18n.js` (`data-pre` = cesta ke kořeni, `404.html` `/`). Styly `.sf*` v `css/tickets.css`.
+- Patička (WEB-004): `js/footer.js` (`Footer.html({ t, lang, pre, langHref })`, `Footer.mount(el, I18N, onLang)`), styly `css/footer.css`. `build-pages.js` ji vkládá staticky do stránek linek/letiště i do `/{jazyk}/` (výběr jazyka = odkazy s `hreflang`). Obsahové stránky mají `<footer class="sf" id="sf">` a skript ji vykreslí po `i18n.js` (`data-pre` = cesta ke kořeni, `404.html` `/`); na hlavní stránce (`data-app`) ji překresluje `applyLang()` v `app.js` a přepnutí jazyka volá `setLang`.
 - SEO v HTML: výchozí jazyk en, JSON-LD (WebSite, WebApplication, Organization), OG `img/og.jpg`, `<noscript>`.
 
 ## Lokalizace

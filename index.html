@@ -56,6 +56,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/footer.css">
 </head>
 <body>
 <noscript><div class="nojs"><h2>Tirana Bus</h2><p>Map of Tirana city bus lines and stops, timetables, next departures and a journey planner with transfers, including airport buses to Rinas. The map and planner need JavaScript.</p><p><a href="tickets.html">Bus tickets and fares in Tirana</a> · <a href="privacy.html">Privacy Policy</a></p></div></noscript>
@@ -167,10 +168,8 @@
     <div id="map" data-i18n-aria="mapAria" aria-label="Map of lines and stops"></div>
     <div class="tilenote" id="tilenote" hidden><span id="tiletext"></span><button type="button" id="tileclose" data-i18n-aria="close" aria-label="Close">×</button></div>
   </div>
-  <footer class="foot">
-    <p><span>© 2026 Tirana Bus. <span data-i18n="footRights">All rights reserved.</span></span><span class="fl"><a data-seo="lines" data-i18n="lines" href="en/lines/">Lines</a><a data-seo="airport" data-i18n="seoAirNav" href="en/airport/">Airport bus</a><a href="tickets.html" data-i18n="tkTitle">Tickets &amp; fares</a><a href="privacy.html" data-i18n="privacy">Privacy Policy</a></span><span><span data-i18n="footMade">Designed &amp; developed by</span> <a href="https://besaweb.al" target="_blank" rel="noopener">BesaWeb</a></span></p>
-  </footer>
 </div>
+<footer class="sf" id="sf" data-app></footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -183,6 +182,7 @@
 <script src="js/extra-airport.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/consent.js"></script>
+<script src="js/footer.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

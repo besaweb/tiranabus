@@ -41,7 +41,7 @@ const Footer = (() => {
     <h2 id="sfh-info">${esc(t('footInfo'))}</h2>
     <ul>${a('https://pt.tirana.al/', 'data', t('footData'), 1)}${a('https://luna.al/en', 'air', t('tkLuna'), 1)}${a('https://www.etransport.al/', 'bus', t('tkEt'), 1)}</ul>
   </nav>
-  <div class="sfcol">
+  <div class="sfcol sflangcol">
     <h2 id="sfh-lang">${esc(t('footLang'))}</h2>
     <details class="sflang">
       <summary aria-describedby="sfh-lang">${ico(I.globe)}<span>${NAMES[lang]}</span><span class="sfchev">${ico(I.chev)}</span></summary>
@@ -56,15 +56,18 @@ const Footer = (() => {
 </div>`;
   }
 
-  function mount(el, I18N) {
+  // onLang(l): přepnutí jazyka bez načtení stránky (hlavní stránka); jinak uložit a načíst znovu
+  function mount(el, I18N, onLang) {
     el.innerHTML = html({ t: I18N.t, lang: I18N.lang, pre: el.dataset.pre || '' });
-    const box = el.querySelector('.sflang');
     for (const b of el.querySelectorAll('[data-flang]')) b.addEventListener('click', () => {
+      if (onLang) { onLang(b.dataset.flang); return; }
       try { localStorage.setItem('tirana-mhd-lang', b.dataset.flang); } catch (e) {}
       location.reload();
     });
-    document.addEventListener('click', e => { if (box.open && !box.contains(e.target)) box.open = false; });
-    box.addEventListener('keydown', e => { if (e.key === 'Escape' && box.open) { box.open = false; box.querySelector('summary').focus(); } });
+    if (el.dataset.bound) return;
+    el.dataset.bound = '1';
+    document.addEventListener('click', e => { const box = el.querySelector('.sflang'); if (box && box.open && !box.contains(e.target)) box.open = false; });
+    el.addEventListener('keydown', e => { const box = el.querySelector('.sflang'); if (e.key === 'Escape' && box && box.open) { box.open = false; box.querySelector('summary').focus(); } });
   }
 
   return { html, mount, ORDER, NAMES };
@@ -74,6 +77,7 @@ else (() => {
   const el = document.getElementById('sf');
   if (!el || typeof I18N === 'undefined') return;
   if (location.hostname === 'appassets.androidplatform.net') { el.remove(); return; }
+  if (el.hasAttribute('data-app')) return;
   let l = null;
   try { l = localStorage.getItem('tirana-mhd-lang'); } catch (e) {}
   I18N.setLang(l || I18N.detect(navigator.languages || [navigator.language]));

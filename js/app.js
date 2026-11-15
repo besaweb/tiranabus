@@ -1589,6 +1589,8 @@
     for (const b of document.querySelectorAll('[data-lang]')) b.setAttribute('aria-pressed', b.dataset.lang === l);
     for (const a of document.querySelectorAll('[data-seo]')) a.setAttribute('href', l + '/' + a.dataset.seo + '/');
     menuBtn.setAttribute('aria-label', t('dataTitle')); menuBtn.title = t('dataTitle');
+    const sf = document.getElementById('sf');
+    if (sf && typeof Footer !== 'undefined') Footer.mount(sf, I18N, setLang);
     syncTheme();
     if (!feed) return;
     if (baseTables && builtLang !== l) { setFeed(buildFeed(), source, false); return; }
@@ -1597,16 +1599,19 @@
   }
   const langBox = $('.lang');
   document.addEventListener('click', e => { if (!langBox.contains(e.target)) langBox.classList.remove('open'); });
-  for (const b of document.querySelectorAll('[data-lang]')) b.addEventListener('click', () => {
-    if (!langBox.classList.contains('open')) { langBox.classList.add('open'); return; }
-    langBox.classList.remove('open');
-    I18N.setLang(b.dataset.lang);
-    try { localStorage.setItem('tirana-mhd-lang', b.dataset.lang); } catch (e) {}
+  function setLang(l) {
+    I18N.setLang(l);
+    try { localStorage.setItem('tirana-mhd-lang', l); } catch (e) {}
     if (pageLang) {
       pageLang = I18N.lang;
       try { history.replaceState(null, '', location.pathname.replace(/[a-z]{2}\/?$/, pageLang + '/') + location.search + location.hash); } catch (e) {}
     }
     applyLang();
+  }
+  for (const b of document.querySelectorAll('[data-lang]')) b.addEventListener('click', () => {
+    if (!langBox.classList.contains('open')) { langBox.classList.add('open'); return; }
+    langBox.classList.remove('open');
+    setLang(b.dataset.lang);
   });
   let savedLang = null;
   try { savedLang = localStorage.getItem('tirana-mhd-lang'); } catch (e) {}
