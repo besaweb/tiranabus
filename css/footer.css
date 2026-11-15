@@ -2,7 +2,7 @@
 .sf {
   --sf-bg: #0E1830; --sf-fg: #EEF2F9; --sf-mut: #A9B4CB; --sf-line: rgb(255 255 255 / .1); --sf-hi: #FF6B7E; --sf-chip: rgb(255 255 255 / .06);
   --sf-gl: max(16px, env(safe-area-inset-left, 0px)); --sf-gr: max(16px, env(safe-area-inset-right, 0px));
-  position: relative; margin-top: 8px; color: var(--sf-mut); font: 400 14px/1.55 var(--ui);
+  position: relative; z-index: 1004; margin-top: 8px; color: var(--sf-mut); font: 400 14px/1.55 var(--ui);
   background: radial-gradient(60% 120% at 0% 0%, rgb(200 16 46 / .2), transparent 60%), radial-gradient(50% 90% at 100% 100%, rgb(59 103 214 / .16), transparent 65%), var(--sf-bg);
   padding: 0 var(--sf-gr) max(18px, env(safe-area-inset-bottom, 0px)) var(--sf-gl);
 }
