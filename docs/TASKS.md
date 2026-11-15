@@ -38,6 +38,7 @@ Aktualizováno: 2026-11-12
 | UX-023 | Poloha uživatele na mapě hned po spuštění | ANDROID ONLY | P3 | REVIEW | MAP-001, UX-013 | 2026-11-12 |
 | UX-025 | Posuvný panel mapa / vyhledávání (bottom sheet, 3 stavy) | ANDROID ONLY | P3 | REVIEW | – | 2026-11-13 |
 | UX-026 | Testerský build: bez položky „Tirana BUS PRO“ v menu, přepínač PRO test ve výchozím stavu zapnutý | ANDROID ONLY | P3 | REVIEW | CORE-007 | 2026-11-13 |
+| UX-027 | Písmo Roboto místo Inter | SHARED | P3 | REVIEW | BUG-004 | 2026-11-14 |
 | WEB-003 | Kontaktní formulář (`contact.html` + `contact.php`, zatím mimo menu) | WEB | P2 | IN_PROGRESS | PHP na hostingu | 2026-11-10 |
 
 ## Detail
@@ -141,6 +142,13 @@ Aktualizováno: 2026-11-12
 - Kritéria:
   - [x] APK `PRO_TEST=1` v emulátoru (čistá instalace): v menu není „Tirana BUS PRO“, „PRO test“ zapnutý
   - [ ] telefon (uživatel) · [ ] vypnutý přepínač přežije restart
+
+### UX-027 Písmo Roboto
+- Oblast: UI · SHARED · P3 · REVIEW
+- Popis: výběr uživatele z 8 ukázek (Inter, Roboto, Noto Sans, Open Sans, Source Sans 3, IBM Plex Sans, Fira Sans, Ubuntu; všechna pokrývají latinku, cyrilici i řečtinu). `--ui` v `css/style.css` a `css/tickets.css` začíná `Roboto`, Google Fonts odkaz (`index.html`, `tickets.html`, `privacy.html`, `404.html`, `contact.html`, `tools/build-pages.js` pro statické stránky) načítá `Roboto:wght@400;500;700`. Řezy 600 a 800 používané v CSS se zobrazí jako 700. Na Androidu je Roboto systémové písmo (offline funguje bez stahování), na webu se stahuje z Google Fonts a bez něj padá na Segoe UI / systémové.
+- Kritéria:
+  - [x] web: `font-family` = Roboto, řezy načteny, výsledky spojení bez přetečení
+  - [ ] APK / tablet / telefon · [ ] tmavý režim · [ ] albánština, řečtina, ruština (diakritika) · [ ] statické stránky linek (`build-pages.js`)
 
 ## Známé chyby a omezení
 
