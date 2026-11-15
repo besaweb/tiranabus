@@ -1,7 +1,7 @@
 :root {
   --bg: #F2F4F8; --panel: #FFFFFF; --fg: #15213F; --muted: #5E6A85; --line: #E1E6EF; --soft: #F5F7FB; --accent: #C8102E;
   --shadow: 0 1px 2px rgb(16 30 60 / .05), 0 4px 14px rgb(16 30 60 / .06);
-  --ui: "Inter", "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+  --ui: "Roboto", "Segoe UI", system-ui, -apple-system, sans-serif;
   --display: var(--ui);
 }
 :root[data-theme="dark"] {
