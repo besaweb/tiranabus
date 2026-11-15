@@ -49,7 +49,7 @@ Aktualizováno: 2026-11-15
 
 ### WEB-005 Sociální sítě v patičce
 
-- Popis: čtyři kulaté ikony pod značkou v patičce (`js/footer.js` `SOC`, styly `.sfsoc`): instagram.com/tiranabus.al, facebook.com/tiranabus, x.com/TiranaBus, tiktok.com/@tirana_bus; `aria-label` + klíč `footFollow` ve 12 jazycích. Na telefonu (≤ 600 px) zůstávají jako jediný prvek značky nad výběrem jazyka. SHARED, ale patička v APK není (viz WEB-004). Zbývá: ověřit na tiranabus.al po nasazení.
+- Popis: čtyři kulaté ikony pod značkou v patičce (`js/footer.js` `SOC`, styly `.sfsoc`): instagram.com/tiranabus.al, facebook.com/tiranabus, x.com/TiranaBus, tiktok.com/@tirana_bus; `aria-label` + klíč `footFollow` ve 12 jazycích. Na telefonu (≤ 600 px) zůstávají jako jediný prvek značky nad výběrem jazyka. SHARED, ale patička v APK není (viz WEB-004). Rozložení B (kompaktní, ≈ 260 px místo ≈ 330 px): vlevo logo se sloganem, uprostřed Navigace a Užitečné odkazy, vpravo výběr jazyka (seznam se otevírá nahoru) a ikony sítí; popis a odznak „Tirana, Albánie“ zrušeny (klíče `footDesc`, `footLoc` odstraněny). Zbývá: ověřit na tiranabus.al po nasazení.
 
 ### WEB-004 Nová patička webu
 - Oblast: web / UI · WEB (v APK se patička nevykreslí: `footer.js` na `appassets.androidplatform.net` prvek odstraní, odkazy na `/{jazyk}/lines/` tam neexistují) · P3 · REVIEW (zadání uživatele 2026-11-15; D-041)
