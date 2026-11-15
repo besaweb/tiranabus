@@ -42,9 +42,14 @@ Aktualizováno: 2026-11-15
 | BUG-004 | Časy v trase spojení zasahují do názvů zastávek (tablet, zvětšené písmo) | SHARED | P2 | REVIEW | – | 2026-11-14 |
 | UX-027 | Písmo Roboto místo Inter | SHARED | P3 | REVIEW | BUG-004 | 2026-11-14 |
 | WEB-003 | Kontaktní formulář (`contact.html` + `contact.php`, zatím mimo menu) | WEB | P2 | IN_PROGRESS | PHP na hostingu | 2026-11-10 |
+| WEB-005 | Odkazy na sociální sítě v patičce (Instagram, Facebook, X, TikTok) | WEB | P3 | REVIEW | – | 2026-11-15 |
 | WEB-004 | Nová patička webu (všechny stránky, na telefonu minimum) | WEB | P3 | REVIEW | – | 2026-11-15 |
 
 ## Detail
+
+### WEB-005 Sociální sítě v patičce
+
+- Popis: čtyři kulaté ikony pod značkou v patičce (`js/footer.js` `SOC`, styly `.sfsoc`): instagram.com/tiranabus.al, facebook.com/tiranabus, x.com/TiranaBus, tiktok.com/@tirana_bus; `aria-label` + klíč `footFollow` ve 12 jazycích. Na telefonu (≤ 600 px) zůstávají jako jediný prvek značky nad výběrem jazyka. SHARED, ale patička v APK není (viz WEB-004). Zbývá: ověřit na tiranabus.al po nasazení.
 
 ### WEB-004 Nová patička webu
 - Oblast: web / UI · WEB (v APK se patička nevykreslí: `footer.js` na `appassets.androidplatform.net` prvek odstraní, odkazy na `/{jazyk}/lines/` tam neexistují) · P3 · REVIEW (zadání uživatele 2026-11-15; D-041)
