@@ -60,16 +60,18 @@
 }
 /* Telefon: jen výběr jazyka a spodní lišta */
 @media (max-width: 600px) {
-  .sf { font-size: 13px; }
-  .sfin { display: block; padding: 20px 0 14px; }
-  .sfbrand, .sfin > nav, .sflangcol h2 { display: none; }
-  .sflangcol { width: 100%; max-width: none; }
-  .sf .sffollow { text-align: center; }
-  .sf .sfsoc { justify-content: center; margin: 8px 0 0; }
-  .sflang summary { min-height: 40px; }
-  .sfbar { flex-direction: column; align-items: center; gap: 6px; padding-top: 12px; text-align: center; font-size: 12px; }
-  .sfbar .sfcred { flex: none; font-size: 11px; }
-  .sfbar ul { justify-content: center; gap: 2px 16px; }
+  .sf { font-size: 12px; }
+  .sfin { display: block; padding: 14px 0 10px; }
+  .sfbrand, .sfin > nav, .sflangcol h2, .sf .sffollow { display: none; }
+  .sflangcol { display: flex; align-items: center; gap: 10px; width: 100%; max-width: none; }
+  .sflangcol .sflang { flex: 1; min-width: 0; }
+  .sflang summary { min-height: 36px; padding: 0 10px; border-radius: 10px; }
+  .sf .sfsoc { flex: none; flex-wrap: nowrap; justify-content: flex-end; gap: 6px; margin: 0; }
+  .sfsoc a { width: 32px; height: 32px; border-width: 1.5px; }
+  .sfsoc svg, .sfcol .sfsoc li a svg { width: 15px; height: 15px; }
+  .sfbar { flex-direction: column; align-items: center; gap: 2px; padding-top: 8px; text-align: center; font-size: 11.5px; }
+  .sfbar .sfcred { flex: none; font-size: 10.5px; line-height: 1.35; }
+  .sfbar ul { justify-content: center; gap: 0 14px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .sf *, .sf *::before { transition: none !important; animation: none !important; }
