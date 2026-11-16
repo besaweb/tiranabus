@@ -41,7 +41,6 @@ Aktualizováno: 2026-11-15
 | UX-026 | Testerský build: bez položky „Tirana BUS PRO“ v menu, přepínač PRO test ve výchozím stavu zapnutý | ANDROID ONLY | P3 | REVIEW | CORE-007 | 2026-11-13 |
 | BUG-004 | Časy v trase spojení zasahují do názvů zastávek (tablet, zvětšené písmo) | SHARED | P2 | REVIEW | – | 2026-11-14 |
 | UX-027 | Písmo Roboto místo Inter | SHARED | P3 | REVIEW | BUG-004 | 2026-11-14 |
-| WEB-003 | Kontaktní formulář (`contact.html` + `contact.php`, zatím mimo menu) | WEB | P2 | IN_PROGRESS | PHP na hostingu | 2026-11-10 |
 | WEB-005 | Odkazy na sociální sítě v patičce (Instagram, Facebook, X, TikTok) | WEB | P3 | REVIEW | – | 2026-11-15 |
 | WEB-004 | Nová patička webu (všechny stránky, na telefonu minimum) | WEB | P3 | REVIEW | – | 2026-11-15 |
 
@@ -59,15 +58,6 @@ Aktualizováno: 2026-11-15
   - [x] obsahové a SEO stránky: desktop, tablet 820 px, telefon 375 px (minimální varianta), světlý i tmavý režim, bez vodorovného přetečení; 12 jazyků bez přetečení
   - [x] klávesnice (Esc zavře výběr jazyka, fokus zpět), klik mimo zavře; v 372 vygenerovaných stránkách žádný rozbitý odkaz, externí 200
   - [ ] po nasazení: tiranabus.al a zrcadlo Pages (`404.html` jen FTP) · [ ] APK: hlavní stránka a `tickets.html` bez patičky (podmínka na hostiteli v emulátoru neověřena)
-
-### WEB-003 Kontaktní formulář
-- Oblast: web / kontakt · WEB (odeslání přes PHP na FTP hostingu tiranabus.al, v APK ani na GitHub Pages neexistuje; D-037) · P2 · IN_PROGRESS
-- Popis: stránka `contact.html` (jméno, e-mail odesílatele, předmět, text, až 3 přílohy – fotky JPG/PNG/WebP/GIF do 4 MB) a `contact.php`, který zprávu odešle na tiranabus@besaweb.al. Ochrana: honeypot, limit 5 zpráv/hod z jedné IP, kontrola typu a velikosti příloh na serveru. Odkaz „Kontakt“ vede na absolutní URL https://tiranabus.al/contact.html (PHP je jen na FTP hostingu, zrcadlo Pages stránku nemá) a je v hlavním menu a na desktopu jako ikona obálky v hlavičce vedle Jízdného (jen web, v APK ne – `window.APP_VERSION`) a v patičce; pod formulářem karta BesaWeb (adresa, support@besaweb.al, WhatsApp +355 697 594 904). Do sitemap nepřidáno, stránka je `noindex`.
-- Kritéria:
-  - [x] formulář ve 12 jazycích, světlý i tmavý režim, telefon
-  - [ ] `contact.php` ověřen na produkčním hostingu (PHP, `mail()`, limity `upload_max_filesize` / `post_max_size`)
-  - [ ] skutečné odeslání s přílohou doručeno na tiranabus@besaweb.al
-- Poznámky: lokálně není PHP, serverová část je ověřena až po nasazení (`deploy-ftp.sh` nahrává `contact.html` a `contact.php`; `pages.yml` ne).
 
 ### AND-008 První vydání v Google Play
 - Oblast: Android / vydání · ANDROID (Google Play) · P0 · IN_PROGRESS
@@ -232,3 +222,4 @@ Aktualizováno: 2026-11-15
 | BUG-001 | Cena RT na palubě sjednocena na 300 L / 3,50 € (data z luna.al, ověřeno 29. 10. 2026; `tkPriceB` ve 12 jazycích a `tickets.html`) | 2026-11-09 | – |
 | BUG-002 | Plánovač vracel spojení s chůzí začínající před zadaným časem (příčina: `tidy` nehlídal čas začátku první chůze; oprava parametrem `tOrg`; test bez `todo`, snapshot přegenerován, nejlepší příjezd ve 160 dotazech nikdy horší) | 2026-11-09 | – |
 | WEB-001 | `deploy-ftp.sh` odmítne běh mimo `main`, s necommitovanými změnami sledovaných souborů a při rozdílu proti `origin/main` (guardy ověřeny odděleně, skript samotný se nespouštěl) | 2026-11-09 | – |
+| WEB-003 | Kontaktní formulář `contact.html` + `contact.php` (12 jazyků, až 3 přílohy), odkaz „Kontakt“ v menu, v hlavičce a v patičce, karta BesaWeb; odeslání ověřeno na tiranabus.al (jen web, v APK není, D-037) | 2026-11-16 | tiranabus.al 86ed03f |
