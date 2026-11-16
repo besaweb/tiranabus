@@ -12,6 +12,7 @@ const Footer = (() => {
     bus: '<rect x="4" y="3" width="16" height="15" rx="3"/><path d="M4 11h16M4 7.5h16"/><circle cx="8" cy="14.5" r=".6"/><circle cx="16" cy="14.5" r=".6"/><path d="M6.5 18v2.5M17.5 18v2.5"/>',
     globe: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.4 2.3 3.6 5.2 3.6 8.5s-1.2 6.2-3.6 8.5c-2.4-2.3-3.6-5.2-3.6-8.5s1.2-6.2 3.6-8.5z"/>',
     ext: '<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
+    mail: '<rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="m4 7.5 8 6 8-6"/>',
     chev: '<path d="m6 9 6 6 6-6"/>'
   };
   const fico = d => `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">${d}</svg>`;
@@ -39,7 +40,7 @@ const Footer = (() => {
   </div>
   <nav class="sfcol" aria-labelledby="sfh-nav">
     <h2 id="sfh-nav">${esc(t('footNav'))}</h2>
-    <ul>${a(pre + lang + '/', 'map', t('seoHome'))}${a(pre + lang + '/lines/', 'lines', t('lines'))}${a(pre + lang + '/airport/', 'air', t('seoAirNav'))}${a(pre + 'tickets.html', 'ticket', t('tkTitle'))}</ul>
+    <ul>${a(pre + lang + '/', 'map', t('seoHome'))}${a(pre + lang + '/lines/', 'lines', t('lines'))}${a(pre + lang + '/airport/', 'air', t('seoAirNav'))}${a(pre + 'tickets.html', 'ticket', t('tkTitle'))}${a(pre + 'contact.html', 'mail', t('ctTitle'))}</ul>
   </nav>
   <nav class="sfcol" aria-labelledby="sfh-info">
     <h2 id="sfh-info">${esc(t('footInfo'))}</h2>

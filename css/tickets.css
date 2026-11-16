@@ -67,6 +67,9 @@ h1 .badge { font-size: .8em; }
 .card h3 { margin-top: 16px; }
 .card h3:first-child { margin-top: 0; }
 .form { display: grid; gap: 14px; }
+.cinfo { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.card .cinfo li { display: flex; align-items: flex-start; gap: 12px; margin: 0; }
+.cinfo svg { flex: none; width: 20px; height: 20px; margin-top: 2px; color: var(--accent); }
 .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .fld { display: grid; gap: 5px; font-weight: 600; font-size: 13px; color: var(--muted); }
 .fld input, .fld textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--soft); color: var(--fg); font: 400 15px/1.4 var(--ui); }

@@ -62,7 +62,7 @@ Aktualizováno: 2026-11-15
 
 ### WEB-003 Kontaktní formulář
 - Oblast: web / kontakt · WEB (odeslání přes PHP na FTP hostingu tiranabus.al, v APK ani na GitHub Pages neexistuje; D-037) · P2 · IN_PROGRESS
-- Popis: stránka `contact.html` (jméno, e-mail odesílatele, předmět, text, až 3 přílohy – fotky JPG/PNG/WebP/GIF do 4 MB) a `contact.php`, který zprávu odešle na tiranabus@besaweb.al. Ochrana: honeypot, limit 5 zpráv/hod z jedné IP, kontrola typu a velikosti příloh na serveru. Do menu a sitemap zatím nepřidáno, stránka je `noindex`.
+- Popis: stránka `contact.html` (jméno, e-mail odesílatele, předmět, text, až 3 přílohy – fotky JPG/PNG/WebP/GIF do 4 MB) a `contact.php`, který zprávu odešle na tiranabus@besaweb.al. Ochrana: honeypot, limit 5 zpráv/hod z jedné IP, kontrola typu a velikosti příloh na serveru. Odkaz „Kontakt“ je v hlavním menu (jen web, v APK ne – `window.APP_VERSION`) a v patičce; pod formulářem karta BesaWeb (adresa, support@besaweb.al, WhatsApp +355 697 594 904). Do sitemap nepřidáno, stránka je `noindex`.
 - Kritéria:
   - [x] formulář ve 12 jazycích, světlý i tmavý režim, telefon
   - [ ] `contact.php` ověřen na produkčním hostingu (PHP, `mail()`, limity `upload_max_filesize` / `post_max_size`)
