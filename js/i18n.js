@@ -49,7 +49,7 @@ const I18N = (() => {
       nearStop: '{m} m od zastávky {s}',
       walkPlace: 'do cíle: {s}',
       cats: { gov: 'Úřad', health: 'Zdravotnictví', edu: 'Vzdělávání', air: 'Letiště', bus: 'Autobusové nádraží', sight: 'Památka', museum: 'Muzeum', worship: 'Chrám', park: 'Park', square: 'Náměstí', street: 'Ulice', area: 'Čtvrť', sport: 'Sport', culture: 'Kultura', fun: 'Zábava', hotel: 'Hotel', food: 'Restaurace', shop: 'Obchod' },
-      gplaySoon: 'Pomozte mi vydat aplikaci Tirana Bus na Google Play a App Store! 🚌 Váš příspěvek pokryje vývojářský účet a práci potřebnou k tomu, aby se aplikace dostala do vašeho telefonu – s offline mapami a jízdními řády, takže funguje i bez internetu na zastávce.',
+      gplaySoon: 'Tirana Bus brzy na Google Play! 🚌 Spojení, jízdní řády a offline mapy Tirany. Podpořte vývoj pro Apple App Store!',
       support: 'Donation',
       lastUpd: 'Poslední aktualizace',
       web: 'Odkaz na web',
