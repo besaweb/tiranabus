@@ -61,7 +61,7 @@ header {
 .brand h1 { margin: 0; font: 800 26px/1.05 var(--ui); letter-spacing: -.02em; color: var(--fg); }
 .brand small { display: block; margin-top: 4px; font: 500 14px/1.2 var(--ui); color: var(--muted); }
 .brand .sm { display: none; }
-.skyline { position: absolute; left: 43%; bottom: 0; width: 580px; height: 68px; transform: translateX(-50%); pointer-events: none; -webkit-mask-image: linear-gradient(90deg, transparent, #000 22%, #000 84%, transparent); mask-image: linear-gradient(90deg, transparent, #000 22%, #000 84%, transparent); }
+.skyline { position: absolute; left: 37%; bottom: 0; width: 580px; height: 68px; transform: translateX(-50%); pointer-events: none; -webkit-mask-image: linear-gradient(90deg, transparent, #000 22%, #000 84%, transparent); mask-image: linear-gradient(90deg, transparent, #000 22%, #000 84%, transparent); }
 .skyline .m1 { fill: var(--sky-m1); }
 .skyline .m2 { fill: var(--sky-m2); }
 .skyline .bd { fill: var(--sky-b); }
