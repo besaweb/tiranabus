@@ -40,7 +40,7 @@ const Footer = (() => {
   </div>
   <nav class="sfcol" aria-labelledby="sfh-nav">
     <h2 id="sfh-nav">${esc(t('footNav'))}</h2>
-    <ul>${a(pre + lang + '/', 'map', t('seoHome'))}${a(pre + lang + '/lines/', 'lines', t('lines'))}${a(pre + lang + '/airport/', 'air', t('seoAirNav'))}${a(pre + 'tickets.html', 'ticket', t('tkTitle'))}${a(pre + 'contact.html', 'mail', t('ctTitle'))}</ul>
+    <ul>${a(pre + lang + '/', 'map', t('seoHome'))}${a(pre + lang + '/lines/', 'lines', t('lines'))}${a(pre + lang + '/airport/', 'air', t('seoAirNav'))}${a(pre + 'tickets.html', 'ticket', t('tkTitle'))}${a('https://tiranabus.al/contact.html', 'mail', t('ctTitle'))}</ul>
   </nav>
   <nav class="sfcol" aria-labelledby="sfh-info">
     <h2 id="sfh-info">${esc(t('footInfo'))}</h2>
