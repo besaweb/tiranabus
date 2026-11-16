@@ -280,8 +280,8 @@
     $('#meta').innerHTML = `<a class="mi mlink" href="tickets.html">${mil('tk', t('tickets'))}</a>${seo}
       <button type="button" class="mi mtheme" id="themeitem">${themeItem()}</button>
       <button type="button" class="mi mtoggle" aria-expanded="false">${mil('data', t('dataTitle'))}</button><div class="mpane data">${metaData()}</div>
-      <button type="button" class="mi mtoggle" aria-expanded="false">${mil('about', t('aboutTitle'))}</button><div class="mpane about">${aboutBody}</div>
       ${window.APP_VERSION ? '' : `<a class="mi mlink" href="https://tiranabus.al/contact.html">${mil('mail', t('ctTitle'))}</a>`}
+      <button type="button" class="mi mtoggle" aria-expanded="false">${mil('about', t('aboutTitle'))}</button><div class="mpane about">${aboutBody}</div>
       <div class="mextwrap"><button type="button" class="mi mext" role="switch" aria-checked="${ext}">${mil('ext', t('extSearch'))}<span class="sw" aria-hidden="true"></span></button><button type="button" class="mhelp" aria-expanded="${extHelpOpen}" aria-controls="exthelp" aria-label="${esc(t('extHelpLbl'))}" title="${esc(t('extHelpLbl'))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></button></div><p class="mexthelp" id="exthelp" ${extHelpOpen ? '' : 'hidden'}>${esc(t(window.APP_VERSION ? 'extHelp' : 'extHelpW'))}</p>`;
     $('#aboutbox').innerHTML = `<h2>${t('aboutTitle')}</h2><div class="aboutbody">${aboutBody}</div>`;
   }
