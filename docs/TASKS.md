@@ -40,6 +40,7 @@ Aktualizováno: 2026-11-15
 | UX-025 | Posuvný panel mapa / vyhledávání (bottom sheet, 3 stavy) | ANDROID ONLY | P3 | REVIEW | – | 2026-11-13 |
 | UX-026 | Testerský build: bez položky „Tirana BUS PRO“ v menu, přepínač PRO test ve výchozím stavu zapnutý | ANDROID ONLY | P3 | REVIEW | CORE-007 | 2026-11-13 |
 | BUG-004 | Časy v trase spojení zasahují do názvů zastávek (tablet, zvětšené písmo) | SHARED | P2 | REVIEW | – | 2026-11-14 |
+| BUG-005 | Veřejný build (bez `PRO_ENFORCE`): každé klepnutí otevře obrazovku PRO | ANDROID ONLY | P0 | REVIEW | – | 2026-11-18 |
 | UX-027 | Písmo Roboto místo Inter | SHARED | P3 | REVIEW | BUG-004 | 2026-11-14 |
 | WEB-005 | Odkazy na sociální sítě v patičce (Instagram, Facebook, X, TikTok) | WEB | P3 | REVIEW | – | 2026-11-15 |
 | WEB-004 | Nová patička webu (všechny stránky, na telefonu minimum) | WEB | P3 | REVIEW | – | 2026-11-15 |
@@ -162,6 +163,12 @@ Aktualizováno: 2026-11-15
 - Kritéria:
   - [x] web (820 px): časy 49–50 px široké, mezera k názvu 12 px; při zvětšeném písmu (19 px) 63 px a mezera 12 px
   - [ ] tablet / telefon s velkým písmem (uživatel) · [ ] APK · [ ] tmavý režim
+### BUG-005 Klepnutí kamkoli otevře obrazovku PRO
+- Oblast: PRO, UI · ANDROID ONLY (`PRO_APP` je jen pod `window.APP_VERSION`) · P0 · REVIEW
+- Popis: v buildu bez `PRO_ENFORCE` (veřejný AAB) a bez zakoupeného plánu je stav `open`, takže `proMark()` nastaví `<html data-pro="open">`. Globální posluchač `click` hledal `closest('[data-pro="open"]')`, ten našel samotné `<html>` a obrazovku PRO otevřel při každém klepnutí v aplikaci (včetně mapy). V buildech s `PRO_TEST` (stav `pro`) a v `free` se to neprojevilo, proto to testy zámků nezachytily. Posluchač nově hledá jen `button[data-pro="open"]` (tlačítko „Odemknout“ v zámku funkce).
+- Kritéria:
+  - [x] prohlížeč s `APP_VERSION` bez `PRO_ENFORCE`: klepnutí na zastávku na mapě už PRO neotevře (před opravou ano)
+  - [ ] tlačítko „Odemknout“ u zamčené funkce stále otevře PRO (build s `PRO_ENFORCE=1`) · [ ] APK bez `PRO_ENFORCE` v emulátoru · [ ] telefon (uživatel)
 ### UX-027 Písmo Roboto
 - Oblast: UI · SHARED · P3 · REVIEW
 - Popis: výběr uživatele z 8 ukázek (Inter, Roboto, Noto Sans, Open Sans, Source Sans 3, IBM Plex Sans, Fira Sans, Ubuntu; všechna pokrývají latinku, cyrilici i řečtinu). `--ui` v `css/style.css` a `css/tickets.css` začíná `Roboto`, Google Fonts odkaz (`index.html`, `tickets.html`, `privacy.html`, `404.html`, `contact.html`, `tools/build-pages.js` pro statické stránky) načítá `Roboto:wght@400;500;700`. Řezy 600 a 800 používané v CSS se zobrazí jako 700. Na Androidu je Roboto systémové písmo (offline funguje bez stahování), na webu se stahuje z Google Fonts a bez něj padá na Segoe UI / systémové.

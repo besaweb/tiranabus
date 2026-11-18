@@ -862,7 +862,7 @@
   document.addEventListener('tb-routes', () => plShow('rt'));
   document.addEventListener('tb-pro', () => plShow('pro'));
   adsSync(true);
-  document.addEventListener('click', e => { if (e.target.closest('[data-pro="open"]')) plShow('pro'); });
+  document.addEventListener('click', e => { if (e.target.closest('button[data-pro="open"]')) plShow('pro'); });
   function proShow() {
     const box = $('#pro');
     plHead('pro');
