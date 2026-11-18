@@ -63,6 +63,7 @@ Pořadí skriptů v `index.html`: Leaflet → JSZip → PapaParse → `gtfs-core
 | Offline vektorová mapa | – | ano | `window.OFFLINE_MAP` + `window.maplibregl` |
 | Odkazy Linky/Letiště (SEO stránky) | ano | skryté | `window.APP_VERSION` |
 | Kontaktní formulář (WEB-003) | `contact.html` + `contact.php` (`mail()`), mimo menu, `noindex` | není (bez backendu, `contact.html` není v Gradle `include`) | jen `deploy-ftp.sh`, `pages.yml` ho nenasazuje; D-037 |
+| Zpětná vazba (FB-001) | – | karta `#fbcard`, menu `#mi-fb` → `tb-feedback`, `js/feedback.js`, výběr přílohy `onShowFileChooser` | odeslání POST na `https://tiranabus.al/feedback.php` (jen `deploy-ftp.sh`; `pages.yml` ani Gradle `include` ho nezahrnují; `js/feedback.js` je v APK přes `js/**`) |
 | Patička (WEB-004) | plná na všech stránkách (`js/footer.js`, `css/footer.css`), na hlavní stránce pod aplikací, na telefonu minimum | není (hlavní stránka ani `tickets.html`) | `footer.js` na `appassets.androidplatform.net` prvek `#sf` odstraní (do CORE-001) |
 | Menu | hlavička (desktop), hamburger (≤ 760 px) | `android/menu.js` (☰, třídy `am*`), přesouvá přepínač jazyka | vloženo Gradle taskem `prepareSite` |
 | Platnost dat | blok v menu (`renderExpiry`, `GTFS.validity`) | stránka `android/validity.html` + `validity.js` (vlastní parsování `feed_info`, vlastní slovník 12 jazyků) | duplicita → I18N-001, CORE-005 |

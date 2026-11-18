@@ -42,3 +42,11 @@ Jen **aktuálně rozpracované** úkoly. Po dokončení úkolu jeho sekci smaž 
 - Chat: 08 PRO funkce · Větev: `and/AND-009-pro-test` (navazuje na `and/MKT-001-admob`) · Aktualizováno: 2026-11-12
 - Hotovo: Gradle `PRO_TEST=1`, přepínač „PRO test“ v `android/menu.js`, simulovaný nákup v `proRead()` (`js/app.js`).
 - Zbývá: na telefonu ověřit zmizení a návrat banneru; po AND-005 přepínač odstranit.
+
+## FB-001 Zpětná vazba v aplikaci
+- Chat: 03 Android · Větev: `claude/feat-fb-001-zpetna-vazba-2ffa1c` · Aktualizováno: 2026-11-18
+- Hotovo: karta, formulář, validace, koncept, výběr přílohy, `feedback.php`, 12 jazyků, testy (52 OK), APK v emulátoru.
+- Změněné soubory: `js/feedback.js`, `feedback.php`, `tests/feedback.test.js`, `js/app.js`, `css/style.css`, `index.html`, `js/i18n.js`, `android/menu.js`, `MainActivity.java`, `deploy-ftp.sh`.
+- Platformy: android ☑ (jen Android)
+- Problémy: `feedback.php` zatím na hostingu není (404, aplikace hlásí chybu připojení); chybový text pro nedostupný server je zavádějící; překlady strojové (I18N-002).
+- Další krok: PR do `main`, nasazení `feedback.php`, skutečné odeslání s přílohou z telefonu (uživatel), pak FB-001 → DONE.

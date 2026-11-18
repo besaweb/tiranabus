@@ -2,7 +2,7 @@
 
 Aktualizováno: 2026-11-15
 
-**Pravidla:** ID `PREFIX-NNN` se nikdy nepoužije znovu (prefixy CORE, WEB, AND, GTFS, POI, MAP, DATA, I18N, UX, SEO, MKT, BUG, TEST, DOC). Priority P0 kritická – P3 nízká. Stavy BACKLOG → READY → IN_PROGRESS → REVIEW → DONE; BLOCKED vždy s důvodem. Platforma SHARED / WEB / ANDROID (WEB/ANDROID se zdůvodněním). SHARED je DONE až s ☑ u obou platforem. DONE = splněná kritéria + testy + dokumentace; pak přesun do Archivu. Před založením hledat podobný úkol.
+**Pravidla:** ID `PREFIX-NNN` se nikdy nepoužije znovu (prefixy CORE, WEB, AND, GTFS, POI, MAP, DATA, I18N, UX, SEO, MKT, BUG, TEST, DOC, FB). Priority P0 kritická – P3 nízká. Stavy BACKLOG → READY → IN_PROGRESS → REVIEW → DONE; BLOCKED vždy s důvodem. Platforma SHARED / WEB / ANDROID (WEB/ANDROID se zdůvodněním). SHARED je DONE až s ☑ u obou platforem. DONE = splněná kritéria + testy + dokumentace; pak přesun do Archivu. Před založením hledat podobný úkol.
 
 ## Přehled
 
@@ -46,8 +46,17 @@ Aktualizováno: 2026-11-15
 | UX-028 | Poloha při startu vyplní „Moje poloha“ do „Odkud“, klik na zastávku nebo pojmenované místo na mapě doplní „Kam“ | ANDROID ONLY | P3 | REVIEW | UX-023 | 2026-11-18 |
 | WEB-005 | Odkazy na sociální sítě v patičce (Instagram, Facebook, X, TikTok) | WEB | P3 | REVIEW | – | 2026-11-15 |
 | WEB-004 | Nová patička webu (všechny stránky, na telefonu minimum) | WEB | P3 | REVIEW | – | 2026-11-15 |
+| FB-001 | Zpětná vazba v aplikaci (menu → formulář, `feedback.php`) | ANDROID ONLY | P2 | REVIEW | PHP na hostingu | 2026-11-18 |
 
 ## Detail
+
+### FB-001 Zpětná vazba v aplikaci
+- Oblast: UI, zpětná vazba · ANDROID ONLY (položka v menu APK `android/menu.js`, událost `tb-feedback`; odeslání přes PHP na FTP hostingu, D-042) · P2 · REVIEW
+- Popis: menu → „Zpětná vazba“: kategorie (chyba / zlepšení / jiné), popis do 5000 znaků, volitelný screenshot (JPG/PNG/WebP do 4 MB, výběr souboru přes `onShowFileChooser` v `MainActivity`) a e-mail. Odesílá se verze aplikace, model zařízení, verze Androidu, jazyk a čas; poloha ne. Koncept zůstává v `localStorage`, dvojí odeslání blokuje `fbBusy`. Logika v `js/feedback.js`, server `feedback.php` (Origin allowlist + CORS, limit 5/h/IP, kontrola MIME, `mail()` na tiranabus@besaweb.al).
+- Kritéria:
+  - [x] formulář, validace, chyby, koncept, 12 jazyků, světlý režim, testy (`tests/feedback.test.js`), APK v emulátoru (karta, výběr souboru)
+  - [ ] `feedback.php` nasazen a skutečné odeslání s přílohou doručeno · [ ] tmavý režim · [ ] telefon (uživatel)
+- Poznámky: bez nasazeného `feedback.php` aplikace hlásí chybu připojení (404 bez CORS). Lokálně není PHP, serverová část je ověřena až po nasazení (`deploy-ftp.sh`; `pages.yml` a Gradle `include` ho nezahrnují). Celoobrazovkové zobrazení řeší FB-002.
 
 ### WEB-005 Sociální sítě v patičce
 
