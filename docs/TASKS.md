@@ -36,6 +36,7 @@ Aktualizováno: 2026-11-15
 | UX-019 | Jen jedna karta (Oblíbené zastávky / trasy / Moje místa) naráz | ANDROID ONLY | P3 | REVIEW | – | 2026-11-10 |
 | BUG-003 | Klepnutí na existující vlastní bod nevyvolá nabídku; sjednocení vzhledu nabídek bodů | ANDROID ONLY | P2 | REVIEW | POI-001 | 2026-11-10 |
 | UX-024 | Obrazovka PRO na celou obrazovku bez mapy | SHARED | P3 | REVIEW | CORE-007 | 2026-11-13 |
+| FB-002 | Zpětná vazba (menu) jako formulář na celou obrazovku bez mapy | ANDROID ONLY | P3 | REVIEW | FB-001, UX-024 | 2026-11-18 |
 | UX-023 | Poloha uživatele na mapě hned po spuštění | ANDROID ONLY | P3 | REVIEW | MAP-001, UX-013 | 2026-11-12 |
 | UX-025 | Posuvný panel mapa / vyhledávání (bottom sheet, 3 stavy) | ANDROID ONLY | P3 | REVIEW | – | 2026-11-13 |
 | UX-026 | Testerský build: bez položky „Tirana BUS PRO“ v menu, přepínač PRO test ve výchozím stavu zapnutý | ANDROID ONLY | P3 | REVIEW | CORE-007 | 2026-11-13 |
@@ -130,6 +131,13 @@ Aktualizováno: 2026-11-15
 - Oblast: PRO · SHARED (jen CSS; na webu se karta PRO neotevírá, protože PRO je jen v aplikaci) · P3 · REVIEW (zadání uživatele 2026-11-13)
 - Popis: karta „Tirana BUS PRO“ se po otevření (tlačítko „Odemknout PRO“ u zamčené funkce, položka PRO v menu, klepnutí na zamčené „Rozšířené vyhledávání“) zobrazí přes celou obrazovku bez mapy (`position: fixed; inset: 0` na `#procard`, `css/style.css`); zavírá se křížkem nebo tlačítkem Zpět dole. Sbalení karty je v tomto režimu skryté. Respektuje okraje displeje (`safe-area`), na širokých displejích je obsah vystředěný (max. 640 px). Ostatní karty beze změny.
 - Kritéria: [x] web 375×812: karta pokrývá celé okno, křížek i Zpět ji zavřou a mapa se vrátí · [x] APK v emulátoru: Odemknout PRO i Rozšířené vyhledávání (2026-11-13) · [ ] tmavý režim · [ ] telefon (uživatel)
+
+### FB-002 Zpětná vazba na celou obrazovku
+- Oblast: UI, zpětná vazba · ANDROID ONLY (položka „Zpětná vazba“ je jen v menu APK, `tb-feedback`; zadání uživatele 2026-11-18) · P3 · REVIEW
+- Popis: po klepnutí na „Zpětná vazba“ v menu se karta `#fbcard` zobrazí přes celou obrazovku bez mapy stejně jako obrazovka PRO (UX-024): `position: fixed; inset: 0`, `safe-area`, na širokých displejích obsah max. 640 px, zavření křížkem nebo Zpět. Řešení je čistě v CSS a nezávisí na rozložení mřížky, takže funguje i s posuvným panelem (UX-025). Nahrazuje samostatný commit `176d729` z větve chatu 07 (ten přepisoval mřížku `.app` a nepočítal s UX-025).
+- Kritéria:
+  - [x] prohlížeč 1024×768 i 375×812: karta pokrývá celé okno (`fixed`, rozměr = okno)
+  - [ ] APK v emulátoru (odeslání zpětné vazby, klávesnice, screenshot) · [ ] tmavý režim · [ ] telefon (uživatel)
 
 ### UX-023 Poloha při startu
 - Oblast: mapa · ANDROID ONLY (`GEO` je jen v APK; na webu by to znamenalo dotaz prohlížeče při každé první návštěvě) · P3 · REVIEW
