@@ -59,6 +59,12 @@
         this._gl.remove();
         L.DomUtil.remove(this._el);
       },
+      nameAt(pt) {
+        if (!this._gl || !this._gl.isStyleLoaded()) return null;
+        const r = 10, fs = this._gl.queryRenderedFeatures([[pt.x - r, pt.y - r], [pt.x + r, pt.y + r]]);
+        for (const f of fs) { const p = f.properties || {}, n = p['name:latin'] || p.name; if (n) return String(n); }
+        return null;
+      },
       _place() {
         const m = this._m, sz = m.getSize(), c = m.getCenter();
         L.DomUtil.setPosition(this._el, m.containerPointToLayerPoint([0, 0]));
@@ -488,7 +494,7 @@
   function pickStop(s) {
     if (!prePick && !poiPick) plCloseAll();
     const g = stopGroup.get(s.id);
-    if (plan.auto || !plan.from || (plan.from && plan.to && plan.from === g)) setEnd('from', g);
+    if (!plan.from || (plan.from && plan.to && plan.from === g)) setEnd('from', g);
     else setEnd('to', g);
     showPlan(); restyle();
     maybeRun();
@@ -1109,7 +1115,9 @@
       if (poiPick) return poiForm(e.latlng.lat, e.latlng.lng, poiPick);
       let best = null, bd = 24;
       if (proOk()) for (const p of pois) { const d = map.latLngToContainerPoint([p.lat, p.lon]).distanceTo(e.containerPoint); if (d <= bd) { best = p; bd = d; } }
-      if (best) poiPop(best);
+      if (best) return poiPop(best);
+      const vl = BASE[VEC], nm = mode === 'plan' && vl && vl.nameAt && map.hasLayer(vl) ? vl.nameAt(e.containerPoint) : null;
+      if (nm) { const w = plan.from ? 'to' : 'from'; chooseEnd(w, ptEnd('@map-' + w, nm, [e.latlng.lat, e.latlng.lng], w), true); }
     });
     map.on('contextmenu', e => {
       if (prePick) return prePickAt(e.latlng.lat, e.latlng.lng);

@@ -41,7 +41,7 @@ Aktualizováno: 2026-11-15
 | UX-026 | Testerský build: bez položky „Tirana BUS PRO“ v menu, přepínač PRO test ve výchozím stavu zapnutý | ANDROID ONLY | P3 | REVIEW | CORE-007 | 2026-11-13 |
 | BUG-004 | Časy v trase spojení zasahují do názvů zastávek (tablet, zvětšené písmo) | SHARED | P2 | REVIEW | – | 2026-11-14 |
 | UX-027 | Písmo Roboto místo Inter | SHARED | P3 | REVIEW | BUG-004 | 2026-11-14 |
-| UX-028 | Poloha při startu vyplní „Moje poloha“ do „Odkud“, první klik na zastávku na mapě ji nahradí | ANDROID ONLY | P3 | REVIEW | UX-023 | 2026-11-18 |
+| UX-028 | Poloha při startu vyplní „Moje poloha“ do „Odkud“, klik na zastávku nebo pojmenované místo na mapě doplní „Kam“ | ANDROID ONLY | P3 | REVIEW | UX-023 | 2026-11-18 |
 | WEB-005 | Odkazy na sociální sítě v patičce (Instagram, Facebook, X, TikTok) | WEB | P3 | REVIEW | – | 2026-11-15 |
 | WEB-004 | Nová patička webu (všechny stránky, na telefonu minimum) | WEB | P3 | REVIEW | – | 2026-11-15 |
 
@@ -171,9 +171,9 @@ Aktualizováno: 2026-11-15
   - [ ] APK / tablet / telefon · [ ] tmavý režim · [ ] albánština, řečtina, ruština (diakritika) · [ ] statické stránky linek (`build-pages.js`)
 ### UX-028 Poloha při startu vyplní „Odkud“
 - Oblast: plánovač, mapa · ANDROID ONLY (poloha při startu `GEO` je jen v APK, navazuje na UX-023; zadání uživatele 2026-11-18) · P3 · REVIEW
-- Popis: po úspěšném zjištění polohy v Tiraně (start aplikace i tlačítko polohy) se do pole „Odkud“ doplní „Moje poloha“ (text `geoBtn`) jako bod s GPS souřadnicemi (`autoFrom()` v `js/app.js`, `ptEnd('@gps', …)`, příznak `plan.auto`); plánovač k němu hledá zastávky pěšky stejně jako u „Odkud z mapy“. Hodnota je jen návrh: první klepnutí na zastávku na mapě ji nahradí (zastávka se stane „Odkud“), další klepnutí nastavují „Kam“ jako dosud. Ručně zadané či zvolené „Odkud“ (psaní do pole, nabídka, tlačítko A, swap, předvolba) se nikdy nepřepíše; mimo Tiranu, při odmítnutém oprávnění a při nepřesné poloze se nic nevyplní. Po načtení jiného zdroje dat a po načtení pěší sítě se bod znovu napočítá (pokud ještě nebylo hledáno).
+- Popis: po úspěšném zjištění polohy v Tiraně (start aplikace i tlačítko polohy) se do pole „Odkud“ doplní „Moje poloha“ (text `geoBtn`) jako bod s GPS souřadnicemi (`autoFrom()` v `js/app.js`, `ptEnd('@gps', …)`, příznak `plan.auto`); plánovač k němu hledá zastávky pěšky stejně jako u „Odkud z mapy“. Klepnutí na zastávku na mapě (plánovač) pak vyplní „Kam“ (původní logika `pickStop`, „Moje poloha“ zůstává). Klepnutí na jiné místo v offline vektorové mapě (APK, `OFFLINE_MAP`) vyplní „Kam“ názvem převzatým z mapy (ulice, instituce, objekt; `nameAt()` přes `queryRenderedFeatures`, název `name:latin`/`name`) jako bod na mapě; bez názvu pod prstem se nic neděje. Ručně zadané či zvolené „Odkud“ se nikdy nepřepíše; mimo Tiranu, při odmítnutém oprávnění a při nepřesné poloze se nic nevyplní. Po načtení jiného zdroje dat a po načtení pěší sítě se bod „Moje poloha“ znovu napočítá (pokud ještě nebylo hledáno).
 - Kritéria:
-  - [x] prohlížeč s mockem polohy (APP_VERSION): Tirana → „Moje poloha“; hledání Moje poloha → Yzberisht najde 4 spojení; klik 1 nahradí Odkud, klik 2 nastaví Kam; Praha a odmítnutí → pole prázdné; `node --test` 52/52
+  - [x] prohlížeč s mockem polohy (APP_VERSION): Tirana → „Moje poloha“; hledání Moje poloha → Yzberisht najde 4 spojení; klik na zastávku vyplní Kam a Moje poloha zůstane; Praha a odmítnutí → pole prázdné; `node --test` 52/52
   - [ ] APK v emulátoru (poloha v Tiraně) · [ ] telefon (uživatel) · [ ] tmavý režim
 
 ## Známé chyby a omezení
