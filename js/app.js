@@ -416,6 +416,7 @@
     if (!feed || !wnet || feed.walkFn) return;
     feed.walkFn = (st, lim) => Places.stopWalks(wnet, st, lim);
     feed.walk = null;
+    if (plan.auto && !plan.res) autoFrom(true);
     if (plan.res && plan.from && plan.to) runPlan();
   }
 
@@ -477,8 +478,8 @@
 
   function autoFrom(show) {
     if (!geoStart || !feed || (plan.from ? !plan.auto : $('#from').value)) return;
-    const n = Places.nearest(allStops(), geoStart, 1, s => stopGroup.get(s.id) || s.id)[0], g = n && stopGroup.get(n.s.id);
-    if (!g || g === plan.from) return;
+    const g = ptEnd('@gps', t('geoBtn'), geoStart, 'from');
+    if (!g.stops.length) return;
     setEnd('from', g);
     plan.auto = true;
     if (show && mode === 'plan') { showPlan(); restyle(); }
