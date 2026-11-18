@@ -99,7 +99,8 @@
   let feed = null, lines = [], markers = new Map(), sel = { route: null, stop: null }, timer = null, source = null;
   let view = { kind: 'list' }, prevView = null;
   let baseTables = null, builtLang = null, mode = 'plan', demoMode = true, groups = new Map(), stopGroup = new Map(), names = [];
-  let plan = { from: null, to: null, res: null, open: 0, timeTouched: false };
+  let plan = { from: null, to: null, res: null, open: 0, timeTouched: false, auto: false };
+  let geoStart = null;
   let ext = false, pidx = null, pload = null;
   const PRO_APP = !!window.APP_VERSION;
   let proSt = Pro.state(null, Date.now()), proMsg = null;
@@ -433,10 +434,11 @@
       for (const s of g.stops) { stopGroup.set(s.id, g); for (const r of s.routes) g.routes.add(r); }
     });
     names.sort((a, b) => a.label.localeCompare(b.label, 'cs', { numeric: true }));
-    plan = { from: null, to: null, res: null, open: 0, timeTouched: false };
+    plan = { from: null, to: null, res: null, open: 0, timeTouched: false, auto: false };
     $('#from').value = ''; $('#to').value = '';
     planLayer.clearLayers();
     renderMeta(); renderExpiry(); draw();
+    autoFrom();
     if (mode === 'plan') { setNow(); showPlan(); restyle(); } else openList();
   }
 
@@ -466,16 +468,26 @@
 
   function setEnd(which, g) {
     plan[which] = g;
+    if (which === 'from') plan.auto = false;
     $('#' + which).value = g ? g.label : '';
     plan.res = null;
     planLayer.clearLayers();
     preMarkers();
   }
 
+  function autoFrom(show) {
+    if (!geoStart || !feed || (plan.from ? !plan.auto : $('#from').value)) return;
+    const n = Places.nearest(allStops(), geoStart, 1, s => stopGroup.get(s.id) || s.id)[0], g = n && stopGroup.get(n.s.id);
+    if (!g || g === plan.from) return;
+    setEnd('from', g);
+    plan.auto = true;
+    if (show && mode === 'plan') { showPlan(); restyle(); }
+  }
+
   function pickStop(s) {
     if (!prePick && !poiPick) plCloseAll();
     const g = stopGroup.get(s.id);
-    if (!plan.from || (plan.from && plan.to && plan.from === g)) setEnd('from', g);
+    if (plan.auto || !plan.from || (plan.from && plan.to && plan.from === g)) setEnd('from', g);
     else setEnd('to', g);
     showPlan(); restyle();
     maybeRun();
@@ -681,6 +693,7 @@
       try { localStorage.removeItem('tirana-geo-no'); } catch (e) {}
       done('ok', '', null, { p, acc, list });
       geoDraw();
+      geoStart = p; autoFrom(true);
     }, done);
   }
   $('#geo').addEventListener('click', e => {
@@ -862,7 +875,7 @@
   document.addEventListener('tb-routes', () => plShow('rt'));
   document.addEventListener('tb-pro', () => plShow('pro'));
   adsSync(true);
-  document.addEventListener('click', e => { if (e.target.closest('[data-pro="open"]')) plShow('pro'); });
+  document.addEventListener('click', e => { if (e.target.closest('button[data-pro="open"]')) plShow('pro'); });
   function proShow() {
     const box = $('#pro');
     plHead('pro');
@@ -1350,6 +1363,7 @@
       const blue = '#1A73E8';
       L.circle(p, { radius: acc, color: blue, weight: 1, opacity: .5, fillColor: blue, fillOpacity: .12, interactive: false }).addTo(geoLayer);
       L.marker(p, { icon: L.divIcon({ className: 'gme', html: icSvg('smile'), iconSize: [22, 22] }), interactive: false, keyboard: false, zIndexOffset: 1000 }).addTo(geoLayer);
+      geoStart = p; autoFrom(true);
     }, (st, k) => { if (st === 'blocked' || k === 'geoDenied') try { localStorage.setItem(GNO, '1'); } catch (e) {} });
   }
 
@@ -1413,7 +1427,7 @@
   }
   for (const which of ['from', 'to']) {
     const inp = $('#' + which), box = $('#' + which + '-sugg');
-    inp.addEventListener('input', () => { plan[which] = null; plan.res = null; planLayer.clearLayers(); preMarkers(); suggest(which); restyle(); });
+    inp.addEventListener('input', () => { plan[which] = null; if (which === 'from') plan.auto = false; plan.res = null; planLayer.clearLayers(); preMarkers(); suggest(which); restyle(); });
     inp.addEventListener('focus', () => { if (ext) { loadPlaces(); loadNet(); } if (!plan[which] && inp.value) suggest(which); });
     inp.addEventListener('blur', () => setTimeout(() => { box.hidden = true; inp.scrollLeft = 0; if (!/^(from|to)$/.test((document.activeElement || {}).id)) document.body.classList.remove('sgpad'); }, 150));
     inp.addEventListener('keydown', e => {
@@ -1473,7 +1487,7 @@
   }
   $('#swap').addEventListener('click', () => {
     const a = plan.from, b = plan.to, va = $('#from').value, vb = $('#to').value;
-    plan.from = b; plan.to = a; $('#from').value = vb; $('#to').value = va;
+    plan.from = b; plan.to = a; plan.auto = false; $('#from').value = vb; $('#to').value = va;
     plan.res = null; planLayer.clearLayers();
     preMarkers();
     restyle();
