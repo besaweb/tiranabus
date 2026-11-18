@@ -1,17 +1,17 @@
 (function () {
   const T = {
-    cs: { menu: 'Menu', lang: 'Jazyk', about: 'O aplikaci', ver: 'Verze', tickets: 'Jízdné', data: 'Platnost dat' },
-    en: { menu: 'Menu', lang: 'Language', about: 'About the app', ver: 'Version', tickets: 'Fares', data: 'Data validity' },
-    sq: { menu: 'Menyja', lang: 'Gjuha', about: 'Rreth aplikacionit', ver: 'Versioni', tickets: 'Tarifa', data: 'Vlefshmëria e të dhënave' },
-    it: { menu: 'Menu', lang: 'Lingua', about: 'Info sull’app', ver: 'Versione', tickets: 'Tariffe', data: 'Validità dei dati' },
-    de: { menu: 'Menü', lang: 'Sprache', about: 'Über die App', ver: 'Version', tickets: 'Fahrpreise', data: 'Datengültigkeit' },
-    pl: { menu: 'Menu', lang: 'Język', about: 'O aplikacji', ver: 'Wersja', tickets: 'Taryfy', data: 'Ważność danych' },
-    fr: { menu: 'Menu', lang: 'Langue', about: 'À propos de l’appli', ver: 'Version', tickets: 'Tarifs', data: 'Validité des données' },
-    es: { menu: 'Menú', lang: 'Idioma', about: 'Acerca de la app', ver: 'Versión', tickets: 'Tarifas', data: 'Validez de los datos' },
-    mk: { menu: 'Мени', lang: 'Јазик', about: 'За апликацијата', ver: 'Верзија', tickets: 'Тарифи', data: 'Важност на податоците' },
-    el: { menu: 'Μενού', lang: 'Γλώσσα', about: 'Σχετικά με την εφαρμογή', ver: 'Έκδοση', tickets: 'Ναύλα', data: 'Εγκυρότητα δεδομένων' },
-    ru: { menu: 'Меню', lang: 'Язык', about: 'О приложении', ver: 'Версия', tickets: 'Тарифы', data: 'Актуальность данных' },
-    tr: { menu: 'Menü', lang: 'Dil', about: 'Uygulama hakkında', ver: 'Sürüm', tickets: 'Ücretler', data: 'Veri geçerliliği' }
+    cs: { menu: 'Menu', lang: 'Jazyk', about: 'O aplikaci', ver: 'Verze', tickets: 'Jízdné', data: 'Platnost dat', adp: 'Soukromí reklam' },
+    en: { menu: 'Menu', lang: 'Language', about: 'About the app', ver: 'Version', tickets: 'Fares', data: 'Data validity', adp: 'Ad privacy' },
+    sq: { menu: 'Menyja', lang: 'Gjuha', about: 'Rreth aplikacionit', ver: 'Versioni', tickets: 'Tarifa', data: 'Vlefshmëria e të dhënave', adp: 'Privatësia e reklamave' },
+    it: { menu: 'Menu', lang: 'Lingua', about: 'Info sull’app', ver: 'Versione', tickets: 'Tariffe', data: 'Validità dei dati', adp: 'Privacy degli annunci' },
+    de: { menu: 'Menü', lang: 'Sprache', about: 'Über die App', ver: 'Version', tickets: 'Fahrpreise', data: 'Datengültigkeit', adp: 'Datenschutz bei Werbung' },
+    pl: { menu: 'Menu', lang: 'Język', about: 'O aplikacji', ver: 'Wersja', tickets: 'Taryfy', data: 'Ważność danych', adp: 'Prywatność reklam' },
+    fr: { menu: 'Menu', lang: 'Langue', about: 'À propos de l’appli', ver: 'Version', tickets: 'Tarifs', data: 'Validité des données', adp: 'Confidentialité des annonces' },
+    es: { menu: 'Menú', lang: 'Idioma', about: 'Acerca de la app', ver: 'Versión', tickets: 'Tarifas', data: 'Validez de los datos', adp: 'Privacidad de los anuncios' },
+    mk: { menu: 'Мени', lang: 'Јазик', about: 'За апликацијата', ver: 'Верзија', tickets: 'Тарифи', data: 'Важност на податоците', adp: 'Приватност на реклами' },
+    el: { menu: 'Μενού', lang: 'Γλώσσα', about: 'Σχετικά με την εφαρμογή', ver: 'Έκδοση', tickets: 'Ναύλα', data: 'Εγκυρότητα δεδομένων', adp: 'Απόρρητο διαφημίσεων' },
+    ru: { menu: 'Меню', lang: 'Язык', about: 'О приложении', ver: 'Версия', tickets: 'Тарифы', data: 'Актуальность данных', adp: 'Конфиденциальность рекламы' },
+    tr: { menu: 'Menü', lang: 'Dil', about: 'Uygulama hakkında', ver: 'Sürüm', tickets: 'Ücretler', data: 'Veri geçerliliği', adp: 'Reklam gizliliği' }
   };
   const NAMES = { cs: 'Čeština', en: 'English', sq: 'Shqip', it: 'Italiano', de: 'Deutsch', pl: 'Polski', fr: 'Français', es: 'Español', mk: 'Македонски', el: 'Ελληνικά', ru: 'Русский', tr: 'Türkçe' };
   const KEY = 'tirana-data-info';
@@ -49,21 +49,26 @@
     sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>',
     help: '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',
     ext: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+    adp: '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>',
+    pro: '<path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/>',
     fb: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'
   };
   const ic = k => '<svg class="mico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + IC[k] + '</svg>';
   const wrap = document.createElement('div');
   wrap.className = 'amwrap';
   wrap.innerHTML = '<button type="button" class="ambtn" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>' +
-    '<div class="ammenu" hidden><button type="button" class="mi" id="mi-rt">' + ic('rt') + '<span class="rt"></span></button>' +
-    '<button type="button" class="mi" id="mi-pre">' + ic('pre') + '<span class="pre"></span></button>' +
-    '<button type="button" class="mi" id="mi-poi">' + ic('poi') + '<span class="poi"></span></button>' +
-    '<div class="miwrap"><button type="button" class="mi" id="mi-ext" role="switch" aria-checked="false">' + ic('ext') + '<span class="ext"></span><span class="sw" aria-hidden="true"></span></button><button type="button" class="mihelp" id="mi-exthelp" aria-expanded="false" aria-controls="mi-exthelptx">' + ic('help') + '</button></div><p class="mihelptx" id="mi-exthelptx" hidden></p>' +
+    '<div class="ammenu" hidden>' + (window.PRO_TEST ? '' : '<button type="button" class="mi mipro" id="mi-pro">' + ic('pro') + '<span>Tirana BUS PRO</span></button>') +
+    (window.PRO_TEST ? '<button type="button" class="mi" id="mi-protest" role="switch" aria-checked="false">' + ic('pro') + '<span>PRO test</span><span class="sw" aria-hidden="true"></span></button>' : '') +
+    '<button type="button" class="mi" id="mi-rt">' + ic('rt') + '<span class="rt"></span><span class="probadge">PRO</span></button>' +
+    '<button type="button" class="mi" id="mi-pre">' + ic('pre') + '<span class="pre"></span><span class="probadge">PRO</span></button>' +
+    '<button type="button" class="mi" id="mi-poi">' + ic('poi') + '<span class="poi"></span><span class="probadge">PRO</span></button>' +
+    '<div class="miwrap"><button type="button" class="mi" id="mi-ext" role="switch" aria-checked="false">' + ic('ext') + '<span class="ext"></span><span class="probadge">PRO</span><span class="sw" aria-hidden="true"></span></button><button type="button" class="mihelp" id="mi-exthelp" aria-expanded="false" aria-controls="mi-exthelptx">' + ic('help') + '</button></div><p class="mihelptx" id="mi-exthelptx" hidden></p>' +
     '<button type="button" class="mi" id="mi-lang" aria-expanded="false">' + ic('lang') + '<span data-k="lang"></span><span class="cur"></span></button>' +
     '<div class="langslot" hidden></div>' +
     '<button type="button" class="mi" id="mi-theme">' + ic('moon') + '<span class="thm"></span></button>' +
     '<a class="mi" id="mi-tickets" href="tickets.html">' + ic('tickets') + '<span data-k="tickets"></span></a>' +
     '<a class="mi" id="mi-data" href="validity.html">' + ic('data') + '<span data-k="data"></span></a>' +
+    '<button type="button" class="mi" id="mi-adp" hidden>' + ic('adp') + '<span data-k="adp"></span></button>' +
     '<button type="button" class="mi" id="mi-fb">' + ic('fb') + '<span class="fb"></span></button>' +
     '<button type="button" class="mi" id="mi-about" aria-expanded="false">' + ic('about') + '<span data-k="about"></span></button><div class="about" hidden></div></div>';
   langBox.parentNode.insertBefore(wrap, langBox);
@@ -74,8 +79,10 @@
   langBox.addEventListener('click', () => langBox.classList.add('open'), true);
 
   const miExt = q('#mi-ext');
-  try { miExt.setAttribute('aria-checked', String(localStorage.getItem('tirana-mhd-ext') === '1')); } catch (e) {}
+  const locked = () => document.documentElement.dataset.pro === 'free';
+  try { miExt.setAttribute('aria-checked', String(!locked() && localStorage.getItem('tirana-mhd-ext') === '1')); } catch (e) {}
   miExt.addEventListener('click', () => {
+    if (locked()) { closeMenu(); document.dispatchEvent(new CustomEvent('tb-pro')); return; }
     const v = miExt.getAttribute('aria-checked') !== 'true';
     miExt.setAttribute('aria-checked', String(v));
     document.dispatchEvent(new CustomEvent('tb-ext', { detail: v }));
@@ -86,6 +93,22 @@
     closeSubs();
     p.hidden = !open; q('#mi-exthelp').setAttribute('aria-expanded', String(open));
   });
+  window.tbAdsPrivacy = () => { let v = false; try { v = !!(window.TBAds && window.TBAds.privacy()); } catch (e) {} q('#mi-adp').hidden = !v; };
+  window.tbAdsPrivacy();
+  q('#mi-adp').addEventListener('click', () => { closeMenu(); try { window.TBAds.options(); } catch (e) {} });
+  const miTest = q('#mi-protest');
+  if (miTest) {
+    try { miTest.setAttribute('aria-checked', String(localStorage.getItem('tirana-pro-test') === '1')); } catch (e) {}
+    miTest.addEventListener('click', () => {
+      const v = miTest.getAttribute('aria-checked') !== 'true';
+      miTest.setAttribute('aria-checked', String(v));
+      try { localStorage.setItem('tirana-pro-test', v ? '1' : '0'); } catch (e) {}
+      if (window.tbProUpdate) window.tbProUpdate();
+      miExt.setAttribute('aria-checked', String(!locked() && localStorage.getItem('tirana-mhd-ext') === '1'));
+    });
+  }
+  const miPro = q('#mi-pro');
+  if (miPro) miPro.addEventListener('click', () => { closeMenu(); document.dispatchEvent(new CustomEvent('tb-pro')); });
   q('#mi-pre').addEventListener('click', () => { closeMenu(); document.dispatchEvent(new CustomEvent('tb-presets')); });
   q('#mi-rt').addEventListener('click', () => { closeMenu(); document.dispatchEvent(new CustomEvent('tb-routes')); });
   q('#mi-poi').addEventListener('click', () => { closeMenu(); document.dispatchEvent(new CustomEvent('tb-pois')); });

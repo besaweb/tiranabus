@@ -101,7 +101,17 @@
   let baseTables = null, builtLang = null, mode = 'plan', demoMode = true, groups = new Map(), stopGroup = new Map(), names = [];
   let plan = { from: null, to: null, res: null, open: 0, timeTouched: false };
   let ext = false, pidx = null, pload = null;
-  try { ext = localStorage.getItem('tirana-mhd-ext') === '1'; } catch (e) {}
+  const PRO_APP = !!window.APP_VERSION;
+  let proSt = Pro.state(null, Date.now()), proMsg = null;
+  const proRead = () => { let raw = null; try { raw = window.PRO_TEST && localStorage.getItem('tirana-pro-test') === '1' ? { purchases: [{ sku: 'pro_lifetime', state: 'purchased', time: Date.now() - 1000 }] } : window.TBPro ? window.TBPro.state() : null; } catch (e) {} proSt = Pro.state(raw, Date.now()); };
+  const proOk = () => !PRO_APP || Pro.can(proSt, !!window.PRO_ENFORCE);
+  const proMark = () => { if (PRO_APP) document.documentElement.dataset.pro = !proOk() ? 'free' : proSt.active ? 'pro' : 'open'; };
+  const extPref = () => { try { return localStorage.getItem('tirana-mhd-ext') === '1'; } catch (e) { return false; } };
+  let adsOn = null;
+  const adsSync = force => { try { if (!window.TBAds) return; const v = PRO_APP && Pro.ads(proSt) && !SEC.pro.open && !plan.res; if (force || v !== adsOn) window.TBAds.set(adsOn = v); } catch (e) {} };
+  proRead();
+  proMark();
+  ext = extPref() && proOk();
   let wnet = null, wload = null;
   const loadNet = () => {
     if (!wload) wload = fetch('data/walk.json').then(r => r.ok ? r.json() : Promise.reject()).then(d => { wnet = Places.net(d); useNet(); }).catch(() => { wload = null; });
@@ -116,6 +126,48 @@
   const scr = () => getComputedStyle($('#panel')).overflowY === 'visible' ? $('.side') : $('#panel');
   const fit = (b, p, maxZoom) => { if (b.isValid()) map.fitBounds(b, { padding: [p, p], maxZoom }); };
   if (window.ResizeObserver) new ResizeObserver(() => map.invalidateSize({ pan: false })).observe($('#map'));
+  if (window.APP_VERSION) {
+    const app = $('#app'), grab = $('#grab'), wrap = $('.mapwrap'), mq = matchMedia('(max-width: 760px)');
+    let st = 1, drag = null;
+    document.body.classList.add('sheetdrag');
+    grab.hidden = false;
+    const snaps = () => { const a = app.clientHeight, v = a - $('header').offsetHeight; return [Math.round(v * .7), Math.round(a * .44), Math.round(v * .22)]; };
+    const setH = (h, anim) => { app.classList.toggle('snap', !!anim); app.style.setProperty('--maph', h + 'px'); };
+    const goto = (i, anim) => { st = i; if (i === 1) { app.style.removeProperty('--maph'); app.classList.toggle('snap', !!anim); } else setH(snaps()[i], anim); };
+    grab.addEventListener('pointerdown', e => {
+      if (!mq.matches) return;
+      grab.setPointerCapture(e.pointerId);
+      drag = { y: e.clientY, h: wrap.offsetHeight, py: e.clientY, pt: e.timeStamp, v: 0 };
+      grab.classList.add('on');
+      app.classList.remove('snap');
+    });
+    grab.addEventListener('pointermove', e => {
+      if (!drag) return;
+      const s = snaps(), h = Math.min(s[0], Math.max(s[2], drag.h + e.clientY - drag.y));
+      drag.v = (e.clientY - drag.py) / Math.max(1, e.timeStamp - drag.pt) || 0;
+      drag.py = e.clientY; drag.pt = e.timeStamp; drag.cur = h;
+      setH(h);
+    });
+    const end = () => {
+      if (!drag) return;
+      const s = snaps(), p = (drag.cur || drag.h) + (drag.v || 0) * 120;
+      let b = 0;
+      s.forEach((x, i) => { if (Math.abs(x - p) < Math.abs(s[b] - p)) b = i; });
+      drag = null;
+      grab.classList.remove('on');
+      goto(b, true);
+    };
+    grab.addEventListener('pointerup', end);
+    grab.addEventListener('pointercancel', end);
+    grab.addEventListener('keydown', e => {
+      const d = e.key === 'ArrowUp' ? 1 : e.key === 'ArrowDown' ? -1 : 0;
+      if (!d) return;
+      e.preventDefault();
+      goto(Math.min(2, Math.max(0, st + d)), true);
+    });
+    addEventListener('resize', () => { if (st !== 1 && mq.matches) goto(st); });
+    mq.addEventListener('change', () => { if (!mq.matches) app.style.removeProperty('--maph'); else if (st !== 1) goto(st); });
+  }
 
   function draw() {
     lineLayer.clearLayers(); stopLayer.clearLayers(); lines = []; markers.clear();
@@ -143,6 +195,7 @@
   map.on('zoomend', () => restyle());
 
   function restyle() {
+    adsSync();
     if (!feed) return;
     poiStyle();
     const sf = tok('--stop-fill'), ss = tok('--stop-stroke'), ac = tok('--accent');
@@ -209,6 +262,7 @@
     dark: '<path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/>',
     light: '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/>',
     data: '<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4M9 15l2 2 4-4"/>',
+    mail: '<rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="m4 7.5 8 6 8-6"/>',
     about: '<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5M12 8h.01"/>',
     ext: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5M10.5 7.5v6M7.5 10.5h6"/>',
     bus: '<circle cx="6" cy="18" r="2.3"/><circle cx="18" cy="6" r="2.3"/><path d="M8.3 18H14a3.5 3.5 0 0 0 0-7h-4a3.5 3.5 0 0 1 0-7h5.7"/>',
@@ -219,12 +273,14 @@
 
   let extHelpOpen = false;
   const VERSION = '1.04';
+  if (window.APP_VERSION) $('#contactbtn').remove();
   function renderMeta() {
     const aboutBody = `<p><b>${esc(t('title'))}</b><br>${esc(t('aboutDesc'))}</p><p>${esc(t('aboutCredits'))}</p><p><b>${esc(t('aboutAuthor'))}:</b> <a href="https://besaweb.al" target="_blank" rel="noopener">besaweb.al</a><br><b>${esc(t('aboutContact'))}:</b> <a href="mailto:info@besaweb.al">info@besaweb.al</a><br><b>${esc(t('aboutVer'))}:</b> ${esc(window.APP_VERSION || VERSION)}</p><p><a href="privacy.html">${esc(t('privacy'))}</a>${typeof Consent !== 'undefined' && Consent.enabled ? ` · <a href="#" class="adprefs">${esc(t('adPrefs'))}</a>` : ''}</p>`;
     const seo = window.APP_VERSION ? '' : `<a class="mi mlink" href="${I18N.lang}/lines/">${mil('bus', t('lines'))}</a><a class="mi mlink" href="${I18N.lang}/airport/">${mil('air', t('seoAirNav'))}</a>`;
     $('#meta').innerHTML = `<a class="mi mlink" href="tickets.html">${mil('tk', t('tickets'))}</a>${seo}
       <button type="button" class="mi mtheme" id="themeitem">${themeItem()}</button>
       <button type="button" class="mi mtoggle" aria-expanded="false">${mil('data', t('dataTitle'))}</button><div class="mpane data">${metaData()}</div>
+      ${window.APP_VERSION ? '' : `<a class="mi mlink" href="https://tiranabus.al/contact.html">${mil('mail', t('ctTitle'))}</a>`}
       <button type="button" class="mi mtoggle" aria-expanded="false">${mil('about', t('aboutTitle'))}</button><div class="mpane about">${aboutBody}</div>
       <div class="mextwrap"><button type="button" class="mi mext" role="switch" aria-checked="${ext}">${mil('ext', t('extSearch'))}<span class="sw" aria-hidden="true"></span></button><button type="button" class="mhelp" aria-expanded="${extHelpOpen}" aria-controls="exthelp" aria-label="${esc(t('extHelpLbl'))}" title="${esc(t('extHelpLbl'))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></button></div><p class="mexthelp" id="exthelp" ${extHelpOpen ? '' : 'hidden'}>${esc(t(window.APP_VERSION ? 'extHelp' : 'extHelpW'))}</p>`;
     $('#aboutbox').innerHTML = `<h2>${t('aboutTitle')}</h2><div class="aboutbody">${aboutBody}</div>`;
@@ -444,12 +500,13 @@
     : chip(l.route);
 
   function showPlan(msg) {
+    adsSync();
     const r = plan.res;
     let html = '';
     if (msg) html += `<div class="empty">${esc(msg)}</div>`;
     if (!r) {
       html += `<p class="hint lg">${t('hintPlan')}</p>`;
-      html += `<div class="gplay"><p class="hint lg">${t('gplaySoon')}</p><div class="gprow"><a class="gpbtn" href="https://ko-fi.com/tiranabus" target="_blank" rel="noopener"><svg viewBox="0 0 24 26" aria-hidden="true"><path fill="#00D7FE" d="M1.5 1.2 13 13 1.5 24.8c-.3-.3-.5-.7-.5-1.2V2.4c0-.5.2-.9.5-1.2z"/><path fill="#00F076" d="M16.8 9.2 13 13 1.5 1.2c.5-.3 1.1-.3 1.7 0z"/><path fill="#FF3A44" d="M16.8 16.8 3.2 24.8c-.6.3-1.2.3-1.7 0L13 13z"/><path fill="#FFD500" d="M22 11.9c.9.5.9 1.7 0 2.2l-5.2 2.7L13 13l3.8-3.8z"/></svg><span><small>DONATION FOR</small><b>Google Play</b></span></a><a class="gpbtn" href="https://ko-fi.com/tiranabus" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg><span><small>DONATION FOR</small><b>App Store</b></span></a></div><a href="https://ko-fi.com/tiranabus" target="_blank" rel="noopener"><img class="promo" src="img/promo.webp" alt="${esc(t('promoAlt'))}" width="640" height="640" loading="lazy"></a><a class="kofi" href="https://ko-fi.com/tiranabus" target="_blank" rel="noopener"><img src="img/kofi.webp" alt="${esc(t('kofiAlt'))}" width="400" height="212" loading="lazy"></a></div>`;
+      html += `<div class="gplay"><p class="hint lg">${t('gplaySoon')}</p><div class="gprow"><a class="gpbtn" href="https://ko-fi.com/tiranabus" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg><span><small>DONATION FOR</small><b>App Store</b></span></a></div><a href="https://ko-fi.com/tiranabus" target="_blank" rel="noopener"><img class="promo" src="img/promo.webp" alt="${esc(t('promoAlt'))}" width="640" height="640" loading="lazy"></a><a class="kofi" href="https://ko-fi.com/tiranabus" target="_blank" rel="noopener"><img src="img/kofi.webp" alt="${esc(t('kofiAlt'))}" width="400" height="212" loading="lazy"></a></div>`;
     } else if (r.same) {
       html += `<div class="empty">${t('same')}</div>`;
     } else if (!r.list.length) {
@@ -621,6 +678,7 @@
     geoOnce((p, acc) => {
       const list = Places.nearest(allStops(), p, 5, s => stopGroup.get(s.id) || s.id);
       if (!list.length) return done('err', 'geoNone');
+      try { localStorage.removeItem('tirana-geo-no'); } catch (e) {}
       done('ok', '', null, { p, acc, list });
       geoDraw();
     }, done);
@@ -669,7 +727,7 @@
   const preIc = k => Places.presetIcon(pre[k], k);
   const preIcon = k => `<i class="si">${icSvg(preIc(k))}</i>`;
   const preName = k => (pre[k] && pre[k].n) || t('pre_' + k);
-  const preList = q => GEO ? Places.SLOTS.filter(k => pre[k] && pre[k].k && (!q || Places.presetHit(preName(k), q))) : [];
+  const preList = q => GEO && proOk() ? Places.SLOTS.filter(k => pre[k] && pre[k].k && (!q || Places.presetHit(preName(k), q))) : [];
   const ptEnd = (id, n, p, which) => placeEnd({ id, n, c: 'pin', pts: [p], t: {} }, which);
   function preGroup(p) {
     if (p.k !== 'stop') return null;
@@ -706,14 +764,22 @@
     locate: '<line x1="2" x2="5" y1="12" y2="12"/><line x1="19" x2="22" y1="12" y2="12"/><line x1="12" x2="12" y1="2" y2="5"/><line x1="12" x2="12" y1="19" y2="22"/><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3"/>',
     map: '<path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/>',
     back: '<path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>',
+    lock: '<rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+    check: '<path d="M20 6 9 17l-5-5"/>',
     route: '<circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/>'
   };
   const uiSvg = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${UI_IC[k]}</svg>`;
   const plBtns = (sc, id, del) => `<button type="button" class="plb" data-pa="edit" ${sc}="${id}" aria-label="${esc(t('preChange'))}" title="${esc(t('preChange'))}">${uiSvg('edit')}</button>` +
     (del ? `<button type="button" class="plb del" data-pa="del" ${sc}="${id}" aria-label="${esc(t('preDel'))}" title="${esc(t('preDel'))}">${uiSvg('del')}</button>` : '<span class="plb ghost"></span>');
   const plConf = (sc, id) => `<div class="plconf" role="alert"><span>${esc(t('poiDelSure'))}</span><button type="button" class="btn sm danger" data-pa="del2" ${sc}="${id}">${esc(t('preDel'))}</button><button type="button" class="btn sm" data-pa="nodel">${esc(t('preCancel'))}</button></div>`;
-  const SEC = { pre: { card: '#precard', open: false, col: false, key: 'tirana-pre-col', title: 'preTitle' }, poi: { card: '#places', open: false, col: false, key: 'tirana-pl-col', title: 'poiTitle', sub: 'plSub' }, rt: { card: '#rtcard', open: false, col: false, key: 'tirana-rt-col', title: 'rtTitle' }, fb: { card: '#fbcard', open: false, col: false, key: 'tirana-fb-col', title: 'fbTitle', sub: 'fbSub' } };
+  const SEC = { pre: { card: '#precard', open: false, col: false, key: 'tirana-pre-col', title: 'preTitle' }, poi: { card: '#places', open: false, col: false, key: 'tirana-pl-col', title: 'poiTitle', sub: 'plSub' }, rt: { card: '#rtcard', open: false, col: false, key: 'tirana-rt-col', title: 'rtTitle' }, pro: { card: '#procard', open: false, col: false, key: 'tirana-pro-col', title: 'proTitle' }, fb: { card: '#fbcard', open: false, col: false, key: 'tirana-fb-col', title: 'fbTitle', sub: 'fbSub' } };
   let preDel = null;
+  const proLockUi = box => {
+    if (proOk()) return;
+    for (const el of box.querySelectorAll('button:not([data-pl-back]), input')) el.disabled = true;
+    box.insertAdjacentHTML('afterbegin', `<div class="prolock" role="note"><i>${uiSvg('lock')}</i><span>${esc(t('proLock'))}</span><button type="button" class="btn sm primary" data-pro="open">${esc(t('proUnlock'))}</button></div>`);
+    box.classList.add('locked');
+  };
   for (const x of Object.values(SEC)) try { x.col = localStorage.getItem(x.key) === '1'; } catch (e) {}
   const plBack = sec => `<button type="button" class="btn sm plback" data-pl-back="${sec}">${uiSvg('back')}${esc(t('back'))}</button>`;
   function plHead(sec) {
@@ -721,7 +787,7 @@
     box.hidden = !x.open;
     document.body.classList.toggle('seclist', Object.values(SEC).some(s => s.open && !s.col));
     box.classList.toggle('col', x.col);
-    const n = sec === 'pre' ? Places.SLOTS.filter(k => pre[k] && pre[k].k).length : sec === 'rt' ? rts.length : sec === 'fb' ? 0 : pois.length;
+    const n = sec === 'pre' ? Places.SLOTS.filter(k => pre[k] && pre[k].k).length : sec === 'rt' ? rts.length : sec === 'pro' || sec === 'fb' ? 0 : pois.length;
     box.querySelector('.plhead').innerHTML = `<div class="pltop"><h2 class="ghead">${esc(t(x.title))}</h2>${n ? `<span class="plnum" title="${esc(t('plSaved', { n }))}" aria-label="${esc(t('plSaved', { n }))}">${n}</span>` : ''}<button type="button" class="plb sm" data-pl="col" aria-expanded="${!x.col}" aria-controls="${sec}body" aria-label="${esc(t(x.col ? 'plOpen' : 'plClose'))}" title="${esc(t(x.col ? 'plOpen' : 'plClose'))}">${uiSvg('down')}</button><button type="button" class="plb sm" data-pl="x" aria-label="${esc(t('close'))}" title="${esc(t('close'))}">×</button></div>${x.sub ? `<p class="plsub">${esc(t(x.sub))}</p>` : ''}`;
   }
   function preShow() {
@@ -746,6 +812,7 @@
     }
     h += plBack('pre');
     box.innerHTML = h;
+    proLockUi(box);
   }
   function preFind(v) {
     const q = norm(v.trim()), box = $('#pre .plist');
@@ -761,6 +828,7 @@
     const b = e.target.closest('[data-pa]');
     if (!b) return;
     const a = b.dataset.pa, k = b.dataset.slot || preEdit;
+    if (!proOk()) return;
     if (a !== 'del') preDel = null;
     if (a === 'go') { if (!pre[k] || !pre[k].k) { a2edit(k); return; } map.setView([pre[k].lat, pre[k].lon], Math.max(map.getZoom(), 15)); prePop(k); if (innerWidth <= 760) $('#map').scrollIntoView({ block: 'nearest' }); preShow(); }
     else if (a === 'seticon') { pre[k] = Object.assign(pre[k] || { n: '' }, { i: b.dataset.ic }); preSave(); preShow(); const f = $(`#pre .picgrid [data-ic="${b.dataset.ic}"]`); if (f) f.focus(); }
@@ -788,10 +856,58 @@
     if (r) { r.querySelector('b').textContent = preName(k); r.querySelector('.plic').innerHTML = icSvg(preIc(k)); }
     for (const x of document.querySelectorAll(`#pre .picgrid [data-slot="${k}"]`)) { const on = x.dataset.ic === preIc(k); x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); }
   });
-  const secShow = sec => sec === 'pre' ? preShow() : sec === 'rt' ? rtShow() : sec === 'fb' ? fbShow() : poiShow();
-  function plShow(sec) { for (const o of Object.keys(SEC)) if (o !== sec && SEC[o].open) plClose(o); Object.assign(SEC[sec], { open: true, col: false }); secShow(sec); $(SEC[sec].card).scrollIntoView({ block: 'nearest' }); }
+  const secShow = sec => sec === 'pre' ? preShow() : sec === 'rt' ? rtShow() : sec === 'pro' ? proShow() : sec === 'fb' ? fbShow() : poiShow();
+  function plShow(sec) { for (const o of Object.keys(SEC)) if (o !== sec && SEC[o].open) plClose(o); Object.assign(SEC[sec], { open: true, col: false }); adsSync(); secShow(sec); $(SEC[sec].card).scrollIntoView({ block: 'nearest' }); }
   document.addEventListener('tb-presets', () => plShow('pre'));
   document.addEventListener('tb-routes', () => plShow('rt'));
+  document.addEventListener('tb-pro', () => plShow('pro'));
+  adsSync(true);
+  document.addEventListener('click', e => { if (e.target.closest('[data-pro="open"]')) plShow('pro'); });
+  function proShow() {
+    const box = $('#pro');
+    plHead('pro');
+    if (!SEC.pro.open) { box.innerHTML = ''; return; }
+    const cur = Pro.PLANS.find(p => p.id === proSt.plan);
+    const when = proSt.until ? new Date(proSt.until).toLocaleString(I18N.loc(), { dateStyle: 'medium', timeStyle: 'short' }) : '';
+    const det = !cur ? '' : !cur.days ? t('proStLife') : t(proSt.auto ? 'proStRenew' : 'proStUntil', { d: when });
+    const mk = on => on ? `<i class="pyes">${uiSvg('check')}</i>` : `<i class="pno">${uiSvg('lock')}</i>`;
+    const row = (k, free) => `<div class="pcrow" role="row"><span role="cell">${esc(t(k))}</span><span role="cell" aria-label="${free ? '✓' : '✕'}">${mk(free)}</span><span role="cell" aria-label="✓">${mk(true)}</span></div>`;
+    let h = `<div class="prohero"><span class="probadge">PRO</span><p>${esc(t('proSub'))}</p><b>${esc(t('proNoAds'))}</b></div>`;
+    h += `<div class="prost${cur ? ' on' : ''}" role="status"><span>${esc(t('proStatus'))}</span><b>${esc(cur ? cur.name : t('proStFree'))}</b>${det ? `<span>${esc(det)}</span>` : ''}${!cur && proOk() ? `<span>${esc(t('proEarly'))}</span>` : ''}</div>`;
+    h += `<div class="procmp" role="table"><div class="pcrow pchead" role="row"><span role="columnheader">${esc(t('proFeat'))}</span><span role="columnheader">FREE</span><span role="columnheader">PRO</span></div>${Pro.FREE.map(k => row(k, true)).join('')}${['rtTitle', 'preTitle', 'poiTitle', 'extSearch'].map(k => row(k, false)).join('')}<div class="pcrow pcads" role="row"><span role="cell">${esc(t('cmpAds'))}</span><span role="cell">${esc(t('cmpAdsFree'))}</span><span role="cell">${esc(t('cmpAdsPro'))}</span></div></div>`;
+    h += `<h3 class="proh">${esc(t('proPlans'))}</h3>`;
+    for (const p of Pro.PLANS) {
+      const act = p.id === proSt.plan;
+      h += `<div class="proplan${p.best ? ' best' : ''}${act ? ' act' : ''}">${p.best ? '<span class="probest">BEST VALUE</span>' : ''}<div class="pptop"><b>${p.name}</b><span class="ppprice">${p.price}</span></div><span class="ppdur">${esc(p.days ? t('proDays', { n: p.days }) : t('proForever'))} · ${esc(t(p.type === 'subs' ? 'proYearly' : 'proOnce'))}</span><p>${esc(t('proD_' + p.id))}</p><button type="button" class="btn sm${p.best ? ' primary' : ''}" data-pro="buy" data-plan="${p.id}" ${act ? 'disabled' : ''}>${esc(t(act ? 'proActive' : 'proChoose'))}</button>${proMsg === p.id ? `<p class="gmsg gwarn" role="status"><i>${icSvg('triangle-alert')}</i>${esc(t('proSoon'))}</p>` : ''}</div>`;
+    }
+    h += plBack('pro');
+    box.innerHTML = h;
+  }
+  $('#pro').addEventListener('click', e => {
+    const b = e.target.closest('[data-pro="buy"]'), p = b && Pro.PLANS.find(x => x.id === b.dataset.plan);
+    if (!p) return;
+    proMsg = null;
+    if (proSt.billing && window.TBPro && window.TBPro.buy) { try { window.TBPro.buy(p.sku); } catch (er) { proMsg = p.id; } }
+    else proMsg = p.id;
+    proShow();
+  });
+  function proApply() {
+    const was = proOk(), plan = proSt.plan;
+    proRead();
+    adsSync(true);
+    if (was === proOk() && plan === proSt.plan) return;
+    proMark();
+    if (!proOk()) { preEdit = prePick = preMsg = preDel = rtEdit = rtDel = poiEdit = poiPick = poiMsg = poiDel = null; map.closePopup(); }
+    if (extPref() && proOk() !== ext) setExt(!ext, true);
+    preDraw(); poiDraw(); pkSync();
+    for (const sec of Object.keys(SEC)) if (SEC[sec].open) secShow(sec);
+    if (mode === 'plan') showPlan();
+  }
+  window.tbProUpdate = proApply;
+  if (PRO_APP) {
+    setInterval(proApply, 30000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) proApply(); });
+  }
   const RTK = 'tirana-routes';
   let rts = [], rtEdit = null, rtDel = null, rtNote = null, rtToastT = 0;
   try { rts = Places.routes(localStorage.getItem(RTK)); } catch (e) {}
@@ -818,6 +934,7 @@
     }
     h += plBack('rt');
     box.innerHTML = h;
+    proLockUi(box);
   }
   function rtStop(p) {
     if (!names.length) return null;
@@ -844,6 +961,7 @@
     const b = e.target.closest('[data-pa]');
     if (!b) return;
     const a = b.dataset.pa, r = rts.find(x => x.id === b.dataset.rt);
+    if (!proOk()) return;
     if (a !== 'del') rtDel = null;
     if (a === 'go' && r) rtOpen(r);
     else if (a === 'edit' && r) { rtEdit = rtEdit === r.id ? null : r.id; rtNote = null; rtShow(); const i = $('#rt .pedit .pname'); if (i) i.focus({ preventScroll: true }); }
@@ -873,6 +991,7 @@
   function rtToggle() {
     const c = rtCur();
     if (!c) return;
+    if (!proOk()) return plShow('pro');
     const key = Places.routeKey(c), had = rts.some(r => Places.routeKey(r) === key);
     if (had) rts = rts.filter(r => Places.routeKey(r) !== key);
     else rts = [{ id: Math.random().toString(36).slice(2, 9), n: '', ...c }, ...rts].slice(0, Places.ROUTE_MAX);
@@ -882,7 +1001,7 @@
     rtToast(had ? 'rtRemoved' : 'rtAdded');
   }
   $('#panel').addEventListener('click', e => { if (e.target.closest('[data-rt="star"]')) rtToggle(); });
-  for (const sec of ['pre', 'poi', 'rt', 'fb']) $(SEC[sec].card + ' .plhead').addEventListener('click', e => {
+  for (const sec of Object.keys(SEC)) $(SEC[sec].card + ' .plhead').addEventListener('click', e => {
     const b = e.target.closest('[data-pl]'), x = SEC[sec];
     if (!b) return;
     if (b.dataset.pl === 'x') plClose(sec);
@@ -890,7 +1009,8 @@
   });
   function plClose(sec) {
     SEC[sec].open = false;
-    if (sec === 'pre') preEdit = prePick = preMsg = preDel = null; else if (sec === 'rt') rtEdit = rtDel = rtNote = null; else if (sec === 'fb') { fbDone = fbFail = false; fbErr = null; } else poiEdit = poiPick = poiMsg = poiDel = poiGeo = null;
+    adsSync();
+    if (sec === 'pre') preEdit = prePick = preMsg = preDel = null; else if (sec === 'rt') rtEdit = rtDel = rtNote = null; else if (sec === 'pro') proMsg = null; else if (sec === 'fb') { fbDone = fbFail = false; fbErr = null; } else poiEdit = poiPick = poiMsg = poiDel = poiGeo = null;
     map.closePopup();
     secShow(sec);
   }
@@ -928,7 +1048,7 @@
   }
   function preMarkers() {
     preLayer.clearLayers();
-    if (!GEO) return;
+    if (!GEO || !proOk()) return;
     for (const k of Places.SLOTS) {
       const p = pre[k];
       if (!p || !p.k || !preActive(k)) continue;
@@ -974,7 +1094,7 @@
       if (prePick) return prePickAt(e.latlng.lat, e.latlng.lng);
       if (poiPick) return poiForm(e.latlng.lat, e.latlng.lng, poiPick);
       let best = null, bd = 24;
-      for (const p of pois) { const d = map.latLngToContainerPoint([p.lat, p.lon]).distanceTo(e.containerPoint); if (d <= bd) { best = p; bd = d; } }
+      if (proOk()) for (const p of pois) { const d = map.latLngToContainerPoint([p.lat, p.lon]).distanceTo(e.containerPoint); if (d <= bd) { best = p; bd = d; } }
       if (best) poiPop(best);
     });
     map.on('contextmenu', e => {
@@ -989,7 +1109,7 @@
         const b = ev.target.closest('[data-w]');
         if (!b) return;
         map.closePopup(pop);
-        if (b.dataset.w === 'poi') return poiForm(e.latlng.lat, e.latlng.lng, { id: null });
+        if (b.dataset.w === 'poi') return !proOk() ? plShow('pro') : poiForm(e.latlng.lat, e.latlng.lng, { id: null });
         if (mode !== 'plan') setMode('plan', true);
         chooseEnd(b.dataset.w, ptEnd('@map-' + b.dataset.w, t('preMapPt'), [e.latlng.lat, e.latlng.lng], b.dataset.w));
       });
@@ -1000,7 +1120,7 @@
   try { pois = Places.pois(localStorage.getItem(POIK)); } catch (e) {}
   const poiId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
   const poiEnd = (p, which) => ptEnd('@poi-' + p.id, p.n, [p.lat, p.lon], which);
-  const poiList = v => GEO && v ? pois.filter(p => Places.poiHit(p, v)).slice(0, 5) : [];
+  const poiList = v => GEO && proOk() && v ? pois.filter(p => Places.poiHit(p, v)).slice(0, 5) : [];
   const poiRow = (p, act) => `<button type="button" class="sg pl poi ${act ? 'act' : ''}" data-poi="${esc(p.id)}"><i class="si"><span class="pldot"></span></i><b>${esc(p.n)}</b><span>${esc(p.d || t('poiLbl'))}</span></button>`;
   const pkSync = () => { pkNote.hidden = !prePick && !poiPick; pkNote.textContent = t(poiPick ? 'poiPickHint' : 'prePickHint'); };
   const poiLayer = L.layerGroup().addTo(map);
@@ -1012,7 +1132,7 @@
   }
   function poiDraw() {
     poiLayer.clearLayers();
-    if (!GEO) return;
+    if (!GEO || !proOk()) return;
     for (const p of pois) {
       L.circleMarker([p.lat, p.lon], { renderer, radius: sr(), weight: 1.5, fillOpacity: 1, interactive: false }).addTo(poiLayer);
       const m = L.circleMarker([p.lat, p.lon], { renderer, radius: 16, stroke: false, fill: true, fillOpacity: 0 }).addTo(poiLayer);
@@ -1094,11 +1214,13 @@
     if (poiPick && !poiPick.id) h += `<p class="gmsg">${esc(t('poiPickHint'))} <button type="button" class="btn sm" data-pa="cancel">${esc(t('preCancel'))}</button></p>`;
     h += plBack('poi');
     box.innerHTML = h;
+    proLockUi(box);
   }
   $('#poi').addEventListener('click', e => {
     const b = e.target.closest('[data-pa]');
     if (!b) return;
     const a = b.dataset.pa, p = pois.find(x => x.id === b.dataset.id);
+    if (!proOk()) return;
     if (a !== 'del') poiDel = null;
     if (a !== 'gps') poiGeo = null;
     if (a === 'nodel') {}
@@ -1219,16 +1341,27 @@
       }
     });
     locBtn = new Loc({ position: 'bottomright' }).addTo(map).getContainer();
+    const GNO = 'tirana-geo-no';
+    let gno = false;
+    try { gno = localStorage.getItem(GNO) === '1'; } catch (e) {}
+    if (!gno) geoOnce((p, acc) => {
+      try { localStorage.removeItem(GNO); } catch (e) {}
+      if (geo) return;
+      const blue = '#1A73E8';
+      L.circle(p, { radius: acc, color: blue, weight: 1, opacity: .5, fillColor: blue, fillOpacity: .12, interactive: false }).addTo(geoLayer);
+      L.marker(p, { icon: L.divIcon({ className: 'gme', html: icSvg('smile'), iconSize: [22, 22] }), interactive: false, keyboard: false, zIndexOffset: 1000 }).addTo(geoLayer);
+    }, (st, k) => { if (st === 'blocked' || k === 'geoDenied') try { localStorage.setItem(GNO, '1'); } catch (e) {} });
   }
 
   function loadPlaces() {
     if (!pload) pload = fetch('data/poi.json').then(r => r.ok ? r.json() : Promise.reject()).then(d => { pidx = Places.build(d); }).catch(() => { pload = null; });
     return pload;
   }
-  function setExt(v) {
+  function setExt(v, keep) {
+    if (v && !proOk()) { v = false; keep = true; plShow('pro'); }
     ext = v;
-    try { localStorage.setItem('tirana-mhd-ext', v ? '1' : '0'); } catch (e) {}
-    for (const b of document.querySelectorAll('.mext')) b.setAttribute('aria-checked', v);
+    if (!keep) try { localStorage.setItem('tirana-mhd-ext', v ? '1' : '0'); } catch (e) {}
+    for (const b of document.querySelectorAll('.mext, #mi-ext')) b.setAttribute('aria-checked', v);
     if (v) loadPlaces();
     else for (const w of ['from', 'to']) if (plan[w] && plan[w].place) setEnd(w, null);
     if (mode === 'plan') { showPlan(); restyle(); }
@@ -1459,24 +1592,38 @@
     for (const b of document.querySelectorAll('[data-lang]')) b.setAttribute('aria-pressed', b.dataset.lang === l);
     for (const a of document.querySelectorAll('[data-seo]')) a.setAttribute('href', l + '/' + a.dataset.seo + '/');
     menuBtn.setAttribute('aria-label', t('dataTitle')); menuBtn.title = t('dataTitle');
+    const sf = document.getElementById('sf');
+    if (sf && typeof Footer !== 'undefined') Footer.mount(sf, I18N, setLang);
+    placeFooter();
     syncTheme();
     if (!feed) return;
     if (baseTables && builtLang !== l) { setFeed(buildFeed(), source, false); return; }
-    setAttr(); renderMeta(); renderExpiry(); geoShow(); preShow(); poiShow(); if (SEC.fb.open) fbShow();
+    setAttr(); renderMeta(); renderExpiry(); geoShow(); preShow(); poiShow(); proShow(); if (SEC.fb.open) fbShow();
     if (mode === 'plan') showPlan(); else { const el = scr(), st = el.scrollTop; render(); el.scrollTop = st; }
   }
   const langBox = $('.lang');
   document.addEventListener('click', e => { if (!langBox.contains(e.target)) langBox.classList.remove('open'); });
-  for (const b of document.querySelectorAll('[data-lang]')) b.addEventListener('click', () => {
-    if (!langBox.classList.contains('open')) { langBox.classList.add('open'); return; }
-    langBox.classList.remove('open');
-    I18N.setLang(b.dataset.lang);
-    try { localStorage.setItem('tirana-mhd-lang', b.dataset.lang); } catch (e) {}
+  const phoneMQ = window.matchMedia('(max-width: 760px)');
+  function placeFooter() {
+    const sf = document.getElementById('sf'), side = document.querySelector('.side');
+    if (!sf || !side) return;
+    if (phoneMQ.matches) { if (sf.parentNode !== side) side.appendChild(sf); }
+    else if (sf.parentNode === side) side.parentNode.after(sf);
+  }
+  phoneMQ.addEventListener('change', placeFooter);
+  function setLang(l) {
+    I18N.setLang(l);
+    try { localStorage.setItem('tirana-mhd-lang', l); } catch (e) {}
     if (pageLang) {
       pageLang = I18N.lang;
       try { history.replaceState(null, '', location.pathname.replace(/[a-z]{2}\/?$/, pageLang + '/') + location.search + location.hash); } catch (e) {}
     }
     applyLang();
+  }
+  for (const b of document.querySelectorAll('[data-lang]')) b.addEventListener('click', () => {
+    if (!langBox.classList.contains('open')) { langBox.classList.add('open'); return; }
+    langBox.classList.remove('open');
+    setLang(b.dataset.lang);
   });
   let savedLang = null;
   try { savedLang = localStorage.getItem('tirana-mhd-lang'); } catch (e) {}

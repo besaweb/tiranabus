@@ -12,6 +12,7 @@ UPDATE_SNAPSHOT=1 node --test tests/planner.test.js      # nový snapshot pláno
 |---|---|
 | `tests/core.test.js` | čas, kalendář, platnost, `merge`, build reálného feedu, letiště, `groupStops`, odjezdy přes půlnoc |
 | `tests/planner.test.js` | 2 × 81 dotazů (vzdušná čára / pěší síť) – invarianty a snapshot `tests/fixtures/planner-snapshot.json` |
+| `tests/pro.test.js` | plány a ceny Pro, platnost 7 / 365 dní, trvalý plán, vypršení, zámek jen při vynucení, texty ve 12 jazycích |
 | `tests/i18n.test.js` | 12 jazyků: shodné klíče, parametry, plurály; letištní texty; slovníky `android/menu.js`, `validity.js` |
 
 - Bez `gtfs.zip` se testy nad reálným feedem přeskočí (skip), ostatní běží.

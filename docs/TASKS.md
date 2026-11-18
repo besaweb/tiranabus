@@ -1,6 +1,6 @@
 # Tasks – Tirana Bus
 
-Aktualizováno: 2026-11-10
+Aktualizováno: 2026-11-15
 
 **Pravidla:** ID `PREFIX-NNN` se nikdy nepoužije znovu (prefixy CORE, WEB, AND, GTFS, POI, MAP, DATA, I18N, UX, SEO, MKT, BUG, TEST, DOC). Priority P0 kritická – P3 nízká. Stavy BACKLOG → READY → IN_PROGRESS → REVIEW → DONE; BLOCKED vždy s důvodem. Platforma SHARED / WEB / ANDROID (WEB/ANDROID se zdůvodněním). SHARED je DONE až s ☑ u obou platforem. DONE = splněná kritéria + testy + dokumentace; pak přesun do Archivu. Před založením hledat podobný úkol.
 
@@ -17,10 +17,13 @@ Aktualizováno: 2026-11-10
 | CORE-004 | Jeden seznam souborů pro Pages / FTP / Android | SHARED | P2 | BACKLOG | – | 2026-11-07 |
 | CORE-005 | Sjednocená konfigurace jízdného, kurzů, verze a platnosti | SHARED | P2 | BACKLOG | – | 2026-11-07 |
 | AND-008 | První vydání v Google Play (podklady, testovací stopa) | ANDROID | P0 | IN_PROGRESS | ověření účtu Play | 2026-11-07 |
-| AND-005 | Pro: roční předplatné 4,99 € přes Google Play Billing | ANDROID | P2 | BACKLOG | CORE-007, první vydání v Play | 2026-11-07 |
-| CORE-007 | Oprávnění Pro (`PLATFORM.pro`) a zamykání funkcí | SHARED | P2 | BACKLOG | CORE-001 | 2026-11-07 |
+| AND-005 | Pro: nákup tří plánů přes Google Play Billing (nativní most `TBPro`) | ANDROID | P2 | BACKLOG | CORE-007, první vydání v Play | 2026-11-12 |
+| CORE-007 | Oprávnění Pro (`js/pro.js`), obrazovka Tirana BUS PRO, tři plány, zámky funkcí | SHARED | P2 | REVIEW | – | 2026-11-12 |
 | AND-007 | Promo kódy z Play Console pro přispěvatele Ko-fi | ANDROID | P3 | BACKLOG | AND-005 | 2026-11-07 |
-| MKT-001 | Reklamy pro neplatící uživatele aplikace | ANDROID | P3 | BACKLOG | AND-005, SEO-003 | 2026-11-07 |
+| MKT-001 | Reklamy pro neplatící uživatele aplikace (AdMob, nativní most `TBAds`) | ANDROID | P3 | REVIEW | účet AdMob | 2026-11-12 |
+| AND-009 | Dočasný testovací přepínač PRO v menu (`PRO_TEST=1`) | ANDROID | P3 | REVIEW | CORE-007, MKT-001 | 2026-11-12 |
+| AND-010 | `ADS_TEST=1`: podepsaný release s testovacími ID Google (build pro testery) | ANDROID | P3 | REVIEW | MKT-001 | 2026-11-12 |
+| AND-011 | Play Console: optimalizace kódu DEX (obfuskace 0 %) → R8 v release | ANDROID | P1 | REVIEW | – | 2026-11-14 |
 | AND-006 | Barvy systémových lišt podle motivu stránky (přepínač v aplikaci vs. systém) | ANDROID | P3 | BACKLOG | – | 2026-11-07 |
 | I18N-002 | Korektury překladů rodilými mluvčími (sq, en prioritně) | SHARED | P2 | BACKLOG | – | 2026-11-07 |
 | GTFS-002 | Varianty tras linek (větve) | SHARED | P2 | BACKLOG | – | 2026-11-07 |
@@ -32,18 +35,29 @@ Aktualizováno: 2026-11-10
 | SEO-002 | Stránky zastávek (493 × 12), schema.org pro linky | WEB | P3 | BACKLOG | – | 2026-11-07 |
 | UX-019 | Jen jedna karta (Oblíbené zastávky / trasy / Moje místa) naráz | ANDROID ONLY | P3 | REVIEW | – | 2026-11-10 |
 | BUG-003 | Klepnutí na existující vlastní bod nevyvolá nabídku; sjednocení vzhledu nabídek bodů | ANDROID ONLY | P2 | REVIEW | POI-001 | 2026-11-10 |
-| WEB-003 | Kontaktní formulář (`contact.html` + `contact.php`, zatím mimo menu) | WEB | P2 | IN_PROGRESS | PHP na hostingu | 2026-11-10 |
+| UX-024 | Obrazovka PRO na celou obrazovku bez mapy | SHARED | P3 | REVIEW | CORE-007 | 2026-11-13 |
+| UX-023 | Poloha uživatele na mapě hned po spuštění | ANDROID ONLY | P3 | REVIEW | MAP-001, UX-013 | 2026-11-12 |
+| UX-025 | Posuvný panel mapa / vyhledávání (bottom sheet, 3 stavy) | ANDROID ONLY | P3 | REVIEW | – | 2026-11-13 |
+| UX-026 | Testerský build: bez položky „Tirana BUS PRO“ v menu, přepínač PRO test ve výchozím stavu zapnutý | ANDROID ONLY | P3 | REVIEW | CORE-007 | 2026-11-13 |
+| BUG-004 | Časy v trase spojení zasahují do názvů zastávek (tablet, zvětšené písmo) | SHARED | P2 | REVIEW | – | 2026-11-14 |
+| UX-027 | Písmo Roboto místo Inter | SHARED | P3 | REVIEW | BUG-004 | 2026-11-14 |
+| WEB-005 | Odkazy na sociální sítě v patičce (Instagram, Facebook, X, TikTok) | WEB | P3 | REVIEW | – | 2026-11-15 |
+| WEB-004 | Nová patička webu (všechny stránky, na telefonu minimum) | WEB | P3 | REVIEW | – | 2026-11-15 |
 
 ## Detail
 
-### WEB-003 Kontaktní formulář
-- Oblast: web / kontakt · WEB (odeslání přes PHP na FTP hostingu tiranabus.al, v APK ani na GitHub Pages neexistuje; D-037) · P2 · IN_PROGRESS
-- Popis: stránka `contact.html` (jméno, e-mail odesílatele, předmět, text, až 3 přílohy – fotky JPG/PNG/WebP/GIF do 4 MB) a `contact.php`, který zprávu odešle na tiranabus@besaweb.al. Ochrana: honeypot, limit 5 zpráv/hod z jedné IP, kontrola typu a velikosti příloh na serveru. Do menu a sitemap zatím nepřidáno, stránka je `noindex`.
+### WEB-005 Sociální sítě v patičce
+
+- Popis: čtyři kulaté ikony pod značkou v patičce (`js/footer.js` `SOC`, styly `.sfsoc`): instagram.com/tiranabus.al, facebook.com/tiranabus, x.com/TiranaBus, tiktok.com/@tirana_bus; `aria-label` + klíč `footFollow` ve 12 jazycích. Na telefonu (≤ 600 px) zůstávají jako jediný prvek značky nad výběrem jazyka. SHARED, ale patička v APK není (viz WEB-004). Rozložení B (kompaktní, ≈ 260 px místo ≈ 330 px): vlevo logo se sloganem, uprostřed Navigace a Užitečné odkazy, vpravo výběr jazyka (seznam se otevírá nahoru) a ikony sítí; popis a odznak „Tirana, Albánie“ zrušeny (klíče `footDesc`, `footLoc` odstraněny). Zbývá: ověřit na tiranabus.al po nasazení.
+
+### WEB-004 Nová patička webu
+- Oblast: web / UI · WEB (v APK se patička nevykreslí: `footer.js` na `appassets.androidplatform.net` prvek odstraní, odkazy na `/{jazyk}/lines/` tam neexistují) · P3 · REVIEW (zadání uživatele 2026-11-15; D-041)
+- Popis: plná tmavá patička (`js/footer.js`, `css/footer.css`) na hlavní stránce, `tickets.html`, `privacy.html`, `contact.html`, `404.html` a 372 statických stránkách linek a letiště: značka s logem, sloganem a popisem, odznak „Tirana, Albánie“, Navigace (Mapa a plánovač, Linky, Autobus na letiště, Jízdenky a jízdné), Užitečné odkazy (pt.tirana.al GTFS, Rinas Express, eTransport), výběr jazyka (`<details>`, 12 jazyků), spodní lišta s copyrightem, atribucí dat CC BY-SA, Zásadami ochrany osobních údajů a BesaWeb. Hlavní stránka: aplikace zůstává na celou výšku okna, patička je pod ní (dorolovat; panel vlevo na desktopu po dojetí na konec roluje stránkou), jazyk se přepíná bez načtení stránky stejně jako v hlavičce (`setLang` v `app.js`), `/{jazyk}/` stránky ji mají předvykreslenou. Telefon (≤ 600 px) jen výběr jazyka a spodní lišta; na hlavní stránce na telefonu (≤ 760 px) je patička na konci panelu pod mapou (`placeFooter` v `app.js` ji při změně šířky přesouvá do `.side` a zpět pod `.app`). Dřívější lišta `.foot` zrušena. Odkazy na neexistující stránky (zastávky, Explore Tirana, Podmínky užití, Google Play) vynechány; Kontakt až po WEB-003. Akcent #C8102E.
 - Kritéria:
-  - [x] formulář ve 12 jazycích, světlý i tmavý režim, telefon
-  - [ ] `contact.php` ověřen na produkčním hostingu (PHP, `mail()`, limity `upload_max_filesize` / `post_max_size`)
-  - [ ] skutečné odeslání s přílohou doručeno na tiranabus@besaweb.al
-- Poznámky: lokálně není PHP, serverová část je ověřena až po nasazení (`deploy-ftp.sh` nahrává `contact.html` a `contact.php`; `pages.yml` ne).
+  - [x] hlavní stránka: desktop 1366×800 a 1280×600, tablet 900 px, telefon 375 px (bez patičky, bez rolování); světlý i tmavý režim; přepnutí jazyka z patičky mění aplikaci i URL `/{jazyk}/`
+  - [x] obsahové a SEO stránky: desktop, tablet 820 px, telefon 375 px (minimální varianta), světlý i tmavý režim, bez vodorovného přetečení; 12 jazyků bez přetečení
+  - [x] klávesnice (Esc zavře výběr jazyka, fokus zpět), klik mimo zavře; v 372 vygenerovaných stránkách žádný rozbitý odkaz, externí 200
+  - [ ] po nasazení: tiranabus.al a zrcadlo Pages (`404.html` jen FTP) · [ ] APK: hlavní stránka a `tickets.html` bez patičky (podmínka na hostiteli v emulátoru neověřena)
 
 ### AND-008 První vydání v Google Play
 - Oblast: Android / vydání · ANDROID (Google Play) · P0 · IN_PROGRESS
@@ -57,14 +71,20 @@ Aktualizováno: 2026-11-10
 
 ### AND-005 Pro: roční předplatné přes Google Play Billing
 - Oblast: Android / platby · ANDROID (Google Play Billing existuje jen v aplikaci z Play; D-026) · P2 · BACKLOG
-- Popis: předplatné „Tirana Bus Pro“ 4,99 € / rok, bez zkušební doby. Play Billing Library (nová nativní závislost v Gradle, schváleno volbou modelu 2026-11-07), most WebView ↔ nativní kód (stav, nákup, obnovení), potvrzení nákupu (acknowledge), stav uložený v zařízení pro offline.
-- Kritéria: [ ] produkt předplatného v Play Console · [ ] nákup, zrušení a obnovení na testovací stopě s testery licencí · [ ] stav Pro platí offline do konce zaplaceného období, po vypršení se zamkne · [ ] most vystavený jen stránce z `appassets.androidplatform.net` · [ ] texty ve 12 jazycích (`i18n.js`) · [ ] zásady soukromí a Data safety aktualizované
+- Popis: tři produkty podle D-038: `pro_tourist_7d` (jednorázový, 1,99 €, 7 dní; po vypršení spotřebovat `consume`, aby šel koupit znovu), `pro_annual` (předplatné, 4,99 € / rok), `pro_lifetime` (jednorázový, 19,99 €). Play Billing Library (nová nativní závislost v Gradle, schváleno volbou modelu 2026-11-07), nativní most `window.TBPro` podle smlouvy v `ARCHITECTURE.md` › Pro (stav, nákup), potvrzení nákupu (acknowledge), stav uložený v zařízení pro offline. Webová část (obrazovka, zámky, výpočet platnosti) je hotová v CORE-007; build pro Play se staví s `PRO_ENFORCE=1`.
+- Kritéria: [ ] tři produkty v Play Console s cenami z D-038 · [ ] nákup, zrušení a obnovení na testovací stopě s testery licencí · [ ] stav Pro platí offline do konce zaplaceného období, po vypršení se zamkne · [ ] most vystavený jen stránce z `appassets.androidplatform.net` · [ ] po nákupu most zavolá `window.tbProUpdate()` · [ ] zásady soukromí a Data safety aktualizované
 - Poznámky: předplatné se dá testovat až s aplikací nahranou na testovací stopu v Play (první vydání). Ověření nákupu jen v zařízení (bez backendu, D-002). Kód je veřejný, proto žádná tajemství v aplikaci.
 
 ### CORE-007 Oprávnění Pro a zamykání funkcí
-- Oblast: sdílený kód, platformní vrstva · SHARED (přepínač ve sdíleném kódu, chování se liší podle platformy) · P2 · BACKLOG
-- Popis: `PLATFORM.pro` (součást CORE-001) určuje dostupnost Pro funkcí. Web: rozšířené vyhledávání zdarma jako dnes, ostatní Pro funkce se nezobrazují. Android: rozšířené vyhledávání, poloha, předvolby a vlastní body jen s Pro; bez Pro výzva k předplatnému.
-- Kritéria: [ ] jeden zdroj pravdy (`PLATFORM.pro`), žádné kontroly roztroušené v kódu · [ ] web beze změny chování · [ ] APK bez Pro: rozšířené vyhledávání zamčené až od verze vydané v Play · [ ] ověřeno na webu i v APK (s Pro i bez)
+- Oblast: sdílený kód, platformní vrstva · SHARED (logika ve sdíleném kódu, zámky a obrazovka jen v aplikaci; D-038) · P2 · REVIEW
+- Popis: čistý modul `js/pro.js` (plány, ceny, výpočet stavu z nákupů, `can`, `ads`) je jediný zdroj pravdy; `app.js` se ptá jen přes `proOk()`. Obrazovka „Tirana BUS PRO“ (karta `#procard`, položka v menu ☰): stav plánu, srovnání FREE / PRO včetně reklam, tři plány (TOURIST PASS 1,99 € / 7 dní, ANNUAL PREMIUM 4,99 € / 365 dní s označením BEST VALUE, LIFETIME PREMIUM 19,99 €). Zamčené funkce (Oblíbené trasy, Oblíbené zastávky, Moje místa, Rozšířené vyhledávání) jdou bez Pro otevřít a prohlédnout, ovládací prvky jsou neaktivní, nahoře výzva s tlačítkem „Odemknout PRO“; uložená data se nemažou, jen se nepoužívají (našeptávač, značky na mapě, ikony v polích). Poloha z GPS zůstává zdarma. Zámky se vynucují jen s `window.PRO_ENFORCE` (Gradle `PRO_ENFORCE=1`), do té doby je vše odemčené. Bez nativního mostu `TBPro` tlačítka plánů hlásí, že nákup bude dostupný po aktivaci platebního systému. Reklamy: `TBAds.set(bool)` podle stavu Pro (most zatím neexistuje, MKT-001). Odchylka od původního zadání: místo `PLATFORM.pro` samostatný modul `Pro`, CORE-001 ho může jen zabalit.
+- Kritéria:
+  - [x] jeden zdroj pravdy (`js/pro.js`, `proOk()`), testy `tests/pro.test.js` (platnost 7 / 365 dní, trvalý plán, vypršení, nepotvrzený nákup)
+  - [x] web beze změny chování (bez `APP_VERSION` žádné zámky, položka PRO ani most)
+  - [x] web v režimu aplikace (telefon 375 px, světlý i tmavý režim, 12 jazyků bez přetečení): FREE zamčeno, Tourist / Annual / Lifetime odemčeno, vypršení Tourist Pass za běhu zamkne a data zůstanou, nevynucený režim odemčen
+  - [x] lokální build APK s `PRO_ENFORCE=1` (JDK 21 z Android Studia), v `index.html` v APK je `window.PRO_ENFORCE=1` · [ ] build v CI (`android.yml`)
+  - [x] APK v emulátoru s `PRO_ENFORCE=1`, stav FREE: menu s odznaky PRO, obrazovka PRO, hláška u nákupu, zamčené Oblíbené trasy a Moje místa (2026-11-12) · [ ] bez `PRO_ENFORCE` · [ ] Oblíbené zastávky, Rozšířené vyhledávání, tmavý režim · [ ] telefon (uživatel)
+- Poznámky: lokální build jde přes `JAVA_HOME` = JBR z Android Studia (systémová Java je 8). Akcent zůstal `var(--accent)` (#C8102E), zadaná #DC2626 by znamenala změnu barev celé aplikace.
 
 ### AND-007 Promo kódy pro přispěvatele Ko-fi
 - ANDROID · P3 · BACKLOG
@@ -72,8 +92,22 @@ Aktualizováno: 2026-11-10
 - Kritéria: [ ] ověřit, že Play promo kódy fungují pro roční předplatné a jaké mají limity · [ ] postup vydání kódů a evidence (bez osobních údajů v gitu)
 
 ### MKT-001 Reklamy pro neplatící uživatele aplikace
-- ANDROID · P3 · BACKLOG (až po Pro funkcích, rozhodnutí 2026-11-07)
-- Popis: reklamy v aplikaci pro uživatele bez Pro; Pro je bez reklam. Způsob (např. AdMob) a souhlas (SEO-003) určit při zahájení. Reklamy na webu zatím nerozhodnuty.
+- ANDROID ONLY (nativní SDK, web reklamy nemá; D-039) · P3 · REVIEW (zadání uživatele 2026-11-12)
+- Popis: adaptivní banner Google AdMob pro uživatele bez aktivního Pro (Tourist, Annual i Lifetime jsou bez reklam). Jediná reklamní plocha: nativní pruh pod WebView (`Ads.java`), takže nikdy nepřekrývá mapu, jízdní řády ani ovládání; systémové okraje řeší kořenové rozvržení. O zobrazení rozhoduje jen web přes `TBAds.set(bool)`: `Pro.ads(stav)` a zároveň není otevřená obrazovka PRO ani zobrazené výsledky hledání spojení. Banner se nezobrazí ani při otevřené klávesnici. Souhlas: Google UMP před první reklamou (jen když jsou reklamy potřeba, tedy ne u Pro), bez souhlasu se nenačítá nic; položka menu „Soukromí reklam“ se ukáže, když UMP vyžaduje možnost změny. SDK se inicializuje jednou na pozadí, při chybě načtení se banner zruší a další pokus je nejdřív za 60 s. Konfigurace: `ADMOB_APP_ID` a `ADMOB_BANNER_ID` z prostředí nebo `android/ads.properties` (mimo git, šablona `ads.properties.example`); debug vždy testovací ID Google, release bez ID má reklamy vypnuté, testovací ID v release build odmítne. `ADS=0` reklamy v buildu vypne, `ADS_TEST_EEA=1` v debug buildu vynutí chování EHP. Interstitial ani rewarded nejsou.
+- Kritéria:
+  - [x] lokální build debug APK (play-services-ads 25.5.0, UMP 4.0.0), testy 44/44
+  - [x] emulátor: souhlas UMP proběhl, požadavek na testovací reklamu odeslán, při chybě načtení aplikace běží dál a pokus se opakuje po 60 s
+  - [x] web v režimu aplikace: `TBAds.set(true)` při startu FREE, `false` po otevření obrazovky PRO, `true` po zavření
+  - [ ] viditelný testovací banner (v emulátoru nešlo: jeho WebView nedůvěřuje certifikátům, `Trust anchor for certification path not found`) · [ ] dialog souhlasu v EHP (`ADS_TEST_EEA=1`) · [ ] otočení displeje, tmavý režim
+  - [ ] po nákupu banner ihned zmizí, po vypršení se vrátí (čeká na AND-005)
+  - [ ] účet AdMob, ID aplikace a jednotky, zpráva souhlasu v AdMob (Privacy & messaging), `app-ads.txt` na tiranabus.al, Data safety a prohlášení o reklamním ID v Play Console, zásady soukromí (uživatel)
+  - [ ] telefon (uživatel)
+- Poznámky: debug APK narostlo z 9,6 na 16,6 MB (SDK a Kotlin runtime, který SDK potřebuje). Release se nezmenšuje (R8 vypnuto), případné zapnutí je samostatný úkol.
+
+### AND-009 Dočasný testovací přepínač PRO v menu
+- ANDROID ONLY (menu ☰ je jen v aplikaci) · P3 · REVIEW (návrh uživatele 2026-11-12)
+- Popis: jen pro testování, než bude Play Billing (AND-005). Build s `PRO_TEST=1` (zapne i `PRO_ENFORCE`) vloží `window.PRO_TEST=1` a v menu pod „Tirana BUS PRO“ ukáže přepínač „PRO test“. Zapnuto: `proRead()` v `app.js` místo mostu `TBPro` použije simulovaný nákup LIFETIME, funkce PRO jsou odemčené a reklamy vypnuté. Vypnuto: stav FREE, zámky a reklamy. Volba se pamatuje v `localStorage['tirana-pro-test']`. Bez `PRO_TEST` přepínač neexistuje a klíč se nečte. Build pro veřejné vydání se s `PRO_TEST=1` stavět nesmí. Po AND-005 odstranit.
+- Kritéria: [x] testy 44/44 · [x] emulátor: přepínač v menu, po zapnutí obrazovka PRO ukazuje LIFETIME PREMIUM · [ ] po zapnutí zmizí banner, po vypnutí se vrátí (v emulátoru se reklamy nenačítají) · [ ] telefon (uživatel)
 
 ### UX-019 Jen jedna karta naráz
 - Oblast: UI · ANDROID ONLY (karty jsou jen v aplikaci) · P3 · REVIEW
@@ -90,6 +124,51 @@ Aktualizováno: 2026-11-10
   - [x] APK v emulátoru: klepnutí na uložený bod otevře nabídku v novém vzhledu
   - [ ] telefon (uživatel)
 
+### UX-024 Obrazovka PRO na celou obrazovku
+- Oblast: PRO · SHARED (jen CSS; na webu se karta PRO neotevírá, protože PRO je jen v aplikaci) · P3 · REVIEW (zadání uživatele 2026-11-13)
+- Popis: karta „Tirana BUS PRO“ se po otevření (tlačítko „Odemknout PRO“ u zamčené funkce, položka PRO v menu, klepnutí na zamčené „Rozšířené vyhledávání“) zobrazí přes celou obrazovku bez mapy (`position: fixed; inset: 0` na `#procard`, `css/style.css`); zavírá se křížkem nebo tlačítkem Zpět dole. Sbalení karty je v tomto režimu skryté. Respektuje okraje displeje (`safe-area`), na širokých displejích je obsah vystředěný (max. 640 px). Ostatní karty beze změny.
+- Kritéria: [x] web 375×812: karta pokrývá celé okno, křížek i Zpět ji zavřou a mapa se vrátí · [x] APK v emulátoru: Odemknout PRO i Rozšířené vyhledávání (2026-11-13) · [ ] tmavý režim · [ ] telefon (uživatel)
+
+### UX-023 Poloha při startu
+- Oblast: mapa · ANDROID ONLY (`GEO` je jen v APK; na webu by to znamenalo dotaz prohlížeče při každé první návštěvě) · P3 · REVIEW
+- Popis: po spuštění se jednou tiše zjistí poloha (`geoOnce`). V Tiraně se zobrazí smajlík s kruhem přesnosti (bez panelu zastávek, mapa zůstává na Tiraně, zoom 13); mimo Tiranu, při vypnuté poloze nebo chybě se nic nestane. Oprávnění uděleno → bez dotazu; neuděleno → systémový dotaz při startu. Po odmítnutí se `localStorage` `tirana-geo-no` nastaví a při dalších startech se už neptá; smaže se úspěšným zjištěním přes tlačítko „Moje poloha“ (změna oprávnění v nastavení systému se tedy projeví až po něm). Zadání uživatele.
+- Kritéria:
+  - [x] APK v emulátoru: první start → dotaz → povolit → smajlík v Tiraně; další start bez dotazu se smajlíkem; poloha v Praze → nic
+  - [ ] odmítnutí a další start bez dotazu · [ ] telefon (uživatel)
+
+### UX-025 Posuvný panel mapa / vyhledávání
+- Oblast: UI, mapa · ANDROID ONLY (zadání uživatele; kód je v `js/app.js` pod `window.APP_VERSION`, na webu by šel zapnout stejně) · P3 · REVIEW
+- Popis: na telefonu (šířka ≤ 760 px) lze tažením úchytu `#grab` nahoře v `.side` měnit výšku mapy plynule (řádek mřížky `--maph`) a po uvolnění se panel přichytí (animace 240 ms) na nejbližší ze tří stavů: panel ~30 % (mapa 70 %), výchozí (beze změny, mapa 44 % výšky aplikace) a panel ~78 %. Úchyt je `position: sticky`, takže zůstává vidět při rolování panelu; tažení začíná jen na něm, gesta mapy a rolování panelu se nemíchají (`touch-action: none` jen na úchytu). Přístupnost: `role=separator`, šipky nahoru/dolů přepínají stavy, `aria-label` z i18n (`sheetGrab`, 12 jazyků). Stav se drží za běhu a po otočení / změně velikosti se znovu spočítá. Karty, plánovač ani mapa se jinak nemění.
+- Kritéria:
+  - [x] APK v emulátoru: výchozí vzhled beze změny; tažení nahoru → panel velký, dolů → mapa velká, přichycení; tažení mapy ve spodní části mapy panel nemění
+  - [ ] telefon (uživatel) · [ ] tmavý režim, otočení, rolování dlouhého panelu
+
+### UX-026 Testerský build: PRO test výchozí zapnutý
+- Oblast: menu, Pro · ANDROID ONLY (jen build s `PRO_TEST=1`) · P3 · REVIEW
+- Popis: v buildu `PRO_TEST=1` se v menu ☰ nezobrazuje položka „Tirana BUS PRO“ (duplicitní s přepínačem „PRO test“; obrazovka PRO zůstává dostupná z Unlock PRO a zamčených funkcí) a přepínač „PRO test“ je při prvním spuštění zapnutý (`build.gradle` vloží do injektovaného skriptu `localStorage.tirana-pro-test = 1`, jen pokud není nastaven; ruční vypnutí se zachová). Běžné buildy beze změny.
+- Kritéria:
+  - [x] APK `PRO_TEST=1` v emulátoru (čistá instalace): v menu není „Tirana BUS PRO“, „PRO test“ zapnutý
+  - [ ] telefon (uživatel) · [ ] vypnutý přepínač přežije restart
+
+### AND-011 R8 / obfuskace (Play Console)
+- Oblast: Android build · ANDROID · P1 · REVIEW
+- Popis: Play Console hlásí „Optimalizace kódu DEX je pod naším limitem“, obfuskace 0 % (pod 25 % může snížit viditelnost a omezit publikování). V `release` je zapnuté `minifyEnabled` a `shrinkResources` s `android/proguard-rules.pro`: ponechány metody `@JavascriptInterface` (most `TBAds`) a Room databáze WorkManageru (`WorkDatabase_Impl`; bez ní spadla aplikace při startu přes `androidx.startup`, závislost z `play-services-ads`). Mapping soubor je v AAB, Play ho použije pro dešifrování pádů (`build/outputs/mapping/release/mapping.txt`, pro jistotu ho uchovat k vydání). APK menší (15,2 → 11,8 MB). Play Console dále hlásil zastaralý `androidx.fragment:fragment` 1.1.0 (tahá ho `play-services-basement` z reklam): v `build.gradle` je explicitně `androidx.fragment:fragment:1.8.5` (zvedne i `activity` na 1.8.1 a `lifecycle` na 2.6.1).
+- Kritéria:
+  - [x] APK `1.109` (`PRO_TEST`, `ADS_TEST`) v emulátoru: start, mapa, menu, Pro přepínač, bez pádu a výjimek v logcatu; `seeds.txt` obsahuje `Ads.set/privacy/options`
+  - [ ] telefon: zpětná vazba (výběr souboru), poloha, banner s testovací reklamou, Pro po nákupu · [ ] po nahrání do Play: skóre obfuskace v Play Console, Pre-launch report
+### BUG-004 Časy zasahují do názvů zastávek
+- Oblast: UI, výsledky spojení · SHARED · P2 · REVIEW
+- Popis: sloupec s časem u zastávek v rozbalené trase (`.ls time`, `.lm li time`) měl pevnou šířku 44 px, takže při větším písmu (nastavení velikosti písma v Androidu / tablet) text přetekl do názvu zastávky. Šířka je nově v `em` (minimum, `nowrap`) a odsazení seznamu mezilehlých zastávek (`.lm`) také, takže mezera a zarovnání názvů zůstávají při každé velikosti písma. Nahlášeno uživatelem na tabletu (foto 2026-11-14).
+- Kritéria:
+  - [x] web (820 px): časy 49–50 px široké, mezera k názvu 12 px; při zvětšeném písmu (19 px) 63 px a mezera 12 px
+  - [ ] tablet / telefon s velkým písmem (uživatel) · [ ] APK · [ ] tmavý režim
+### UX-027 Písmo Roboto
+- Oblast: UI · SHARED · P3 · REVIEW
+- Popis: výběr uživatele z 8 ukázek (Inter, Roboto, Noto Sans, Open Sans, Source Sans 3, IBM Plex Sans, Fira Sans, Ubuntu; všechna pokrývají latinku, cyrilici i řečtinu). `--ui` v `css/style.css` a `css/tickets.css` začíná `Roboto`, Google Fonts odkaz (`index.html`, `tickets.html`, `privacy.html`, `404.html`, `contact.html`, `tools/build-pages.js` pro statické stránky) načítá `Roboto:wght@400;500;700`. Řezy 600 a 800 používané v CSS se zobrazí jako 700. Na Androidu je Roboto systémové písmo (offline funguje bez stahování), na webu se stahuje z Google Fonts a bez něj padá na Segoe UI / systémové.
+- Kritéria:
+  - [x] web: `font-family` = Roboto, řezy načteny, výsledky spojení bez přetečení
+  - [ ] APK / tablet / telefon · [ ] tmavý režim · [ ] albánština, řečtina, ruština (diakritika) · [ ] statické stránky linek (`build-pages.js`)
+
 ## Známé chyby a omezení
 
 - Statické stránky linek: první/poslední odjezd a interval z kalendáře podle dnů v týdnu (bez `calendar_dates` a rozsahu platnosti); u frekvenčních spojů poslední odjezd z `end_time`. Směry a názvy linek albánsky. `/{jazyk}` bez lomítka spoléhá na přesměrování serveru.
@@ -98,7 +177,7 @@ Aktualizováno: 2026-11-10
 - Jen plánovaný jízdní řád, žádná zpoždění (realtime neexistuje).
 - Linka RT: jízdní doba 30 min je odhad; trasy letištních linek z OSRM. Kalendář letištních linek natvrdo 2026–2027.
 - Našeptávač na desktopu se ořízne spodním okrajem levého sloupce při velmi nízkém okně.
-- Inter z Google Fonts; offline (APK bez cache) systémové písmo.
+- Roboto z Google Fonts; offline (APK bez cache) systémové písmo.
 - Z `file://` nefunguje OSM podklad; v náhledu artefaktu se podklad nemusí načíst.
 - Ukázková síť se s letištním doplňkem neslučuje.
 - APK: ověřeno na emulátoru API 36 a Samsung Galaxy S21 (7. 11. 2026, výsledek od uživatele bez podrobností o verzi Androidu); build na Linuxu hlídá `android.yml`.
@@ -143,3 +222,4 @@ Aktualizováno: 2026-11-10
 | BUG-001 | Cena RT na palubě sjednocena na 300 L / 3,50 € (data z luna.al, ověřeno 29. 10. 2026; `tkPriceB` ve 12 jazycích a `tickets.html`) | 2026-11-09 | – |
 | BUG-002 | Plánovač vracel spojení s chůzí začínající před zadaným časem (příčina: `tidy` nehlídal čas začátku první chůze; oprava parametrem `tOrg`; test bez `todo`, snapshot přegenerován, nejlepší příjezd ve 160 dotazech nikdy horší) | 2026-11-09 | – |
 | WEB-001 | `deploy-ftp.sh` odmítne běh mimo `main`, s necommitovanými změnami sledovaných souborů a při rozdílu proti `origin/main` (guardy ověřeny odděleně, skript samotný se nespouštěl) | 2026-11-09 | – |
+| WEB-003 | Kontaktní formulář `contact.html` + `contact.php` (12 jazyků, až 3 přílohy), odkaz „Kontakt“ v menu, v hlavičce a v patičce, karta BesaWeb; odeslání ověřeno na tiranabus.al (jen web, v APK není, D-037) | 2026-11-16 | tiranabus.al 86ed03f |

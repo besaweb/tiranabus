@@ -3,7 +3,7 @@
 .ambtn:hover { border-color: var(--muted); }
 .ambtn svg { width: 22px; height: 22px; }
 .ammenu { max-height: calc(100vh - 70px); overflow-y: auto; position: absolute; top: calc(100% + 6px); right: 0; z-index: 1100; min-width: 330px; max-width: calc(100vw - 24px); padding: 6px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); box-shadow: var(--shadow-lg); }
-.ammenu[hidden], .langslot[hidden], .about[hidden] { display: none; }
+.ammenu[hidden], .langslot[hidden], .about[hidden], .mi[hidden] { display: none; }
 .mi { display: flex; align-items: center; gap: 12px; width: 100%; height: 46px; padding: 0 12px; border: 0; border-radius: 10px; background: transparent; color: var(--fg); font: 600 14px var(--ui); cursor: pointer; text-align: left; }
 .mi:hover, .ammenu .lang button:hover { background: var(--soft); }
 .miwrap { display: flex; align-items: center; }
