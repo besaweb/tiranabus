@@ -49,3 +49,15 @@ test('nearest nad skutečným feedem (offline, bez sítě)', { skip }, () => {
   assert.equal(new Set(r.map(x => x.s.name)).size, 5);
   assert.ok(r.every(x => Places.inArea([x.s.lat, x.s.lon])));
 });
+
+test('nearPlace: nejbližší místo do limitu, ulice s přirážkou, mimo limit nic', () => {
+  const idx = { items: [
+    { id: 'p0', n: 'Kavárna', c: 'food', pts: [[41.3276, 19.8188]] },
+    { id: 's0', n: 'Ulice', c: 'street', pts: [[41.32752, 19.81872], [41.33, 19.82]] },
+    { id: 'p1', n: 'Daleko', c: 'shop', pts: [[41.34, 19.83]] }
+  ] };
+  assert.equal(Places.nearPlace(idx, SQUARE, 60).id, 'p0');
+  assert.equal(Places.nearPlace({ items: [idx.items[1]] }, SQUARE, 60).id, 's0');
+  assert.equal(Places.nearPlace({ items: [idx.items[2]] }, SQUARE, 60), null);
+  assert.equal(Places.nearPlace(null, SQUARE), null);
+});

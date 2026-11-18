@@ -1116,9 +1116,19 @@
       let best = null, bd = 24;
       if (proOk()) for (const p of pois) { const d = map.latLngToContainerPoint([p.lat, p.lon]).distanceTo(e.containerPoint); if (d <= bd) { best = p; bd = d; } }
       if (best) return poiPop(best);
-      const vl = BASE[VEC], nm = mode === 'plan' && vl && vl.nameAt && map.hasLayer(vl) ? vl.nameAt(e.containerPoint) : null;
-      if (nm) { const w = plan.from ? 'to' : 'from'; chooseEnd(w, ptEnd('@map-' + w, nm, [e.latlng.lat, e.latlng.lng], w), true); }
+      if (mode === 'plan' && PRO_APP) mapPick(e);
     });
+    async function mapPick(e) {
+      let bs = null, bd = 22;
+      for (const s of allStops()) { const d = map.latLngToContainerPoint([s.lat, s.lon]).distanceTo(e.containerPoint); if (d < bd) { bs = s; bd = d; } }
+      if (bs) return pickStop(bs);
+      const p = [e.latlng.lat, e.latlng.lng], vl = BASE[VEC];
+      let nm = vl && vl.nameAt && map.hasLayer(vl) ? vl.nameAt(e.containerPoint) : null;
+      if (!nm) { await loadPlaces(); const it = Places.nearPlace(pidx, p, 60); if (it) nm = Places.label(it, I18N.lang); }
+      if (mode !== 'plan') return;
+      const w = plan.from ? 'to' : 'from';
+      chooseEnd(w, ptEnd('@map-' + w, nm || t('preMapPt'), p, w), true);
+    }
     map.on('contextmenu', e => {
       if (prePick) return prePickAt(e.latlng.lat, e.latlng.lng);
       if (poiPick) return poiForm(e.latlng.lat, e.latlng.lng, poiPick);
