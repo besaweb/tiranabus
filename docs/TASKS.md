@@ -42,6 +42,7 @@ Aktualizováno: 2026-11-15
 | BUG-004 | Časy v trase spojení zasahují do názvů zastávek (tablet, zvětšené písmo) | SHARED | P2 | REVIEW | – | 2026-11-14 |
 | BUG-005 | Veřejný build (bez `PRO_ENFORCE`): každé klepnutí otevře obrazovku PRO | ANDROID ONLY | P0 | REVIEW | – | 2026-11-18 |
 | UX-027 | Písmo Roboto místo Inter | SHARED | P3 | REVIEW | BUG-004 | 2026-11-14 |
+| UX-028 | Poloha při startu vyplní „Moje poloha“ do „Odkud“, klik na zastávku nebo pojmenované místo na mapě doplní „Kam“ | ANDROID ONLY | P3 | REVIEW | UX-023 | 2026-11-18 |
 | WEB-005 | Odkazy na sociální sítě v patičce (Instagram, Facebook, X, TikTok) | WEB | P3 | REVIEW | – | 2026-11-15 |
 | WEB-004 | Nová patička webu (všechny stránky, na telefonu minimum) | WEB | P3 | REVIEW | – | 2026-11-15 |
 
@@ -175,6 +176,12 @@ Aktualizováno: 2026-11-15
 - Kritéria:
   - [x] web: `font-family` = Roboto, řezy načteny, výsledky spojení bez přetečení
   - [ ] APK / tablet / telefon · [ ] tmavý režim · [ ] albánština, řečtina, ruština (diakritika) · [ ] statické stránky linek (`build-pages.js`)
+### UX-028 Poloha při startu vyplní „Odkud“
+- Oblast: plánovač, mapa · ANDROID ONLY (poloha při startu `GEO` je jen v APK, navazuje na UX-023; zadání uživatele 2026-11-18) · P3 · REVIEW
+- Popis: po úspěšném zjištění polohy v Tiraně (start aplikace i tlačítko polohy) se do pole „Odkud“ doplní „Moje poloha“ (text `geoBtn`) jako bod s GPS souřadnicemi (`autoFrom()` v `js/app.js`, `ptEnd('@gps', …)`, příznak `plan.auto`); plánovač k němu hledá zastávky pěšky stejně jako u „Odkud z mapy“. Klepnutí na zastávku na mapě (plánovač) pak vyplní „Kam“ (původní logika `pickStop`, „Moje poloha“ zůstává). Klepnutí jinam na mapu (`mapPick()`, jen v aplikaci) vyplní „Kam“ (resp. prázdné „Odkud“) bodem s názvem v tomto pořadí: zastávka do 22 px od prstu (tolerance pro malé tečky) → název z offline vektorové mapy pod prstem (`nameAt()`, `queryRenderedFeatures`, `name:latin`/`name`; na malém přiblížení dlaždice názvy nemají) → nejbližší místo nebo ulice z `data/poi.json` do 60 m (`Places.nearPlace`, funguje s každou podkladovou mapou) → „Bod na mapě“. Ručně zadané či zvolené „Odkud“ se nikdy nepřepíše; mimo Tiranu, při odmítnutém oprávnění a při nepřesné poloze se nic nevyplní. Po načtení jiného zdroje dat a po načtení pěší sítě se bod „Moje poloha“ znovu napočítá (pokud ještě nebylo hledáno).
+- Kritéria:
+  - [x] prohlížeč s mockem polohy (APP_VERSION): Tirana → „Moje poloha“; hledání Moje poloha → Yzberisht najde 4 spojení; klik na zastávku (i 10 px vedle) vyplní Kam a Moje poloha zůstane; klik u POI → název z `poi.json`, klik mimo → „Bod na mapě“; test `nearPlace` (53/53); Praha a odmítnutí → pole prázdné; `node --test` 52/52
+  - [ ] APK v emulátoru (poloha v Tiraně) · [ ] telefon (uživatel) · [ ] tmavý režim
 
 ## Známé chyby a omezení
 

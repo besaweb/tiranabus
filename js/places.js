@@ -266,6 +266,15 @@ const Places = (() => {
     return [...best.values()].sort((a, b) => a.d - b.d).slice(0, n);
   }
 
+  function nearPlace(idx, p, max = 60) {
+    let best = null, bd = max;
+    for (const it of (idx && idx.items) || []) for (const q of it.pts) {
+      const d = dist(p, q) + (it.pts.length > 1 || it.c === 'street' ? 15 : 0);
+      if (d <= bd) { bd = d; best = it; }
+    }
+    return best;
+  }
+
   const SLOTS = ['home', 'work', 'school'];
   const KINDS = ['stop', 'place', 'gps', 'map'];
   const ICONS = ['house', 'briefcase-business', 'graduation-cap', 'building-2', 'shopping-cart', 'shopping-bag', 'utensils', 'coffee', 'heart-pulse', 'dumbbell',
@@ -371,6 +380,6 @@ const Places = (() => {
 
   const poiHit = (p, q) =>presetHit(p.n, q) || (!!p.d && presetHit(p.d, q));
 
-  return { norm, build, search, label, access, between, route, stopWalks, net, center, dist, locate, inArea, nearest, presets, presetHit, presetIcon, pois, poiHit, routes, routeKey, ROUTE_MAX, SLOTS, ICONS, AREA, MAX_ACC, POI_MAX, RANK, WALK_V };
+  return { norm, build, search, label, access, between, route, stopWalks, net, center, dist, locate, inArea, nearest, nearPlace, presets, presetHit, presetIcon, pois, poiHit, routes, routeKey, ROUTE_MAX, SLOTS, ICONS, AREA, MAX_ACC, POI_MAX, RANK, WALK_V };
 })();
 if (typeof module !== 'undefined') module.exports = Places;

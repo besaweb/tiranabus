@@ -59,6 +59,12 @@
         this._gl.remove();
         L.DomUtil.remove(this._el);
       },
+      nameAt(pt) {
+        if (!this._gl || !this._gl.isStyleLoaded()) return null;
+        const r = 10, fs = this._gl.queryRenderedFeatures([[pt.x - r, pt.y - r], [pt.x + r, pt.y + r]]);
+        for (const f of fs) { const p = f.properties || {}, n = p['name:latin'] || p.name; if (n) return String(n); }
+        return null;
+      },
       _place() {
         const m = this._m, sz = m.getSize(), c = m.getCenter();
         L.DomUtil.setPosition(this._el, m.containerPointToLayerPoint([0, 0]));
@@ -99,7 +105,8 @@
   let feed = null, lines = [], markers = new Map(), sel = { route: null, stop: null }, timer = null, source = null;
   let view = { kind: 'list' }, prevView = null;
   let baseTables = null, builtLang = null, mode = 'plan', demoMode = true, groups = new Map(), stopGroup = new Map(), names = [];
-  let plan = { from: null, to: null, res: null, open: 0, timeTouched: false };
+  let plan = { from: null, to: null, res: null, open: 0, timeTouched: false, auto: false };
+  let geoStart = null;
   let ext = false, pidx = null, pload = null;
   const PRO_APP = !!window.APP_VERSION;
   let proSt = Pro.state(null, Date.now()), proMsg = null;
@@ -415,6 +422,7 @@
     if (!feed || !wnet || feed.walkFn) return;
     feed.walkFn = (st, lim) => Places.stopWalks(wnet, st, lim);
     feed.walk = null;
+    if (plan.auto && !plan.res) autoFrom(true);
     if (plan.res && plan.from && plan.to) runPlan();
   }
 
@@ -433,10 +441,11 @@
       for (const s of g.stops) { stopGroup.set(s.id, g); for (const r of s.routes) g.routes.add(r); }
     });
     names.sort((a, b) => a.label.localeCompare(b.label, 'cs', { numeric: true }));
-    plan = { from: null, to: null, res: null, open: 0, timeTouched: false };
+    plan = { from: null, to: null, res: null, open: 0, timeTouched: false, auto: false };
     $('#from').value = ''; $('#to').value = '';
     planLayer.clearLayers();
     renderMeta(); renderExpiry(); draw();
+    autoFrom();
     if (mode === 'plan') { setNow(); showPlan(); restyle(); } else openList();
   }
 
@@ -466,10 +475,20 @@
 
   function setEnd(which, g) {
     plan[which] = g;
+    if (which === 'from') plan.auto = false;
     $('#' + which).value = g ? g.label : '';
     plan.res = null;
     planLayer.clearLayers();
     preMarkers();
+  }
+
+  function autoFrom(show) {
+    if (!geoStart || !feed || (plan.from ? !plan.auto : $('#from').value)) return;
+    const g = ptEnd('@gps', t('geoBtn'), geoStart, 'from');
+    if (!g.stops.length) return;
+    setEnd('from', g);
+    plan.auto = true;
+    if (show && mode === 'plan') { showPlan(); restyle(); }
   }
 
   function pickStop(s) {
@@ -681,6 +700,7 @@
       try { localStorage.removeItem('tirana-geo-no'); } catch (e) {}
       done('ok', '', null, { p, acc, list });
       geoDraw();
+      geoStart = p; autoFrom(true);
     }, done);
   }
   $('#geo').addEventListener('click', e => {
@@ -1095,8 +1115,20 @@
       if (poiPick) return poiForm(e.latlng.lat, e.latlng.lng, poiPick);
       let best = null, bd = 24;
       if (proOk()) for (const p of pois) { const d = map.latLngToContainerPoint([p.lat, p.lon]).distanceTo(e.containerPoint); if (d <= bd) { best = p; bd = d; } }
-      if (best) poiPop(best);
+      if (best) return poiPop(best);
+      if (mode === 'plan' && PRO_APP) mapPick(e);
     });
+    async function mapPick(e) {
+      let bs = null, bd = 22;
+      for (const s of allStops()) { const d = map.latLngToContainerPoint([s.lat, s.lon]).distanceTo(e.containerPoint); if (d < bd) { bs = s; bd = d; } }
+      if (bs) return pickStop(bs);
+      const p = [e.latlng.lat, e.latlng.lng], vl = BASE[VEC];
+      let nm = vl && vl.nameAt && map.hasLayer(vl) ? vl.nameAt(e.containerPoint) : null;
+      if (!nm) { await loadPlaces(); const it = Places.nearPlace(pidx, p, 60); if (it) nm = Places.label(it, I18N.lang); }
+      if (mode !== 'plan') return;
+      const w = plan.from ? 'to' : 'from';
+      chooseEnd(w, ptEnd('@map-' + w, nm || t('preMapPt'), p, w), true);
+    }
     map.on('contextmenu', e => {
       if (prePick) return prePickAt(e.latlng.lat, e.latlng.lng);
       if (poiPick) return poiForm(e.latlng.lat, e.latlng.lng, poiPick);
@@ -1350,6 +1382,7 @@
       const blue = '#1A73E8';
       L.circle(p, { radius: acc, color: blue, weight: 1, opacity: .5, fillColor: blue, fillOpacity: .12, interactive: false }).addTo(geoLayer);
       L.marker(p, { icon: L.divIcon({ className: 'gme', html: icSvg('smile'), iconSize: [22, 22] }), interactive: false, keyboard: false, zIndexOffset: 1000 }).addTo(geoLayer);
+      geoStart = p; autoFrom(true);
     }, (st, k) => { if (st === 'blocked' || k === 'geoDenied') try { localStorage.setItem(GNO, '1'); } catch (e) {} });
   }
 
@@ -1413,7 +1446,7 @@
   }
   for (const which of ['from', 'to']) {
     const inp = $('#' + which), box = $('#' + which + '-sugg');
-    inp.addEventListener('input', () => { plan[which] = null; plan.res = null; planLayer.clearLayers(); preMarkers(); suggest(which); restyle(); });
+    inp.addEventListener('input', () => { plan[which] = null; if (which === 'from') plan.auto = false; plan.res = null; planLayer.clearLayers(); preMarkers(); suggest(which); restyle(); });
     inp.addEventListener('focus', () => { if (ext) { loadPlaces(); loadNet(); } if (!plan[which] && inp.value) suggest(which); });
     inp.addEventListener('blur', () => setTimeout(() => { box.hidden = true; inp.scrollLeft = 0; if (!/^(from|to)$/.test((document.activeElement || {}).id)) document.body.classList.remove('sgpad'); }, 150));
     inp.addEventListener('keydown', e => {
@@ -1473,7 +1506,7 @@
   }
   $('#swap').addEventListener('click', () => {
     const a = plan.from, b = plan.to, va = $('#from').value, vb = $('#to').value;
-    plan.from = b; plan.to = a; $('#from').value = vb; $('#to').value = va;
+    plan.from = b; plan.to = a; plan.auto = false; $('#from').value = vb; $('#to').value = va;
     plan.res = null; planLayer.clearLayers();
     preMarkers();
     restyle();
