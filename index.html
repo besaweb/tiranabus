@@ -13,7 +13,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Tirana Bus – Bus Map, Timetables &amp; Journey Planner</title>
-<meta name="description" content="Find Tirana city bus lines, stops and next departures on a map. Plan trips with transfers and catch the airport bus to Rinas. Free, in 12 languages.">
+<meta name="description" content="Find Tirana city bus lines, stops and next departures on a map. Plan trips with transfers and catch the airport bus to Rinas. Free, in 16 languages.">
 <meta name="author" content="besaweb">
 <meta name="robots" content="index, follow">
 <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
@@ -31,6 +31,10 @@
 <link rel="alternate" hreflang="el" href="https://tiranabus.al/el/">
 <link rel="alternate" hreflang="ru" href="https://tiranabus.al/ru/">
 <link rel="alternate" hreflang="tr" href="https://tiranabus.al/tr/">
+<link rel="alternate" hreflang="hu" href="https://tiranabus.al/hu/">
+<link rel="alternate" hreflang="uk" href="https://tiranabus.al/uk/">
+<link rel="alternate" hreflang="ro" href="https://tiranabus.al/ro/">
+<link rel="alternate" hreflang="pt" href="https://tiranabus.al/pt/">
 <link rel="alternate" hreflang="x-default" href="https://tiranabus.al/">
 <link rel="icon" href="favicon.ico" sizes="48x48">
 <link rel="icon" type="image/png" href="img/logo.png" sizes="192x192">
@@ -51,7 +55,7 @@
 <meta name="twitter:title" content="Tirana Bus">
 <meta name="twitter:description" content="Map, timetables and journey planner for public transport in Tirana.">
 <meta name="twitter:image" content="https://tiranabus.al/img/og.jpg">
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "@id": "https://tiranabus.al/#website", "url": "https://tiranabus.al/", "name": "Tirana Bus", "inLanguage": "en", "publisher": {"@id": "https://besaweb.al/#org"}}, {"@type": "WebApplication", "@id": "https://tiranabus.al/#app", "name": "Tirana Bus", "url": "https://tiranabus.al/", "description": "Map of Tirana city bus lines and stops, timetables, next departures and a journey planner with transfers, including airport buses to Rinas.", "applicationCategory": "TravelApplication", "operatingSystem": "Web, Android", "browserRequirements": "Requires JavaScript", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}, "inLanguage": ["en", "sq", "cs", "it", "de", "pl", "fr", "es", "mk", "el", "ru", "tr"], "image": "https://tiranabus.al/img/og.jpg", "author": {"@id": "https://besaweb.al/#org"}}, {"@type": "Organization", "@id": "https://besaweb.al/#org", "name": "BesaWeb", "url": "https://besaweb.al", "email": "info@besaweb.al"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "@id": "https://tiranabus.al/#website", "url": "https://tiranabus.al/", "name": "Tirana Bus", "inLanguage": "en", "publisher": {"@id": "https://besaweb.al/#org"}}, {"@type": "WebApplication", "@id": "https://tiranabus.al/#app", "name": "Tirana Bus", "url": "https://tiranabus.al/", "description": "Map of Tirana city bus lines and stops, timetables, next departures and a journey planner with transfers, including airport buses to Rinas.", "applicationCategory": "TravelApplication", "operatingSystem": "Web, Android", "browserRequirements": "Requires JavaScript", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}, "inLanguage": ["en", "sq", "cs", "it", "de", "pl", "fr", "es", "mk", "el", "ru", "tr", "hu", "uk", "ro", "pt"], "image": "https://tiranabus.al/img/og.jpg", "author": {"@id": "https://besaweb.al/#org"}}, {"@type": "Organization", "@id": "https://besaweb.al/#org", "name": "BesaWeb", "url": "https://besaweb.al", "email": "info@besaweb.al"}]}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
@@ -121,6 +125,10 @@
         <button type="button" data-lang="el" aria-pressed="false" aria-label="Ελληνικά" title="Ελληνικά"><svg viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#0D5EAF"/><rect y="1.78" width="24" height="1.78" fill="#fff"/><rect y="5.33" width="24" height="1.78" fill="#fff"/><rect y="8.89" width="24" height="1.78" fill="#fff"/><rect y="12.44" width="24" height="1.78" fill="#fff"/><rect width="8.89" height="8.89" fill="#0D5EAF"/><rect x="3.56" width="1.78" height="8.89" fill="#fff"/><rect y="3.56" width="8.89" height="1.78" fill="#fff"/></svg></button>
         <button type="button" data-lang="ru" aria-pressed="false" aria-label="Русский" title="Русский"><svg viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#fff"/><rect y="5.33" width="24" height="5.34" fill="#0039A6"/><rect y="10.67" width="24" height="5.33" fill="#D52B1E"/></svg></button>
         <button type="button" data-lang="tr" aria-pressed="false" aria-label="Türkçe" title="Türkçe"><svg viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#E30A17"/><circle cx="8.6" cy="8" r="4" fill="#fff"/><circle cx="9.6" cy="8" r="3.2" fill="#E30A17"/><path fill="#fff" d="M11.80 8.00L12.88 7.62L12.91 6.48L13.60 7.39L14.69 7.06L14.04 8.00L14.69 8.94L13.60 8.61L12.91 9.52L12.88 8.38z"/></svg></button>
+        <button type="button" data-lang="hu" aria-pressed="false" aria-label="Magyar" title="Magyar"><svg viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="5.33" fill="#CE2939"/><rect y="5.33" width="24" height="5.34" fill="#fff"/><rect y="10.67" width="24" height="5.33" fill="#477050"/></svg></button>
+        <button type="button" data-lang="uk" aria-pressed="false" aria-label="Українська" title="Українська"><svg viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="8" fill="#0057B7"/><rect y="8" width="24" height="8" fill="#FFD700"/></svg></button>
+        <button type="button" data-lang="ro" aria-pressed="false" aria-label="Română" title="Română"><svg viewBox="0 0 24 16" aria-hidden="true"><rect width="8" height="16" fill="#002B7F"/><rect x="8" width="8" height="16" fill="#FCD116"/><rect x="16" width="8" height="16" fill="#CE1126"/></svg></button>
+        <button type="button" data-lang="pt" aria-pressed="false" aria-label="Português" title="Português"><svg viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#FF0000"/><rect width="9.6" height="16" fill="#006600"/><circle cx="9.6" cy="8" r="3" fill="#FFE000"/><circle cx="9.6" cy="8" r="1.7" fill="#FF0000"/></svg></button>
       </div></div>
     </div>
   </header>

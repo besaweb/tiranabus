@@ -28,7 +28,7 @@ Snímky: 01 spojení na mapě · 02 detail spojení s jízdným · 03 linky a za
 
 ## Texty listingu
 
-Výchozí jazyk en-US. Albánština a čeština níže; ostatní jazyky (it, de, pl, fr, es, mk, el, ru, tr) zatím přes automatický překlad Play nebo později. **Albánský text je strojový, nechat zkontrolovat rodilým mluvčím (I18N-002).** Neoficiálnost aplikace musí v popisu zůstat (pravidla Play proti vydávání se za instituci).
+Výchozí jazyk en-US. Albánština a čeština níže; ostatní jazyky (it, de, pl, fr, es, mk, el, ru, tr, hu, uk, ro, pt) zatím přes automatický překlad Play nebo později. **Albánský text je strojový, nechat zkontrolovat rodilým mluvčím (I18N-002).** Neoficiálnost aplikace musí v popisu zůstat (pravidla Play proti vydávání se za instituci).
 
 ### English (en-US)
 
@@ -88,7 +88,7 @@ Tirana Bus vám pomůže cestovat po Tiraně městskou dopravou.
 • Letiště – autobusy LU-NA (Luna Travel) mezi Tiranou a mezinárodním letištěm Tirana (Rinas).
 • Funguje offline – jízdní řády i mapa Tirany jsou uložené v aplikaci, takže fungují na zastávce i bez internetu.
 • Hledání míst a ulic, nejen zastávek, s časem chůze k nejbližší zastávce.
-• 12 jazyků, světlý a tmavý režim. Bez účtu a registrace.
+• 16 jazyků, světlý a tmavý režim. Bez účtu a registrace.
 
 Jízdní řády jsou plánované, z otevřených dat města Tirana (GTFS, CC BY-SA 4.0); zpoždění v reálném čase nejsou k dispozici. Mapy © OpenMapTiles © přispěvatelé OpenStreetMap.
 

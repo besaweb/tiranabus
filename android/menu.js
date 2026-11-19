@@ -11,9 +11,13 @@
     mk: { menu: 'Мени', lang: 'Јазик', about: 'За апликацијата', ver: 'Верзија', tickets: 'Тарифи', data: 'Важност на податоците', adp: 'Приватност на реклами' },
     el: { menu: 'Μενού', lang: 'Γλώσσα', about: 'Σχετικά με την εφαρμογή', ver: 'Έκδοση', tickets: 'Ναύλα', data: 'Εγκυρότητα δεδομένων', adp: 'Απόρρητο διαφημίσεων' },
     ru: { menu: 'Меню', lang: 'Язык', about: 'О приложении', ver: 'Версия', tickets: 'Тарифы', data: 'Актуальность данных', adp: 'Конфиденциальность рекламы' },
-    tr: { menu: 'Menü', lang: 'Dil', about: 'Uygulama hakkında', ver: 'Sürüm', tickets: 'Ücretler', data: 'Veri geçerliliği', adp: 'Reklam gizliliği' }
+    tr: { menu: 'Menü', lang: 'Dil', about: 'Uygulama hakkında', ver: 'Sürüm', tickets: 'Ücretler', data: 'Veri geçerliliği', adp: 'Reklam gizliliği' },
+    hu: { menu: 'Menü', lang: 'Nyelv', about: 'Az alkalmazásról', ver: 'Verzió', tickets: 'Viteldíjak', data: 'Az adatok érvényessége', adp: 'Hirdetések adatvédelme' },
+    uk: { menu: 'Меню', lang: 'Мова', about: 'Про застосунок', ver: 'Версія', tickets: 'Тарифи', data: 'Чинність даних', adp: 'Конфіденційність реклами' },
+    ro: { menu: 'Meniu', lang: 'Limba', about: 'Despre aplicație', ver: 'Versiune', tickets: 'Tarife', data: 'Valabilitatea datelor', adp: 'Confidențialitatea reclamelor' },
+    pt: { menu: 'Menu', lang: 'Idioma', about: 'Sobre a aplicação', ver: 'Versão', tickets: 'Tarifas', data: 'Validade dos dados', adp: 'Privacidade dos anúncios' }
   };
-  const NAMES = { cs: 'Čeština', en: 'English', sq: 'Shqip', it: 'Italiano', de: 'Deutsch', pl: 'Polski', fr: 'Français', es: 'Español', mk: 'Македонски', el: 'Ελληνικά', ru: 'Русский', tr: 'Türkçe' };
+  const NAMES = { cs: 'Čeština', en: 'English', sq: 'Shqip', it: 'Italiano', de: 'Deutsch', pl: 'Polski', fr: 'Français', es: 'Español', mk: 'Македонски', el: 'Ελληνικά', ru: 'Русский', tr: 'Türkçe', hu: 'Magyar', uk: 'Українська', ro: 'Română', pt: 'Português' };
   const KEY = 'tirana-data-info';
   let info = [{ from: '', to: '', upd: '' }, { from: '', to: '', upd: '20261029' }];
   try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s[0]) info[0] = s[0]; } catch (e) {}

@@ -7,9 +7,9 @@
   document.title = I18N.t('tkTitle') + ' – ' + I18N.t('title');
   for (const el of document.querySelectorAll('[data-k]')) el.textContent = I18N.t(el.dataset.k);
   document.getElementById('title').textContent = I18N.t('tkTitle');
-  const RATE = { cs: ['CZK', .268], en: ['EUR', .011], it: ['EUR', .011], de: ['EUR', .011], pl: ['PLN', .047], fr: ['EUR', .011], es: ['EUR', .011], el: ['EUR', .011], ru: ['EUR', .011], mk: ['MKD', .68], tr: ['EUR', .011] }[I18N.lang];
+  const RATE = { cs: ['CZK', .268], en: ['EUR', .011], it: ['EUR', .011], de: ['EUR', .011], pl: ['PLN', .047], fr: ['EUR', .011], es: ['EUR', .011], el: ['EUR', .011], ru: ['EUR', .011], mk: ['MKD', .68], tr: ['EUR', .011], hu: ['HUF', 4], uk: ['EUR', .011], ro: ['RON', .055], pt: ['EUR', .011] }[I18N.lang];
   if (RATE) {
-    const c = new Intl.NumberFormat(I18N.loc(), { style: 'currency', currency: RATE[0], maximumFractionDigits: RATE[0] === 'CZK' ? 0 : 2 }).format(40 * RATE[1]);
+    const c = new Intl.NumberFormat(I18N.loc(), { style: 'currency', currency: RATE[0], maximumFractionDigits: RATE[0] === 'CZK' || RATE[0] === 'HUF' ? 0 : 2 }).format(40 * RATE[1]);
     document.querySelector('[data-k="tkFareV"]').textContent += ' (≈ ' + c + ')';
   }
   const back = document.getElementById('back');

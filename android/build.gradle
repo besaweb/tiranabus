@@ -18,8 +18,8 @@ def secret = { String env, String key, String dflt = null -> System.getenv(env) 
 def storePass = secret('TB_KS_PASS', 'storePassword')
 def keyPass = secret('TB_KEY_PASS', 'keyPassword', storePass)
 def ksAlias = secret('TB_KEY_ALIAS', 'keyAlias', 'tiranabus')
-def appVersion = System.getenv('VERSION') ?: '1.0'
-def appCode = (System.getenv('VERSION_CODE') ?: '1') as int
+def appVersion = System.getenv('VERSION') ?: '1.13'
+def appCode = (System.getenv('VERSION_CODE') ?: '130') as int
 def proTest = System.getenv('PRO_TEST') == '1'
 def proEnforce = proTest || System.getenv('PRO_ENFORCE') == '1'
 def adProps = new Properties()
@@ -165,7 +165,7 @@ dependencies {
 }
 
 def prepareSite = tasks.register('prepareSite', PrepareSite) {
-  ver = appVersion
+  ver = appVersion + ' (' + new Date().format('ddMM') + ')'
   pro = proEnforce
   test = proTest
   it.libs = libs

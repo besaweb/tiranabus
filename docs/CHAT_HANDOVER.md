@@ -50,3 +50,12 @@ Jen **aktuálně rozpracované** úkoly. Po dokončení úkolu jeho sekci smaž 
 - Platformy: android ☑ (jen Android)
 - Problémy: `feedback.php` zatím na hostingu není (404, aplikace hlásí chybu připojení); chybový text pro nedostupný server je zavádějící; překlady strojové (I18N-002).
 - Další krok: PR do `main`, nasazení `feedback.php`, skutečné odeslání s přílohou z telefonu (uživatel), pak FB-001 → DONE.
+
+## I18N-003 Nové jazyky hu, uk, ro, pt
+- Chat: 09 JAZYKY · Větev: `feat/I18N-003-hu-uk-ro-pt` · Aktualizováno: 2026-11-19
+- Hotovo: bloky hu, uk, ro, pt v `js/i18n.js`, plurály, patička, vlajky a `hreflang`, Android slovníky, letištní texty, kurzy a datum, testy 53/53, statické stránky 512 / sitemap 515.
+- Změněné soubory: `js/i18n.js`, `js/app.js`, `js/tickets.js`, `js/footer.js`, `js/extra-airport.js`, `index.html`, `android/menu.js`, `android/validity.js`, `android/boot-extra.html`, `tools/build-pages.js`, `tools/poi-build.js`, `tests/i18n.test.js`, dokumentace.
+- Testy: `node --test "tests/*.test.js"` 53/53; prohlížeč: výběr jazyka, telefon 375 px, stránka linek uk.
+- Platformy: web ☑ · android ☐ (SHARED; APK v emulátoru neověřen)
+- Problémy: překlady strojové; `data/poi.json` bez překladů názvů pro nové jazyky (přegenerovat `tools/poi-build.js`).
+- Další krok: PR, tmavý režim a dlouhé texty, APK v emulátoru, přegenerování POI, korektura (I18N-002).

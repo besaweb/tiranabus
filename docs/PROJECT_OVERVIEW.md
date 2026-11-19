@@ -4,7 +4,7 @@ Aktualizováno: 2026-11-07
 
 ## Co to je
 
-Mapa městské dopravy Tirany: linky a zastávky, nejbližší odjezdy, plánovač spojení s přestupy a chůzí, letištní autobusy LU-NA, volitelné hledání míst a ulic, informace o jízdném. 12 jazyků. Bez backendu – vše počítá klient nad GTFS.
+Mapa městské dopravy Tirany: linky a zastávky, nejbližší odjezdy, plánovač spojení s přestupy a chůzí, letištní autobusy LU-NA, volitelné hledání míst a ulic, informace o jízdném. 16 jazyků. Bez backendu – vše počítá klient nad GTFS.
 
 Cílová skupina: turisté a obyvatelé Tirany (kampaň na Facebooku míří i na české turisty). Autor a provozovatel: BesaWeb (besaweb.al, info@besaweb.al).
 
