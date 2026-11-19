@@ -1,6 +1,6 @@
 # Tasks – Tirana Bus
 
-Aktualizováno: 2026-11-15
+Aktualizováno: 2026-11-19
 
 **Pravidla:** ID `PREFIX-NNN` se nikdy nepoužije znovu (prefixy CORE, WEB, AND, GTFS, POI, MAP, DATA, I18N, UX, SEO, MKT, BUG, TEST, DOC, FB). Priority P0 kritická – P3 nízká. Stavy BACKLOG → READY → IN_PROGRESS → REVIEW → DONE; BLOCKED vždy s důvodem. Platforma SHARED / WEB / ANDROID (WEB/ANDROID se zdůvodněním). SHARED je DONE až s ☑ u obou platforem. DONE = splněná kritéria + testy + dokumentace; pak přesun do Archivu. Před založením hledat podobný úkol.
 
@@ -46,9 +46,18 @@ Aktualizováno: 2026-11-15
 | UX-028 | Poloha při startu vyplní „Moje poloha“ do „Odkud“, klik na zastávku nebo pojmenované místo na mapě doplní „Kam“ | ANDROID ONLY | P3 | REVIEW | UX-023 | 2026-11-18 |
 | WEB-005 | Odkazy na sociální sítě v patičce (Instagram, Facebook, X, TikTok) | WEB | P3 | REVIEW | – | 2026-11-15 |
 | WEB-004 | Nová patička webu (všechny stránky, na telefonu minimum) | WEB | P3 | REVIEW | – | 2026-11-15 |
+| I18N-003 | Nové jazyky: maďarština, ukrajinština, rumunština, portugalština (pt-PT) | SHARED | P2 | REVIEW | I18N-002 | 2026-11-19 |
 | FB-001 | Zpětná vazba v aplikaci (menu → formulář, `feedback.php`) | ANDROID ONLY | P2 | REVIEW | PHP na hostingu | 2026-11-18 |
 
 ## Detail
+
+### I18N-003 Nové jazyky hu, uk, ro, pt
+- Oblast: lokalizace · SHARED (texty ve sdíleném `js/i18n.js`; Android slovníky a úvodní obrazovka v `android/`; D-043) · P2 · REVIEW (zadání uživatele 2026-11-19)
+- Popis: jazyky 13–16: maďarština (hu), ukrajinština (uk), rumunština (ro), portugalština pt-PT. Všechny klíče v `js/i18n.js` (bloky za `tr`), pluralizace (`uk` jako `ru`, `ro` nová větev), `LANGS`/`LOC`, patička, vlajky a `hreflang` v `index.html`, `OGLOC`, kurzy a formát data, slovníky `android/menu.js`, `validity.js`, `boot-extra.html`, letištní texty. Statické stránky: 16 × 32 = 512 + `sitemap.xml` (515 URL). **Všechny překlady jsou strojové, navrhnout korekturu rodilými mluvčími (I18N-002).** Kurzy HUF 4 a RON 0,055 za lek jsou odhad. `privacy.js` zobrazuje cs nebo en (beze změny).
+- Kritéria:
+  - [x] `node --test` 53/53 (16 jazyků, klíče, parametry, plurály, Android slovníky, letiště); `build-pages.js` 512 stránek, sitemap 515 URL, `hreflang` ve všech
+  - [x] web: výběr jazyka (hu, uk, ro, pt) přepíná texty a URL `/{jazyk}/`, telefon 375 px bez vodorovného přetečení, statická stránka linek uk
+  - [ ] světlý i tmavý režim a dlouhé texty (ro, hu, pt) v plánovači a výsledcích · [ ] APK v emulátoru (menu, platnost dat, úvodní obrazovka) · [ ] `data/poi.json` přegenerovat (`tools/poi-build.js`) · [ ] korektura rodilými mluvčími (I18N-002)
 
 ### FB-001 Zpětná vazba v aplikaci
 - Oblast: UI, zpětná vazba · ANDROID ONLY (položka v menu APK `android/menu.js`, událost `tb-feedback`; odeslání přes PHP na FTP hostingu, D-042) · P2 · REVIEW

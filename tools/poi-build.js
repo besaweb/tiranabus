@@ -42,7 +42,7 @@ const GENERIC = /^(fush[eë]( (e )?(sporti|basketbolli|futbolli|tenisit?|volejbo
 // Poloha vstupu místo středu areálu (letiště: autobusové stání LU-NA u příletové haly, viz js/extra-airport.js).
 const POS = { 'Aeroporti Ndërkombëtar i Tiranës Nënë Tereza': [41.41726, 19.71391] };
 
-const LANGS = ['en', 'sq', 'it', 'de', 'cs', 'pl', 'fr', 'es', 'mk', 'el', 'ru', 'tr'];
+const LANGS = ['en', 'sq', 'it', 'de', 'cs', 'pl', 'fr', 'es', 'mk', 'el', 'ru', 'tr', 'hu', 'uk', 'ro', 'pt'];
 
 const FUN = ['playground', 'indoor_play', 'amusement_arcade', 'bowling_alley', 'trampoline_park', 'escape_game', 'adventure_park', 'miniature_golf'];
 const CULT = ['theatre', 'cinema', 'arts_centre', 'events_venue', 'conference_centre', 'social_centre', 'exhibition_centre', 'music_school', 'dancing_school', 'planetarium'];

@@ -9,8 +9,8 @@ const { ROOT } = require('./helpers');
 
 const keys = o => Object.keys(o).sort();
 
-test('i18n.js: všech 12 jazyků má stejné klíče jako en', () => {
-  assert.equal(I18N.LANGS.length, 12);
+test('i18n.js: všech 16 jazyků má stejné klíče jako en', () => {
+  assert.equal(I18N.LANGS.length, 16);
   const ref = keys(I18N.D.en);
   for (const l of I18N.LANGS) {
     assert.ok(I18N.D[l], l);
@@ -49,7 +49,7 @@ function androidDict(file) {
 }
 
 for (const file of ['menu.js', 'validity.js']) {
-  test(`android/${file}: všech 12 jazyků`, () => {
+  test(`android/${file}: všech 16 jazyků`, () => {
     const T = androidDict(file), ref = keys(T.en);
     for (const l of I18N.LANGS) {
       assert.ok(T[l], `${file}: chybí jazyk ${l}`);

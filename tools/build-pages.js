@@ -14,7 +14,7 @@ const OUT = path.resolve(process.argv[2] || 'site');
 const SITE = (process.env.SITE || 'https://tiranabus.al').replace(/\/$/, '');
 const VQ = process.env.V ? '?v=' + process.env.V : '';
 const LANGS = I18N.LANGS;
-const OGLOC = { cs: 'cs_CZ', en: 'en_US', sq: 'sq_AL', it: 'it_IT', de: 'de_DE', pl: 'pl_PL', fr: 'fr_FR', es: 'es_ES', mk: 'mk_MK', el: 'el_GR', ru: 'ru_RU', tr: 'tr_TR' };
+const OGLOC = { cs: 'cs_CZ', en: 'en_US', sq: 'sq_AL', it: 'it_IT', de: 'de_DE', pl: 'pl_PL', fr: 'fr_FR', es: 'es_ES', mk: 'mk_MK', el: 'el_GR', ru: 'ru_RU', tr: 'tr_TR', hu: 'hu_HU', uk: 'uk_UA', ro: 'ro_RO', pt: 'pt_PT' };
 const TODAY = new Date().toISOString().slice(0, 10);
 
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');

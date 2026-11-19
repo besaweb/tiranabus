@@ -1,6 +1,6 @@
 const Footer = (() => {
-  const ORDER = ['sq', 'cs', 'en', 'it', 'de', 'pl', 'fr', 'es', 'mk', 'el', 'ru', 'tr'];
-  const NAMES = { sq: 'Shqip', cs: 'Čeština', en: 'English', it: 'Italiano', de: 'Deutsch', pl: 'Polski', fr: 'Français', es: 'Español', mk: 'Македонски', el: 'Ελληνικά', ru: 'Русский', tr: 'Türkçe' };
+  const ORDER = ['sq', 'cs', 'en', 'it', 'de', 'pl', 'fr', 'es', 'mk', 'el', 'ru', 'tr', 'hu', 'uk', 'ro', 'pt'];
+  const NAMES = { sq: 'Shqip', cs: 'Čeština', en: 'English', it: 'Italiano', de: 'Deutsch', pl: 'Polski', fr: 'Français', es: 'Español', mk: 'Македонски', el: 'Ελληνικά', ru: 'Русский', tr: 'Türkçe', hu: 'Magyar', uk: 'Українська', ro: 'Română', pt: 'Português' };
   const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   const ico = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
   const I = {

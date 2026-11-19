@@ -22,7 +22,7 @@ index.html, tickets.html, privacy.html, css/, js/, data/, img/   ← SHARED zdro
 | Core | `js/gtfs-core.js` (`GTFS`) | build feedu, kalendář, `departures`, `plan` (CSA), `merge`, `readZip`, `groupStops`, `validity`, `clock` | bez DOM, `module.exports` |
 | Core | `js/places.js` (`Places`) | hledání míst/ulic, pěší síť (`net`, `access`, `between`, `route`, `stopWalks`) | bez DOM, `module.exports` |
 | Core data | `js/extra-airport.js` (`EXTRA_FEEDS`), `js/demo.js` (`demoTables`) | letištní mini-GTFS, ukázková síť | `module.exports` |
-| I18N | `js/i18n.js` (`I18N`) | 12 jazyků, `t(klíč, {p})`, `pl(klíč, n)` | všechny jazyky mají stejné klíče |
+| I18N | `js/i18n.js` (`I18N`) | 16 jazyků, `t(klíč, {p})`, `pl(klíč, n)` | všechny jazyky mají stejné klíče |
 | UI | `js/app.js` | mapa, panely, formulář, načtení feedu, jízdné (`FARE`), verze (`VERSION`) | jediné místo UI logiky |
 | UI | `css/style.css`, `css/tickets.css` | vzhled, tokeny, světlý/tmavý režim | přes CSS proměnné |
 | Ostatní | `js/consent.js` (vypnutý souhlas s reklamou), `js/tickets.js`, `js/privacy.js` | | |
@@ -105,17 +105,17 @@ Vkládání do `index.html` v APK je přes `sed`/`python` na konkrétní řetěz
 - `android.yml`: na PR a push do `main` s cestami `android/**`, `index.html`, `css|js|data|img/**` (a ručně) → JDK 21, feed z release, `./gradlew assembleDebug bundleDebug` bez podpisových tajemství, kontrola obsahu APK (`index.html` s `OFFLINE_MAP`, `gtfs.zip`, knihovny, mapa, `classes.dex`) a že `assembleRelease` bez hesla selže (D-022). Podepsané buildy jen lokálně.
 - `pages.yml`: push na `main` + denně → kopie webu, cache-busting `?v=<sha>`, `gtfs.zip` z release, `node tools/build-pages.js site`, deploy Pages.
 - `deploy-ftp.sh`: totéž, nahrání na tiranabus.al přes FTP (šifrovaný jen řídicí kanál – Pure-FTPd vrací 451 při TLS na datovém). Starší soubory nemaže. Nahrává pracovní adresář (WEB-001).
-- `tools/build-pages.js` (+ `tools/gtfs-node.js`, čtečka zipu bez závislostí): 12 × (`/{jazyk}/`, `/lines/`, `/airport/`, `/line/{linka}/`) = 384 stránek + `sitemap.xml` (387 URL, hreflang, x-default). Jazykové kopie `index.html` mají `<base href="../">`. Výstup se necommituje.
+- `tools/build-pages.js` (+ `tools/gtfs-node.js`, čtečka zipu bez závislostí): 16 × (`/{jazyk}/`, `/lines/`, `/airport/`, `/line/{linka}/`) = 512 stránek + `sitemap.xml` (515 URL, hreflang, x-default). Jazykové kopie `index.html` mají `<base href="../">`. Výstup se necommituje.
 - Kanonická doména `https://tiranabus.al/` (Pages = zrcadlo). `.htaccess` (www → bez www, 404) a `404.html` jen na FTP.
 - Patička (WEB-004): `js/footer.js` (`Footer.html({ t, lang, pre, langHref })`, `Footer.mount(el, I18N, onLang)`), styly `css/footer.css`. `build-pages.js` ji vkládá staticky do stránek linek/letiště i do `/{jazyk}/` (výběr jazyka = odkazy s `hreflang`). Obsahové stránky mají `<footer class="sf" id="sf">` a skript ji vykreslí po `i18n.js` (`data-pre` = cesta ke kořeni, `404.html` `/`); na hlavní stránce (`data-app`) ji překresluje `applyLang()` v `app.js` a přepnutí jazyka volá `setLang`.
 - SEO v HTML: výchozí jazyk en, JSON-LD (WebSite, WebApplication, Organization), OG `img/og.jpg`, `<noscript>`.
 
 ## Lokalizace
 
-- Jazyky: cs, en, sq, it, de, pl, fr, es, mk, el, ru, tr. Výchozí podle URL (`/{jazyk}/`), pak `localStorage`, pak prohlížeč, jinak en. Překlady strojové, bez korektury.
-- Plurály: cs, pl, ru 3 tvary, ostatní 2 (fr: 0 a 1 = jednotné). Názvy zastávek a linek se nepřekládají.
+- Jazyky: cs, en, sq, it, de, pl, fr, es, mk, el, ru, tr, hu, uk, ro, pt (pt-PT; I18N-003). Nový jazyk = blok v `D`, položka v `LANGS` a `LOC` a v `pl()`, dále `footer.js` (`ORDER`, `NAMES`), vlajka a `hreflang` v `index.html`, `OGLOC` v `build-pages.js`, `LANGS` v `poi-build.js`, kurz a formát data (`app.js`, `tickets.js`, `android/validity.js`), slovníky Androidu a letištní texty. Výchozí podle URL (`/{jazyk}/`), pak `localStorage`, pak prohlížeč, jinak en. Překlady strojové, bez korektury.
+- Plurály: cs, pl, ru, uk, ro 3 tvary (ro: 1 / 0 a 2–19 / ostatní), ostatní 2 (fr: 0 a 1 = jednotné). Názvy zastávek a linek se nepřekládají.
 - Statické texty v HTML přes `data-i18n*`, `applyLang()` přepíše a překreslí panel.
-- Výjimky mimo `i18n.js` (vlastní slovníky, všech 12 jazyků, kontroluje `tests/i18n.test.js`): `android/menu.js`, `android/validity.js`, `android/boot-extra.html`, texty letiště v `extra-airport.js`.
+- Výjimky mimo `i18n.js` (vlastní slovníky, všech 16 jazyků, kontroluje `tests/i18n.test.js`): `android/menu.js`, `android/validity.js`, `android/boot-extra.html`, texty letiště v `extra-airport.js`.
 
 ## Nástroje (`tools/`)
 
