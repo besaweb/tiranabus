@@ -44,6 +44,7 @@ Aktualizováno: 2026-11-19
 | BUG-005 | Veřejný build (bez `PRO_ENFORCE`): každé klepnutí otevře obrazovku PRO | ANDROID ONLY | P0 | REVIEW | – | 2026-11-18 |
 | UX-027 | Písmo Roboto místo Inter | SHARED | P3 | REVIEW | BUG-004 | 2026-11-14 |
 | UX-028 | Poloha při startu vyplní „Moje poloha“ do „Odkud“, klik na zastávku nebo pojmenované místo na mapě doplní „Kam“ | ANDROID ONLY | P3 | REVIEW | UX-023 | 2026-11-18 |
+| BUG-006 | Popisky „Bod na mapě“ a „Moje poloha“ se po změně jazyka nepřekládají (pole, oblíbená místa, oblíbené trasy) | ANDROID ONLY | P2 | REVIEW | UX-028 | 2026-11-25 |
 | WEB-005 | Odkazy na sociální sítě v patičce (Instagram, Facebook, X, TikTok) | WEB | P3 | REVIEW | – | 2026-11-15 |
 | WEB-004 | Nová patička webu (všechny stránky, na telefonu minimum) | WEB | P3 | REVIEW | – | 2026-11-15 |
 | I18N-003 | Nové jazyky: maďarština, ukrajinština, rumunština, portugalština (pt-PT) | SHARED | P2 | REVIEW | I18N-002 | 2026-11-19 |
@@ -208,6 +209,14 @@ Aktualizováno: 2026-11-19
 - Kritéria:
   - [x] prohlížeč s mockem polohy (APP_VERSION): Tirana → „Moje poloha“; hledání Moje poloha → Yzberisht najde 4 spojení; klik na zastávku (i 10 px vedle) vyplní Kam a Moje poloha zůstane; klik u POI → název z `poi.json`, klik mimo → „Bod na mapě“; test `nearPlace` (53/53); Praha a odmítnutí → pole prázdné; `node --test` 52/52
   - [ ] APK v emulátoru (poloha v Tiraně) · [ ] telefon (uživatel) · [ ] tmavý režim
+
+### BUG-006 Popisky bodů se po změně jazyka nepřekládají
+- Oblast: plánovač · ANDROID ONLY (bod na mapě a poloha jen v APK, navazuje na UX-028; hlášení uživatele 2026-11-25) · P2 · REVIEW
+- Příčina: text `preMapPt` / `geoBtn` se uložil přeložený v okamžiku výběru (pole Odkud/Kam, položky `k: 'map'` / `'gps'` v oblíbených místech a trasách v `localStorage`) a po přepnutí jazyka zůstal v původním jazyce. Klíče existují ve všech 16 jazycích.
+- Řešení: `I18N.same(klíč, text)` pozná text v kterémkoli jazyce; `plbl()` ho při zobrazení oblíbených míst a tras přeloží do aktuálního jazyka, `relabel()` v `applyLang()` přepíše popisek v polích a plánu na místě. Uložená data se nemění. Pojmenovaná místa (název z mapy, `poi.json`, zastávka) se nepřekládají.
+- Kritéria:
+  - [x] testy 54/54 (nový: `same` pro všech 16 jazyků)
+  - [ ] prohlížeč: vybrat bod na mapě, přepnout jazyk, pole i oblíbená místa se přeloží · [ ] APK · [ ] telefon (uživatel)
 
 ## Známé chyby a omezení
 

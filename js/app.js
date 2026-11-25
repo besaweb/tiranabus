@@ -748,6 +748,9 @@
   const preIcon = k => `<i class="si">${icSvg(preIc(k))}</i>`;
   const preName = k => (pre[k] && pre[k].n) || t('pre_' + k);
   const preList = q => GEO && proOk() ? Places.SLOTS.filter(k => pre[k] && pre[k].k && (!q || Places.presetHit(preName(k), q))) : [];
+  const GEN = ['preMapPt', 'geoBtn'];
+  const genKey = l => GEN.find(k => I18N.same(k, l));
+  const plbl = p => { const k = (p.k === 'map' || p.k === 'gps') && genKey(p.l); return k ? t(k) : p.l; };
   const ptEnd = (id, n, p, which) => placeEnd({ id, n, c: 'pin', pts: [p], t: {} }, which);
   function preGroup(p) {
     if (p.k !== 'stop') return null;
@@ -819,7 +822,7 @@
     let h = '';
     for (const k of Places.SLOTS) {
       const p = pre[k] || {};
-      h += `<div class="plrow"><button type="button" class="plgo" data-pa="go" data-slot="${k}"><span class="plic">${icSvg(preIc(k))}</span><span class="pltx"><b>${esc(preName(k))}</b><span>${esc(p.k ? p.l : t('preUnset'))}</span></span></button>${plBtns('data-slot', k, p.k || p.n || p.i)}</div>`;
+      h += `<div class="plrow"><button type="button" class="plgo" data-pa="go" data-slot="${k}"><span class="plic">${icSvg(preIc(k))}</span><span class="pltx"><b>${esc(preName(k))}</b><span>${esc(p.k ? plbl(p) : t('preUnset'))}</span></span></button>${plBtns('data-slot', k, p.k || p.n || p.i)}</div>`;
       if (preDel === k) h += plConf('data-slot', k);
       if (preEdit === k) {
         h += `<div class="pedit"><input class="pname" data-slot="${k}" maxlength="24" value="${esc(preName(k))}" aria-label="${esc(t('preName'))}">`;
@@ -932,7 +935,7 @@
   let rts = [], rtEdit = null, rtDel = null, rtNote = null, rtToastT = 0;
   try { rts = Places.routes(localStorage.getItem(RTK)); } catch (e) {}
   const rtSave = () => { try { localStorage.setItem(RTK, JSON.stringify({ v: 1, items: rts })); } catch (e) {} };
-  const rtAuto = r => `${r.f.l} → ${r.t.l}`.slice(0, 60);
+  const rtAuto = r => `${plbl(r.f)} → ${plbl(r.t)}`.slice(0, 60);
   const rtName = r => r.n || rtAuto(r);
   function rtCur() {
     if (!(plan.res && plan.res.list.length) || !plan.from || !plan.to) return null;
@@ -947,7 +950,7 @@
     if (!SEC.rt.open) { box.innerHTML = ''; return; }
     let h = rts.length ? '' : `<p class="gmsg plempty">${esc(t('rtEmpty'))}</p>`;
     for (const r of rts) {
-      h += `<div class="plrow"><button type="button" class="plgo" data-pa="go" data-rt="${esc(r.id)}"><span class="plic">${uiSvg('route')}</span><span class="pltx"><b>${esc(rtName(r))}</b><span>${esc(r.f.l)} → ${esc(r.t.l)}</span></span></button>${plBtns('data-rt', esc(r.id), true)}</div>`;
+      h += `<div class="plrow"><button type="button" class="plgo" data-pa="go" data-rt="${esc(r.id)}"><span class="plic">${uiSvg('route')}</span><span class="pltx"><b>${esc(rtName(r))}</b><span>${esc(plbl(r.f))} → ${esc(plbl(r.t))}</span></span></button>${plBtns('data-rt', esc(r.id), true)}</div>`;
       if (rtDel === r.id) h += plConf('data-rt', esc(r.id));
       if (rtEdit === r.id) h += `<div class="pedit"><input class="pname" maxlength="60" value="${esc(r.n)}" placeholder="${esc(rtAuto(r))}" aria-label="${esc(t('rtName'))}"><div class="grow"><button type="button" class="btn sm primary" data-pa="rsave" data-rt="${esc(r.id)}">${esc(t('preSave'))}</button><button type="button" class="btn sm" data-pa="rcancel">${esc(t('preCancel'))}</button></div></div>`;
       if (rtNote && rtNote.id === r.id) h += `<p class="gmsg gwarn"><i>${icSvg('triangle-alert')}</i>${esc(t(rtNote.k, rtNote.p))}</p>`;
@@ -965,7 +968,7 @@
   }
   function rtOpen(r) {
     rtNote = null;
-    const ends = [['from', r.f], ['to', r.t]].map(([w, p]) => [w, p.k === 'stop' ? rtStop(p) : ptEnd('@fav-' + w, p.l, [p.lat, p.lon], w), p]);
+    const ends = [['from', r.f], ['to', r.t]].map(([w, p]) => [w, p.k === 'stop' ? rtStop(p) : ptEnd('@fav-' + w, plbl(p), [p.lat, p.lon], w), p]);
     const gone = ends.find(e => !e[1]);
     if (gone) { rtNote = { id: r.id, k: 'rtGone', p: { s: gone[2].l } }; rtShow(); return; }
     plCloseAll();
@@ -1080,7 +1083,7 @@
   function prePop(k) {
     const p = pre[k], el = document.createElement('div');
     el.className = 'gpop gmenu';
-    el.innerHTML = `<b><i class="gm-red">${icSvg(preIc(k))}</i>${esc(preName(k))}</b><span>${esc(p.l)}</span>${gmRow('from', 'map-pin', t('mapFrom'))}${gmRow('to', 'flag', t('mapTo'))}`;
+    el.innerHTML = `<b><i class="gm-red">${icSvg(preIc(k))}</i>${esc(preName(k))}</b><span>${esc(plbl(p))}</span>${gmRow('from', 'map-pin', t('mapFrom'))}${gmRow('to', 'flag', t('mapTo'))}`;
     const pop = L.popup({ offset: [0, -10], autoPanPaddingTopLeft: [72, 16], autoPanPaddingBottomRight: [72, 56] }).setLatLng([p.lat, p.lon]).setContent(el).openOn(map);
     el.addEventListener('click', ev => {
       const b = ev.target.closest('[data-w]');
@@ -1612,6 +1615,14 @@
   };
   themeBtn.addEventListener('click', toggleTheme);
 
+  function relabel() {
+    for (const w of ['from', 'to']) {
+      const g = plan[w], k = g && g.pt && g.place && genKey(g.label);
+      if (!k) continue;
+      g.label = g.pt.name = g.place.n = t(k);
+      $('#' + w).value = g.label;
+    }
+  }
   function applyLang() {
     const l = I18N.lang;
     if (typeof Consent !== 'undefined') Consent.render();
@@ -1630,6 +1641,7 @@
     placeFooter();
     syncTheme();
     if (!feed) return;
+    relabel();
     if (baseTables && builtLang !== l) { setFeed(buildFeed(), source, false); return; }
     setAttr(); renderMeta(); renderExpiry(); geoShow(); preShow(); poiShow(); proShow(); if (SEC.fb.open) fbShow();
     if (mode === 'plan') showPlan(); else { const el = scr(), st = el.scrollTop; render(); el.scrollTop = st; }

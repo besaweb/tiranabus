@@ -57,3 +57,10 @@ for (const file of ['menu.js', 'validity.js']) {
     }
   });
 }
+
+test('same: popisek bodu na mapě a Moje poloha se pozná v každém jazyce', () => {
+  for (const l of I18N.LANGS) for (const k of ['preMapPt', 'geoBtn']) {
+    assert.ok(I18N.same(k, I18N.D[l][k]), `${l}.${k}`);
+    assert.ok(!I18N.same(k, 'Hlavní nádraží'));
+  }
+});

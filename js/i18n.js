@@ -4992,6 +4992,8 @@ const I18N = (() => {
     return 'en';
   };
 
-  return { t, pl, setLang, detect, LANGS, loc: () => LOC[lang], get lang() { return lang; }, D };
+  const same = (k, s) => LANGS.some(l => D[l][k] === s);
+
+  return { t, pl, setLang, detect, same, LANGS, loc: () => LOC[lang], get lang() { return lang; }, D };
 })();
 if (typeof module !== 'undefined') module.exports = I18N;
